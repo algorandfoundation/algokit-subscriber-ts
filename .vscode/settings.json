@@ -1,0 +1,23 @@
+{
+  "files.eol": "\n",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "jest.jestCommandLine": "npm run test --",
+  "jest.autoRun": {
+    "watch": false,
+    "onSave": "test-file",
+    "onStartup": false
+  },
+  "files.associations": {
+    ".github/**/*.yml": "github-actions-workflow"
+  },
+  "eslint.enable": true,
+  "eslint.validate": ["typescript", "typescriptreact", "graphql"],
+  "eslint.options": {
+    "extensions": [".ts", ".graphql"]
+  },
+  "eslint.workingDirectories": ["./graphql"]
+}

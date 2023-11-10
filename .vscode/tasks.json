@@ -1,0 +1,56 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "localstack + localnet",
+      "command": "docker",
+      "args": ["compose", "up", "-d"],
+      "type": "shell",
+      "dependsOn": ["Start AlgoKit LocalNet"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start AlgoKit LocalNet",
+      "command": "algokit",
+      "args": ["localnet", "start"],
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Stop AlgoKit LocalNet",
+      "command": "algokit",
+      "args": ["localnet", "stop"],
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Reset AlgoKit LocalNet",
+      "command": "algokit",
+      "args": ["localnet", "reset"],
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: cdk bootstrap - /infrastructure",
+      "type": "npm",
+      "script": "bootstrap:local",
+      "path": "${workspaceFolder}/infrastructure",
+      "options": {
+        "cwd": "${workspaceFolder}/infrastructure"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
