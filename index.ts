@@ -20,6 +20,7 @@ const run = async () => {
     {
       filter: {
         type: TransactionType.acfg,
+        // Data History Museum creator accounts
         sender: (await algokit.isTestNet(algod))
           ? 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU'
           : 'EHYQCYHUC6CIWZLBX5TDTLVJ4SSVE4RRTMKFDCG4Z4Q7QSQ2XWIQPMKBPU',
@@ -38,6 +39,7 @@ const run = async () => {
   )
 
   if (transactions.subscribedTransactions.length > 0) {
+    // Save all of the Data History Museum Verifiably Authentic Digital Historical Artifacts
     await saveDHMTransactions(transactions.subscribedTransactions)
   }
 

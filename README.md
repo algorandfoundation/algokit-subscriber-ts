@@ -127,7 +127,7 @@ export interface TransactionSubscriptionResult {
 }
 ```
 
-## Example
+## Examples
 
 Here are some examples of how to use this method:
 
