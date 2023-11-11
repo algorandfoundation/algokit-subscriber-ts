@@ -60,13 +60,18 @@ export interface TransactionSubscriptionParams {
    *    for real-time notification scenarios where you don't care about history and
    *    are happy to lose old transactions.
    *  * `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
-   *    using algod; note: this will be slow if you.
+   *    using algod; note: this will be slow if you are starting from 0 and requires
+   *    an archival node.
+   *  * `sync-oldest-start-now`: Same as `sync-oldest`, but if the `watermark` is `0`
+   *    then start at the current round i.e. don't sync historical records, but once
+   *    subscribing starts sync everything; note: if it falls behind it requires an
+   *    archival node.
    *  * `catchup-with-indexer`: Sync to round `currentRound - maxRoundsToSync + 1`
    *    using indexer (much faster than using algod for long time periods) and then
    *    use algod from there.
    *  * `fail`: Throw an error.
    **/
-  onMaxRounds: 'skip-to-newest' | 'sync-oldest' | 'catchup-with-indexer' | 'fail'
+  onMaxRounds: 'skip-to-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
 }
 
 /** Specify a filter to apply to find transactions of interest. */
@@ -109,7 +114,9 @@ export interface TransactionSubscriptionResult {
   currentRound: number
   /** The new watermark value to persist for the next call to
    * `getSubscribedTransactions` to continue the sync.
-   * Will be equal to `syncedRoundRange[1]`. */
+   * Will be equal to `syncedRoundRange[1]`. Only persist this
+   * after processing (or in the same atomic transaction as)
+   * subscribed transactions to keep it reliable. */
   newWatermark: number
   /** Any transactions that matched the given filter within
    * the synced round range. This uses the [indexer transaction
@@ -124,9 +131,10 @@ export interface TransactionSubscriptionResult {
 
 Here are some examples of how to use this method:
 
-### Real-time notification of transactions of interest at the tip of the chain
+### Real-time notification of transactions of interest at the tip of the chain discarding stale records
 
-If you ran the following code on a cron schedule of (say) every 5 seconds it would notify you every time the account (in this case the Data History Museum TestNet account `ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU`) sent a transaction.
+If you ran the following code on a cron schedule of (say) every 5 seconds it would notify you every time the account (in this case the Data History Museum TestNet account `ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU`) sent a transaction. If the service stopped working for a period of time and fell behind then
+it would drop old records and restart notifications from the new tip.
 
 ```typescript
 const algod = await algokit.getAlgoClient()
@@ -151,7 +159,35 @@ if (transactions.subscribedTransactions.length > 0) {
 await saveWatermark(transactions.newWatermark)
 ```
 
-### Quickly building a reliable, up-to-date cache index of transactions of interest from the beginning of the chain
+### Real-time notification of transactions of interest at the tip of the chain with at least once delivery
+
+If you ran the following code on a cron schedule of (say) every 5 seconds it would notify you every time the account (in this case the Data History Museum TestNet account `ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU`) sent a transaction. If the service stopped working for a period of time and fell behind then
+it would pick up where it left off and catch up using algod (note: you need to connect it to a archival node).
+
+```typescript
+const algod = await algokit.getAlgoClient()
+// You would need to implement getLastWatermark() to retrieve from a persistence store
+const watermark = await getLastWatermark()
+const subscription = await getSubscribedTransactions(
+  {
+    filter: {
+      sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
+    },
+    watermark,
+    maxRoundsToSync: 100,
+    onMaxRounds: 'sync-oldest-start-now',
+  },
+  algod,
+)
+if (transactions.subscribedTransactions.length > 0) {
+  // You would need to implement notifyTransactions to action the transactions
+  await notifyTransactions(transactions.subscribedTransactions)
+}
+// You would need to implement saveWatermark to persist the watermark to the persistence store
+await saveWatermark(transactions.newWatermark)
+```
+
+### Quickly building a reliable, up-to-date cache index of all transactions of interest from the beginning of the chain
 
 If you ran the following code on a cron schedule of (say) every 30 - 60 seconds it would create a cached index of all assets created by the account (in this case the Data History Museum TestNet account `ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU`). Given it uses indexer to catch up you can deploy this into a fresh environment with an empty database and it will catch up in seconds rather than days.
 

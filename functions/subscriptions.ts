@@ -38,13 +38,18 @@ export interface TransactionSubscriptionParams {
    *    for real-time notification scenarios where you don't care about history and
    *    are happy to lose old transactions.
    *  * `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
-   *    using algod; note: this will be slow if you.
+   *    using algod; note: this will be slow if you are starting from 0 and requires
+   *    an archival node.
+   *  * `sync-oldest-start-now`: Same as `sync-oldest`, but if the `watermark` is `0`
+   *    then start at the current round i.e. don't sync historical records, but once
+   *    subscribing starts sync everything; note: if it falls behind it requires an
+   *    archival node.
    *  * `catchup-with-indexer`: Sync to round `currentRound - maxRoundsToSync + 1`
    *    using indexer (much faster than using algod for long time periods) and then
    *    use algod from there.
    *  * `fail`: Throw an error.
    **/
-  onMaxRounds: 'skip-to-newest' | 'sync-oldest' | 'catchup-with-indexer' | 'fail'
+  onMaxRounds: 'skip-to-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
 }
 
 /** Specify a filter to apply to find transactions of interest. */
@@ -83,7 +88,9 @@ export interface TransactionSubscriptionResult {
   currentRound: number
   /** The new watermark value to persist for the next call to
    * `getSubscribedTransactions` to continue the sync.
-   * Will be equal to `syncedRoundRange[1]`. */
+   * Will be equal to `syncedRoundRange[1]`. Only persist this
+   * after processing (or in the same atomic transaction as)
+   * subscribed transactions to keep it reliable. */
   newWatermark: number
   /** Any transactions that matched the given filter within
    * the synced round range. This uses the [indexer transaction
@@ -135,6 +142,13 @@ export async function getSubscribedTransactions(
       case 'sync-oldest':
         endRound = algodSyncFromRoundNumber + maxRoundsToSync - 1
         break
+      case 'sync-oldest-start-now':
+        if (watermark === 0) {
+          algodSyncFromRoundNumber = currentRound - 1
+        } else {
+          endRound = algodSyncFromRoundNumber + maxRoundsToSync - 1
+        }
+        break
       case 'catchup-with-indexer':
         if (!indexer) {
           throw new Error("Can't catch up using indexer since it's not provided")
@@ -147,9 +161,9 @@ export async function getSubscribedTransactions(
         )
 
         catchupTransactions.push(
-          ...(
-            await algokit.searchTransactions(indexer, indexerPreFilter(filter, startRound, algodSyncFromRoundNumber - 1))
-          ).transactions.filter(indexerPostFilter(filter)),
+          ...(await algokit.searchTransactions(indexer, indexerPreFilter(filter, startRound, algodSyncFromRoundNumber - 1))).transactions
+            .filter(indexerPostFilter(filter))
+            .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!),
         )
 
         algokit.Config.logger.debug(
