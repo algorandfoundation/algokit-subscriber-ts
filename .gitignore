@@ -61,4 +61,4 @@ out/
 .env.local
 
 watermark.txt
-synced-transactions.json
+*.json

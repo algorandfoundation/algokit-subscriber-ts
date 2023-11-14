@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@algorandfoundation/algokit-utils": "^4.1.0",
-    "algokit": "^0.0.1",
+    "algosdk": "^2.7.0",
     "dotenv": "^16.3.1"
   }
 }

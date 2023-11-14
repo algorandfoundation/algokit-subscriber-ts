@@ -80,7 +80,7 @@ async function saveDHMTransactions(transactions: TransactionResult[]) {
     return metadata
   }
 
-  const assets = await getSavedTransactions<DHMAsset>()
+  const assets = await getSavedTransactions<DHMAsset>('dhm-assets.json')
 
   for (const t of transactions) {
     if (t['created-asset-index']) {
@@ -110,18 +110,16 @@ async function saveDHMTransactions(transactions: TransactionResult[]) {
     }
   }
 
-  await saveTransactions(assets)
+  await saveTransactions(assets, 'dhm-assets.json')
 }
 
-async function getSavedTransactions<T>(): Promise<T[]> {
-  const existing = fs.existsSync('synced-transactions.json')
-    ? (JSON.parse(fs.readFileSync('synced-transactions.json', 'utf-8')) as T[])
-    : []
+async function getSavedTransactions<T>(fileName: string): Promise<T[]> {
+  const existing = fs.existsSync(fileName) ? (JSON.parse(fs.readFileSync(fileName, 'utf-8')) as T[]) : []
   return existing
 }
 
-async function saveTransactions(transactions: unknown[]) {
-  fs.writeFileSync('synced-transactions.json', JSON.stringify(transactions, undefined, 2), { encoding: 'utf-8' })
+async function saveTransactions(transactions: unknown[], fileName: string) {
+  fs.writeFileSync(fileName, JSON.stringify(transactions, undefined, 2), { encoding: 'utf-8' })
   // eslint-disable-next-line no-console
   console.log(`Saved ${transactions.length} transactions to synced-transactions.json`)
 }
