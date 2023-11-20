@@ -218,3 +218,12 @@ if (transactions.subscribedTransactions.length > 0) {
 // You would need to implement saveWatermark to persist the watermark to the persistence store
 await saveWatermark(transactions.newWatermark)
 ```
+
+# Todo
+
+- Contract events via logs
+- Multiple (named?) filters
+- Pub sub style? web3.js
+- Dynamic filters
+- GraphQL example ideally with subscriptions
+- Inner transaction processing

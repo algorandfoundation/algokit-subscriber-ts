@@ -53,7 +53,7 @@ export interface TransactionSubscriptionParams {
 }
 
 /** Specify a filter to apply to find transactions of interest. */
-interface TransactionFilter {
+export interface TransactionFilter {
   /** Filter based on the given transaction type. */
   type?: TransactionType
   /** Filter to transactions sent from the specified address. */

@@ -1,13 +1,88 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import { TransactionType } from 'algosdk'
+import { Algodv2, Indexer, TransactionType } from 'algosdk'
 import fs from 'fs'
-import { getSubscribedTransactions } from './functions/subscriptions'
+import { AsyncEventEmitter } from './functions/async-event-emitter'
+import { TransactionFilter, getSubscribedTransactions } from './functions/subscriptions'
 
 if (!fs.existsSync('.env') && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
   console.error('Copy .env.sample to .env before starting the application.')
   process.exit(1)
+}
+
+interface SubscriptionConfigEvent<T> {
+  eventName: string
+  filter: TransactionFilter
+  mapper: (transaction: TransactionResult[]) => Promise<T[]>
+}
+
+interface SubscriptionConfig {
+  frequencyInSeconds: number
+  maxRoundsToSync: number
+  events: SubscriptionConfigEvent<unknown>[]
+  syncBehaviour: 'skip-to-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
+  watermarkPersistence: { get: () => Promise<number>; set: (newWatermark: number) => Promise<void> }
+}
+
+class AlgorandSubscriber {
+  private algod: Algodv2
+  private indexer: Indexer | undefined
+  private subscription: SubscriptionConfig
+  private abortController: AbortController
+  private eventEmitter: AsyncEventEmitter
+
+  constructor(subscription: SubscriptionConfig, algod: Algodv2, indexer?: Indexer) {
+    this.algod = algod
+    this.indexer = indexer
+    this.subscription = subscription
+    this.abortController = new AbortController()
+    this.eventEmitter = new AsyncEventEmitter()
+
+    if (subscription.syncBehaviour === 'catchup-with-indexer' && !indexer) {
+      throw new Error("Received sync behaviour of catchup-with-indexer, but didn't receive an indexer instance.")
+    }
+  }
+
+  start() {
+    ;(async () => {
+      while (!this.abortController.signal.aborted) {
+        const watermark = await this.subscription.watermarkPersistence.get()
+
+        const pollResult = await getSubscribedTransactions(
+          {
+            filter: this.subscription.events[0].filter,
+            watermark,
+            maxRoundsToSync: this.subscription.maxRoundsToSync,
+            onMaxRounds: this.subscription.syncBehaviour,
+          },
+          this.algod,
+          this.indexer,
+        )
+
+        const mappedTransactions = await this.subscription.events[0].mapper(pollResult.subscribedTransactions)
+        await this.eventEmitter.emitAsync(`batch:${this.subscription.events[0].eventName}`, mappedTransactions)
+        for (const transaction of mappedTransactions) {
+          await this.eventEmitter.emitAsync(this.subscription.events[0].eventName, transaction)
+        }
+
+        await this.subscription.watermarkPersistence.set(pollResult.newWatermark)
+        await new Promise((resolve) => setTimeout(resolve, this.subscription.frequencyInSeconds * 1000))
+      }
+    })()
+  }
+
+  stop(reason: unknown) {
+    this.abortController.abort(reason)
+  }
+
+  on<T>(eventName: string, listener: (event: T) => unknown) {
+    this.eventEmitter.on(eventName, listener)
+  }
+
+  onBatch<T>(eventName: string, listener: (events: T[]) => unknown) {
+    this.eventEmitter.on(`batch:${eventName}`, listener)
+  }
 }
 
 const run = async () => {
@@ -19,15 +94,13 @@ const run = async () => {
   const transactions = await getSubscribedTransactions(
     {
       filter: {
-        type: TransactionType.acfg,
+        type: TransactionType.appl,
         // Data History Museum creator accounts
-        sender: (await algokit.isTestNet(algod))
-          ? 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU'
-          : 'EHYQCYHUC6CIWZLBX5TDTLVJ4SSVE4RRTMKFDCG4Z4Q7QSQ2XWIQPMKBPU',
+        appId: 1212121,
       },
       watermark,
       maxRoundsToSync: 100,
-      onMaxRounds: 'catchup-with-indexer',
+      onMaxRounds: 'skip-to-newest',
     },
     algod,
     indexer,
@@ -70,16 +143,118 @@ interface DHMAsset {
   lastModified: string
 }
 
-async function saveDHMTransactions(transactions: TransactionResult[]) {
-  const getArc69Metadata = (t: TransactionResult) => {
-    let metadata = {}
-    try {
-      if (t.note && t.note.startsWith('ey')) metadata = JSON.parse(Buffer.from(t.note, 'base64').toString('utf-8'))
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
-    return metadata
-  }
+async function runSubscribe() {
+  const algod = await algokit.getAlgoClient()
+  const indexer = await algokit.getAlgoIndexerClient()
+  const subscriber = new AlgorandSubscriber(
+    {
+      events: [
+        {
+          eventName: 'dhm-asset',
+          filter: {
+            type: TransactionType.acfg,
+            // Data History Museum creator accounts
+            sender: (await algokit.isTestNet(algod))
+              ? 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU'
+              : 'EHYQCYHUC6CIWZLBX5TDTLVJ4SSVE4RRTMKFDCG4Z4Q7QSQ2XWIQPMKBPU',
+          },
+          mapper: DHMAssetMapper,
+        },
+      ],
+      frequencyInSeconds: 5,
+      maxRoundsToSync: 100,
+      syncBehaviour: 'catchup-with-indexer',
+      watermarkPersistence: {
+        get: getLastWatermark,
+        set: saveWatermark,
+      },
+    },
+    algod,
+    indexer,
+  )
+  subscriber.onBatch('dhm-asset', async (events) => {
+    // eslint-disable-next-line no-console
+    console.log(`Received ${events.length} asset changes`)
+  })
+  subscriber.on<MappedDHMAsset>('dhm-asset', async (event) => {
+    // eslint-disable-next-line no-console
+    console.log(`Received ${event.txId}`)
+  })
+  subscriber.start()
+  ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) =>
+    process.on(signal, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Received ${signal}; stopping subscriber...`)
+      subscriber.stop(signal)
+    }),
+  )
+  // Infinite loop
+  await new Promise(() => {})
+}
 
+function getArc69Metadata(t: TransactionResult) {
+  let metadata = {}
+  try {
+    if (t.note && t.note.startsWith('ey')) metadata = JSON.parse(Buffer.from(t.note, 'base64').toString('utf-8'))
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
+  return metadata
+}
+
+interface MappedDHMAsset {
+  txId: string
+  asset: DHMAsset
+  deleted: boolean
+}
+
+async function DHMAssetMapper(transactions: TransactionResult[]): Promise<MappedDHMAsset[]> {
+  const assets = await getSavedTransactions<DHMAsset>('dhm-assets.json')
+  const result: MappedDHMAsset[] = []
+  for (const transaction of transactions) {
+    if (transaction['created-asset-index']) {
+      const asset = {
+        txId: transaction.id,
+        asset: {
+          id: transaction['created-asset-index'],
+          name: transaction['asset-config-transaction'].params.name!,
+          unit: transaction['asset-config-transaction'].params['unit-name']!,
+          mediaUrl: transaction['asset-config-transaction'].params.url!,
+          metadata: getArc69Metadata(transaction),
+          created: new Date(transaction['round-time']! * 1000).toISOString(),
+          lastModified: new Date(transaction['round-time']! * 1000).toISOString(),
+        },
+        deleted: false,
+      }
+      result.push(asset)
+      assets.push(asset.asset)
+    } else {
+      const asset = assets.find((a) => a.id === transaction['asset-config-transaction']['asset-id'])
+      if (!asset) {
+        // eslint-disable-next-line no-console
+        console.error(transaction)
+        throw new Error(`Unable to find existing asset data for ${transaction['asset-config-transaction']['asset-id']}`)
+      }
+      if (!transaction['asset-config-transaction'].params) {
+        result.push({
+          txId: transaction.id,
+          asset: asset,
+          deleted: true,
+        })
+      } else {
+        asset!.metadata = getArc69Metadata(transaction)
+        asset!.lastModified = new Date(transaction['round-time']! * 1000).toISOString()
+        result.push({
+          txId: transaction.id,
+          asset,
+          deleted: false,
+        })
+      }
+    }
+  }
+  return result
+}
+
+async function saveDHMTransactions(transactions: TransactionResult[]) {
   const assets = await getSavedTransactions<DHMAsset>('dhm-assets.json')
 
   for (const t of transactions) {
@@ -127,10 +302,7 @@ async function saveTransactions(transactions: unknown[], fileName: string) {
 ;(async () => {
   if (process.env.RUN_LOOP === 'true') {
     // eslint-disable-next-line no-constant-condition
-    while (true) {
-      await run()
-      await new Promise((resolve) => setTimeout(resolve, 4000))
-    }
+    await runSubscribe()
   } else {
     await run()
   }
