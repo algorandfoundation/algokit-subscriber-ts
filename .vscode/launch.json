@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run indexer",
+      "name": "Run examples/data-history-museum",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["run", "dhm"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
@@ -18,11 +18,11 @@
     },
 
     {
-      "name": "Run indexer (loop)",
+      "name": "Run examples/data-history-museum (loop)",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "watch"],
+      "runtimeArgs": ["run", "dhm-loop"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**", "node_modules/**"],

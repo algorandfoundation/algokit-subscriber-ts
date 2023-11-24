@@ -1,9 +1,32 @@
-import { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import algosdk, { EncodedTransaction, OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
+import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
+import algosdk, { OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
+import type { Block, BlockTransaction } from './types/block'
 
+// Recursively remove all null values from object
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function removeNulls(obj: any) {
+  for (const key in obj) {
+    if (obj[key] === null) {
+      // eslint-disable-next-line no-param-reassign
+      delete obj[key]
+    } else if (typeof obj[key] === 'object') {
+      removeNulls(obj[key])
+    }
+  }
+}
+
+/**
+ * Transform a raw block transaction representation into an `algosdk.Transaction` object.
+ *
+ * **Note:** Doesn't currently support `keyreg` (Key Registration) or `stpf` (State Proof) transactions.
+ * @param blockTransaction The raw transaction from a block
+ * @param block The block the transaction belongs to
+ * @returns The `algosdk.Transaction` object along with key secondary information from the block.
+ */
 export function getAlgodTransactionFromBlockTransaction(
-  bt: BlockTransaction,
-  b: Block,
+  blockTransaction: BlockTransaction,
+  block: Block,
 ):
   | {
       transaction: Transaction
@@ -15,26 +38,37 @@ export function getAlgodTransactionFromBlockTransaction(
       blockOffset: number
     }
   | undefined {
-  const txn = bt.txn
+  const txn = blockTransaction.txn
+
+  // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
+  // Remove nulls (mainly where an appl txn contains a null app arg)
+  removeNulls(txn)
+  txn.gh = Buffer.from(block.gh)
+  txn.gen = block.gen
+  // Unset gen if `hgi` isn't set
+  if (!blockTransaction.hgi) txn.gen = null
 
   // todo: support these?
   if (txn.type === 'stpf' || txn.type === 'keyreg') {
     return undefined
   }
 
-  bt.txn.gh = Buffer.from(b.gh)
-  bt.txn.gen = b.gen
   return {
-    transaction: Transaction.from_obj_for_encoding(bt.txn),
-    createdAssetId: bt.caid,
-    createdAppId: bt.apid,
-    assetCloseAmount: bt.aca,
-    closeAmount: bt.ca,
-    block: b,
-    blockOffset: b.txns.indexOf(bt),
+    transaction: Transaction.from_obj_for_encoding(txn),
+    createdAssetId: blockTransaction.caid,
+    createdAppId: blockTransaction.apid,
+    assetCloseAmount: blockTransaction.aca,
+    closeAmount: blockTransaction.ca,
+    block: block,
+    blockOffset: block.txns.indexOf(blockTransaction),
   }
 }
 
+/**
+ * Transforms `algosdk.Transaction` app on-complete enum to the equivalent indexer on-complete enum.
+ * @param appOnComplete The `OnApplicationComplete` value
+ * @returns The equivalent `ApplicationOnComplete` value
+ */
 export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationComplete): ApplicationOnComplete {
   return appOnComplete === OnApplicationComplete.NoOpOC
     ? ApplicationOnComplete.noop
@@ -49,6 +83,30 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
     : ApplicationOnComplete.update
 }
 
+/**
+ * Transforms the given `algosdk.Transaction` object into an indexer transaction.
+ *
+ * **Note:** Currently the following fields are not supported:
+ *  * `auth-addr`
+ *  * `close-rewards`
+ *  * `global-state-delta`
+ *  * `inner-txns`
+ *  * `keyreg-transaction`
+ *  * `local-state-delta`
+ *  * `receiver-rewards`
+ *  * `sender-rewards`
+ *  * `logs`
+ *  * `signature`
+ *
+ * @param transaction The `algosdk.Transaction` object to transform
+ * @param block The block data for the block the transaction belongs to
+ * @param blockOffset The offset within the block that the transaction was in
+ * @param createdAssetId The ID of the asset that was created if the transaction created an asset
+ * @param createdAppId The ID of the app that was created if the transaction created an app
+ * @param assetCloseAmount The amount of the asset that was transferred if the transaction had an asset close
+ * @param closeAmount The amount of microAlgos that were transferred if the transaction had a close
+ * @returns The indexer transaction formation (`TransactionResult`)
+ */
 export function getIndexerTransactionFromAlgodTransaction(
   transaction: Transaction,
   block: Block,
@@ -183,40 +241,4 @@ export function getIndexerTransactionFromAlgodTransaction(
     //logs
     //signature
   }
-}
-
-export interface Block {
-  earn: number
-  fees: Uint8Array
-  frac: number
-  gen: string
-  gh: Uint8Array
-  prev: Uint8Array
-  proto: string
-  rate: number
-  /** Round number */
-  rnd: number
-  rwcalr: number
-  rwd: Uint8Array
-  seed: Uint8Array
-  tc: number
-  /** Round time (unix timestamp) */
-  ts: number
-  txn: Uint8Array
-  txns: BlockTransaction[]
-}
-
-export interface BlockTransaction {
-  //txn: BlockTransactionData
-  txn: EncodedTransaction
-  /** Asset ID when an asset is created by the transaction */
-  caid?: number
-  /** App ID when an app is created by the transaction */
-  apid?: number
-  /** Asset closing amount in decimal units */
-  aca?: number
-  /** Algo closing amount in microAlgos */
-  ca?: number
-  /** Has genesis id */
-  hgi: boolean
 }
