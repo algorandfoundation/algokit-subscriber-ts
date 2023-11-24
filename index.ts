@@ -2,8 +2,8 @@ import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { Algodv2, Indexer, TransactionType } from 'algosdk'
 import fs from 'fs'
-import { AsyncEventEmitter } from './functions/async-event-emitter'
-import { TransactionFilter, getSubscribedTransactions } from './functions/subscriptions'
+import { AsyncEventEmitter } from './src/async-event-emitter'
+import { TransactionFilter, getSubscribedTransactions } from './src/subscriptions'
 
 if (!fs.existsSync('.env') && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
@@ -14,7 +14,7 @@ if (!fs.existsSync('.env') && !process.env.ALGOD_SERVER) {
 interface SubscriptionConfigEvent<T> {
   eventName: string
   filter: TransactionFilter
-  mapper: (transaction: TransactionResult[]) => Promise<T[]>
+  mapper?: (transaction: TransactionResult[]) => Promise<T[]>
 }
 
 interface SubscriptionConfig {
@@ -44,29 +44,41 @@ class AlgorandSubscriber {
     }
   }
 
+  async pollOnce() {
+    const watermark = await this.subscription.watermarkPersistence.get()
+
+    const pollResult = await getSubscribedTransactions(
+      {
+        filter: this.subscription.events[0].filter,
+        watermark,
+        maxRoundsToSync: this.subscription.maxRoundsToSync,
+        onMaxRounds: this.subscription.syncBehaviour,
+      },
+      this.algod,
+      this.indexer,
+    )
+
+    const mappedTransactions = this.subscription.events[0].mapper
+      ? await this.subscription.events[0].mapper(pollResult.subscribedTransactions)
+      : pollResult.subscribedTransactions
+    try {
+      await this.eventEmitter.emitAsync(`batch:${this.subscription.events[0].eventName}`, mappedTransactions)
+      for (const transaction of mappedTransactions) {
+        await this.eventEmitter.emitAsync(this.subscription.events[0].eventName, transaction)
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`Error processing event emittance`, e)
+      throw e
+    }
+
+    await this.subscription.watermarkPersistence.set(pollResult.newWatermark)
+  }
+
   start() {
     ;(async () => {
       while (!this.abortController.signal.aborted) {
-        const watermark = await this.subscription.watermarkPersistence.get()
-
-        const pollResult = await getSubscribedTransactions(
-          {
-            filter: this.subscription.events[0].filter,
-            watermark,
-            maxRoundsToSync: this.subscription.maxRoundsToSync,
-            onMaxRounds: this.subscription.syncBehaviour,
-          },
-          this.algod,
-          this.indexer,
-        )
-
-        const mappedTransactions = await this.subscription.events[0].mapper(pollResult.subscribedTransactions)
-        await this.eventEmitter.emitAsync(`batch:${this.subscription.events[0].eventName}`, mappedTransactions)
-        for (const transaction of mappedTransactions) {
-          await this.eventEmitter.emitAsync(this.subscription.events[0].eventName, transaction)
-        }
-
-        await this.subscription.watermarkPersistence.set(pollResult.newWatermark)
+        await this.pollOnce()
         await new Promise((resolve) => setTimeout(resolve, this.subscription.frequencyInSeconds * 1000))
       }
     })()
@@ -113,7 +125,7 @@ const run = async () => {
 
   if (transactions.subscribedTransactions.length > 0) {
     // Save all of the Data History Museum Verifiably Authentic Digital Historical Artifacts
-    await saveDHMTransactions(transactions.subscribedTransactions)
+    await saveTransactions(transactions.subscribedTransactions, 'txns.json')
   }
 
   await saveWatermark(transactions.newWatermark)
@@ -143,7 +155,7 @@ interface DHMAsset {
   lastModified: string
 }
 
-async function runSubscribe() {
+async function runSubscribeDHM() {
   const algod = await algokit.getAlgoClient()
   const indexer = await algokit.getAlgoIndexerClient()
   const subscriber = new AlgorandSubscriber(
@@ -188,8 +200,47 @@ async function runSubscribe() {
       subscriber.stop(signal)
     }),
   )
-  // Infinite loop
-  await new Promise(() => {})
+  // Infinite loop: https://github.com/nodejs/node/issues/22088#issuecomment-609835641
+  await new Promise((_resolve) => {
+    setTimeout(() => null, 0)
+  })
+}
+
+async function runSubscribeXgovVoting() {
+  const algod = await algokit.getAlgoClient()
+  const indexer = await algokit.getAlgoIndexerClient()
+  const subscriber = new AlgorandSubscriber(
+    {
+      events: [
+        {
+          eventName: 'xgov-vote',
+          filter: {
+            type: TransactionType.appl,
+            appId: 1236654302, // MainNet: xGov Voting Session 2
+            methodSignature: 'vote(pay,byte[],uint64,uint8[],uint64[],application)void',
+          },
+        },
+      ],
+      frequencyInSeconds: 30,
+      maxRoundsToSync: 100,
+      syncBehaviour: 'catchup-with-indexer',
+      watermarkPersistence: {
+        get: getLastWatermark,
+        set: saveWatermark,
+      },
+    },
+    algod,
+    indexer,
+  )
+  // eslint-disable-next-line no-console
+  subscriber.on('xgov-vote', console.log)
+  subscriber.start()
+  // Infinite loop: https://github.com/nodejs/node/issues/22088#issuecomment-609835641
+  await new Promise<void>((resolve) => {
+    // eslint-disable-next-line no-constant-condition
+    if (false) resolve()
+    setTimeout(() => null, 0)
+  })
 }
 
 function getArc69Metadata(t: TransactionResult) {
@@ -296,13 +347,16 @@ async function getSavedTransactions<T>(fileName: string): Promise<T[]> {
 async function saveTransactions(transactions: unknown[], fileName: string) {
   fs.writeFileSync(fileName, JSON.stringify(transactions, undefined, 2), { encoding: 'utf-8' })
   // eslint-disable-next-line no-console
-  console.log(`Saved ${transactions.length} transactions to synced-transactions.json`)
+  console.log(`Saved ${transactions.length} transactions to ${fileName}`)
 }
 
+// eslint-disable-next-line no-console
+process.on('uncaughtException', (e) => console.error(e))
 ;(async () => {
   if (process.env.RUN_LOOP === 'true') {
     // eslint-disable-next-line no-constant-condition
-    await runSubscribe()
+    //await runSubscribeDHM()
+    await runSubscribeDHM()
   } else {
     await run()
   }
