@@ -1,13 +1,6 @@
 # Algorand transaction subscription / indexing
 
-This is a proof-of-concept for a simple, but flexible / configurable Algorand transaction subscription / indexing solution.
-
-- `npm install`
-- Copy `.env.sample` to `.env` and edit to point to the Algorand node you want to point to
-- Edit the filter in `index.ts` to change the syncing characteristics
-- `npm run dev` or F5 in Visual Studio Code to get breakpoint debugging
-
-If you want to keep running the sync continuously, you can run `npm run watch`.
+This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism.
 
 [Documentation](./docs/README.md)
 
@@ -102,11 +95,19 @@ subscriber.on('usdc', (transfer) => {
 subscriber.start()
 ```
 
-# Roadmap
+## Roadmap
 
-- Contract events via logs
-- Multiple (named?) filters
-- Pub sub style? web3.js
-- Dynamic filters
-- GraphQL example ideally with subscriptions
+- Automated test coverage
+- Subscribe to contract events ([ARC-28](https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md))
 - Inner transaction processing
+- Multiple filters
+- Dynamic filters (e.g. subscribe to axfer's for assets that you subscribe to the creation of)
+- GraphQL example ideally with subscriptions
+
+## Getting started
+
+To try examples in this repository:
+
+- `npm install`
+- Copy `.env.sample` to `.env` and edit to point to the Algorand node you want to point to
+- `npm run dhm` or F5 in Visual Studio Code to get breakpoint debugging against one of the examples (or choose the other ones)
