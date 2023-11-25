@@ -8,8 +8,6 @@
     "build:2-compile-esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json && cpy package.esm.json dist/esm --rename=package.json",
     "build:3-copy-pkg-json": "npx --yes @makerx/ts-toolkit@latest copy-package-json --main ./cjs/index.js --types ./types/index.d.ts --custom-sections exports typesVersions module",
     "build:4-copy-readme": "cpy README.md dist",
-    "dhm": "ts-node --esm --transpile-only -r dotenv/config ./examples/data-history-museum/index.ts",
-    "watch": "cross-env RUN_LOOP=true npm run dhm",
     "test": "dotenv -e .env -- jest --coverage --passWithNoTests",
     "lint": "eslint ./src/ --ext .ts",
     "lint:fix": "eslint ./src/ --ext .ts --fix",
@@ -19,14 +17,17 @@
     "commit-lint": "commitlint --edit -o",
     "semantic-release": "semantic-release",
     "generate:code-docs": "typedoc",
-    "pre-commit": "run-s check-types lint:fix audit format test generate:code-docs"
+    "pre-commit": "run-s check-types lint:fix audit format test generate:code-docs",
+    "dhm": "ts-node-dev --transpile-only --watch .env -r dotenv/config ./examples/data-history-museum/index.ts",
+    "watch-dhm": "cross-env RUN_LOOP=true npm run dhm",
+    "xgov": "ts-node-dev --transpile-only --watch .env -r dotenv/config ./examples/xgov-voting/index.ts",
+    "watch-xgov": "cross-env RUN_LOOP=true npm run xgov"
   },
   "author": "Algorand Foundation",
   "license": "MIT",
   "engines": {
     "node": ">=18.0"
   },
-  "type": "module",
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
   "types": "./types/index.d.ts",
@@ -89,11 +90,11 @@
     "prettier": "3.1.0",
     "rimraf": "^5.0.5",
     "semantic-release": "^22.0.8",
-    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.8",
     "typedoc": "^0.25.3",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.3.2"
+    "typescript": "^5.2.2"
   },
   "peerDependencies": {
     "@algorandfoundation/algokit-utils": "^5.0.1",

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/cjs",
+    "target": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "allowImportingTsExtensions": false
+  },
+  "exclude": ["index.ts", "examples/**/*.ts", "src/**/*.spec.ts", "tests/**/*.*"]
+}

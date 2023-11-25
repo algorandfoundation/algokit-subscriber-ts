@@ -69,7 +69,6 @@ export class AlgorandSubscriber {
       console.error(`Error processing event emittance`, e)
       throw e
     }
-
     await this.subscription.watermarkPersistence.set(pollResult.newWatermark)
   }
 
@@ -81,7 +80,11 @@ export class AlgorandSubscriber {
   start() {
     ;(async () => {
       while (!this.abortController.signal.aborted) {
+        // eslint-disable-next-line no-console
+        console.time(`Subscription poll completed; sleeping for ${this.subscription.frequencyInSeconds}s`)
         await this.pollOnce()
+        // eslint-disable-next-line no-console
+        console.timeEnd(`Subscription poll completed; sleeping for ${this.subscription.frequencyInSeconds}s`)
         await new Promise((resolve) => setTimeout(resolve, this.subscription.frequencyInSeconds * 1000))
       }
     })()

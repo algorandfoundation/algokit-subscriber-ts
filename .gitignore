@@ -61,4 +61,5 @@ out/
 .env.local
 
 watermark.txt
-*.json
+examples/**/*.json
+

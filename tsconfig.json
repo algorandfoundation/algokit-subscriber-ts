@@ -2,13 +2,7 @@
   "extends": "@makerx/ts-config",
   "compilerOptions": {
     "outDir": "dist",
-    "declaration": true,
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    "declaration": true
   },
   "include": ["index.ts", "examples/**/*.ts", "src/**/*.ts", "tests/**/*.ts"]
 }

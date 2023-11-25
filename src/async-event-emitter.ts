@@ -1,76 +1,83 @@
-import EventEmitter from 'events'
+/**
+ * An asynchronous event listener
+ */
+export type AsyncEventListener = (event: unknown, eventName: string | symbol) => Promise<void> | void
 
-export const EventResolverSymbol = Symbol.for('EventResolver')
+/** Simple asynchronous event emitter class.
+ *
+ * **Note:** This class is not thread-safe.
+ */
+export class AsyncEventEmitter {
+  private listenerWrapperMap = new WeakMap<AsyncEventListener, AsyncEventListener>()
+  private listenerMap: Record<string | symbol, AsyncEventListener[]> = {}
 
-export class AsyncEventEmitter extends EventEmitter {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private listenerMap = new WeakMap<(...args: any[]) => void, (...args: any[]) => void>()
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emitAsync(eventName: string | symbol, ...args: any[]): Promise<void> {
-    return new Promise((resolve) => {
-      Object.getPrototypeOf(resolve).key = EventResolverSymbol
-      super.emit(eventName, ...args, resolve)
-    })
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  on(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wrappedListener = async (...args: any[]) => {
-      // check if event called from `awaitForEventDone` function
-      if (args?.length) {
-        const resolver = args[args.length - 1]
-        if (typeof resolver === 'function' && Object.getPrototypeOf(resolver).key === EventResolverSymbol) {
-          try {
-            await listener(...args)
-            // eslint-disable-next-line no-empty
-          } catch (e) {}
-          return await resolver()
-        }
-      }
-      return await listener(...args)
+  /**
+   * Emit an event and wait for all registered listeners to be run one-by-one
+   * in the order they were registered.
+   *
+   * @param eventName The name of the event
+   * @param event The event payload
+   */
+  async emitAsync(eventName: string | symbol, event: unknown): Promise<void> {
+    for (const listener of this.listenerMap[eventName] ?? []) {
+      await listener(event, eventName)
     }
-    this.listenerMap.set(listener, wrappedListener)
-    return super.on(eventName, wrappedListener)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  once(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wrappedListener = async (...args: any[]) => {
-      if (args?.length) {
-        const resolver = args[args.length - 1]
-        if (typeof resolver === 'function' && Object.getPrototypeOf(resolver).key === EventResolverSymbol) {
-          try {
-            await listener(...args)
-            // eslint-disable-next-line no-empty
-          } catch (e) {}
-          // remove listeners after the event is done
-          this.removeListener(eventName, listener)
-          this.removeListener(eventName, wrappedListener)
-          return await resolver()
-        }
+  /**
+   * Register an event listener for the given event.
+   * @param eventName The name of the event
+   * @param listener The listener to trigger
+   * @returns The `AsyncEventEmitter` so you can chain registrations
+   */
+  on(eventName: string | symbol, listener: AsyncEventListener): this {
+    if (!this.listenerMap[eventName]) this.listenerMap[eventName] = []
+    this.listenerMap[eventName].push(listener)
+    return this
+  }
+
+  /**
+   * Register an event listener for the given event that is only fired once.
+   * @param eventName The name of the event
+   * @param listener The listener to trigger
+   * @returns The `AsyncEventEmitter` so you can chain registrations
+   */
+  once(eventName: string | symbol, listener: AsyncEventListener): this {
+    const wrappedListener: AsyncEventListener = async (event, eventName) => {
+      try {
+        return await listener(event, eventName)
+      } finally {
+        this.removeListener(eventName, wrappedListener)
       }
-      // remove listeners after the event is done
-      this.removeListener(eventName, listener)
-      this.removeListener(eventName, wrappedListener)
-      return await listener(...args)
     }
-    this.listenerMap.set(listener, wrappedListener)
-    return super.once(eventName, wrappedListener)
+    this.listenerWrapperMap.set(listener, wrappedListener)
+    return this.on(eventName, wrappedListener)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    const wrappedListener = this.listenerMap.get(listener)
+  /**
+   * Removes an event listener from the given event.
+   * @param eventName The name of the event
+   * @param listener The listener to remove
+   * @returns The `AsyncEventEmitter` so you can chain registrations
+   */
+  removeListener(eventName: string | symbol, listener: AsyncEventListener): this {
+    const wrappedListener = this.listenerWrapperMap.get(listener)
     if (wrappedListener) {
-      this.listenerMap.delete(listener)
-      return super.removeListener(eventName, wrappedListener)
+      this.listenerWrapperMap.delete(listener)
+      if (this.listenerMap[eventName]?.indexOf(wrappedListener) !== -1) {
+        this.listenerMap[eventName].slice(this.listenerMap[eventName].indexOf(wrappedListener))
+      }
+    } else {
+      if (this.listenerMap[eventName]?.indexOf(listener) !== -1) {
+        this.listenerMap[eventName].slice(this.listenerMap[eventName].indexOf(listener))
+      }
     }
 
     return this
   }
 
+  /**
+   * Alias for `removeListener`.
+   */
   off = this.removeListener
 }

@@ -2,9 +2,10 @@ import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { TransactionType } from 'algosdk'
 import fs from 'fs'
+import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
 
-if (!fs.existsSync('../../.env') && !process.env.ALGOD_SERVER) {
+if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
   console.error('Copy /.env.sample to /.env before starting the application.')
   process.exit(1)
@@ -48,6 +49,7 @@ async function getDHMSubscriber() {
     algod,
     indexer,
   )
+  //subscriber.on('dhm-asset', () => {})
   subscriber.onBatch<TransactionResult>('dhm-asset', async (events) => {
     // eslint-disable-next-line no-console
     console.log(`Received ${events.length} asset changes`)
@@ -103,24 +105,26 @@ async function saveDHMTransactions(transactions: TransactionResult[]) {
 // Basic methods that persist using filesystem - for illustrative purposes only
 
 async function saveWatermark(watermark: number) {
-  fs.writeFileSync('watermark.txt', watermark.toString(), { encoding: 'utf-8' })
+  fs.writeFileSync(path.join(__dirname, 'watermark.txt'), watermark.toString(), { encoding: 'utf-8' })
 }
 
 async function getLastWatermark(): Promise<number> {
-  if (!fs.existsSync('watermark.txt')) return 0
-  const existing = fs.readFileSync('watermark.txt', 'utf-8')
+  if (!fs.existsSync(path.join(__dirname, 'watermark.txt'))) return 0
+  const existing = fs.readFileSync(path.join(__dirname, 'watermark.txt'), 'utf-8')
   // eslint-disable-next-line no-console
   console.log(`Found existing sync watermark in watermark.txt; syncing from ${existing}`)
   return Number(existing)
 }
 
 async function getSavedTransactions<T>(fileName: string): Promise<T[]> {
-  const existing = fs.existsSync(fileName) ? (JSON.parse(fs.readFileSync(fileName, 'utf-8')) as T[]) : []
+  const existing = fs.existsSync(path.join(__dirname, fileName))
+    ? (JSON.parse(fs.readFileSync(path.join(__dirname, fileName), 'utf-8')) as T[])
+    : []
   return existing
 }
 
 async function saveTransactions(transactions: unknown[], fileName: string) {
-  fs.writeFileSync(fileName, JSON.stringify(transactions, undefined, 2), { encoding: 'utf-8' })
+  fs.writeFileSync(path.join(__dirname, fileName), JSON.stringify(transactions, undefined, 2), { encoding: 'utf-8' })
   // eslint-disable-next-line no-console
   console.log(`Saved ${transactions.length} transactions to ${fileName}`)
 }
@@ -139,11 +143,10 @@ process.on('uncaughtException', (e) => console.error(e))
         subscriber.stop(signal)
       }),
     )
-    // Infinite loop: https://github.com/nodejs/node/issues/22088#issuecomment-609835641
-    await new Promise((_resolve) => {
-      setTimeout(() => null, 0)
-    })
   } else {
     await subscriber.pollOnce()
   }
-})()
+})().catch((e) => {
+  // eslint-disable-next-line no-console
+  console.error(e)
+})

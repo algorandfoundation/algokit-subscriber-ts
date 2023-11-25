@@ -1,9 +1,10 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionType } from 'algosdk'
 import fs from 'fs'
+import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
 
-if (!fs.existsSync('../../.env') && !process.env.ALGOD_SERVER) {
+if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
   console.error('Copy /.env.sample to /.env before starting the application.')
   process.exit(1)
@@ -21,7 +22,7 @@ async function getXGovSubscriber() {
             type: TransactionType.appl,
             appId: 1236654302, // MainNet: xGov Voting Session 2
             // todo: why doesn't this work?
-            methodSignature: 'vote(pay,byte[],uint64,uint8[],uint64[],application)void',
+            //methodSignature: 'vote(pay,byte[],uint64,uint8[],uint64[],application)void',
           },
         },
       ],
@@ -44,12 +45,12 @@ async function getXGovSubscriber() {
 // Basic methods that persist using filesystem - for illustrative purposes only
 
 async function saveWatermark(watermark: number) {
-  fs.writeFileSync('watermark.txt', watermark.toString(), { encoding: 'utf-8' })
+  fs.writeFileSync(path.join(__dirname, 'watermark.txt'), watermark.toString(), { encoding: 'utf-8' })
 }
 
 async function getLastWatermark(): Promise<number> {
-  if (!fs.existsSync('watermark.txt')) return 0
-  const existing = fs.readFileSync('watermark.txt', 'utf-8')
+  if (!fs.existsSync(path.join(__dirname, 'watermark.txt'))) return 0
+  const existing = fs.readFileSync(path.join(__dirname, 'watermark.txt'), 'utf-8')
   // eslint-disable-next-line no-console
   console.log(`Found existing sync watermark in watermark.txt; syncing from ${existing}`)
   return Number(existing)
@@ -69,11 +70,10 @@ process.on('uncaughtException', (e) => console.error(e))
         subscriber.stop(signal)
       }),
     )
-    // Infinite loop: https://github.com/nodejs/node/issues/22088#issuecomment-609835641
-    await new Promise((_resolve) => {
-      setTimeout(() => null, 0)
-    })
   } else {
     await subscriber.pollOnce()
   }
-})()
+})().catch((e) => {
+  // eslint-disable-next-line no-console
+  console.error(e)
+})
