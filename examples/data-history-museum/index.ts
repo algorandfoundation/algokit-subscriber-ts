@@ -49,8 +49,7 @@ async function getDHMSubscriber() {
     algod,
     indexer,
   )
-  //subscriber.on('dhm-asset', () => {})
-  subscriber.onBatch<TransactionResult>('dhm-asset', async (events) => {
+  subscriber.onBatch('dhm-asset', async (events) => {
     // eslint-disable-next-line no-console
     console.log(`Received ${events.length} asset changes`)
     // Save all of the Data History Museum Verifiably Authentic Digital Historical Artifacts

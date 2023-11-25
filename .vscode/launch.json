@@ -60,6 +60,22 @@
         "group": "2. Main",
         "order": 1
       }
+    },
+
+    {
+      "name": "Run examples/usdc (loop)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "usdc"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "presentation": {
+        "hidden": false,
+        "group": "2. Main",
+        "order": 1
+      }
     }
   ]
 }

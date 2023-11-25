@@ -1,7 +1,8 @@
+import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { Algodv2, Indexer } from 'algosdk'
-import { AsyncEventEmitter } from './async-event-emitter'
 import { getSubscribedTransactions } from './subscriptions'
-import type { SubscriptionConfig } from './types/subscription'
+import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
+import type { SubscriptionConfig, TypedAsyncEventListener } from './types/subscription'
 
 /**
  * Handles the logic for subscribing to the Algorand blockchain and emitting events.
@@ -102,8 +103,8 @@ export class AlgorandSubscriber {
    * @param eventName The name of the event to subscribe to
    * @param listener The listener function to invoke with the subscribed event
    */
-  on<T>(eventName: string, listener: (event: T) => unknown) {
-    this.eventEmitter.on(eventName, listener)
+  on<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T>) {
+    this.eventEmitter.on(eventName, listener as AsyncEventListener)
   }
 
   /**
@@ -117,7 +118,7 @@ export class AlgorandSubscriber {
    * @param eventName The name of the event to subscribe to
    * @param listener The listener function to invoke with the subscribed events
    */
-  onBatch<T>(eventName: string, listener: (events: T[]) => unknown) {
-    this.eventEmitter.on(`batch:${eventName}`, listener)
+  onBatch<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T[]>) {
+    this.eventEmitter.on(`batch:${eventName}`, listener as AsyncEventListener)
   }
 }

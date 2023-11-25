@@ -137,3 +137,5 @@ export interface SubscriptionConfigEvent<T> {
    */
   mapper?: (transaction: TransactionResult[]) => Promise<T[]>
 }
+
+export type TypedAsyncEventListener<T> = (event: T, eventName: string | symbol) => Promise<void> | void
