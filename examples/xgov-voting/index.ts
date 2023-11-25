@@ -1,5 +1,5 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { ABIArrayDynamicType, ABIUintType, TransactionType } from 'algosdk'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
@@ -21,8 +21,7 @@ async function getXGovSubscriber() {
           filter: {
             type: TransactionType.appl,
             appId: 1236654302, // MainNet: xGov Voting Session 2
-            // todo: why doesn't this work?
-            //methodSignature: 'vote(pay,byte[],uint64,uint8[],uint64[],application)void',
+            methodSignature: 'vote(pay,byte[],uint64,uint8[],uint64[],application)void',
           },
         },
       ],
@@ -38,7 +37,12 @@ async function getXGovSubscriber() {
     indexer,
   )
   // eslint-disable-next-line no-console
-  subscriber.on('xgov-vote', console.log)
+  subscriber.on('xgov-vote', (event) => {
+    const abiUint64Array = new ABIArrayDynamicType(new ABIUintType(64))
+    const votes = abiUint64Array.decode(Buffer.from(event['application-transaction']['application-args'][4], 'base64'))
+    // eslint-disable-next-line no-console
+    console.log(`${event.sender} voted with txn ${event.id} with votes:`, votes)
+  })
   return subscriber
 }
 
