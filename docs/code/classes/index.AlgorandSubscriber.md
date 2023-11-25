@@ -50,7 +50,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:23](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L23)
+[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
 
 ## Properties
 
@@ -60,7 +60,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:14](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L14)
+[subscriber.ts:14](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L14)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:11](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L11)
+[subscriber.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L11)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:15](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L15)
+[subscriber.ts:15](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L15)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:12](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L12)
+[subscriber.ts:12](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L12)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:13](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L13)
+[subscriber.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L13)
 
 ## Methods
 
@@ -131,7 +131,7 @@ The listener can be async and it will be awaited if so.
 
 #### Defined in
 
-[subscriber.ts:106](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L106)
+[subscriber.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L106)
 
 ___
 
@@ -166,7 +166,7 @@ The listener can be async and it will be awaited if so.
 
 #### Defined in
 
-[subscriber.ts:121](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L121)
+[subscriber.ts:121](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L121)
 
 ___
 
@@ -185,7 +185,7 @@ triggered by a recurring schedule / cron.
 
 #### Defined in
 
-[subscriber.ts:46](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L46)
+[subscriber.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L46)
 
 ___
 
@@ -203,7 +203,7 @@ This is useful when running in the context of a long-running process / container
 
 #### Defined in
 
-[subscriber.ts:81](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L81)
+[subscriber.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L81)
 
 ___
 
@@ -225,4 +225,4 @@ Stops the subscriber if previously started via `start`.
 
 #### Defined in
 
-[subscriber.ts:95](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriber.ts#L95)
+[subscriber.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L95)

@@ -38,7 +38,7 @@ The blocks
 
 #### Defined in
 
-[subscriptions.ts:261](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriptions.ts#L261)
+[subscriptions.ts:261](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L261)
 
 ___
 
@@ -65,4 +65,4 @@ The result of this subscription pull/poll.
 
 #### Defined in
 
-[subscriptions.ts:23](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/subscriptions.ts#L23)
+[subscriptions.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L23)

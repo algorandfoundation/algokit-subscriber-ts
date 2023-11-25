@@ -26,7 +26,7 @@ The set of events to subscribe to / emit
 
 #### Defined in
 
-[types/subscription.ts:106](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L106)
+[types/subscription.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L106)
 
 ___
 
@@ -38,7 +38,7 @@ The frequency to poll for new blocks in seconds
 
 #### Defined in
 
-[types/subscription.ts:102](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L102)
+[types/subscription.ts:102](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L102)
 
 ___
 
@@ -50,7 +50,7 @@ The maximum number of rounds to sync at a time.
 
 #### Defined in
 
-[types/subscription.ts:104](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L104)
+[types/subscription.ts:104](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L104)
 
 ___
 
@@ -70,7 +70,7 @@ The behaviour when the number of rounds to sync is greater than `maxRoundsToSync
 
 #### Defined in
 
-[types/subscription.ts:117](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L117)
+[types/subscription.ts:117](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L117)
 
 ___
 
@@ -90,4 +90,4 @@ its position in the chain.
 
 #### Defined in
 
-[types/subscription.ts:120](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L120)
+[types/subscription.ts:120](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L120)

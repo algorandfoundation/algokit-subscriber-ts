@@ -30,7 +30,7 @@ Name / identifier to uniquely describe the event
 
 #### Defined in
 
-[types/subscription.ts:131](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L131)
+[types/subscription.ts:131](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L131)
 
 ___
 
@@ -42,7 +42,7 @@ The transaction filter that determines if the event has occurred
 
 #### Defined in
 
-[types/subscription.ts:133](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L133)
+[types/subscription.ts:133](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L133)
 
 ___
 
@@ -70,4 +70,4 @@ If not specified, then the event will receive a `TransactionResult`.
 
 #### Defined in
 
-[types/subscription.ts:138](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L138)
+[types/subscription.ts:138](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L138)

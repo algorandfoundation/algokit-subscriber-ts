@@ -25,7 +25,7 @@ Asset closing amount in decimal units
 
 #### Defined in
 
-[types/block.ts:66](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/block.ts#L66)
+[types/block.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L66)
 
 ___
 
@@ -37,7 +37,7 @@ App ID when an app is created by the transaction
 
 #### Defined in
 
-[types/block.ts:64](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/block.ts#L64)
+[types/block.ts:64](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L64)
 
 ___
 
@@ -49,7 +49,7 @@ Algo closing amount in microAlgos
 
 #### Defined in
 
-[types/block.ts:68](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/block.ts#L68)
+[types/block.ts:68](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L68)
 
 ___
 
@@ -61,7 +61,7 @@ Asset ID when an asset is created by the transaction
 
 #### Defined in
 
-[types/block.ts:62](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/block.ts#L62)
+[types/block.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L62)
 
 ___
 
@@ -73,7 +73,7 @@ Has genesis id
 
 #### Defined in
 
-[types/block.ts:70](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/block.ts#L70)
+[types/block.ts:70](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L70)
 
 ___
 
@@ -85,4 +85,4 @@ The encoded transaction data
 
 #### Defined in
 
-[types/block.ts:60](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/block.ts#L60)
+[types/block.ts:60](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L60)

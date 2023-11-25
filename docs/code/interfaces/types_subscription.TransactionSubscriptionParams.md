@@ -25,7 +25,7 @@ The filter to apply to find transactions of interest.
 
 #### Defined in
 
-[types/subscription.ts:7](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L7)
+[types/subscription.ts:7](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L7)
 
 ___
 
@@ -41,7 +41,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:25](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L25)
+[types/subscription.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L25)
 
 ___
 
@@ -68,7 +68,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:43](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L43)
+[types/subscription.ts:43](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L43)
 
 ___
 
@@ -88,4 +88,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:18](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L18)
+[types/subscription.ts:18](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L18)

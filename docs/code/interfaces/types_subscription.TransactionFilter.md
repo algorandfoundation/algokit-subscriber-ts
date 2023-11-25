@@ -48,7 +48,7 @@ Filter to app transactions that meet the given app arguments predicate.
 
 #### Defined in
 
-[types/subscription.ts:76](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L76)
+[types/subscription.ts:76](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L76)
 
 ___
 
@@ -60,7 +60,7 @@ Filter to transactions that are creating an app.
 
 #### Defined in
 
-[types/subscription.ts:59](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L59)
+[types/subscription.ts:59](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L59)
 
 ___
 
@@ -72,7 +72,7 @@ Filter to transactions against the app with the given ID.
 
 #### Defined in
 
-[types/subscription.ts:57](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L57)
+[types/subscription.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L57)
 
 ___
 
@@ -84,7 +84,7 @@ Filter to transactions that have given on complete(s).
 
 #### Defined in
 
-[types/subscription.ts:61](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L61)
+[types/subscription.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L61)
 
 ___
 
@@ -96,7 +96,7 @@ Filter to transactions that are creating an asset.
 
 #### Defined in
 
-[types/subscription.ts:65](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L65)
+[types/subscription.ts:65](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L65)
 
 ___
 
@@ -108,7 +108,7 @@ Filter to transactions against the asset with the given ID.
 
 #### Defined in
 
-[types/subscription.ts:63](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L63)
+[types/subscription.ts:63](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L63)
 
 ___
 
@@ -121,7 +121,7 @@ or equal to the given maximum (microAlgos or decimal units of an ASA).
 
 #### Defined in
 
-[types/subscription.ts:71](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L71)
+[types/subscription.ts:71](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L71)
 
 ___
 
@@ -134,7 +134,7 @@ the given method signature as the first app argument.
 
 #### Defined in
 
-[types/subscription.ts:74](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L74)
+[types/subscription.ts:74](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L74)
 
 ___
 
@@ -147,7 +147,7 @@ than or equal to the given minimum (microAlgos or decimal units of an ASA).
 
 #### Defined in
 
-[types/subscription.ts:68](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L68)
+[types/subscription.ts:68](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L68)
 
 ___
 
@@ -159,7 +159,7 @@ Filter to transactions with a note having the given prefix.
 
 #### Defined in
 
-[types/subscription.ts:55](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L55)
+[types/subscription.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L55)
 
 ___
 
@@ -171,7 +171,7 @@ Filter to transactions being received by the specified address.
 
 #### Defined in
 
-[types/subscription.ts:53](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L53)
+[types/subscription.ts:53](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L53)
 
 ___
 
@@ -183,7 +183,7 @@ Filter to transactions sent from the specified address.
 
 #### Defined in
 
-[types/subscription.ts:51](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L51)
+[types/subscription.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L51)
 
 ___
 
@@ -195,4 +195,4 @@ Filter based on the given transaction type.
 
 #### Defined in
 
-[types/subscription.ts:49](https://github.com/MakerXStudio/algorand-indexer-poc/blob/main/src/types/subscription.ts#L49)
+[types/subscription.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L49)
