@@ -46,7 +46,8 @@ export function getAlgodTransactionFromBlockTransaction(
   txn.gh = Buffer.from(block.gh)
   txn.gen = block.gen
   // Unset gen if `hgi` isn't set
-  if (!blockTransaction.hgi) txn.gen = null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!blockTransaction.hgi) txn.gen = null as any
 
   // todo: support these?
   if (txn.type === 'stpf' || txn.type === 'keyreg') {
