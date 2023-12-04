@@ -39,7 +39,7 @@ async function getXGovSubscriber() {
   // eslint-disable-next-line no-console
   subscriber.on('xgov-vote', (event) => {
     const abiUint64Array = new ABIArrayDynamicType(new ABIUintType(64))
-    const votes = abiUint64Array.decode(Buffer.from(event['application-transaction']['application-args'][4], 'base64'))
+    const votes = abiUint64Array.decode(Buffer.from(event!['application-transaction']!['application-args']![4], 'base64'))
     // eslint-disable-next-line no-console
     console.log(`${event.sender} voted with txn ${event.id} with votes:`, votes)
   })
