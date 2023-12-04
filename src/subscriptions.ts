@@ -50,15 +50,17 @@ export async function getSubscribedTransactions(
       case 'skip-sync-newest':
         algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
         startRound = algodSyncFromRoundNumber
-        console.log('YO', algodSyncFromRoundNumber, startRound, endRound)
         break
       case 'sync-oldest':
         endRound = algodSyncFromRoundNumber + maxRoundsToSync - 1
         break
       case 'sync-oldest-start-now':
+        // When watermark is 0 same behaviour as skip-sync-newest
         if (watermark === 0) {
-          algodSyncFromRoundNumber = currentRound - 1
+          algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
+          startRound = algodSyncFromRoundNumber
         } else {
+          // Otherwise same behaviour as sync-oldest
           endRound = algodSyncFromRoundNumber + maxRoundsToSync - 1
         }
         break
