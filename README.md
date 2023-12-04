@@ -2,6 +2,8 @@
 
 This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism.
 
+> npm install @algorandfoundation/algokit-subscriber
+
 [Documentation](./docs/README.md)
 
 ## Examples
