@@ -2,7 +2,7 @@ import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { beforeEach, describe, test } from '@jest/globals'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
-describe('skip-sync-newest', () => {
+describe('Subscribing using skip-sync-newest', () => {
   const localnet = algorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
@@ -24,7 +24,7 @@ describe('skip-sync-newest', () => {
     expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txID())
   })
 
-  test('Only processes the latest transaction when starting from an earlier roudn with other transactions', async () => {
+  test('Only processes the latest transaction when starting from an earlier round with other transactions', async () => {
     const { algod, testAccount } = localnet.context
     const { lastTxnRound: olderTxnRound } = await SendXTransactions(2, testAccount, algod)
     const { txns, lastTxnRound: currentRound } = await SendXTransactions(1, testAccount, algod)
