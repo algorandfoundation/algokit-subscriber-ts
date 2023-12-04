@@ -43,13 +43,14 @@ export async function getSubscribedTransactions(
   const catchupTransactions: TransactionResult[] = []
   let start = +new Date()
 
-  if (currentRound - algodSyncFromRoundNumber > maxRoundsToSync) {
+  if (currentRound - watermark > maxRoundsToSync) {
     switch (onMaxRounds) {
       case 'fail':
         throw new Error(`Invalid round number to subscribe from ${algodSyncFromRoundNumber}; current round number is ${currentRound}`)
-      case 'skip-to-newest':
+      case 'skip-sync-newest':
         algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
         startRound = algodSyncFromRoundNumber
+        console.log('YO', algodSyncFromRoundNumber, startRound, endRound)
         break
       case 'sync-oldest':
         endRound = algodSyncFromRoundNumber + maxRoundsToSync - 1

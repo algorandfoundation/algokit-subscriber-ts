@@ -43,13 +43,13 @@ export interface TransactionSubscriptionParams {
   /** The maximum number of rounds to sync for each subscription pull/poll.
    *
    * This gives you control over how many rounds you wait for at a time,
-   * your staleness tolerance when using `skip-to-newest` or `fail`, and
+   * your staleness tolerance when using `skip-sync-newest` or `fail`, and
    * your catchup speed when using `sync-oldest`.
    **/
   maxRoundsToSync: number
   /** If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
    * past `watermark` then how should that be handled:
-   *  * `skip-to-newest`: Discard old blocks/transactions and sync the newest; useful
+   *  * `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
    *    for real-time notification scenarios where you don't care about history and
    *    are happy to lose old transactions.
    *  * `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
@@ -64,7 +64,7 @@ export interface TransactionSubscriptionParams {
    *    use algod from there.
    *  * `fail`: Throw an error.
    **/
-  syncBehaviour: 'skip-to-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
+  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
 }
 
 /** Specify a filter to apply to find transactions of interest. */
@@ -145,7 +145,7 @@ const subscription = await getSubscribedTransactions(
     },
     watermark,
     maxRoundsToSync: 100,
-    onMaxRounds: 'skip-to-newest',
+    onMaxRounds: 'skip-sync-newest',
   },
   algod,
 )

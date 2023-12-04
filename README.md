@@ -72,7 +72,7 @@ const subscriber = new AlgorandSubscriber(
     ],
     frequencyInSeconds: 1,
     maxRoundsToSync: 100,
-    syncBehaviour: 'skip-to-newest',
+    syncBehaviour: 'skip-sync-newest',
     watermarkPersistence: {
       get: async () => watermark,
       set: async (newWatermark) => {

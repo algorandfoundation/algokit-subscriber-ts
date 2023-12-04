@@ -19,13 +19,13 @@ export interface TransactionSubscriptionParams {
   /** The maximum number of rounds to sync for each subscription pull/poll.
    *
    * This gives you control over how many rounds you wait for at a time,
-   * your staleness tolerance when using `skip-to-newest` or `fail`, and
+   * your staleness tolerance when using `skip-sync-newest` or `fail`, and
    * your catchup speed when using `sync-oldest`.
    **/
   maxRoundsToSync: number
   /** If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
    * past `watermark` then how should that be handled:
-   *  * `skip-to-newest`: Discard old blocks/transactions and sync the newest; useful
+   *  * `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
    *    for real-time notification scenarios where you don't care about history and
    *    are happy to lose old transactions.
    *  * `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
@@ -40,7 +40,7 @@ export interface TransactionSubscriptionParams {
    *    use algod from there.
    *  * `fail`: Throw an error.
    **/
-  syncBehaviour: 'skip-to-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
+  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
 }
 
 /** Specify a filter to apply to find transactions of interest. */
@@ -105,7 +105,7 @@ export interface SubscriptionConfig {
   /** The set of events to subscribe to / emit */
   events: SubscriptionConfigEvent<unknown>[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
-   *  * `skip-to-newest`: Discard old rounds
+   *  * `skip-sync-newest`: Discard old rounds
    *  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
    *
    *    **Note:** will be slow to catch up if sync is significantly behind the tip of the chain
@@ -114,7 +114,7 @@ export interface SubscriptionConfig {
    *  * `catchup-with-indexer`: Will catch up to `tipOfTheChain - maxRoundsToSync` using indexer (fast) and then
    *    continue with algod.
    */
-  syncBehaviour: 'skip-to-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
+  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
   /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
    * its position in the chain. */
   watermarkPersistence: {

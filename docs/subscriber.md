@@ -28,7 +28,7 @@ export interface SubscriptionConfig {
   /** The set of events to subscribe to / emit */
   events: SubscriptionConfigEvent<unknown>[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
-   *  * `skip-to-newest`: Discard old rounds
+   *  * `skip-sync-newest`: Discard old rounds
    *  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
    *
    *    **Note:** will be slow to catch up if sync is significantly behind the tip of the chain
@@ -37,7 +37,7 @@ export interface SubscriptionConfig {
    *  * `catchup-with-indexer`: Will catch up to `tipOfTheChain - maxRoundsToSync` using indexer (fast) and then
    *    continue with algod.
    */
-  syncBehaviour: 'skip-to-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
+  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
   /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
    * its position in the chain. */
   watermarkPersistence: {
