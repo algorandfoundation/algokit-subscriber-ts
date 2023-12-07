@@ -1,6 +1,7 @@
 {
   "name": "@algorandfoundation/algokit-subscriber",
   "version": "1.0.0",
+  "private": false,
   "scripts": {
     "build": "run-s build:*",
     "build:0-clean": "rimraf dist coverage",
