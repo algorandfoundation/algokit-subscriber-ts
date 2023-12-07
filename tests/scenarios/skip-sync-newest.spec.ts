@@ -47,17 +47,18 @@ describe('Subscribing using skip-sync-newest', () => {
 
   test('Process multiple transactions', async () => {
     const { algod, testAccount } = localnet.context
-    const { txns, lastTxnRound } = await SendXTransactions(3, testAccount, algod)
+    const { txns, lastTxnRound, rounds } = await SendXTransactions(3, testAccount, algod)
 
+    const syncFrom = lastTxnRound - rounds[1] + 1
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 2, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
+      { roundsToSync: syncFrom, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
       testAccount,
       algod,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
-    expect(subscribed.syncedRoundRange).toEqual([lastTxnRound - 1, lastTxnRound])
+    expect(subscribed.syncedRoundRange).toEqual([rounds[1], lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(2)
     expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txID())
     expect(subscribed.subscribedTransactions[1].id).toBe(txns[2].transaction.txID())
