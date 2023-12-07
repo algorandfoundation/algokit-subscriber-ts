@@ -49,9 +49,8 @@ describe('Subscribing using skip-sync-newest', () => {
     const { algod, testAccount } = localnet.context
     const { txns, lastTxnRound, rounds } = await SendXTransactions(3, testAccount, algod)
 
-    const syncFrom = lastTxnRound - rounds[1] + 1
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: syncFrom, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
+      { roundsToSync: lastTxnRound - rounds[1] + 1, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
       testAccount,
       algod,
     )
