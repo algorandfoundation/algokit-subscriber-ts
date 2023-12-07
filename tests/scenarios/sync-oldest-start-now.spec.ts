@@ -6,13 +6,16 @@ describe('Subscribing using sync-oldest-start-now', () => {
   const localnet = algorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
   test('Processes the current round when starting from beginning of chain', async () => {
     const { algod, testAccount } = localnet.context
     const { txns, lastTxnRound } = await SendXTransactions(2, testAccount, algod)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'sync-oldest-start-now', watermark: 0 },
+      { roundsToSync: 1, syncBehaviour: 'sync-oldest-start-now', watermark: 0, currentRound: lastTxnRound },
       testAccount,
       algod,
     )
@@ -30,7 +33,7 @@ describe('Subscribing using sync-oldest-start-now', () => {
     const { lastTxnRound: currentRound } = await SendXTransactions(1, testAccount, algod)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'sync-oldest', watermark: olderTxnRound - 1 },
+      { roundsToSync: 1, syncBehaviour: 'sync-oldest', watermark: olderTxnRound - 1, currentRound },
       testAccount,
       algod,
     )
@@ -47,7 +50,7 @@ describe('Subscribing using sync-oldest-start-now', () => {
     const { txns, lastTxnRound } = await SendXTransactions(3, testAccount, algod)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 2, syncBehaviour: 'sync-oldest-start-now', watermark: lastTxnRound - 3 },
+      { roundsToSync: 2, syncBehaviour: 'sync-oldest-start-now', watermark: lastTxnRound - 3, currentRound: lastTxnRound },
       testAccount,
       algod,
     )

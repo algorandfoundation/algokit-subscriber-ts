@@ -163,5 +163,8 @@
       ],
       "@semantic-release/github"
     ]
+  },
+  "dependencies": {
+    "buffer": "^6.0.3"
   }
 }

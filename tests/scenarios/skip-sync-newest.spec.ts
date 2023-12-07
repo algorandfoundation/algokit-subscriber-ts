@@ -6,13 +6,16 @@ describe('Subscribing using skip-sync-newest', () => {
   const localnet = algorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
   test('Only processes the latest transaction when starting from beginning of chain', async () => {
     const { algod, testAccount } = localnet.context
     const { txns, lastTxnRound } = await SendXTransactions(2, testAccount, algod)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: 0 },
+      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
       testAccount,
       algod,
     )
@@ -30,7 +33,7 @@ describe('Subscribing using skip-sync-newest', () => {
     const { txns, lastTxnRound: currentRound } = await SendXTransactions(1, testAccount, algod)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: olderTxnRound - 1 },
+      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: olderTxnRound - 1, currentRound },
       testAccount,
       algod,
     )
@@ -47,7 +50,7 @@ describe('Subscribing using skip-sync-newest', () => {
     const { txns, lastTxnRound } = await SendXTransactions(3, testAccount, algod)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 2, syncBehaviour: 'skip-sync-newest', watermark: 0 },
+      { roundsToSync: 2, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
       testAccount,
       algod,
     )

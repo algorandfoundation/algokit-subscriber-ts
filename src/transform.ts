@@ -1,6 +1,7 @@
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk, { OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
+import { Buffer } from 'buffer'
 import type { Block, BlockTransaction } from './types/block'
 
 // Recursively remove all null values from object
@@ -74,14 +75,14 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
   return appOnComplete === OnApplicationComplete.NoOpOC
     ? ApplicationOnComplete.noop
     : appOnComplete === OnApplicationComplete.OptInOC
-    ? ApplicationOnComplete.optin
-    : appOnComplete === OnApplicationComplete.CloseOutOC
-    ? ApplicationOnComplete.closeout
-    : appOnComplete === OnApplicationComplete.ClearStateOC
-    ? ApplicationOnComplete.clear
-    : appOnComplete === OnApplicationComplete.DeleteApplicationOC
-    ? ApplicationOnComplete.delete
-    : ApplicationOnComplete.update
+      ? ApplicationOnComplete.optin
+      : appOnComplete === OnApplicationComplete.CloseOutOC
+        ? ApplicationOnComplete.closeout
+        : appOnComplete === OnApplicationComplete.ClearStateOC
+          ? ApplicationOnComplete.clear
+          : appOnComplete === OnApplicationComplete.DeleteApplicationOC
+            ? ApplicationOnComplete.delete
+            : ApplicationOnComplete.update
 }
 
 /**
@@ -149,13 +150,13 @@ export function getIndexerTransactionFromAlgodTransaction(
                   freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
                 }
               : 'apar' in block.txns[blockOffset].txn
-              ? {
-                  manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
-                  reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
-                  clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
-                  freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
-                }
-              : undefined,
+                ? {
+                    manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
+                    reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
+                    clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
+                    freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
+                  }
+                : undefined,
           }
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ({} as any),

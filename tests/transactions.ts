@@ -27,11 +27,31 @@ export const SendXTransactions = async (x: number, account: SendTransactionFrom,
 }
 
 export const GetSubscribedTransactionsFromSender = (
-  subscription: { syncBehaviour: TransactionSubscriptionParams['syncBehaviour']; roundsToSync: number; watermark?: number },
+  subscription: {
+    syncBehaviour: TransactionSubscriptionParams['syncBehaviour']
+    roundsToSync: number
+    watermark?: number
+    currentRound?: number
+  },
   account: SendTransactionFrom,
   algod: Algodv2,
 ) => {
-  const { roundsToSync, syncBehaviour, watermark } = subscription
+  const { roundsToSync, syncBehaviour, watermark, currentRound } = subscription
+
+  if (currentRound !== undefined) {
+    const existingStatus = algod.status
+    Object.assign(algod, {
+      status: jest.fn().mockImplementation(() => {
+        return {
+          do: async () => {
+            const status = await existingStatus.apply(algod).do()
+            status['last-round'] = currentRound
+            return status
+          },
+        }
+      }),
+    })
+  }
 
   return getSubscribedTransactions(
     {
