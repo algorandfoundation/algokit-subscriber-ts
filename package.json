@@ -105,6 +105,9 @@
     "@algorandfoundation/algokit-utils": "^5.0.1",
     "algosdk": "^2.7.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "release": {
     "branches": [
       {
