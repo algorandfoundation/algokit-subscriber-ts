@@ -1,6 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Algodv2 } from 'algosdk'
+import { Algodv2, Indexer } from 'algosdk'
 import { getSubscribedTransactions } from '../src'
 import { TransactionSubscriptionParams } from '../src/types/subscription'
 
@@ -36,6 +36,7 @@ export const GetSubscribedTransactionsFromSender = (
   },
   account: SendTransactionFrom,
   algod: Algodv2,
+  indexer?: Indexer,
 ) => {
   const { roundsToSync, syncBehaviour, watermark, currentRound } = subscription
 
@@ -64,5 +65,6 @@ export const GetSubscribedTransactionsFromSender = (
       watermark: watermark ?? 0,
     },
     algod,
+    indexer,
   )
 }
