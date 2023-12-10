@@ -22,6 +22,7 @@ export const SendXTransactions = async (x: number, account: SendTransactionFrom,
 
   return {
     txns,
+    txIds: txns.map((t) => t.transaction.txID()),
     lastTxnRound,
     rounds: txns.map((t) => Number(t.confirmation!.confirmedRound)),
   }

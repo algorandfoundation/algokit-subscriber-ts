@@ -11,6 +11,8 @@
     "onSave": "test-file",
     "onStartup": false
   },
+  "jest.outputConfig": { "revealWithFocus": "none" },
+  "testing.openTesting": "neverOpen",
   "files.associations": {
     ".github/**/*.yml": "github-actions-workflow"
   },

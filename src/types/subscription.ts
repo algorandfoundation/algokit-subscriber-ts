@@ -98,14 +98,16 @@ export interface TransactionSubscriptionResult {
 
 /** Configuration for a subscription */
 export interface SubscriptionConfig {
-  /** The frequency to poll for new blocks in seconds */
-  frequencyInSeconds: number
-  /** The maximum number of rounds to sync at a time. */
-  maxRoundsToSync: number
+  /** The frequency to poll for new blocks in seconds; defaults to 1s */
+  frequencyInSeconds?: number
+  /** Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription */
+  waitForBlockWhenAtTip?: boolean
+  /** The maximum number of rounds to sync at a time; defaults to 500 */
+  maxRoundsToSync?: number
   /** The set of events to subscribe to / emit */
   events: SubscriptionConfigEvent<unknown>[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
-   *  * `skip-sync-newest`: Discard old rounds
+   *  * `skip-sync-newest`: Discard old rounds.
    *  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
    *
    *    **Note:** will be slow to catch up if sync is significantly behind the tip of the chain
@@ -116,7 +118,7 @@ export interface SubscriptionConfig {
    */
   syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
   /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
-   * its position in the chain. */
+   * its position in the chain */
   watermarkPersistence: {
     /** Returns the current watermark that syncing has previously been processed to */
     get: () => Promise<number>

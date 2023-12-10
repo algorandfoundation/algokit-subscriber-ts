@@ -1,8 +1,10 @@
+import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { Algodv2, Indexer } from 'algosdk'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
-import type { SubscriptionConfig, TypedAsyncEventListener } from './types/subscription'
+import type { SubscriptionConfig, TransactionSubscriptionResult, TypedAsyncEventListener } from './types/subscription'
+import { race, sleep } from './utils'
 
 /**
  * Handles the logic for subscribing to the Algorand blockchain and emitting events.
@@ -13,6 +15,8 @@ export class AlgorandSubscriber {
   private subscription: SubscriptionConfig
   private abortController: AbortController
   private eventEmitter: AsyncEventEmitter
+  private started: boolean = false
+  private startPromise: Promise<void> | undefined
 
   /**
    * Create a new `AlgorandSubscriber`.
@@ -42,6 +46,7 @@ export class AlgorandSubscriber {
    *
    * This is useful when executing in the context of a process
    * triggered by a recurring schedule / cron.
+   * @returns The poll result
    */
   async pollOnce() {
     const watermark = await this.subscription.watermarkPersistence.get()
@@ -50,7 +55,7 @@ export class AlgorandSubscriber {
       {
         filter: this.subscription.events[0].filter,
         watermark,
-        maxRoundsToSync: this.subscription.maxRoundsToSync,
+        maxRoundsToSync: this.subscription.maxRoundsToSync ?? 500,
         syncBehaviour: this.subscription.syncBehaviour,
       },
       this.algod,
@@ -66,34 +71,67 @@ export class AlgorandSubscriber {
         await this.eventEmitter.emitAsync(this.subscription.events[0].eventName, transaction)
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(`Error processing event emittance`, e)
+      algokit.Config.logger.error(`Error processing event emittance`, e)
       throw e
     }
     await this.subscription.watermarkPersistence.set(pollResult.newWatermark)
+    return pollResult
   }
 
   /**
    * Start the subscriber in a loop until `stop` is called.
    *
    * This is useful when running in the context of a long-running process / container.
+   * @param inspect A function that is called for each poll so the inner workings can be inspected / logged / etc.
+   * @returns An object that contains a promise you can wait for after calling stop
    */
-  start() {
-    ;(async () => {
+  start(inspect?: (pollResult: TransactionSubscriptionResult) => void, suppressLog?: boolean) {
+    if (this.started) return
+    this.started = true
+    this.startPromise = (async () => {
       while (!this.abortController.signal.aborted) {
         // eslint-disable-next-line no-console
-        console.time(`Subscription poll completed; sleeping for ${this.subscription.frequencyInSeconds}s`)
-        await this.pollOnce()
+        const start = +new Date()
+        const result = await this.pollOnce()
+        inspect?.(result)
+        const durationInSeconds = (+new Date() - start) / 1000
+        algokit.Config.getLogger(suppressLog).debug('Subscription poll', {
+          currentRound: result.currentRound,
+          newWatermark: result.newWatermark,
+          syncedRoundRange: result.syncedRoundRange,
+          subscribedTransactionsLength: result.subscribedTransactions.length,
+        })
         // eslint-disable-next-line no-console
-        console.timeEnd(`Subscription poll completed; sleeping for ${this.subscription.frequencyInSeconds}s`)
-        await new Promise((resolve) => setTimeout(resolve, this.subscription.frequencyInSeconds * 1000))
+        if (result.currentRound > result.newWatermark || !this.subscription.waitForBlockWhenAtTip) {
+          algokit.Config.getLogger(suppressLog).info(
+            `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.subscription.frequencyInSeconds ?? 1}s`,
+          )
+          await sleep((this.subscription.frequencyInSeconds ?? 1) * 1000, this.abortController.signal)
+        } else {
+          // Wait until the next block is published
+          algokit.Config.getLogger(suppressLog).info(
+            `Subscription poll completed in ${durationInSeconds}s; waiting for round ${result.currentRound + 1}`,
+          )
+          const waitStart = +new Date()
+          // Despite what the `statusAfterBlock` method description suggests, you need to wait for the round before
+          //  the round you are waiting for per the API description:
+          //  https://developer.algorand.org/docs/rest-apis/algod/#get-v2statuswait-for-block-afterround
+          await race(this.algod.statusAfterBlock(result.currentRound).do(), this.abortController.signal)
+          algokit.Config.getLogger(suppressLog).info(`Waited for ${(+new Date() - waitStart) / 1000}s until next block`)
+        }
       }
+      this.started = false
     })()
   }
 
-  /** Stops the subscriber if previously started via `start`. */
+  /** Stops the subscriber if previously started via `start`.
+   * @param reason The reason the subscriber is being stopped
+   * @returns A promise that can be awaited to ensure the subscriber has finished stopping
+   */
   stop(reason: unknown) {
+    if (!this.started) return Promise.resolve()
     this.abortController.abort(reason)
+    return this.startPromise!
   }
 
   /**
@@ -102,9 +140,11 @@ export class AlgorandSubscriber {
    * The listener can be async and it will be awaited if so.
    * @param eventName The name of the event to subscribe to
    * @param listener The listener function to invoke with the subscribed event
+   * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
   on<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T>) {
     this.eventEmitter.on(eventName, listener as AsyncEventListener)
+    return this
   }
 
   /**
@@ -117,8 +157,10 @@ export class AlgorandSubscriber {
    * The listener can be async and it will be awaited if so.
    * @param eventName The name of the event to subscribe to
    * @param listener The listener function to invoke with the subscribed events
+   * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
   onBatch<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T[]>) {
     this.eventEmitter.on(`batch:${eventName}`, listener as AsyncEventListener)
+    return this
   }
 }
