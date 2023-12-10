@@ -117,7 +117,7 @@ ___
 • `Optional` **maxAmount**: `number`
 
 Filter to transactions where the amount being transferred is less than
-or equal to the given maximum (microAlgos or decimal units of an ASA).
+or equal to the given maximum (microAlgos or decimal units of an ASA if type: axfer).
 
 #### Defined in
 
@@ -143,7 +143,7 @@ ___
 • `Optional` **minAmount**: `number`
 
 Filter to transactions where the amount being transferred is greater
-than or equal to the given minimum (microAlgos or decimal units of an ASA).
+than or equal to the given minimum (microAlgos or decimal units of an ASA if type: axfer).
 
 #### Defined in
 

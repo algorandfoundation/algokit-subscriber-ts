@@ -2,7 +2,7 @@ import * as algokit from '@algorandfoundation/algokit-utils'
 import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { Algodv2, Indexer } from 'algosdk'
 import { getSubscribedTransactions } from '../src'
-import { TransactionSubscriptionParams } from '../src/types/subscription'
+import { TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
 
 export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
   const txns: SendTransactionResult[] = []
@@ -28,18 +28,18 @@ export const SendXTransactions = async (x: number, account: SendTransactionFrom,
   }
 }
 
-export const GetSubscribedTransactionsFromSender = (
+export const GetSubscribedTransactions = (
   subscription: {
     syncBehaviour: TransactionSubscriptionParams['syncBehaviour']
     roundsToSync: number
     watermark?: number
     currentRound?: number
+    filter: TransactionFilter
   },
-  account: SendTransactionFrom,
   algod: Algodv2,
   indexer?: Indexer,
 ) => {
-  const { roundsToSync, syncBehaviour, watermark, currentRound } = subscription
+  const { roundsToSync, syncBehaviour, watermark, currentRound, filter } = subscription
 
   if (currentRound !== undefined) {
     const existingStatus = algod.status
@@ -58,12 +58,33 @@ export const GetSubscribedTransactionsFromSender = (
 
   return getSubscribedTransactions(
     {
-      filter: {
-        sender: algokit.getSenderAddress(account),
-      },
+      filter: filter,
       maxRoundsToSync: roundsToSync,
       syncBehaviour: syncBehaviour,
       watermark: watermark ?? 0,
+    },
+    algod,
+    indexer,
+  )
+}
+
+export const GetSubscribedTransactionsFromSender = (
+  subscription: {
+    syncBehaviour: TransactionSubscriptionParams['syncBehaviour']
+    roundsToSync: number
+    watermark?: number
+    currentRound?: number
+  },
+  account: SendTransactionFrom,
+  algod: Algodv2,
+  indexer?: Indexer,
+) => {
+  return GetSubscribedTransactions(
+    {
+      ...subscription,
+      filter: {
+        sender: algokit.getSenderAddress(account),
+      },
     },
     algod,
     indexer,

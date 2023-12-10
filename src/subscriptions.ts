@@ -139,7 +139,7 @@ function indexerPreFilter(
       filter = filter.txType(subscription.type.toString())
     }
     if (subscription.notePrefix) {
-      filter = filter.notePrefix(subscription.notePrefix)
+      filter = filter.notePrefix(Buffer.from(subscription.notePrefix).toString('base64'))
     }
     if (subscription.appId) {
       filter = filter.applicationID(subscription.appId)
@@ -210,7 +210,7 @@ function transactionFilter(
       result &&= !!t.from && encodeAddress(t.from.publicKey) === subscription.sender
     }
     if (subscription.receiver) {
-      result &&= !!t.to && encodeAddress(t.to.publicKey) === subscription.sender
+      result &&= !!t.to && encodeAddress(t.to.publicKey) === subscription.receiver
     }
     if (subscription.type) {
       result &&= t.type === subscription.type

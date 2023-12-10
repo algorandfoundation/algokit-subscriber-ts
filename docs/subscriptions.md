@@ -88,10 +88,10 @@ export interface TransactionFilter {
   /** Filter to transactions that are creating an asset. */
   assetCreate?: boolean
   /** Filter to transactions where the amount being transferred is greater
-   * than or equal to the given minimum (microAlgos or decimal units of an ASA). */
+   * than or equal to the given minimum (microAlgos or decimal units of an ASA if type: axfer). */
   minAmount?: number
   /** Filter to transactions where the amount being transferred is less than
-   * or equal to the given maximum (microAlgos or decimal units of an ASA). */
+   * or equal to the given maximum (microAlgos or decimal units of an ASA  if type: axfer). */
   maxAmount?: number
   /** Filter to app transactions that have the given ARC-0004 method selector for
    * the given method signature as the first app argument. */

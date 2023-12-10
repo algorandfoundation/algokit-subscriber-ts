@@ -139,11 +139,13 @@ export function getIndexerTransactionFromAlgodTransaction(
                   'default-frozen': transaction.assetDefaultFrozen,
                   'metadata-hash': transaction.assetMetadataHash,
                   name: transaction.assetName,
-                  'name-b64': encoder.encode(Buffer.from(transaction.assetName).toString('base64')),
+                  'name-b64': transaction.assetName ? encoder.encode(Buffer.from(transaction.assetName).toString('base64')) : undefined,
                   'unit-name': transaction.assetUnitName,
-                  'unit-name-b64': encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64')),
+                  'unit-name-b64': transaction.assetUnitName
+                    ? encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64'))
+                    : undefined,
                   url: transaction.assetURL,
-                  'url-b64': encoder.encode(Buffer.from(transaction.assetURL).toString('base64')),
+                  'url-b64': transaction.assetURL ? encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) : undefined,
                   manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
                   reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
                   clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
