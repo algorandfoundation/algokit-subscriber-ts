@@ -48,7 +48,7 @@ export class AlgorandSubscriber {
    * triggered by a recurring schedule / cron.
    * @returns The poll result
    */
-  async pollOnce() {
+  async pollOnce(): Promise<TransactionSubscriptionResult> {
     const watermark = await this.subscription.watermarkPersistence.get()
 
     const pollResult = await getSubscribedTransactions(
@@ -85,7 +85,7 @@ export class AlgorandSubscriber {
    * @param inspect A function that is called for each poll so the inner workings can be inspected / logged / etc.
    * @returns An object that contains a promise you can wait for after calling stop
    */
-  start(inspect?: (pollResult: TransactionSubscriptionResult) => void, suppressLog?: boolean) {
+  start(inspect?: (pollResult: TransactionSubscriptionResult) => void, suppressLog?: boolean): void {
     if (this.started) return
     this.started = true
     this.startPromise = (async () => {
@@ -128,7 +128,7 @@ export class AlgorandSubscriber {
    * @param reason The reason the subscriber is being stopped
    * @returns A promise that can be awaited to ensure the subscriber has finished stopping
    */
-  stop(reason: unknown) {
+  stop(reason: unknown): Promise<void> {
     if (!this.started) return Promise.resolve()
     this.abortController.abort(reason)
     return this.startPromise!

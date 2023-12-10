@@ -72,8 +72,7 @@ const subscriber = new AlgorandSubscriber(
         },
       },
     ],
-    frequencyInSeconds: 1,
-    maxRoundsToSync: 100,
+    waitForBlockWhenAtTip: true,
     syncBehaviour: 'skip-sync-newest',
     watermarkPersistence: {
       get: async () => watermark,

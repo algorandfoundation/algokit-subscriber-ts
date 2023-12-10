@@ -21,14 +21,16 @@ The key configuration is the `SubscriptionConfig` interface:
 ```typescript
 /** Configuration for a subscription */
 export interface SubscriptionConfig {
-  /** The frequency to poll for new blocks in seconds */
-  frequencyInSeconds: number
-  /** The maximum number of rounds to sync at a time. */
-  maxRoundsToSync: number
+  /** The frequency to poll for new blocks in seconds; defaults to 1s */
+  frequencyInSeconds?: number
+  /** Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription */
+  waitForBlockWhenAtTip?: boolean
+  /** The maximum number of rounds to sync at a time; defaults to 500 */
+  maxRoundsToSync?: number
   /** The set of events to subscribe to / emit */
   events: SubscriptionConfigEvent<unknown>[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
-   *  * `skip-sync-newest`: Discard old rounds
+   *  * `skip-sync-newest`: Discard old rounds.
    *  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
    *
    *    **Note:** will be slow to catch up if sync is significantly behind the tip of the chain
@@ -39,7 +41,7 @@ export interface SubscriptionConfig {
    */
   syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
   /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
-   * its position in the chain. */
+   * its position in the chain */
   watermarkPersistence: {
     /** Returns the current watermark that syncing has previously been processed to */
     get: () => Promise<number>
@@ -49,11 +51,11 @@ export interface SubscriptionConfig {
 }
 ```
 
-Watermark persistence allows you to ensure reliability against your code having outages since you can persist the last block your code processed up to and then provide it again the next time your code runs.
+`watermarkPersistence` allows you to ensure reliability against your code having outages since you can persist the last block your code processed up to and then provide it again the next time your code runs.
 
-Max rounds to sync and sync behaviour allow you to control the subscription semantics as your code falls behind the tip of the chain (either on first run or after an outage).
+`maxRoundsToSync` and `syncBehaviour` allow you to control the subscription semantics as your code falls behind the tip of the chain (either on first run or after an outage).
 
-Frequency in seconds allows you to control the polling frequency and by association your latency tolerance for new events once you've caught up to the tip of the chain.
+`frequencyInSeconds` allows you to control the polling frequency and by association your latency tolerance for new events once you've caught up to the tip of the chain. Alternatively, you can set `waitForBlockWhenAtTip` to get the subscriber to ask algod to tell it when there is a new block ready to reduce latency when it's caught up to the tip of the chain.
 
 Events defines the different subscription(s) you want to make, and is defined by the following interface:
 
@@ -134,29 +136,32 @@ There are two methods to poll the chain for events: `pollOnce` and `start`:
  *
  * This is useful when executing in the context of a process
  * triggered by a recurring schedule / cron.
+ * @returns The poll result
  */
-async pollOnce(){}
+async pollOnce(): Promise<>
 
-  /**
+/**
  * Start the subscriber in a loop until `stop` is called.
  *
  * This is useful when running in the context of a long-running process / container.
+ * @param inspect A function that is called for each poll so the inner workings can be inspected / logged / etc.
+ * @returns An object that contains a promise you can wait for after calling stop
  */
-start(){}
+start(inspect?: (pollResult: TransactionSubscriptionResult) => void, suppressLog?: boolean): void
 ```
 
-`pollOnce` is useful when you want to take control of scheduling the different polls, such as when running a Lambda on a schedule or a process via cron, etc. - it will do a single poll of the chain.
+`pollOnce` is useful when you want to take control of scheduling the different polls, such as when running a Lambda on a schedule or a process via cron, etc. - it will do a single poll of the chain and return the result of that poll.
 
-`start` is useful when you have a long-running process or container and you want it to loop infinitely at the specified polling frequency from the constructor config.
+`start` is useful when you have a long-running process or container and you want it to loop infinitely at the specified polling frequency from the constructor config. If you want to inspect or log what happens under the covers you can pass in an inspect lambda that will be called for each poll.
 
-If you use `start` then you can stop the polling by calling `stop`. You may want to subscribe to NodeJS kill signals to exit cleanly:
+If you use `start` then you can stop the polling by calling `stop`, which can be awaited to wait until everything is cleaned up. You may want to subscribe to NodeJS kill signals to exit cleanly:
 
 ```typescript
 ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) =>
   process.on(signal, () => {
     // eslint-disable-next-line no-console
     console.log(`Received ${signal}; stopping subscriber...`)
-    subscriber.stop(signal)
+    subscriber.stop(signal).then(() => console.log('Subscriber stopped'))
   }),
 )
 ```
