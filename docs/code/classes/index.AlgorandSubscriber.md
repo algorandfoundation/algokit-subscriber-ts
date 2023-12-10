@@ -18,6 +18,8 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 - [algod](index.AlgorandSubscriber.md#algod)
 - [eventEmitter](index.AlgorandSubscriber.md#eventemitter)
 - [indexer](index.AlgorandSubscriber.md#indexer)
+- [startPromise](index.AlgorandSubscriber.md#startpromise)
+- [started](index.AlgorandSubscriber.md#started)
 - [subscription](index.AlgorandSubscriber.md#subscription)
 
 ### Methods
@@ -50,7 +52,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+[subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
 
 ## Properties
 
@@ -60,7 +62,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:14](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L14)
+[subscriber.ts:16](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L16)
 
 ___
 
@@ -70,7 +72,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L11)
+[subscriber.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L13)
 
 ___
 
@@ -80,7 +82,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:15](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L15)
+[subscriber.ts:17](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L17)
 
 ___
 
@@ -90,7 +92,27 @@ ___
 
 #### Defined in
 
-[subscriber.ts:12](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L12)
+[subscriber.ts:14](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L14)
+
+___
+
+### startPromise
+
+• `Private` **startPromise**: `undefined` \| `Promise`\<`void`\>
+
+#### Defined in
+
+[subscriber.ts:19](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L19)
+
+___
+
+### started
+
+• `Private` **started**: `boolean` = `false`
+
+#### Defined in
+
+[subscriber.ts:18](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L18)
 
 ___
 
@@ -100,13 +122,13 @@ ___
 
 #### Defined in
 
-[subscriber.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L13)
+[subscriber.ts:15](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L15)
 
 ## Methods
 
 ### on
 
-▸ **on**\<`T`\>(`eventName`, `listener`): `void`
+▸ **on**\<`T`\>(`eventName`, `listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
 
 Register an event handler to run on every instance the given event name.
 
@@ -127,17 +149,19 @@ The listener can be async and it will be awaited if so.
 
 #### Returns
 
-`void`
+[`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L106)
+[subscriber.ts:145](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L145)
 
 ___
 
 ### onBatch
 
-▸ **onBatch**\<`T`\>(`eventName`, `listener`): `void`
+▸ **onBatch**\<`T`\>(`eventName`, `listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
 
 Register an event handler to run on all instances of the given event name
 for each subscription poll.
@@ -162,17 +186,19 @@ The listener can be async and it will be awaited if so.
 
 #### Returns
 
-`void`
+[`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:121](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L121)
+[subscriber.ts:162](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L162)
 
 ___
 
 ### pollOnce
 
-▸ **pollOnce**(): `Promise`\<`void`\>
+▸ **pollOnce**(): `Promise`\<[`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)\>
 
 Execute a single subscription poll.
 
@@ -181,48 +207,61 @@ triggered by a recurring schedule / cron.
 
 #### Returns
 
-`Promise`\<`void`\>
+`Promise`\<[`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)\>
+
+The poll result
 
 #### Defined in
 
-[subscriber.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L46)
+[subscriber.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L51)
 
 ___
 
 ### start
 
-▸ **start**(): `void`
+▸ **start**(`inspect?`, `suppressLog?`): `void`
 
 Start the subscriber in a loop until `stop` is called.
 
 This is useful when running in the context of a long-running process / container.
 
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `inspect?` | (`pollResult`: [`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)) => `void` | A function that is called for each poll so the inner workings can be inspected / logged / etc. |
+| `suppressLog?` | `boolean` | - |
+
 #### Returns
 
 `void`
 
+An object that contains a promise you can wait for after calling stop
+
 #### Defined in
 
-[subscriber.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L81)
+[subscriber.ts:88](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L88)
 
 ___
 
 ### stop
 
-▸ **stop**(`reason`): `void`
+▸ **stop**(`reason`): `Promise`\<`void`\>
 
 Stops the subscriber if previously started via `start`.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `reason` | `unknown` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `reason` | `unknown` | The reason the subscriber is being stopped |
 
 #### Returns
 
-`void`
+`Promise`\<`void`\>
+
+A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L95)
+[subscriber.ts:131](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L131)

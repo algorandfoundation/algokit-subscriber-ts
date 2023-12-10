@@ -14,6 +14,7 @@ Configuration for a subscription
 - [frequencyInSeconds](types_subscription.SubscriptionConfig.md#frequencyinseconds)
 - [maxRoundsToSync](types_subscription.SubscriptionConfig.md#maxroundstosync)
 - [syncBehaviour](types_subscription.SubscriptionConfig.md#syncbehaviour)
+- [waitForBlockWhenAtTip](types_subscription.SubscriptionConfig.md#waitforblockwhenattip)
 - [watermarkPersistence](types_subscription.SubscriptionConfig.md#watermarkpersistence)
 
 ## Properties
@@ -26,15 +27,15 @@ The set of events to subscribe to / emit
 
 #### Defined in
 
-[types/subscription.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L106)
+[types/subscription.ts:108](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L108)
 
 ___
 
 ### frequencyInSeconds
 
-• **frequencyInSeconds**: `number`
+• `Optional` **frequencyInSeconds**: `number`
 
-The frequency to poll for new blocks in seconds
+The frequency to poll for new blocks in seconds; defaults to 1s
 
 #### Defined in
 
@@ -44,13 +45,13 @@ ___
 
 ### maxRoundsToSync
 
-• **maxRoundsToSync**: `number`
+• `Optional` **maxRoundsToSync**: `number`
 
-The maximum number of rounds to sync at a time.
+The maximum number of rounds to sync at a time; defaults to 500
 
 #### Defined in
 
-[types/subscription.ts:104](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L104)
+[types/subscription.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L106)
 
 ___
 
@@ -59,7 +60,7 @@ ___
 • **syncBehaviour**: ``"skip-sync-newest"`` \| ``"sync-oldest"`` \| ``"sync-oldest-start-now"`` \| ``"catchup-with-indexer"``
 
 The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
- * `skip-sync-newest`: Discard old rounds
+ * `skip-sync-newest`: Discard old rounds.
  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
 
    **Note:** will be slow to catch up if sync is significantly behind the tip of the chain
@@ -70,7 +71,19 @@ The behaviour when the number of rounds to sync is greater than `maxRoundsToSync
 
 #### Defined in
 
-[types/subscription.ts:117](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L117)
+[types/subscription.ts:119](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L119)
+
+___
+
+### waitForBlockWhenAtTip
+
+• `Optional` **waitForBlockWhenAtTip**: `boolean`
+
+Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription
+
+#### Defined in
+
+[types/subscription.ts:104](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L104)
 
 ___
 
@@ -79,7 +92,7 @@ ___
 • **watermarkPersistence**: `Object`
 
 Methods to retrieve and persist the current watermark so syncing is resilient and maintains
-its position in the chain.
+its position in the chain
 
 #### Type declaration
 
@@ -90,4 +103,4 @@ its position in the chain.
 
 #### Defined in
 
-[types/subscription.ts:120](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L120)
+[types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)
