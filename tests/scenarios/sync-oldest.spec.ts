@@ -51,7 +51,7 @@ describe('Subscribing using sync-oldest', () => {
     const { txns, lastTxnRound, rounds } = await SendXTransactions(3, testAccount, algod)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: rounds[1] - rounds[0] + 1, syncBehaviour: 'sync-oldest', watermark: lastTxnRound - 3, currentRound: lastTxnRound },
+      { roundsToSync: rounds[1] - rounds[0] + 1, syncBehaviour: 'sync-oldest', watermark: rounds[0] - 1, currentRound: lastTxnRound },
       testAccount,
       algod,
     )

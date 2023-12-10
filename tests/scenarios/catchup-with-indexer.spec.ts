@@ -55,8 +55,8 @@ describe('Subscribing using catchup-with-indexer', () => {
 
   test('Process multiple historic transactions using indexer and blends them in with algod transaction', async () => {
     const { algod, indexer, testAccount, waitForIndexerTransaction } = localnet.context
-    const { txns, lastTxnRound } = await SendXTransactions(3, testAccount, algod)
-    await waitForIndexerTransaction(txns[0].transaction.txID())
+    const { txns, txIds, lastTxnRound } = await SendXTransactions(3, testAccount, algod)
+    await waitForIndexerTransaction(txIds[2])
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0, currentRound: lastTxnRound },

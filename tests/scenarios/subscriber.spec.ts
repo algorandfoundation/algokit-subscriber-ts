@@ -141,8 +141,8 @@ describe('AlgorandSubscriber', () => {
     } = getSubscriber(
       {
         testAccount,
-        // Polling for 100s means we are definitely testing the algod waiting works
-        configOverrides: { maxRoundsToSync: 100, frequencyInSeconds: 10, waitForBlockWhenAtTip: true, syncBehaviour: 'sync-oldest' },
+        // Polling for 10s means we are definitely testing the algod waiting works
+        configOverrides: { frequencyInSeconds: 10, waitForBlockWhenAtTip: true, syncBehaviour: 'sync-oldest' },
         initialWatermark: currentRound - 1,
       },
       algod,
