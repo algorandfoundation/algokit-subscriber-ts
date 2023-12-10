@@ -29,8 +29,7 @@ process.on('uncaughtException', (e) => console.error(e))
           },
         },
       ],
-      frequencyInSeconds: 1,
-      maxRoundsToSync: 100,
+      waitForBlockWhenAtTip: true,
       syncBehaviour: 'skip-sync-newest',
       watermarkPersistence: {
         get: async () => watermark,
