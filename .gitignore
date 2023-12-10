@@ -63,3 +63,4 @@ out/
 watermark.txt
 examples/**/*.json
 
+__pycache__

@@ -18,6 +18,7 @@
     "commit-lint": "commitlint --edit -o",
     "semantic-release": "semantic-release",
     "generate:code-docs": "typedoc",
+    "generate:contract-client": "cd tests/contract && poetry run python -m build",
     "pre-commit": "run-s check-types lint:fix audit format test generate:code-docs",
     "dhm": "ts-node-dev --transpile-only --watch .env -r dotenv/config ./examples/data-history-museum/index.ts",
     "watch-dhm": "cross-env RUN_LOOP=true npm run dhm",

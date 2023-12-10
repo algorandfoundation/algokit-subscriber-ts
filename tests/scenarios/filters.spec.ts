@@ -4,6 +4,7 @@ import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@al
 import { beforeEach, describe, test } from '@jest/globals'
 import algosdk, { Account, TransactionType } from 'algosdk'
 import { TransactionFilter } from '../../src/types/subscription'
+import { TestingAppClient } from '../contract/client'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 
 describe('Subscribing using various filters', () => {
@@ -87,6 +88,27 @@ describe('Subscribing using various filters', () => {
       defaultFrozen: false,
       suggestedParams: await algokit.getTransactionParams(undefined, localnet.context.algod),
     })
+  }
+
+  const app = async (config: { create: boolean }, creator?: Account) => {
+    const app = new TestingAppClient(
+      {
+        resolveBy: 'id',
+        id: 0,
+      },
+      localnet.context.algod,
+    )
+    const creation = await app.create.bare({
+      sender: creator ?? systemAccount,
+      sendParams: {
+        skipSending: !config.create,
+      },
+    })
+
+    return {
+      app,
+      creation,
+    }
   }
 
   test('Works for receiver', async () => {
@@ -318,6 +340,29 @@ describe('Subscribing using various filters', () => {
         maxAmount: 1,
       },
       extractFromGroupResult(txns, 0),
+    )
+  })
+
+  test('Works for app create', async () => {
+    const { testAccount, algod } = localnet.context
+    const app1 = await app({ create: true })
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          app1.app.callAbi({ value: 'test' }, { sender: testAccount, sendParams: { skipSending: true } }),
+          (await app({ create: false }, testAccount)).creation.transaction,
+        ],
+        signer: testAccount,
+      },
+      algod,
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        appCreate: true,
+      },
+      extractFromGroupResult(txns, 1),
     )
   })
 })

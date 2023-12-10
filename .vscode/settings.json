@@ -21,5 +21,33 @@
   "eslint.options": {
     "extensions": [".ts", ".graphql"]
   },
-  "eslint.workingDirectories": ["./graphql"]
+  "eslint.workingDirectories": ["./graphql"],
+
+  // Python
+  "python.defaultInterpreterPath": "${workspaceFolder}/tests/contract/.venv",
+  "python.analysis.extraPaths": ["${workspaceFolder}/tests/contract"],
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "ruff.enable": true,
+  "ruff.lint.run": "onSave",
+  "ruff.lint.args": ["--config=${workspaceFolder}/tests/contract/pyproject.toml"],
+  "ruff.importStrategy": "fromEnvironment",
+  "ruff.fixAll": true, //lint and fix all files in workspace
+  "ruff.organizeImports": true, //organize imports on save
+  "ruff.codeAction.disableRuleComment": {
+    "enable": true
+  },
+  "ruff.codeAction.fixViolation": {
+    "enable": true
+  },
+
+  "mypy.configFile": "tests/contract/pyproject.toml",
+  // set to empty array to use config from project
+  "mypy.targets": [],
+  "mypy.runUsingActiveInterpreter": true,
+  "mypy.enabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": false
 }
