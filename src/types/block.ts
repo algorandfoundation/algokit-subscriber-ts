@@ -58,6 +58,8 @@ export interface Block {
 export interface BlockTransaction {
   /** The encoded transaction data */
   txn: EncodedTransaction
+  /** The eval deltas for the block */
+  dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
   caid?: number
   /** App ID when an app is created by the transaction */
@@ -68,4 +70,33 @@ export interface BlockTransaction {
   ca?: number
   /** Has genesis id */
   hgi: boolean
+  /** Has genesis hash */
+  hgh?: boolean
+}
+
+/** Eval deltas for a block */
+export interface BlockTransactionEvalDelta {
+  /** The delta of global state, keyed by key */
+  gd: Record<string, BlockValueDelta>
+  /** The delta of local state keyed by account ID offset in [txn.Sender, ...txn.Accounts] and then keyed by key */
+  ld: Record<number, Record<string, BlockValueDelta>>
+  /** Logs */
+  lg: string[]
+  /** Inner transactions */
+  itx?: Omit<BlockTransaction, 'hgi' | 'hgh'>[]
+}
+
+export interface BlockValueDelta {
+  /** DeltaAction is an enum of actions that may be performed when applying a delta to a TEAL key/value store:
+   *   * `1`: SetBytesAction indicates that a TEAL byte slice should be stored at a key
+   *   * `2`: SetUintAction indicates that a Uint should be stored at a key
+   *   * `3`: DeleteAction indicates that the value for a particular key should be deleted
+   **/
+  at: number
+
+  /** Bytes value */
+  bs?: Uint8Array
+
+  /** Uint64 value */
+  ui?: number
 }
