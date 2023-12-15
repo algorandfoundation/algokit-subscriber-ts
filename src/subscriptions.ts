@@ -5,7 +5,7 @@ import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/sea
 import sha512 from 'js-sha512'
 import {
   algodOnCompleteToIndexerOnComplete,
-  getAlgodTransactionFromBlockTransaction,
+  getAlgodTransactionsFromBlockTransaction,
   getIndexerTransactionFromAlgodTransaction,
 } from './transform'
 import type { Block } from './types/block'
@@ -105,7 +105,7 @@ export async function getSubscribedTransactions(
     currentRound,
     subscribedTransactions: catchupTransactions.concat(
       blocks
-        .flatMap((b) => b.block.txns?.map((t) => getAlgodTransactionFromBlockTransaction(t, b.block)).filter((t) => !!t) ?? [])
+        .flatMap((b) => b.block.txns?.flatMap((t) => getAlgodTransactionsFromBlockTransaction(t, b.block)).filter((t) => !!t) ?? [])
         .filter((t) => transactionFilter(filter, t!.createdAssetId, t!.createdAppId)(t!))
         .map((t) =>
           getIndexerTransactionFromAlgodTransaction(

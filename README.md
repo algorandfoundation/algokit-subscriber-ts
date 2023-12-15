@@ -98,7 +98,6 @@ subscriber.start()
 
 ## Roadmap
 
-- Automated test coverage
 - Subscribe to contract events ([ARC-28](https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md))
 - Inner transaction processing
 - Multiple filters

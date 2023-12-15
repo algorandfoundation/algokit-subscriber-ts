@@ -25,20 +25,19 @@ function removeNulls(obj: any) {
  * @param block The block the transaction belongs to
  * @returns The `algosdk.Transaction` object along with key secondary information from the block.
  */
-export function getAlgodTransactionFromBlockTransaction(
+export function getAlgodTransactionsFromBlockTransaction(
   blockTransaction: BlockTransaction,
   block: Block,
-):
-  | {
-      transaction: Transaction
-      createdAssetId?: number
-      createdAppId?: number
-      assetCloseAmount?: number
-      closeAmount?: number
-      block: Block
-      blockOffset: number
-    }
-  | undefined {
+  blockOffset?: number,
+): {
+  transaction: Transaction
+  createdAssetId?: number
+  createdAppId?: number
+  assetCloseAmount?: number
+  closeAmount?: number
+  block: Block
+  blockOffset: number
+}[] {
   const txn = blockTransaction.txn
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
@@ -49,21 +48,29 @@ export function getAlgodTransactionFromBlockTransaction(
   // Unset gen if `hgi` isn't set
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!blockTransaction.hgi) txn.gen = null as any
+  // Unset gen if `hgh` is set to false
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (blockTransaction.hgh === false) txn.gh = null as any
 
   // todo: support these?
   if (txn.type === 'stpf' || txn.type === 'keyreg') {
-    return undefined
+    return []
   }
 
-  return {
-    transaction: Transaction.from_obj_for_encoding(txn),
-    createdAssetId: blockTransaction.caid,
-    createdAppId: blockTransaction.apid,
-    assetCloseAmount: blockTransaction.aca,
-    closeAmount: blockTransaction.ca,
-    block: block,
-    blockOffset: block.txns.indexOf(blockTransaction),
-  }
+  return [
+    {
+      transaction: Transaction.from_obj_for_encoding(txn),
+      createdAssetId: blockTransaction.caid,
+      createdAppId: blockTransaction.apid,
+      assetCloseAmount: blockTransaction.aca,
+      closeAmount: blockTransaction.ca,
+      block: block,
+      blockOffset: blockOffset ?? block.txns.indexOf(blockTransaction),
+    },
+    ...(blockTransaction.dt?.itx?.flatMap((bt) =>
+      getAlgodTransactionsFromBlockTransaction({ ...bt, hgi: false, hgh: false }, block, blockOffset),
+    ) ?? []),
+  ]
 }
 
 /**

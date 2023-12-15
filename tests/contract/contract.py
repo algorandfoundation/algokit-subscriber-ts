@@ -82,6 +82,18 @@ def set_local(
 
 
 @app.external()
+def issue_transfer_to_sender(amount: pt.abi.Uint64) -> pt.Expr:
+    return pt.InnerTxnBuilder.Execute(
+        {
+            pt.TxnField.type_enum: pt.TxnType.Payment,
+            pt.TxnField.amount: amount.get(),
+            pt.TxnField.receiver: pt.Txn.sender(),
+            pt.TxnField.fee: pt.Int(0),
+        }
+    )
+
+
+@app.external()
 def set_box(name: pt.abi.StaticBytes[Literal[4]], value: pt.abi.String) -> pt.Expr:
     return app.state.box[name.get()].set(value.get())
 
