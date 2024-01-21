@@ -2,7 +2,7 @@ import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk, { OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
 import { Buffer } from 'buffer'
-import type { Block, BlockTransaction } from './types/block'
+import type { Block, BlockInnerTransaction, BlockTransaction } from './types/block'
 
 // Recursively remove all null values from object
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,27 +17,112 @@ function removeNulls(obj: any) {
   }
 }
 
+export interface TransactionInBlock {
+  // Raw data
+  blockTransaction: BlockTransaction | BlockInnerTransaction
+  block: Block
+  roundOffset: number
+  roundIndex: number
+  parentTransaction?: BlockTransaction
+  parentTransactionId?: string
+  parentOffset?: number
+
+  // Processed data
+  transaction: Transaction
+  createdAssetId?: number
+  createdAppId?: number
+  assetCloseAmount?: number
+  closeAmount?: number
+}
+
 /**
- * Transform a raw block transaction representation into an `algosdk.Transaction` object.
+ * Processes a block and returns all transactions from it, including inner transactions, with key information populated.
+ * @param block An Algorand block
+ * @returns An array of processed transactions from the block
+ */
+export function getBlockTransactions(block: Block): TransactionInBlock[] {
+  let offset = 0
+  const getOffset = () => offset++
+
+  return block.txns.flatMap((blockTransaction, roundIndex) => {
+    let parentOffset = 0
+    const getParentOffset = () => parentOffset++
+    const parentData = extractTransactionFromBlockTransaction(blockTransaction, block)
+    return [
+      {
+        blockTransaction,
+        block,
+        roundOffset: getOffset(),
+        roundIndex,
+        ...parentData,
+      } as TransactionInBlock,
+      ...(blockTransaction.dt?.itx ?? []).flatMap((innerTransaction) =>
+        getBlockInnerTransactions(
+          innerTransaction,
+          block,
+          blockTransaction,
+          parentData.transaction.txID(),
+          roundIndex,
+          getOffset,
+          getParentOffset,
+        ),
+      ),
+    ]
+  })
+}
+
+function getBlockInnerTransactions(
+  blockTransaction: BlockInnerTransaction,
+  block: Block,
+  parentTransaction: BlockTransaction,
+  parentTransactionId: string,
+  roundIndex: number,
+  getRoundOffset: () => number,
+  getParentOffset: () => number,
+): TransactionInBlock[] {
+  return [
+    {
+      blockTransaction,
+      block,
+      roundIndex,
+      roundOffset: getRoundOffset(),
+      parentOffset: getParentOffset(),
+      parentTransaction,
+      parentTransactionId,
+      ...extractTransactionFromBlockTransaction(blockTransaction, block),
+    },
+    ...(blockTransaction.dt?.itx ?? []).flatMap((innerInnerTransaction) =>
+      getBlockInnerTransactions(
+        innerInnerTransaction,
+        block,
+        parentTransaction,
+        parentTransactionId,
+        roundIndex,
+        getRoundOffset,
+        getParentOffset,
+      ),
+    ),
+  ]
+}
+
+/**
+ * Transform a raw block transaction representation into a `algosdk.Transaction` object and other key transaction data.
  *
  * **Note:** Doesn't currently support `keyreg` (Key Registration) or `stpf` (State Proof) transactions.
  * @param blockTransaction The raw transaction from a block
  * @param block The block the transaction belongs to
  * @returns The `algosdk.Transaction` object along with key secondary information from the block.
  */
-export function getAlgodTransactionsFromBlockTransaction(
-  blockTransaction: BlockTransaction,
+export function extractTransactionFromBlockTransaction(
+  blockTransaction: BlockTransaction | BlockInnerTransaction,
   block: Block,
-  blockOffset?: number,
 ): {
   transaction: Transaction
   createdAssetId?: number
   createdAppId?: number
   assetCloseAmount?: number
   closeAmount?: number
-  block: Block
-  blockOffset: number
-}[] {
+} {
   const txn = blockTransaction.txn
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
@@ -47,30 +132,24 @@ export function getAlgodTransactionsFromBlockTransaction(
   txn.gen = block.gen
   // Unset gen if `hgi` isn't set
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!blockTransaction.hgi) txn.gen = null as any
-  // Unset gen if `hgh` is set to false
+  if ('hgi' in blockTransaction && !blockTransaction.hgi) txn.gen = null as any
+  // Unset gh if `hgh` is set to false
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (blockTransaction.hgh === false) txn.gh = null as any
+  if ('hgh' in blockTransaction && blockTransaction.hgh === false) txn.gh = null as any
 
-  // todo: support these?
+  // todo: support these
   if (txn.type === 'stpf' || txn.type === 'keyreg') {
-    return []
+    throw new Error('TODO')
   }
 
-  return [
-    {
-      transaction: Transaction.from_obj_for_encoding(txn),
-      createdAssetId: blockTransaction.caid,
-      createdAppId: blockTransaction.apid,
-      assetCloseAmount: blockTransaction.aca,
-      closeAmount: blockTransaction.ca,
-      block: block,
-      blockOffset: blockOffset ?? block.txns.indexOf(blockTransaction),
-    },
-    ...(blockTransaction.dt?.itx?.flatMap((bt) =>
-      getAlgodTransactionsFromBlockTransaction({ ...bt, hgi: false, hgh: false }, block, blockOffset),
-    ) ?? []),
-  ]
+  const t = Transaction.from_obj_for_encoding(txn)
+  return {
+    transaction: t,
+    createdAssetId: blockTransaction.caid,
+    createdAppId: blockTransaction.apid,
+    assetCloseAmount: blockTransaction.aca,
+    closeAmount: blockTransaction.ca,
+  }
 }
 
 /**
@@ -116,15 +195,20 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
  * @param closeAmount The amount of microAlgos that were transferred if the transaction had a close
  * @returns The indexer transaction formation (`TransactionResult`)
  */
-export function getIndexerTransactionFromAlgodTransaction(
-  transaction: Transaction,
-  block: Block,
-  blockOffset: number,
-  createdAssetId?: number,
-  createdAppId?: number,
-  assetCloseAmount?: number,
-  closeAmount?: number,
-): TransactionResult {
+export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock): TransactionResult {
+  const {
+    transaction,
+    createdAssetId,
+    blockTransaction,
+    assetCloseAmount,
+    closeAmount,
+    createdAppId,
+    block,
+    roundOffset,
+    parentOffset,
+    parentTransactionId,
+  } = t
+
   if (!transaction.type) {
     throw new Error(`Received no transaction type for transaction ${transaction.txID()}`)
   }
@@ -132,8 +216,9 @@ export function getIndexerTransactionFromAlgodTransaction(
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
+  // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
   return {
-    id: transaction.txID(),
+    id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : transaction.txID(),
     'asset-config-transaction':
       transaction.type === TransactionType.acfg
         ? {
@@ -158,7 +243,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                   clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
                   freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
                 }
-              : 'apar' in block.txns[blockOffset].txn
+              : 'apar' in blockTransaction.txn
                 ? {
                     manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
                     reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
@@ -195,17 +280,17 @@ export function getIndexerTransactionFromAlgodTransaction(
             'approval-program': decoder.decode(transaction.appApprovalProgram),
             'clear-state-program': decoder.decode(transaction.appClearProgram),
             'on-completion': algodOnCompleteToIndexerOnComplete(transaction.appOnComplete),
-            'application-args': transaction.appArgs?.map((a) => decoder.decode(a)),
+            'application-args': transaction.appArgs?.map((a) => Buffer.from(a).toString('base64')),
             'extra-program-pages': transaction.extraPages,
             'foreign-apps': transaction.appForeignApps,
             'foreign-assets': transaction.appForeignAssets,
-            'global-state-schema': block.txns[blockOffset].txn.apgs
+            'global-state-schema': blockTransaction.txn.apgs
               ? {
                   'num-byte-slice': transaction.appGlobalByteSlices,
                   'num-uint': transaction.appGlobalInts,
                 }
               : undefined,
-            'local-state-schema': block.txns[blockOffset].txn.apls
+            'local-state-schema': blockTransaction.txn.apls
               ? {
                   'num-byte-slice': transaction.appLocalByteSlices,
                   'num-uint': transaction.appLocalInts,
@@ -230,7 +315,7 @@ export function getIndexerTransactionFromAlgodTransaction(
     sender: algosdk.encodeAddress(transaction.from.publicKey),
     'confirmed-round': block.rnd,
     'round-time': block.ts,
-    'intra-round-offset': blockOffset,
+    'intra-round-offset': roundOffset,
     'created-asset-index': createdAssetId,
     'genesis-hash': Buffer.from(transaction.genesisHash).toString('base64'),
     'genesis-id': transaction.genesisID,

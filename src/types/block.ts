@@ -55,6 +55,7 @@ export interface Block {
   txns: BlockTransaction[]
 }
 
+/** Data that is returned in a raw Algorand block for a single transaction */
 export interface BlockTransaction {
   /** The encoded transaction data */
   txn: EncodedTransaction
@@ -74,6 +75,9 @@ export interface BlockTransaction {
   hgh?: boolean
 }
 
+/** Data that is returned in a raw Algorand block for a single inner transaction */
+export type BlockInnerTransaction = Omit<BlockTransaction, 'hgi' | 'hgh'>
+
 /** Eval deltas for a block */
 export interface BlockTransactionEvalDelta {
   /** The delta of global state, keyed by key */
@@ -83,7 +87,7 @@ export interface BlockTransactionEvalDelta {
   /** Logs */
   lg: string[]
   /** Inner transactions */
-  itx?: Omit<BlockTransaction, 'hgi' | 'hgh'>[]
+  itx?: BlockInnerTransaction[]
 }
 
 export interface BlockValueDelta {

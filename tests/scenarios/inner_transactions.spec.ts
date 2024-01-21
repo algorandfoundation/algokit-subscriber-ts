@@ -21,11 +21,11 @@ describe('Inner transactions', () => {
     jest.clearAllMocks()
   })
 
-  const subscribeAndVerifyFilter = async (filter: TransactionFilter, ...result: SendTransactionResult[]) => {
+  const subscribeAndVerifyFilter = async (filter: TransactionFilter, ...result: (SendTransactionResult & { id: string })[]) => {
     // Ensure there is another transaction so algod subscription can process something
     await SendXTransactions(1, systemAccount, localnet.context.algod)
     // Wait for indexer to catch up
-    await localnet.context.waitForIndexerTransaction(result[result.length - 1].transaction.txID())
+    await localnet.context.waitForIndexer()
     // Run the subscription twice - once that will pick up using algod and once using indexer
     // this allows the filtering logic for both to be tested
     const [algod, indexer] = await Promise.all([
@@ -51,10 +51,11 @@ describe('Inner transactions', () => {
         localnet.context.indexer,
       ),
     ])
+
     expect(algod.subscribedTransactions.length).toBe(result.length)
-    expect(algod.subscribedTransactions.map((t) => t.id)).toEqual(result.map((r) => r.transaction.txID()))
+    expect(algod.subscribedTransactions.map((t) => t.id)).toEqual(result.map((r) => r.id))
     expect(indexer.subscribedTransactions.length).toBe(result.length)
-    expect(indexer.subscribedTransactions.map((t) => t.id)).toEqual(result.map((r) => r.transaction.txID()))
+    expect(indexer.subscribedTransactions.map((t) => t.id)).toEqual(result.map((r) => r.id))
     return { algod, indexer }
   }
 
@@ -64,9 +65,18 @@ describe('Inner transactions', () => {
     innerTransactionIndex?: number,
   ) => {
     return {
-      transaction: innerTransactionIndex
-        ? Transaction.from_obj_for_encoding(groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn)
-        : groupResult.transactions[index],
+      id:
+        innerTransactionIndex !== undefined
+          ? `${groupResult.transactions[index].txID()}/inner/${innerTransactionIndex + 1}`
+          : groupResult.transactions[index].txID(),
+      transaction:
+        innerTransactionIndex !== undefined
+          ? Transaction.from_obj_for_encoding({
+              ...groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn,
+              gen: groupResult.confirmations![index].txn.txn.gen,
+              gh: groupResult.confirmations![index].txn.txn.gh,
+            })
+          : groupResult.transactions[index],
       confirmation: groupResult.confirmations?.[index],
     }
   }
@@ -150,7 +160,6 @@ describe('Inner transactions', () => {
       },
       algod,
     )
-
     await subscribeAndVerifyFilter(
       {
         type: TransactionType.pay,
