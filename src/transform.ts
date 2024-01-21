@@ -1,4 +1,4 @@
-import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk, { OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
 import { Buffer } from 'buffer'
@@ -195,7 +195,7 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
  * @param closeAmount The amount of microAlgos that were transferred if the transaction had a close
  * @returns The indexer transaction formation (`TransactionResult`)
  */
-export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock): TransactionResult {
+export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock & { getChildOffset?: () => number }): TransactionResult {
   const {
     transaction,
     createdAssetId,
@@ -207,11 +207,16 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock)
     roundOffset,
     parentOffset,
     parentTransactionId,
+    roundIndex,
+    parentTransaction,
   } = t
 
   if (!transaction.type) {
     throw new Error(`Received no transaction type for transaction ${transaction.txID()}`)
   }
+
+  let childOffset = roundOffset
+  const getChildOffset = t.getChildOffset ? t.getChildOffset : () => ++childOffset
 
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
@@ -325,16 +330,63 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock)
     'rekey-to': transaction.reKeyTo ? algosdk.encodeAddress(transaction.reKeyTo.publicKey) : undefined,
     'closing-amount': closeAmount,
     'created-application-index': createdAppId,
+    'auth-addr': blockTransaction.sgnr ? algosdk.encodeAddress(blockTransaction.sgnr) : undefined,
+    'inner-txns': blockTransaction.dt?.itx?.map((ibt) =>
+      getIndexerTransactionFromAlgodTransaction({
+        block,
+        blockTransaction: ibt,
+        roundIndex,
+        roundOffset: getChildOffset(),
+        ...extractTransactionFromBlockTransaction(ibt, block),
+        getChildOffset,
+        parentOffset,
+        parentTransaction,
+        parentTransactionId,
+      }),
+    ),
+    signature:
+      blockTransaction.sig || blockTransaction.lsig || blockTransaction.msig
+        ? {
+            sig: blockTransaction.sig ? Buffer.from(blockTransaction.sig).toString('base64') : undefined,
+            logicsig: blockTransaction.lsig
+              ? {
+                  logic: Buffer.from(blockTransaction.lsig.l).toString('base64'),
+                  args: blockTransaction.lsig.arg ? blockTransaction.lsig.arg.map((a) => Buffer.from(a).toString('base64')) : undefined,
+                  signature: blockTransaction.lsig.sig ? Buffer.from(blockTransaction.lsig.sig).toString('base64') : undefined,
+                  'multisig-signature': blockTransaction.lsig.msig
+                    ? {
+                        version: blockTransaction.lsig.msig.v,
+                        threshold: blockTransaction.lsig.msig.thr,
+                        subsignature: blockTransaction.lsig.msig.subsig.map(
+                          (s) =>
+                            ({
+                              'public-key': Buffer.from(s.pk).toString('base64'),
+                              signature: Buffer.from(s.s).toString('base64'),
+                            }) as MultisigTransactionSubSignature,
+                        ),
+                      }
+                    : undefined,
+                }
+              : undefined,
+            multisig: blockTransaction.msig
+              ? {
+                  version: blockTransaction.msig.v,
+                  threshold: blockTransaction.msig.thr,
+                  subsignature: blockTransaction.msig.subsig.map((s) => ({
+                    'public-key': Buffer.from(s.pk).toString('base64'),
+                    signature: Buffer.from(s.s).toString('base64'),
+                  })),
+                }
+              : undefined,
+          }
+        : undefined,
     // todo: do we need any of these?
-    //"auth-addr"
     //"close-rewards"
-    //"global-state-delta"
-    //"inner-txns"
-    //"keyreg-transaction"
-    //"local-state-delta"
     //"receiver-rewards"
     //"sender-rewards"
+    //"global-state-delta"
+    //"keyreg-transaction"
+    //"local-state-delta"
     //logs
-    //signature
   }
 }

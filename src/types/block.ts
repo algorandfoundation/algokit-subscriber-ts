@@ -55,7 +55,10 @@ export interface Block {
   txns: BlockTransaction[]
 }
 
-/** Data that is returned in a raw Algorand block for a single transaction */
+/** Data that is returned in a raw Algorand block for a single transaction
+ *
+ * @see https://github.com/algorand/go-algorand/blob/master/data/transactions/signedtxn.go#L32
+ */
 export interface BlockTransaction {
   /** The encoded transaction data */
   txn: EncodedTransaction
@@ -73,6 +76,45 @@ export interface BlockTransaction {
   hgi: boolean
   /** Has genesis hash */
   hgh?: boolean
+  /** Transaction ED25519 signature */
+  sig?: Uint8Array
+  /** Logic signature */
+  lsig?: LogicSig
+  /** Transaction multisig signature */
+  msig?: MultisigSig
+  /** The signer, if signing with a different key than the Transaction type `from` property indicates */
+  sgnr?: Uint8Array
+}
+
+/** Data that represents a multisig signature
+ * @see https://github.com/algorand/go-algorand/blob/master/data/transactions/logicsig.go#L32
+ */
+export interface LogicSig {
+  /** Logic sig code */
+  l: Uint8Array
+  /** ED25519 signature for delegated operations */
+  sig?: Uint8Array
+  /** Multisig signature for delegated operations */
+  msig?: MultisigSig
+  /** Arguments passed into the logic signature */
+  arg?: Buffer[]
+}
+
+/** Data that represents a multisig signature
+ * @see https://github.com/algorand/go-algorand/blob/master/crypto/multisig.go#L36
+ */
+export interface MultisigSig {
+  /** Multisig version */
+  v: number
+  /** Multisig threshold */
+  thr: number
+  /** Sub-signatures */
+  subsig: {
+    /** ED25519 public key */
+    pk: Uint8Array
+    /** ED25519 signature */
+    s: Uint8Array
+  }[]
 }
 
 /** Data that is returned in a raw Algorand block for a single inner transaction */
