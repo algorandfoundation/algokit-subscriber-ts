@@ -1,7 +1,8 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Algodv2, Indexer } from 'algosdk'
+import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
 import { getSubscribedTransactions } from '../src'
+import { TransactionInBlock } from '../src/transform'
 import { TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
 
 export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
@@ -89,4 +90,48 @@ export const GetSubscribedTransactionsFromSender = (
     algod,
     indexer,
   )
+}
+
+export function getTransactionInBlockForDiff(transaction: TransactionInBlock) {
+  return {
+    transaction: getTransactionForDiff(transaction.transaction),
+    parentOffset: transaction.parentOffset,
+    parentTransactionId: transaction.parentTransactionId,
+    roundIndex: transaction.roundIndex,
+    roundOffset: transaction.roundOffset,
+    createdAppId: transaction.createdAppId,
+    createdAssetId: transaction.createdAppId,
+    assetCloseAmount: transaction.assetCloseAmount,
+    closeAmount: transaction.closeAmount,
+  }
+}
+
+export function getTransactionForDiff(transaction: Transaction) {
+  const t = {
+    ...transaction,
+    name: undefined,
+    appAccounts: transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)),
+    from: algosdk.encodeAddress(transaction.from.publicKey),
+    to: transaction.to ? algosdk.encodeAddress(transaction.to.publicKey) : undefined,
+    reKeyTo: transaction.reKeyTo ? algosdk.encodeAddress(transaction.reKeyTo.publicKey) : undefined,
+    appArgs: transaction.appArgs?.map((a) => Buffer.from(a).toString('base64')),
+    genesisHash: transaction.genesisHash.toString('base64'),
+    group: transaction.group ? transaction.group.toString('base64') : undefined,
+    lease: transaction.lease && transaction.lease.length ? Buffer.from(transaction.lease).toString('base64') : undefined,
+    note: transaction.note && transaction.note.length ? Buffer.from(transaction.note).toString('base64') : undefined,
+    tag: transaction.tag.toString('base64'),
+  }
+
+  return clearUndefineds(t)
+}
+
+export function clearUndefineds(object: Record<string, unknown>) {
+  Object.keys(object).forEach((k) => {
+    if (object[k] === undefined) {
+      delete object[k]
+    } else if (typeof object[k] === 'object') {
+      clearUndefineds(object[k] as Record<string, unknown>)
+    }
+  })
+  return object
 }

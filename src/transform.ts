@@ -138,7 +138,7 @@ export function extractTransactionFromBlockTransaction(
   if ('hgh' in blockTransaction && blockTransaction.hgh === false) txn.gh = null as any
 
   // todo: support these
-  if (txn.type === 'stpf' || txn.type === 'keyreg') {
+  if (txn.type === 'stpf') {
     throw new Error('TODO')
   }
 
@@ -316,6 +316,18 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
             'close-remainder-to': transaction.closeRemainderTo ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) : undefined,
           }
         : undefined,
+    'keyreg-transaction':
+      transaction.type === TransactionType.keyreg
+        ? {
+            'non-participation': transaction.nonParticipation ?? false,
+            'selection-participation-key': transaction.selectionKey?.toString('base64'),
+            'state-proof-key': transaction.stateProofKey?.toString('base64'),
+            'vote-first-valid': transaction.voteFirst,
+            'vote-key-dilution': transaction.voteKeyDilution,
+            'vote-last-valid': transaction.voteLast,
+            'vote-participation-key': transaction.voteKey?.toString('base64'),
+          }
+        : undefined,
     'first-valid': transaction.firstRound,
     'last-valid': transaction.lastRound,
     'tx-type': transaction.type,
@@ -389,7 +401,6 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
     //"receiver-rewards"
     //"sender-rewards"
     //"global-state-delta"
-    //"keyreg-transaction"
     //"local-state-delta"
     //logs
   }

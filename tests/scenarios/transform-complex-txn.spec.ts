@@ -1,47 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
-import algosdk, { Transaction } from 'algosdk'
 import { getBlocksBulk } from '../../src'
-import { TransactionInBlock, getBlockTransactions } from '../../src/transform'
-import { GetSubscribedTransactions } from '../transactions'
-
-function getTransactionInBlockForDiff(transaction: TransactionInBlock) {
-  return {
-    transaction: getTransactionForDiff(transaction.transaction),
-    parentOffset: transaction.parentOffset,
-    parentTransactionId: transaction.parentTransactionId,
-    roundIndex: transaction.roundIndex,
-    roundOffset: transaction.roundOffset,
-    createdAppId: transaction.createdAppId,
-    createdAssetId: transaction.createdAppId,
-    assetCloseAmount: transaction.assetCloseAmount,
-    closeAmount: transaction.closeAmount,
-  }
-}
-
-function getTransactionForDiff(transaction: Transaction) {
-  const t = {
-    ...transaction,
-    name: undefined,
-    appAccounts: transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)),
-    from: algosdk.encodeAddress(transaction.from.publicKey),
-    to: transaction.to ? algosdk.encodeAddress(transaction.to.publicKey) : undefined,
-    reKeyTo: transaction.reKeyTo ? algosdk.encodeAddress(transaction.reKeyTo.publicKey) : undefined,
-    appArgs: transaction.appArgs?.map((a) => Buffer.from(a).toString('base64')),
-    genesisHash: transaction.genesisHash.toString('base64'),
-    group: transaction.group ? transaction.group.toString('base64') : undefined,
-    lease: transaction.lease && transaction.lease.length ? Buffer.from(transaction.lease).toString('base64') : undefined,
-    note: transaction.note && transaction.note.length ? Buffer.from(transaction.note).toString('base64') : undefined,
-    tag: transaction.tag.toString('base64'),
-  }
-
-  // Clear out undefined's
-  Object.keys(t).forEach((k) => {
-    if ((t as Record<string, unknown>)[k] === undefined) {
-      delete (t as Record<string, unknown>)[k]
-    }
-  })
-  return t
-}
+import { getBlockTransactions } from '../../src/transform'
+import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
 
 describe('Complex transaction with many nested inner transactions', () => {
   const txnId = 'QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q'
@@ -184,10 +144,9 @@ describe('Complex transaction with many nested inner transactions', () => {
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
     expect(txn.id).toBe(`${txnId}/inner/5`)
-    expect(txn).toMatchInlineSnapshot(`
+    expect(clearUndefineds(txn)).toMatchInlineSnapshot(`
       {
         "application-transaction": {
-          "accounts": undefined,
           "application-args": [
             "AA==",
             "Aw==",
@@ -197,23 +156,12 @@ describe('Complex transaction with many nested inner transactions', () => {
           "application-id": 1390675395,
           "approval-program": "",
           "clear-state-program": "",
-          "extra-program-pages": undefined,
-          "foreign-apps": undefined,
           "foreign-assets": [
             1390638935,
           ],
-          "global-state-schema": undefined,
-          "local-state-schema": undefined,
           "on-completion": "update",
         },
-        "asset-config-transaction": undefined,
-        "asset-freeze-transaction": undefined,
-        "asset-transfer-transaction": undefined,
-        "auth-addr": undefined,
-        "closing-amount": undefined,
         "confirmed-round": 35214367,
-        "created-application-index": undefined,
-        "created-asset-index": undefined,
         "fee": 2000,
         "first-valid": 35214365,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
@@ -222,39 +170,23 @@ describe('Complex transaction with many nested inner transactions', () => {
         "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "inner-txns": [
           {
-            "application-transaction": undefined,
-            "asset-config-transaction": undefined,
-            "asset-freeze-transaction": undefined,
             "asset-transfer-transaction": {
               "amount": 536012365,
               "asset-id": 1390638935,
-              "close-amount": undefined,
-              "close-to": undefined,
               "receiver": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
               "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
             },
-            "auth-addr": undefined,
-            "closing-amount": undefined,
             "confirmed-round": 35214367,
-            "created-application-index": undefined,
-            "created-asset-index": undefined,
-            "fee": undefined,
             "first-valid": 35214365,
             "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
             "genesis-id": "mainnet-v1.0",
-            "group": undefined,
             "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
-            "inner-txns": undefined,
             "intra-round-offset": 148,
             "last-valid": 35214369,
             "lease": "",
-            "logs": undefined,
             "note": "",
-            "payment-transaction": undefined,
-            "rekey-to": undefined,
             "round-time": 1705252440,
             "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
-            "signature": undefined,
             "tx-type": "axfer",
           },
         ],
@@ -267,11 +199,8 @@ describe('Complex transaction with many nested inner transactions', () => {
           "PNaUw7oABCHCpmV8I9qBOd6+0ofCvhDCucm/w74lwoJqwqTdrjUCzpYNwqYAAAAAAAAAAAAAAAAABgTFgAAAAB/ypo2AAAAAAAAAAAAAAA91w7sZdAAAAAAC77+9",
         ],
         "note": "",
-        "payment-transaction": undefined,
-        "rekey-to": undefined,
         "round-time": 1705252440,
         "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
-        "signature": undefined,
         "tx-type": "appl",
       }
     `)
