@@ -1,6 +1,55 @@
 import type { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import type { TransactionType } from 'algosdk'
 
+export type SubscribedTransaction = TransactionResult & {
+  parentTransactionId?: string
+  'state-proof-transaction'?: {
+    message: {
+      'block-headers-commitment': string
+      'first-attested-round': number
+      'latest-attested-round': number
+      'ln-proven-weight': number
+      'voters-commitment': string
+    }
+    'state-proof': {
+      'part-proofs': {
+        'hash-factory': { 'hash-type': number }
+        path: string[]
+        'tree-depth': number
+      }
+      'positions-to-reveal': number[]
+      reveals: {
+        participant: {
+          verifier: {
+            commitment: string
+            'key-lifetime': number
+          }
+          weight: number
+        }
+        position: number
+        'sig-slot': {
+          'lower-sig-weight': number
+          signature: {
+            'falcon-signature': string
+            'merkle-array-index': number
+            proof: {
+              'hash-factory': { 'hash-type': number }
+              path: string[]
+              'tree-depth': number
+            }
+            'verifying-key': string
+          }
+        }
+      }[]
+      'salt-version': number
+      'sig-commit': string
+      'sig-proofs': { 'hash-factory': { 'hash-type': number }; path: string[]; 'tree-depth': number }
+      'signed-weight': number
+    }
+    'state-proof-type': number
+  }
+}
+
 /** Parameters to control a single subscription pull/poll. */
 export interface TransactionSubscriptionParams {
   /** The filter to apply to find transactions of interest. */
@@ -93,7 +142,7 @@ export interface TransactionSubscriptionResult {
    * format](https://developer.algorand.org/docs/rest-apis/indexer/#transaction)
    * to represent the data.
    */
-  subscribedTransactions: TransactionResult[]
+  subscribedTransactions: SubscribedTransaction[]
 }
 
 /** Configuration for a subscription */
@@ -135,9 +184,9 @@ export interface SubscriptionConfigEvent<T> {
   filter: TransactionFilter
   /** An optional data mapper if you want the event data to take a certain shape.
    *
-   * If not specified, then the event will receive a `TransactionResult`.
+   * If not specified, then the event will receive a `SubscribedTransaction`.
    */
-  mapper?: (transaction: TransactionResult[]) => Promise<T[]>
+  mapper?: (transaction: SubscribedTransaction[]) => Promise<T[]>
 }
 
 export type TypedAsyncEventListener<T> = (event: T, eventName: string | symbol) => Promise<void> | void

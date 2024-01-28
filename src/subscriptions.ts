@@ -6,7 +6,12 @@ import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/sea
 import sha512 from 'js-sha512'
 import { algodOnCompleteToIndexerOnComplete, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from './transform'
 import type { Block } from './types/block'
-import type { TransactionFilter, TransactionSubscriptionParams, TransactionSubscriptionResult } from './types/subscription'
+import type {
+  SubscribedTransaction,
+  TransactionFilter,
+  TransactionSubscriptionParams,
+  TransactionSubscriptionResult,
+} from './types/subscription'
 import { chunkArray, range } from './utils'
 
 /**
@@ -37,7 +42,7 @@ export async function getSubscribedTransactions(
   let algodSyncFromRoundNumber = watermark + 1
   let startRound = algodSyncFromRoundNumber
   let endRound = currentRound
-  const catchupTransactions: TransactionResult[] = []
+  const catchupTransactions: SubscribedTransaction[] = []
   let start = +new Date()
 
   if (currentRound - watermark > maxRoundsToSync) {
@@ -318,7 +323,7 @@ export async function getBlocksBulk(context: { startRound: number; maxRound: num
 }
 
 /** Process an indexer transaction and return that transaction or any of it's inner transactions that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through */
-function getFilteredIndexerTransactions(transaction: TransactionResult, filter: TransactionFilter): TransactionResult[] {
+function getFilteredIndexerTransactions(transaction: TransactionResult, filter: TransactionFilter): SubscribedTransaction[] {
   let parentOffset = 0
   const getParentOffset = () => parentOffset++
 
@@ -326,12 +331,13 @@ function getFilteredIndexerTransactions(transaction: TransactionResult, filter: 
   return transactions.filter(indexerPreFilterInMemory(filter))
 }
 
-function getIndexerInnerTransactions(root: TransactionResult, parent: TransactionResult, offset: () => number): TransactionResult[] {
+function getIndexerInnerTransactions(root: TransactionResult, parent: TransactionResult, offset: () => number): SubscribedTransaction[] {
   return (parent['inner-txns'] ?? []).flatMap((t) => {
     const parentOffset = offset()
     return [
       {
         ...t,
+        parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
         'intra-round-offset': root['intra-round-offset']! + parentOffset + 1,
       },

@@ -1,9 +1,13 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
-import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { Algodv2, Indexer } from 'algosdk'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
-import type { SubscriptionConfig, TransactionSubscriptionResult, TypedAsyncEventListener } from './types/subscription'
+import type {
+  SubscribedTransaction,
+  SubscriptionConfig,
+  TransactionSubscriptionResult,
+  TypedAsyncEventListener,
+} from './types/subscription'
 import { race, sleep } from './utils'
 
 /**
@@ -142,7 +146,7 @@ export class AlgorandSubscriber {
    * @param listener The listener function to invoke with the subscribed event
    * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
-  on<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T>) {
+  on<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T>) {
     this.eventEmitter.on(eventName, listener as AsyncEventListener)
     return this
   }
@@ -159,7 +163,7 @@ export class AlgorandSubscriber {
    * @param listener The listener function to invoke with the subscribed events
    * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
-  onBatch<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T[]>) {
+  onBatch<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T[]>) {
     this.eventEmitter.on(`batch:${eventName}`, listener as AsyncEventListener)
     return this
   }

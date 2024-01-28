@@ -146,3 +146,36 @@ export interface BlockValueDelta {
   /** Uint64 value */
   ui?: number
 }
+
+// https://github.com/algorand/go-algorand-sdk/blob/develop/types/stateproof.go
+export interface StateProof {
+  c: Uint8Array
+  P: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+  pr: number[]
+  r: Record<
+    string,
+    {
+      p: { p: { cmt: Uint8Array; lf: number }; w: number }
+      s: {
+        l?: number
+        s: {
+          idx: number
+          prf: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+          sig: Uint8Array
+          vkey: { k: Uint8Array }
+        }
+      }
+    }
+  >
+  S: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+  w: number
+  v?: number
+}
+
+export interface StateProofMessage {
+  b: Uint8Array
+  f: number
+  l: number
+  P: number
+  v: Uint8Array
+}

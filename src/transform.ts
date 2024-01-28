@@ -1,8 +1,12 @@
-import type { MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { MultisigTransactionSubSignature } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
+import * as msgpack from 'algo-msgpack-with-bigint'
 import algosdk, { OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
 import { Buffer } from 'buffer'
-import type { Block, BlockInnerTransaction, BlockTransaction } from './types/block'
+import base32 from 'hi-base32'
+import sha512 from 'js-sha512'
+import type { Block, BlockInnerTransaction, BlockTransaction, StateProof, StateProofMessage } from './types/block'
+import { SubscribedTransaction } from './types/subscription'
 
 // Recursively remove all null values from object
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,11 +141,6 @@ export function extractTransactionFromBlockTransaction(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ('hgh' in blockTransaction && blockTransaction.hgh === false) txn.gh = null as any
 
-  // todo: support these
-  if (txn.type === 'stpf') {
-    throw new Error('TODO')
-  }
-
   const t = Transaction.from_obj_for_encoding(txn)
   return {
     transaction: t,
@@ -171,6 +170,29 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
             : ApplicationOnComplete.update
 }
 
+function concatArrays(...arrs: ArrayLike<number>[]) {
+  const size = arrs.reduce((sum, arr) => sum + arr.length, 0)
+  const c = new Uint8Array(size)
+
+  let offset = 0
+  for (let i = 0; i < arrs.length; i++) {
+    c.set(arrs[i], offset)
+    offset += arrs[i].length
+  }
+
+  return c
+}
+
+function getTxIdFromBlockTransaction(bt: BlockTransaction) {
+  // Translated from algosdk.Transaction.txID()
+  const ALGORAND_TRANSACTION_LENGTH = 52
+  const encodedMessage = msgpack.encode(bt.txn, { sortKeys: true, ignoreUndefined: true })
+  const tag = Buffer.from('TX')
+  const gh = Buffer.from(concatArrays(tag, encodedMessage))
+  const rawTxId = Buffer.from(sha512.sha512_256.array(gh))
+  return base32.encode(rawTxId).slice(0, ALGORAND_TRANSACTION_LENGTH)
+}
+
 /**
  * Transforms the given `algosdk.Transaction` object into an indexer transaction.
  *
@@ -195,7 +217,9 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
  * @param closeAmount The amount of microAlgos that were transferred if the transaction had a close
  * @returns The indexer transaction formation (`TransactionResult`)
  */
-export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock & { getChildOffset?: () => number }): TransactionResult {
+export function getIndexerTransactionFromAlgodTransaction(
+  t: TransactionInBlock & { getChildOffset?: () => number },
+): SubscribedTransaction {
   const {
     transaction,
     createdAssetId,
@@ -221,9 +245,16 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
+  // The types in algosdk for state proofs are incorrect, so override them
+  const stateProof = transaction.stateProof as StateProof | undefined
+  const stateProofMessage = transaction.stateProofMessage as StateProofMessage | undefined
+  const txId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
+    transaction.type === TransactionType.stpf ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction) : transaction.txID()
+
   // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
   return {
-    id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : transaction.txID(),
+    id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : txId,
+    parentTransactionId,
     'asset-config-transaction':
       transaction.type === TransactionType.acfg
         ? {
@@ -328,10 +359,71 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
             'vote-participation-key': transaction.voteKey?.toString('base64'),
           }
         : undefined,
+    'state-proof-transaction':
+      transaction.type === TransactionType.stpf
+        ? {
+            'state-proof': {
+              'part-proofs': {
+                'hash-factory': {
+                  'hash-type': stateProof!.P.hsh.t,
+                },
+                'tree-depth': stateProof!.P.td,
+                path: stateProof!.P.pth.map((p) => Buffer.from(p).toString('base64')),
+              },
+              'positions-to-reveal': stateProof!.pr,
+              'salt-version': Number(stateProof!.v),
+              'sig-commit': Buffer.from(stateProof!.c).toString('base64'),
+              'sig-proofs': {
+                'hash-factory': {
+                  'hash-type': stateProof!.S.hsh.t,
+                },
+                'tree-depth': stateProof!.S.td,
+                path: stateProof!.S.pth.map((p) => Buffer.from(p).toString('base64')),
+              },
+              'signed-weight': stateProof!.w,
+              reveals: Object.keys(stateProof!.r).map((position) => {
+                const r = stateProof!.r[position]
+                return {
+                  'sig-slot': {
+                    'lower-sig-weight': r.s.l ?? 0,
+                    signature: {
+                      'merkle-array-index': r.s.s.idx,
+                      'falcon-signature': Buffer.from(r.s.s.sig).toString('base64'),
+                      proof: {
+                        'hash-factory': {
+                          'hash-type': r.s.s.prf.hsh.t,
+                        },
+                        'tree-depth': r.s.s.prf.td,
+                        path: r.s.s.prf.pth.map((p) => Buffer.from(p).toString('base64')),
+                      },
+                      'verifying-key': Buffer.from(r.s.s.vkey.k).toString('base64'),
+                    },
+                  },
+                  position: Number(position),
+                  participant: {
+                    weight: r.p.w,
+                    verifier: {
+                      'key-lifetime': r.p.p.lf,
+                      commitment: Buffer.from(r.p.p.cmt).toString('base64'),
+                    },
+                  },
+                }
+              }),
+            },
+            message: {
+              'block-headers-commitment': Buffer.from(stateProofMessage!.b).toString('base64'),
+              'first-attested-round': stateProofMessage!.f,
+              'latest-attested-round': stateProofMessage!.l,
+              'ln-proven-weight': stateProofMessage!.P,
+              'voters-commitment': Buffer.from(stateProofMessage!.v).toString('base64'),
+            },
+            'state-proof-type': Number(transaction.stateProofType),
+          }
+        : undefined,
     'first-valid': transaction.firstRound,
     'last-valid': transaction.lastRound,
     'tx-type': transaction.type,
-    fee: transaction.fee,
+    fee: transaction.fee ?? 0,
     sender: algosdk.encodeAddress(transaction.from.publicKey),
     'confirmed-round': block.rnd,
     'round-time': block.ts,
@@ -402,6 +494,5 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
     //"sender-rewards"
     //"global-state-delta"
     //"local-state-delta"
-    //logs
   }
 }
