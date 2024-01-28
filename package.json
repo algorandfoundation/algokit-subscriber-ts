@@ -104,7 +104,7 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
-    "@algorandfoundation/algokit-utils": "^5.2.2",
+    "@algorandfoundation/algokit-utils": "^5.3.1",
     "algosdk": "^2.7.0"
   },
   "publishConfig": {

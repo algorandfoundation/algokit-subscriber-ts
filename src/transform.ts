@@ -248,17 +248,20 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
                   clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
                   freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
                 }
-              : 'apar' in blockTransaction.txn
+              : 'apar' in blockTransaction.txn && blockTransaction.txn.apar
                 ? {
                     manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
                     reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
                     clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
                     freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
+                    // These parameters are required in the indexer type so setting to empty values
+                    creator: '',
+                    decimals: 0,
+                    total: 0,
                   }
                 : undefined,
           }
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ({} as any),
+        : undefined,
     'asset-transfer-transaction':
       transaction.type === TransactionType.axfer
         ? {
@@ -380,6 +383,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
               : undefined,
           }
         : undefined,
+    logs: blockTransaction.dt?.lg ? blockTransaction.dt.lg.map((l) => Buffer.from(l, 'utf-8').toString('base64')) : undefined,
     // todo: do we need any of these?
     //"close-rewards"
     //"receiver-rewards"
