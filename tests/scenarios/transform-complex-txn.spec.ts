@@ -206,7 +206,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "local-state-schema": undefined,
           "on-completion": "update",
         },
-        "asset-config-transaction": {},
+        "asset-config-transaction": undefined,
         "asset-freeze-transaction": undefined,
         "asset-transfer-transaction": undefined,
         "auth-addr": undefined,
@@ -223,7 +223,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "inner-txns": [
           {
             "application-transaction": undefined,
-            "asset-config-transaction": {},
+            "asset-config-transaction": undefined,
             "asset-freeze-transaction": undefined,
             "asset-transfer-transaction": {
               "amount": 536012365,
@@ -248,6 +248,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "intra-round-offset": 148,
             "last-valid": 35214369,
             "lease": "",
+            "logs": undefined,
             "note": "",
             "payment-transaction": undefined,
             "rekey-to": undefined,
@@ -260,6 +261,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "intra-round-offset": 147,
         "last-valid": 35214369,
         "lease": "",
+        "logs": [
+          "R2hHHwQAAAAAAAYExYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+          "AAAAAAAAYcKgAAAAAB/ypo2AAAAAAAAAAA==",
+          "PNaUw7oABCHCpmV8I9qBOd6+0ofCvhDCucm/w74lwoJqwqTdrjUCzpYNwqYAAAAAAAAAAAAAAAAABgTFgAAAAB/ypo2AAAAAAAAAAAAAAA91w7sZdAAAAAAC77+9",
+        ],
         "note": "",
         "payment-transaction": undefined,
         "rekey-to": undefined,

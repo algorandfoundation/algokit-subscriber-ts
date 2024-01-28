@@ -74,21 +74,21 @@ async function saveDHMTransactions(transactions: TransactionResult[]) {
     if (t['created-asset-index']) {
       assets.push({
         id: t['created-asset-index'],
-        name: t['asset-config-transaction'].params.name!,
-        unit: t['asset-config-transaction'].params['unit-name']!,
-        mediaUrl: t['asset-config-transaction'].params.url!,
+        name: t['asset-config-transaction']!.params!.name!,
+        unit: t['asset-config-transaction']!.params!['unit-name']!,
+        mediaUrl: t['asset-config-transaction']!.params!.url!,
         metadata: getArc69Metadata(t),
         created: new Date(t['round-time']! * 1000).toISOString(),
         lastModified: new Date(t['round-time']! * 1000).toISOString(),
       })
     } else {
-      const asset = assets.find((a) => a.id === t['asset-config-transaction']['asset-id'])
+      const asset = assets.find((a) => a.id === t['asset-config-transaction']!['asset-id'])
       if (!asset) {
         // eslint-disable-next-line no-console
         console.error(t)
-        throw new Error(`Unable to find existing asset data for ${t['asset-config-transaction']['asset-id']}`)
+        throw new Error(`Unable to find existing asset data for ${t['asset-config-transaction']!['asset-id']}`)
       }
-      if (!t['asset-config-transaction'].params) {
+      if (!t['asset-config-transaction']!.params) {
         // Asset was deleted, remove it
         assets.splice(assets.indexOf(asset), 1)
       } else {

@@ -383,6 +383,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock 
               : undefined,
           }
         : undefined,
+    logs: blockTransaction.dt?.lg ? blockTransaction.dt.lg.map((l) => Buffer.from(l, 'utf-8').toString('base64')) : undefined,
     // todo: do we need any of these?
     //"close-rewards"
     //"receiver-rewards"

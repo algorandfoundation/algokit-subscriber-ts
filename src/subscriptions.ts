@@ -1,5 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import * as msgpack from 'algo-msgpack-with-bigint'
 import { Algodv2, Indexer, Transaction, encodeAddress } from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import sha512 from 'js-sha512'
@@ -304,7 +305,10 @@ export async function getBlocksBulk(context: { startRound: number; maxRound: num
     blocks.push(
       ...(await Promise.all(
         chunk.map(async (round) => {
-          return (await client.block(round).do()) as { block: Block }
+          const response = await client.c.get(`/v2/blocks/${round}`, { format: 'msgpack' }, undefined, undefined, false)
+          const body = response.body as Uint8Array
+          const decoded = msgpack.decode(body) as { block: Block }
+          return decoded
         }),
       )),
     )
