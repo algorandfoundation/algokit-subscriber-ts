@@ -121,7 +121,7 @@ export interface TransactionSubscriptionResult {
    * format](https://developer.algorand.org/docs/rest-apis/indexer/#transaction)
    * to represent the data.
    */
-  subscribedTransactions: TransactionResult[]
+  subscribedTransactions: SubscribedTransaction[]
 }
 ```
 

@@ -12,6 +12,8 @@
 - [BlockValueDelta](../interfaces/types_block.BlockValueDelta.md)
 - [LogicSig](../interfaces/types_block.LogicSig.md)
 - [MultisigSig](../interfaces/types_block.MultisigSig.md)
+- [StateProof](../interfaces/types_block.StateProof.md)
+- [StateProofMessage](../interfaces/types_block.StateProofMessage.md)
 
 ### Type Aliases
 
