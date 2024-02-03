@@ -55,9 +55,15 @@ export interface Block {
   txns: BlockTransaction[]
 }
 
+/** Data that is returned in a raw Algorand block for a single transaction
+ *
+ * @see https://github.com/algorand/go-algorand/blob/master/data/transactions/signedtxn.go#L32
+ */
 export interface BlockTransaction {
   /** The encoded transaction data */
   txn: EncodedTransaction
+  /** The eval deltas for the block */
+  dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
   caid?: number
   /** App ID when an app is created by the transaction */
@@ -68,4 +74,108 @@ export interface BlockTransaction {
   ca?: number
   /** Has genesis id */
   hgi: boolean
+  /** Has genesis hash */
+  hgh?: boolean
+  /** Transaction ED25519 signature */
+  sig?: Uint8Array
+  /** Logic signature */
+  lsig?: LogicSig
+  /** Transaction multisig signature */
+  msig?: MultisigSig
+  /** The signer, if signing with a different key than the Transaction type `from` property indicates */
+  sgnr?: Uint8Array
+}
+
+/** Data that represents a multisig signature
+ * @see https://github.com/algorand/go-algorand/blob/master/data/transactions/logicsig.go#L32
+ */
+export interface LogicSig {
+  /** Logic sig code */
+  l: Uint8Array
+  /** ED25519 signature for delegated operations */
+  sig?: Uint8Array
+  /** Multisig signature for delegated operations */
+  msig?: MultisigSig
+  /** Arguments passed into the logic signature */
+  arg?: Buffer[]
+}
+
+/** Data that represents a multisig signature
+ * @see https://github.com/algorand/go-algorand/blob/master/crypto/multisig.go#L36
+ */
+export interface MultisigSig {
+  /** Multisig version */
+  v: number
+  /** Multisig threshold */
+  thr: number
+  /** Sub-signatures */
+  subsig: {
+    /** ED25519 public key */
+    pk: Uint8Array
+    /** ED25519 signature */
+    s: Uint8Array
+  }[]
+}
+
+/** Data that is returned in a raw Algorand block for a single inner transaction */
+export type BlockInnerTransaction = Omit<BlockTransaction, 'hgi' | 'hgh'>
+
+/** Eval deltas for a block */
+export interface BlockTransactionEvalDelta {
+  /** The delta of global state, keyed by key */
+  gd: Record<string, BlockValueDelta>
+  /** The delta of local state keyed by account ID offset in [txn.Sender, ...txn.Accounts] and then keyed by key */
+  ld: Record<number, Record<string, BlockValueDelta>>
+  /** Logs */
+  lg: string[]
+  /** Inner transactions */
+  itx?: BlockInnerTransaction[]
+}
+
+export interface BlockValueDelta {
+  /** DeltaAction is an enum of actions that may be performed when applying a delta to a TEAL key/value store:
+   *   * `1`: SetBytesAction indicates that a TEAL byte slice should be stored at a key
+   *   * `2`: SetUintAction indicates that a Uint should be stored at a key
+   *   * `3`: DeleteAction indicates that the value for a particular key should be deleted
+   **/
+  at: number
+
+  /** Bytes value */
+  bs?: Uint8Array
+
+  /** Uint64 value */
+  ui?: number
+}
+
+// https://github.com/algorand/go-algorand-sdk/blob/develop/types/stateproof.go
+export interface StateProof {
+  c: Uint8Array
+  P: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+  pr: number[]
+  r: Record<
+    string,
+    {
+      p: { p: { cmt: Uint8Array; lf: number }; w: number }
+      s: {
+        l?: number
+        s: {
+          idx: number
+          prf: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+          sig: Uint8Array
+          vkey: { k: Uint8Array }
+        }
+      }
+    }
+  >
+  S: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+  w: number
+  v?: number
+}
+
+export interface StateProofMessage {
+  b: Uint8Array
+  f: number
+  l: number
+  P: number
+  v: Uint8Array
 }

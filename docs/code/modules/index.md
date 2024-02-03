@@ -38,7 +38,7 @@ The blocks
 
 #### Defined in
 
-[subscriptions.ts:264](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L264)
+[subscriptions.ts:303](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L303)
 
 ___
 
@@ -65,4 +65,4 @@ The result of this subscription pull/poll.
 
 #### Defined in
 
-[subscriptions.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L23)
+[subscriptions.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L25)

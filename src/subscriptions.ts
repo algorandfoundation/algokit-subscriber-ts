@@ -1,15 +1,17 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import * as msgpack from 'algo-msgpack-with-bigint'
 import { Algodv2, Indexer, Transaction, encodeAddress } from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import sha512 from 'js-sha512'
-import {
-  algodOnCompleteToIndexerOnComplete,
-  getAlgodTransactionFromBlockTransaction,
-  getIndexerTransactionFromAlgodTransaction,
-} from './transform'
+import { algodOnCompleteToIndexerOnComplete, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from './transform'
 import type { Block } from './types/block'
-import type { TransactionFilter, TransactionSubscriptionParams, TransactionSubscriptionResult } from './types/subscription'
+import type {
+  SubscribedTransaction,
+  TransactionFilter,
+  TransactionSubscriptionParams,
+  TransactionSubscriptionResult,
+} from './types/subscription'
 import { chunkArray, range } from './utils'
 
 /**
@@ -40,7 +42,7 @@ export async function getSubscribedTransactions(
   let algodSyncFromRoundNumber = watermark + 1
   let startRound = algodSyncFromRoundNumber
   let endRound = currentRound
-  const catchupTransactions: TransactionResult[] = []
+  const catchupTransactions: SubscribedTransaction[] = []
   let start = +new Date()
 
   if (currentRound - watermark > maxRoundsToSync) {
@@ -77,6 +79,7 @@ export async function getSubscribedTransactions(
 
         catchupTransactions.push(
           ...(await algokit.searchTransactions(indexer, indexerPreFilter(filter, startRound, algodSyncFromRoundNumber - 1))).transactions
+            .flatMap((t) => getFilteredIndexerTransactions(t, filter))
             .filter(indexerPostFilter(filter))
             .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!),
         )
@@ -105,19 +108,9 @@ export async function getSubscribedTransactions(
     currentRound,
     subscribedTransactions: catchupTransactions.concat(
       blocks
-        .flatMap((b) => b.block.txns?.map((t) => getAlgodTransactionFromBlockTransaction(t, b.block)).filter((t) => !!t) ?? [])
+        .flatMap((b) => getBlockTransactions(b.block))
         .filter((t) => transactionFilter(filter, t!.createdAssetId, t!.createdAppId)(t!))
-        .map((t) =>
-          getIndexerTransactionFromAlgodTransaction(
-            t!.transaction,
-            t!.block,
-            t!.blockOffset,
-            t?.createdAssetId,
-            t?.createdAppId,
-            t?.assetCloseAmount,
-            t?.closeAmount,
-          ),
-        ),
+        .map((t) => getIndexerTransactionFromAlgodTransaction(t)),
     ),
   }
 }
@@ -128,6 +121,7 @@ function indexerPreFilter(
   maxRound: number,
 ): (s: SearchForTransactions) => SearchForTransactions {
   return (s) => {
+    // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
     let filter = s
     if (subscription.sender) {
       filter = filter.address(subscription.sender).addressRole('sender')
@@ -154,6 +148,51 @@ function indexerPreFilter(
       filter = filter.currencyLessThan(subscription.maxAmount + 1)
     }
     return filter.minRound(minRound).maxRound(maxRound)
+  }
+}
+
+function indexerPreFilterInMemory(subscription: TransactionFilter): (t: TransactionResult) => boolean {
+  return (t) => {
+    let result = true
+    if (subscription.sender) {
+      result &&= t.sender === subscription.sender
+    }
+    if (subscription.receiver) {
+      result &&=
+        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].receiver === subscription.receiver) ||
+        (!!t['payment-transaction'] && t['payment-transaction'].receiver === subscription.receiver)
+    }
+    if (subscription.type) {
+      result &&= t['tx-type'] === subscription.type
+    }
+    if (subscription.notePrefix) {
+      result &&= t.note ? Buffer.from(t.note, 'base64').toString('utf-8').startsWith(subscription.notePrefix) : false
+    }
+    if (subscription.appId) {
+      result &&=
+        t['created-application-index'] === subscription.appId ||
+        (!!t['application-transaction'] && t['application-transaction']['application-id'] === subscription.appId)
+    }
+    if (subscription.assetId) {
+      result &&=
+        t['created-asset-index'] === subscription.assetId ||
+        (!!t['asset-config-transaction'] && t['asset-config-transaction']['asset-id'] === subscription.assetId) ||
+        (!!t['asset-freeze-transaction'] && t['asset-freeze-transaction']['asset-id'] === subscription.assetId) ||
+        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction']['asset-id'] === subscription.assetId)
+    }
+
+    if (subscription.minAmount) {
+      result &&=
+        (!!t['payment-transaction'] && t['payment-transaction'].amount >= subscription.minAmount) ||
+        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].amount >= subscription.minAmount)
+    }
+    if (subscription.maxAmount) {
+      result &&=
+        (!!t['payment-transaction'] && t['payment-transaction'].amount <= subscription.maxAmount) ||
+        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].amount <= subscription.maxAmount)
+    }
+
+    return result
   }
 }
 
@@ -219,10 +258,10 @@ function transactionFilter(
       result &&= !!t.note && new TextDecoder().decode(t.note).startsWith(subscription.notePrefix)
     }
     if (subscription.appId) {
-      result &&= t.appIndex === subscription.appId
+      result &&= t.appIndex === subscription.appId || createdAppId === subscription.appId
     }
     if (subscription.assetId) {
-      result &&= t.assetIndex === subscription.assetId
+      result &&= t.assetIndex === subscription.assetId || createdAssetId === subscription.assetId
     }
     if (subscription.minAmount) {
       result &&= t.amount >= subscription.minAmount
@@ -271,11 +310,38 @@ export async function getBlocksBulk(context: { startRound: number; maxRound: num
     blocks.push(
       ...(await Promise.all(
         chunk.map(async (round) => {
-          return (await client.block(round).do()) as { block: Block }
+          const response = await client.c.get(`/v2/blocks/${round}`, { format: 'msgpack' }, undefined, undefined, false)
+          const body = response.body as Uint8Array
+          const decoded = msgpack.decode(body) as { block: Block }
+          return decoded
         }),
       )),
     )
     algokit.Config.logger.debug(`Retrieved ${chunk.length} blocks from round ${chunk[0]} via algod in ${(+new Date() - start) / 1000}s`)
   }
   return blocks
+}
+
+/** Process an indexer transaction and return that transaction or any of it's inner transactions that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through */
+function getFilteredIndexerTransactions(transaction: TransactionResult, filter: TransactionFilter): SubscribedTransaction[] {
+  let parentOffset = 0
+  const getParentOffset = () => parentOffset++
+
+  const transactions = [transaction, ...getIndexerInnerTransactions(transaction, transaction, getParentOffset)]
+  return transactions.filter(indexerPreFilterInMemory(filter))
+}
+
+function getIndexerInnerTransactions(root: TransactionResult, parent: TransactionResult, offset: () => number): SubscribedTransaction[] {
+  return (parent['inner-txns'] ?? []).flatMap((t) => {
+    const parentOffset = offset()
+    return [
+      {
+        ...t,
+        parentTransactionId: root.id,
+        id: `${root.id}/inner/${parentOffset + 1}`,
+        'intra-round-offset': root['intra-round-offset']! + parentOffset + 1,
+      },
+      ...getIndexerInnerTransactions(root, t, offset),
+    ]
+  })
 }

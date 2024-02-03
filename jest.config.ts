@@ -17,5 +17,6 @@ const config: Config.InitialOptions = {
   },
   coveragePathIgnorePatterns: ['tests'],
   testPathIgnorePatterns: ['node_modules'],
+  prettierPath: require.resolve('prettier-2'),
 }
 export default config

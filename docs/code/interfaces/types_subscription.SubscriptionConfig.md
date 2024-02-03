@@ -27,7 +27,7 @@ The set of events to subscribe to / emit
 
 #### Defined in
 
-[types/subscription.ts:108](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L108)
+[types/subscription.ts:157](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L157)
 
 ___
 
@@ -39,7 +39,7 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 #### Defined in
 
-[types/subscription.ts:102](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L102)
+[types/subscription.ts:151](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L151)
 
 ___
 
@@ -51,7 +51,7 @@ The maximum number of rounds to sync at a time; defaults to 500
 
 #### Defined in
 
-[types/subscription.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L106)
+[types/subscription.ts:155](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L155)
 
 ___
 
@@ -71,7 +71,7 @@ The behaviour when the number of rounds to sync is greater than `maxRoundsToSync
 
 #### Defined in
 
-[types/subscription.ts:119](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L119)
+[types/subscription.ts:168](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L168)
 
 ___
 
@@ -83,7 +83,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 #### Defined in
 
-[types/subscription.ts:104](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L104)
+[types/subscription.ts:153](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L153)
 
 ___
 
@@ -103,4 +103,4 @@ its position in the chain
 
 #### Defined in
 
-[types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)
+[types/subscription.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L171)

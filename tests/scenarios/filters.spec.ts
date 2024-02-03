@@ -1,5 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
+import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { beforeEach, describe, test } from '@jest/globals'
 import algosdk, { Account, TransactionType } from 'algosdk'
@@ -363,6 +364,100 @@ describe('Subscribing using various filters', () => {
         appCreate: true,
       },
       extractFromGroupResult(txns, 1),
+    )
+  })
+
+  test('Works for app ID', async () => {
+    const { testAccount, algod } = localnet.context
+    const app1 = await app({ create: true })
+    const app2 = await app({ create: true })
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          app1.app.callAbi({ value: 'test' }, { sender: testAccount, sendParams: { skipSending: true } }),
+          app2.app.callAbi({ value: 'test' }, { sender: testAccount, sendParams: { skipSending: true } }),
+        ],
+        signer: testAccount,
+      },
+      algod,
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        appId: Number(app1.creation.confirmation!.applicationIndex!),
+      },
+      extractFromGroupResult(txns, 0),
+    )
+  })
+
+  test('Works for on-complete', async () => {
+    const { testAccount, algod } = localnet.context
+    const app1 = await app({ create: true })
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          app1.app.callAbi({ value: 'test' }, { sender: testAccount, sendParams: { skipSending: true } }),
+          app1.app.optIn.optIn({}, { sender: testAccount, sendParams: { skipSending: true } }),
+        ],
+        signer: testAccount,
+      },
+      algod,
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        appOnComplete: ApplicationOnComplete.optin,
+      },
+      extractFromGroupResult(txns, 1),
+    )
+  })
+
+  test('Works for method signature', async () => {
+    const { testAccount, algod } = localnet.context
+    const app1 = await app({ create: true })
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          app1.app.callAbi({ value: 'test' }, { sender: testAccount, sendParams: { skipSending: true } }),
+          app1.app.optIn.optIn({}, { sender: testAccount, sendParams: { skipSending: true } }),
+        ],
+        signer: testAccount,
+      },
+      algod,
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        methodSignature: 'opt_in()void',
+      },
+      extractFromGroupResult(txns, 1),
+    )
+  })
+
+  test('Works for app args', async () => {
+    const { testAccount, algod } = localnet.context
+    const app1 = await app({ create: true })
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          app1.app.callAbi({ value: 'test1' }, { sender: testAccount, sendParams: { skipSending: true } }),
+          app1.app.callAbi({ value: 'test2' }, { sender: testAccount, sendParams: { skipSending: true } }),
+        ],
+        signer: testAccount,
+      },
+      algod,
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        // ARC-4 string has first 2 bytes with length of the string so slice them off before comparing
+        appCallArgumentsMatch: (args) => !!args && Buffer.from(args[1].slice(2)).toString('utf-8') === 'test1',
+      },
+      extractFromGroupResult(txns, 0),
     )
   })
 })

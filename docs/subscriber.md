@@ -70,7 +70,7 @@ export interface SubscriptionConfigEvent<T> {
    *
    * If not specified, then the event will receive a `TransactionResult`.
    */
-  mapper?: (transaction: TransactionResult[]) => Promise<T[]>
+  mapper?: (transaction: SubscribedTransaction[]) => Promise<T[]>
 }
 ```
 
@@ -90,7 +90,7 @@ You can do this via the `on` and `onBatch` methods:
    * @param eventName The name of the event to subscribe to
    * @param listener The listener function to invoke with the subscribed event
    */
-  on<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T>){}
+  on<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T>){}
 
   /**
    * Register an event handler to run on all instances of the given event name
@@ -103,7 +103,7 @@ You can do this via the `on` and `onBatch` methods:
    * @param eventName The name of the event to subscribe to
    * @param listener The listener function to invoke with the subscribed events
    */
-  onBatch<T = TransactionResult>(eventName: string, listener: TypedAsyncEventListener<T[]>){}
+  onBatch<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T[]>){}
 ```
 
 The `TypedAsyncEventListener` type is defined as:
@@ -118,13 +118,13 @@ When you define an event listener it will be called, one-by-one (and awaited) in
 
 If you call `onBatch` it will be called first, with the full set of transactions that were found in the current poll (0 or more). Following that, each transaction in turn will then be passed to the listener(s) that subscribed with `on` for that event.
 
-The default type that will be received is a `TransactionResult`, which can be imported like so from [AlgoKit Utils](https://github.com/algorandfoundation/algokit-utils-ts):
+The default type that will be received is a `SubscribedTransaction`, which can be imported like so:
 
 ```typescript
-import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
 ```
 
-It's the [indexer `TransactionResult` type](https://developer.algorand.org/docs/rest-apis/indexer/#transaction). Even if you aren't using indexer, this is the type that will be returned. We process the manual block data and transform it into this type. This is because it's a convenient type that contains all of the useful data from a transaction, including the transaction ID.
+It's a superset of the [indexer `TransactionResult` type](https://developer.algorand.org/docs/rest-apis/indexer/#transaction). Even if you aren't using indexer, this is the type that will be returned because it's a convenient and comprehensive type that has all the data you would want about a transaction including the transaction ID.
 
 ## Poll the chain
 
