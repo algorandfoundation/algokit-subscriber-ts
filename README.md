@@ -1,10 +1,48 @@
 # Algorand transaction subscription / indexing
 
-This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism.
+This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism. It allows you to quickly create Node.js or JavaScript services that follow or subscribe to the Algorand Blockchain.
 
 > npm install @algorandfoundation/algokit-subscriber
 
 [Documentation](./docs/README.md)
+
+## Quick start
+
+```typescript
+// Create subscriber
+const subscriber = new AlgorandSubscriber(
+  {
+    /* ... options (use intellisense to explore) */
+  },
+  algod,
+  optionalIndexer,
+)
+
+// Set up subscription(s)
+subscriber.on('eventNameFromOptions', async (transaction) => {
+  // ...
+})
+//...
+
+// Either: Start the subscriber (if in long-running process)
+subscriber.start()
+
+// OR: Poll the subscriber (if in cron job / periodic lambda)
+subscriber.pollOnce()
+```
+
+## Key features
+
+- **Notification _and_ indexing** - You have fine-grained control over the syncing behaviour and can control the number of rounds to sync at a time, the pattern of syncing i.e. start from the beginning of the chain, or start from the tip; drop stale records if your service can't keep up or keep syncing from where you are up to; etc.
+- **Low latency processing** - When your service has caught up to the tip of the chain it can optionally wait for new rounds so you have a low latency reaction to a new round occurring
+- **Extensive subscription filtering** - You can filter by transaction type, sender, receiver, note prefix, apps (ID, creation, on complete, ARC-4 method signature, call arguments, ARC-28 events), assets (ID, creation, amount transferred range), transfers (amount transferred range)
+- **Watermarking and resilience** - You can create reliable syncing / indexing services through a simple round watermarking capability that allows you to create resilient syncing services that can recover from an outage
+- **ARC-28 event subscription support** - You can subscribe to ARC-28 events for a smart contract, similar to how you can [subscribe to events in Ethereum](https://docs.web3js.org/guides/events_subscriptions/)
+- **First-class inner transaction support** - Your filter will find arbitrarily nested inner transactions and return that transaction (indexer can't do this!)
+- **State-proof support** - You can subscribe to state proof transactions
+- **Simple programming model** - It's really easy to use and consume through easy to use, type-safe TypeScript methods and objects and subscribed transactions have a comprehensive and familiar model type with all relevant/useful information about that transaction (including things like transaction id, round number, created asset/app id, app logs, etc.) modelled on the indexer data model (which is used regardless of whether the transactions come from indexer or algod so it's a consistent experience)
+- **Easy to deploy** - You have full control over how you want to deploy and use the subscriber; it will work with whatever persistence (e.g. sql, no-sql, etc.), queuing/messaging (e.g. queues, topics, buses, web hooks, web sockets) and compute (e.g. serverless periodic lambdas, continually running containers, virtual machines, etc.) services you want to use
+- **Fast initial index** - There is an indexer catch up mode that allows you to use indexer to catch up to the tip of the chain in seconds or minutes rather than days; alternatively, if you prefer to just use algod and not indexer that option is available too!
 
 ## Examples
 
