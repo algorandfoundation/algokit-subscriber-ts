@@ -437,6 +437,29 @@ describe('Subscribing using various filters', () => {
     )
   })
 
+  test('Works for method signatures', async () => {
+    const { testAccount, algod } = localnet.context
+    const app1 = await app({ create: true })
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          app1.app.callAbi({ value: 'test' }, { sender: testAccount, sendParams: { skipSending: true } }),
+          app1.app.optIn.optIn({}, { sender: testAccount, sendParams: { skipSending: true } }),
+        ],
+        signer: testAccount,
+      },
+      algod,
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        methodSignatures: ['opt_in()void'],
+      },
+      extractFromGroupResult(txns, 1),
+    )
+  })
+
   test('Works for app args', async () => {
     const { testAccount, algod } = localnet.context
     const app1 = await app({ create: true })
