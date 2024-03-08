@@ -454,7 +454,7 @@ describe('Subscribing using various filters', () => {
     await subscribeAndVerifyFilter(
       {
         sender: testAccount.addr,
-        methodSignatures: ['opt_in()void'],
+        methodSignatures: ['opt_in()void', 'madeUpMethod()void'],
       },
       extractFromGroupResult(txns, 1),
     )
