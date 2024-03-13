@@ -1,6 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import * as msgpack from 'algo-msgpack-with-bigint'
+import * as msgpack from 'algorand-msgpack'
 import { Algodv2, Indexer, Transaction, encodeAddress } from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import sha512 from 'js-sha512'
@@ -312,7 +312,15 @@ export async function getBlocksBulk(context: { startRound: number; maxRound: num
         chunk.map(async (round) => {
           const response = await client.c.get(`/v2/blocks/${round}`, { format: 'msgpack' }, undefined, undefined, false)
           const body = response.body as Uint8Array
-          const decoded = msgpack.decode(body) as { block: Block }
+          const decodedWithMap = msgpack.decode(body, {
+            intMode: msgpack.IntMode.AS_ENCODED,
+            useMap: true,
+            rawBinaryStringValues: true,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          }) as Map<any, any>
+          const decoded = blockMapToObject(decodedWithMap) as {
+            block: Block
+          }
           return decoded
         }),
       )),
@@ -320,6 +328,33 @@ export async function getBlocksBulk(context: { startRound: number; maxRound: num
     algokit.Config.logger.debug(`Retrieved ${chunk.length} blocks from round ${chunk[0]} via algod in ${(+new Date() - start) / 1000}s`)
   }
   return blocks
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function blockMapToObject(object: Map<any, any>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: { [key: string]: any } = {}
+  const decoder = new TextDecoder()
+  for (const [key, value] of object) {
+    if (key === 'r' && value instanceof Map) {
+      // State proof transactions have a property `r` with a map with numeric keys that must stay intact
+      const rMap = new Map()
+      for (const [k, v] of value) {
+        rMap.set(k, v instanceof Map ? blockMapToObject(v) : v)
+      }
+      result[key] = rMap
+    } else if (value instanceof Map) {
+      result[key] = blockMapToObject(value)
+    } else if (value instanceof Uint8Array) {
+      // The following have UTF-8 values
+      result[key] = ['gen', 'proto', 'txn256', 'type', 'an', 'un', 'au'].includes(key) ? decoder.decode(value) : value
+    } else if (value instanceof Array) {
+      result[key] = value.map((v) => (v instanceof Map ? blockMapToObject(v) : v))
+    } else {
+      result[key] = value
+    }
+  }
+  return result
 }
 
 /** Process an indexer transaction and return that transaction or any of it's inner transactions that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through */

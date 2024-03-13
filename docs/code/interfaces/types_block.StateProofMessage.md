@@ -18,7 +18,7 @@
 
 ### P
 
-• **P**: `number`
+• **P**: `bigint`
 
 #### Defined in
 
