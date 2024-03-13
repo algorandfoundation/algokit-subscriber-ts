@@ -222,6 +222,16 @@ function indexerPostFilter(subscription: TransactionFilter): (t: TransactionResu
         !!t['application-transaction']['application-args'] &&
         t['application-transaction']['application-args'][0] === getMethodSelectorBase64(subscription.methodSignature)
     }
+    if (subscription.methodSignatures) {
+      subscription.methodSignatures.filter(
+        (method) =>
+          !!t['application-transaction'] &&
+          !!t['application-transaction']['application-args'] &&
+          t['application-transaction']['application-args'][0] === getMethodSelectorBase64(method),
+      ).length > 0
+        ? (result &&= true)
+        : (result &&= false)
+    }
     if (subscription.appCallArgumentsMatch) {
       result &&=
         !!t['application-transaction'] &&
@@ -286,6 +296,13 @@ function transactionFilter(
     }
     if (subscription.methodSignature) {
       result &&= !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(subscription.methodSignature)
+    }
+    if (subscription.methodSignatures) {
+      subscription.methodSignatures.filter(
+        (method) => !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(method),
+      ).length > 0
+        ? (result &&= true)
+        : (result &&= false)
     }
     if (subscription.appCallArgumentsMatch) {
       result &&= subscription.appCallArgumentsMatch(t.appArgs)
