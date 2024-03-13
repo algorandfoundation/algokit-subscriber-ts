@@ -22,7 +22,7 @@ https://github.com/algorand/go-algorand/blob/master/crypto/multisig.go#L36
 
 ### subsig
 
-• **subsig**: \{ `pk`: `Uint8Array` ; `s`: `Uint8Array`  }[]
+• **subsig**: \{ `pk`: `Uint8Array` ; `s?`: `Uint8Array`  }[]
 
 Sub-signatures
 

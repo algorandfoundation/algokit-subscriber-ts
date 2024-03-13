@@ -113,7 +113,7 @@ export interface MultisigSig {
     /** ED25519 public key */
     pk: Uint8Array
     /** ED25519 signature */
-    s: Uint8Array
+    s?: Uint8Array
   }[]
 }
 
@@ -127,7 +127,7 @@ export interface BlockTransactionEvalDelta {
   /** The delta of local state keyed by account ID offset in [txn.Sender, ...txn.Accounts] and then keyed by key */
   ld: Record<number, Record<string, BlockValueDelta>>
   /** Logs */
-  lg: string[]
+  lg: Uint8Array[]
   /** Inner transactions */
   itx?: BlockInnerTransaction[]
 }
@@ -152,12 +152,12 @@ export interface StateProof {
   c: Uint8Array
   P: { hsh: { t: number }; pth: Uint8Array[]; td: number }
   pr: number[]
-  r: Record<
-    string,
+  r: Map<
+    number,
     {
-      p: { p: { cmt: Uint8Array; lf: number }; w: number }
+      p: { p: { cmt: Uint8Array; lf: number }; w: bigint }
       s: {
-        l?: number
+        l?: bigint
         s: {
           idx: number
           prf: { hsh: { t: number }; pth: Uint8Array[]; td: number }
@@ -168,7 +168,7 @@ export interface StateProof {
     }
   >
   S: { hsh: { t: number }; pth: Uint8Array[]; td: number }
-  w: number
+  w: bigint
   v?: number
 }
 
@@ -176,6 +176,6 @@ export interface StateProofMessage {
   b: Uint8Array
   f: number
   l: number
-  P: number
+  P: bigint
   v: Uint8Array
 }

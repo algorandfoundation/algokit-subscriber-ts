@@ -2097,7 +2097,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     `)
   })
 
-  it.skip('Can have an inner transaction subscribed correctly from algod', async () => {
+  it('Can have an inner transaction subscribed correctly from algod', async () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filter: {
@@ -2122,7 +2122,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "first-valid": 35600002,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",
-        "id": "R6RXYKV6TPIGLCX3P7OEIVGJL25AEIFITIDUNKZNUYLP356FNKVA",
+        "id": "G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ",
         "intra-round-offset": 1,
         "last-valid": 35601002,
         "lease": "",

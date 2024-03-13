@@ -55,7 +55,7 @@ ___
 
 ### lg
 
-• **lg**: `string`[]
+• **lg**: `Uint8Array`[]
 
 Logs
 

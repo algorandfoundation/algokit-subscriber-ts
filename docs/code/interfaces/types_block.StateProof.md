@@ -78,7 +78,7 @@ ___
 
 ### r
 
-• **r**: `Record`\<`string`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number`  } ; `w`: `number`  } ; `s`: \{ `l?`: `number` ; `s`: \{ `idx`: `number` ; `prf`: \{ `hsh`: \{ `t`: `number`  } ; `pth`: `Uint8Array`[] ; `td`: `number`  } ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
+• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `number` ; `prf`: \{ `hsh`: \{ `t`: `number`  } ; `pth`: `Uint8Array`[] ; `td`: `number`  } ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
 
 #### Defined in
 
@@ -98,7 +98,7 @@ ___
 
 ### w
 
-• **w**: `number`
+• **w**: `bigint`
 
 #### Defined in
 

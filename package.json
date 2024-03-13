@@ -103,6 +103,10 @@
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.2.2"
   },
+  "dependencies": {
+    "algorand-msgpack": "^1.0.1",
+    "buffer": "^6.0.3"
+  },
   "peerDependencies": {
     "@algorandfoundation/algokit-utils": "^5.5.1",
     "algosdk": "^2.7.0"
@@ -168,8 +172,5 @@
       ],
       "@semantic-release/github"
     ]
-  },
-  "dependencies": {
-    "buffer": "^6.0.3"
   }
 }
