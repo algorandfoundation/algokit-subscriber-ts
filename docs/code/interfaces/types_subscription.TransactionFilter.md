@@ -18,6 +18,7 @@ Specify a filter to apply to find transactions of interest.
 - [assetId](types_subscription.TransactionFilter.md#assetid)
 - [maxAmount](types_subscription.TransactionFilter.md#maxamount)
 - [methodSignature](types_subscription.TransactionFilter.md#methodsignature)
+- [methodSignatures](types_subscription.TransactionFilter.md#methodsignatures)
 - [minAmount](types_subscription.TransactionFilter.md#minamount)
 - [notePrefix](types_subscription.TransactionFilter.md#noteprefix)
 - [receiver](types_subscription.TransactionFilter.md#receiver)
@@ -48,7 +49,7 @@ Filter to app transactions that meet the given app arguments predicate.
 
 #### Defined in
 
-[types/subscription.ts:125](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L125)
+[types/subscription.ts:127](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L127)
 
 ___
 
@@ -135,6 +136,18 @@ the given method signature as the first app argument.
 #### Defined in
 
 [types/subscription.ts:123](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L123)
+
+___
+
+### methodSignatures
+
+• `Optional` **methodSignatures**: `string`[]
+
+Filter to app transactions that match one of the given ARC-0004 method selectors as the first app argument.
+
+#### Defined in
+
+[types/subscription.ts:125](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L125)
 
 ___
 

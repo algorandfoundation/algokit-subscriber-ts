@@ -30,7 +30,7 @@ Name / identifier to uniquely describe the event
 
 #### Defined in
 
-[types/subscription.ts:182](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L182)
+[types/subscription.ts:184](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L184)
 
 ___
 
@@ -42,7 +42,7 @@ The transaction filter that determines if the event has occurred
 
 #### Defined in
 
-[types/subscription.ts:184](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L184)
+[types/subscription.ts:186](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L186)
 
 ___
 
@@ -70,4 +70,4 @@ If not specified, then the event will receive a `SubscribedTransaction`.
 
 #### Defined in
 
-[types/subscription.ts:189](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L189)
+[types/subscription.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L191)
