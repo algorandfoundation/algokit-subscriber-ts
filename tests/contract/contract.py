@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, TypeAlias
 
 import beaker
 import pyteal as pt
@@ -124,3 +124,39 @@ def delete() -> pt.Expr:
 @app.opt_in
 def opt_in() -> pt.Expr:
     return pt.Approve()
+
+
+@app.external()
+def emitSwapped(a: pt.abi.Uint64, b: pt.abi.Uint64) -> pt.Expr:
+    return pt.Seq(
+        # 4 byte prefix for this method selector is 1ccbd925 (hex) per https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#reference-implementation
+        pt.Log(pt.Concat(pt.MethodSignature("Swapped(uint64,uint64)"), pt.Itob(a.get()), pt.Itob(b.get()))),
+        pt.Approve(),
+    )
+
+
+@app.external()
+def emitSwappedTwice(a: pt.abi.Uint64, b: pt.abi.Uint64) -> pt.Expr:
+    return pt.Seq(
+        pt.Log(pt.Concat(pt.MethodSignature("Swapped(uint64,uint64)"), pt.Itob(a.get()), pt.Itob(b.get()))),
+        pt.Log(pt.Concat(pt.MethodSignature("Swapped(uint64,uint64)"), pt.Itob(b.get()), pt.Itob(a.get()))),
+        pt.Approve(),
+    )
+
+
+DynamicIntArray: TypeAlias = pt.abi.DynamicArray[pt.abi.Uint32]
+
+
+class ComplexEvent(pt.abi.NamedTuple):
+    array: pt.abi.Field[DynamicIntArray]
+    int: pt.abi.Field[pt.abi.Uint64]
+
+
+@app.external()
+def emitComplex(a: pt.abi.Uint64, b: pt.abi.Uint64, array: pt.abi.DynamicArray[pt.abi.Uint32]) -> pt.Expr:
+    return pt.Seq(
+        pt.Log(pt.Concat(pt.MethodSignature("Swapped(uint64,uint64)"), pt.Itob(a.get()), pt.Itob(b.get()))),
+        (event := ComplexEvent()).set(array, b),
+        pt.Log(pt.Concat(pt.MethodSignature("Complex(uint32[],uint64)"), event._stored_value.load())),
+        pt.Approve(),
+    )

@@ -39,7 +39,6 @@ process.on('uncaughtException', (e) => console.error(e))
       },
     },
     algod,
-    indexer,
   )
   subscriber.on('usdc', (transfer) => {
     // eslint-disable-next-line no-console

@@ -58,6 +58,7 @@ export class AlgorandSubscriber {
     const pollResult = await getSubscribedTransactions(
       {
         filter: this.subscription.events[0].filter,
+        arc28Events: this.subscription.arc28Events,
         watermark,
         maxRoundsToSync: this.subscription.maxRoundsToSync ?? 500,
         syncBehaviour: this.subscription.syncBehaviour,

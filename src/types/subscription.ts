@@ -1,8 +1,72 @@
 import type { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import type { TransactionType } from 'algosdk'
+import type { ABIValue, TransactionType } from 'algosdk'
 
+/**
+ * The definition of metadata for an ARC-28 event per https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#event.
+ */
+export interface Arc28Event {
+  /** The name of the event */
+  name: string
+  /** Optional, user-friendly description for the event */
+  desc?: string
+  /** The arguments of the event, in order */
+  args: Array<{
+    /** The type of the argument */
+    type: string
+    /** Optional, user-friendly name for the argument */
+    name?: string
+    /** Optional, user-friendly description for the argument */
+    desc?: string
+  }>
+}
+
+/** An ARC-28 event to be processed */
+export interface Arc28EventToProcess {
+  /** The name of the ARC-28 event group the event belongs to */
+  groupName: string
+  /** The name of the ARC-28 event that was triggered */
+  eventName: string
+  /** The signature of the event e.g. `EventName(type1,type2)` */
+  eventSignature: string
+  /** The 4-byte hex prefix for the event */
+  eventPrefix: string
+  /** The ARC-28 definition of the event */
+  eventDefinition: Arc28Event
+}
+
+/** An emitted ARC-28 event extracted from an app call log. */
+export interface EmittedArc28Event extends Arc28EventToProcess {
+  /** The ordered arguments extracted from the event that was emitted */
+  args: ABIValue[]
+  /** The named arguments extracted from the event that was emitted (where the arguments had a name defined) */
+  argsByName: Record<string, ABIValue>
+}
+
+/** Specifies a group of ARC-28 event definitions along with instructions for when to attempt to process the events. */
+export interface Arc28EventGroup {
+  /** The name to designate for this group of events. */
+  groupName: string
+  /** Optional list of app IDs that this event should apply to */
+  processForAppIds?: number[]
+  /** Optional predicate to indicate if these ARC-28 events should be processed for the given transaction */
+  processTransaction?: (transaction: TransactionResult) => boolean
+  /** Whether or not to silently (with warning log) continue if an error is encountered processing the ARC-28 event data; default = false */
+  continueOnError?: boolean
+  /** The list of ARC-28 event definitions */
+  events: Arc28Event[]
+}
+
+/** The common model used to expose a transaction that is returned from a subscription.
+ *
+ * Substantively, based on the Indexer `TransactionResult` model with some modifications to:
+ * * Add the `parentTransactionId` field so inner transactions have a reference to their parent.
+ * * Add correct types for state proof transactions.
+ * * Add ARC-28 events.
+ */
 export type SubscribedTransaction = TransactionResult & {
   parentTransactionId?: string
+  'inner-txns'?: SubscribedTransaction[]
+  arc28Events?: EmittedArc28Event[]
   'state-proof-transaction'?: {
     message: {
       'block-headers-commitment': string
@@ -54,6 +118,8 @@ export type SubscribedTransaction = TransactionResult & {
 export interface TransactionSubscriptionParams {
   /** The filter to apply to find transactions of interest. */
   filter: TransactionFilter
+  /** Any ARC-28 event definitions to process from app call logs */
+  arc28Events?: Arc28EventGroup[]
   /** The current round watermark that transactions have previously been synced to.
    *
    * Persist this value as you process transactions processed from this method
@@ -125,6 +191,10 @@ export interface TransactionFilter {
   methodSignatures?: string[]
   /** Filter to app transactions that meet the given app arguments predicate. */
   appCallArgumentsMatch?: (appCallArguments?: Uint8Array[]) => boolean
+  /** Filter to app transactions that emit the given ARC-28 events.
+   * Note: the definitions for these events must be passed in to the subscription config via `arc28Events`.
+   */
+  arc28Events?: { groupName: string; eventName: string }[]
 }
 
 /** The result of a single subscription pull/poll. */
@@ -155,6 +225,8 @@ export interface SubscriptionConfig {
   waitForBlockWhenAtTip?: boolean
   /** The maximum number of rounds to sync at a time; defaults to 500 */
   maxRoundsToSync?: number
+  /** Any ARC-28 event definitions to process from app call logs */
+  arc28Events?: Arc28EventGroup[]
   /** The set of events to subscribe to / emit */
   events: SubscriptionConfigEvent<unknown>[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:

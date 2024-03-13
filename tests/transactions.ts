@@ -3,7 +3,7 @@ import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/
 import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
 import { getSubscribedTransactions } from '../src'
 import { TransactionInBlock } from '../src/transform'
-import { TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
+import { Arc28EventGroup, TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
 
 export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
   const txns: SendTransactionResult[] = []
@@ -36,11 +36,12 @@ export const GetSubscribedTransactions = (
     watermark?: number
     currentRound?: number
     filter: TransactionFilter
+    arc28Events?: Arc28EventGroup[]
   },
   algod: Algodv2,
   indexer?: Indexer,
 ) => {
-  const { roundsToSync, syncBehaviour, watermark, currentRound, filter } = subscription
+  const { roundsToSync, syncBehaviour, watermark, currentRound, filter, arc28Events } = subscription
 
   if (currentRound !== undefined) {
     const existingStatus = algod.status
@@ -63,6 +64,7 @@ export const GetSubscribedTransactions = (
       maxRoundsToSync: roundsToSync,
       syncBehaviour: syncBehaviour,
       watermark: watermark ?? 0,
+      arc28Events,
     },
     algod,
     indexer,

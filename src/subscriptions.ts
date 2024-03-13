@@ -1,12 +1,20 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
-import { Algodv2, Indexer, Transaction, encodeAddress } from 'algosdk'
+import { ABITupleType, ABIValue, Algodv2, Indexer, TransactionType, encodeAddress } from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
-import sha512 from 'js-sha512'
-import { algodOnCompleteToIndexerOnComplete, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from './transform'
+import sha512, { sha512_256 } from 'js-sha512'
+import {
+  TransactionInBlock,
+  algodOnCompleteToIndexerOnComplete,
+  getBlockTransactions,
+  getIndexerTransactionFromAlgodTransaction,
+} from './transform'
 import type { Block } from './types/block'
 import type {
+  Arc28EventGroup,
+  Arc28EventToProcess,
+  EmittedArc28Event,
   SubscribedTransaction,
   TransactionFilter,
   TransactionSubscriptionParams,
@@ -29,6 +37,23 @@ export async function getSubscribedTransactions(
 ): Promise<TransactionSubscriptionResult> {
   const { watermark, filter, maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
   const currentRound = (await algod.status().do())['last-round'] as number
+
+  const arc28Events = (subscription.arc28Events ?? []).flatMap((g) =>
+    g.events.map((e) => {
+      // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#sample-interpretation-of-event-log-data
+      const eventSignature = `${e.name}(${e.args.map((a) => a.type).join(',')})`
+      const eventHash = sha512_256(eventSignature)
+      const eventPrefix = eventHash.slice(0, 8)
+
+      return {
+        groupName: g.groupName,
+        eventName: e.name,
+        eventSignature,
+        eventPrefix,
+        eventDefinition: e,
+      } satisfies Arc28EventToProcess
+    }),
+  )
 
   if (currentRound <= watermark) {
     return {
@@ -80,7 +105,7 @@ export async function getSubscribedTransactions(
         catchupTransactions.push(
           ...(await algokit.searchTransactions(indexer, indexerPreFilter(filter, startRound, algodSyncFromRoundNumber - 1))).transactions
             .flatMap((t) => getFilteredIndexerTransactions(t, filter))
-            .filter(indexerPostFilter(filter))
+            .filter(indexerPostFilter(filter, arc28Events, subscription.arc28Events ?? []))
             .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!),
         )
 
@@ -106,13 +131,120 @@ export async function getSubscribedTransactions(
     syncedRoundRange: [startRound, endRound],
     newWatermark: endRound,
     currentRound,
-    subscribedTransactions: catchupTransactions.concat(
-      blocks
-        .flatMap((b) => getBlockTransactions(b.block))
-        .filter((t) => transactionFilter(filter, t!.createdAssetId, t!.createdAppId)(t!))
-        .map((t) => getIndexerTransactionFromAlgodTransaction(t)),
-    ),
+    subscribedTransactions: catchupTransactions
+      .concat(
+        blocks
+          .flatMap((b) => getBlockTransactions(b.block))
+          .filter((t) => transactionFilter(filter, arc28Events, subscription.arc28Events ?? [])(t!))
+          .map((t) => getIndexerTransactionFromAlgodTransaction(t)),
+      )
+      .map((t) => processArc28Events(t, arc28Events, subscription.arc28Events ?? [])),
   }
+}
+
+function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: number, transaction: () => TransactionResult) {
+  return (
+    (!group.processForAppIds || group.processForAppIds.includes(appId)) &&
+    // Lazily evaluate transaction so it's only evaluated if needed since creating the transaction object may be expensive if from algod
+    (!group.processTransaction || group.processTransaction(transaction()))
+  )
+}
+
+function processArc28Events(
+  transaction: TransactionResult | SubscribedTransaction,
+  arc28Events: Arc28EventToProcess[],
+  arc28Groups: Arc28EventGroup[],
+): SubscribedTransaction {
+  if (!arc28Events || transaction['tx-type'] !== TransactionType.appl) return transaction
+  const groupsToApply = arc28Groups.filter((g) =>
+    transactionIsInArc28EventGroup(
+      g,
+      transaction['created-application-index'] ?? transaction['application-transaction']?.['application-id'] ?? 0,
+      () => transaction,
+    ),
+  )
+  if (groupsToApply.length === 0) return transaction
+  const eventsToApply = arc28Events.filter((e) => groupsToApply.some((g) => g.groupName === e.groupName))
+  return {
+    ...transaction,
+    arc28Events: extractArc28Events(
+      transaction.id,
+      (transaction.logs ?? []).map((l) => Buffer.from(l, 'base64')),
+      eventsToApply,
+      (groupName) => groupsToApply.find((g) => g.groupName === groupName)!.continueOnError ?? false,
+    ),
+    'inner-txns': transaction['inner-txns']
+      ? transaction['inner-txns'].map((inner) => processArc28Events(inner, arc28Events, arc28Groups))
+      : undefined,
+  }
+}
+
+function hasEmittedMatchingArc28Event(
+  logs: Uint8Array[],
+  allEvents: Arc28EventToProcess[],
+  eventGroups: Arc28EventGroup[],
+  eventFilter: { groupName: string; eventName: string }[],
+  appId: number,
+  transaction: () => TransactionResult,
+): boolean {
+  const potentialEvents = allEvents
+    .filter((e) => eventFilter.some((f) => f.eventName === e.eventName && f.groupName === e.groupName))
+    .filter((e) => transactionIsInArc28EventGroup(eventGroups.find((g) => g.groupName === e.groupName)!, appId, transaction))
+
+  return (
+    logs
+      .filter((log) => log.length > 4)
+      .filter((log) => {
+        const prefix = Buffer.from(log.slice(0, 4)).toString('hex')
+        return potentialEvents.some((e) => e.eventPrefix === prefix)
+      }).length > 0
+  )
+}
+
+function extractArc28Events(
+  transactionId: string,
+  logs: Uint8Array[],
+  events: Arc28EventToProcess[],
+  continueOnError: (groupName: string) => boolean,
+): EmittedArc28Event[] {
+  return logs
+    .filter((log) => log.length > 4)
+    .flatMap((log) => {
+      const prefix = Buffer.from(log.slice(0, 4)).toString('hex')
+      return events
+        .filter((e) => e.eventPrefix === prefix)
+        .map((e) => {
+          try {
+            const args: ABIValue[] = []
+            const argsByName: Record<string, ABIValue> = {}
+
+            const type = ABITupleType.from(`(${e.eventDefinition.args.map((a) => a.type).join(',')})`)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const value = type.decode(Buffer.from(log.slice(4))) as any[]
+
+            e.eventDefinition.args.forEach((a, i) => {
+              args.push(value[i])
+              if (a.name) {
+                argsByName[a.name] = value[i]
+              }
+            })
+
+            return {
+              ...e,
+              args,
+              argsByName,
+            } satisfies EmittedArc28Event
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            if (continueOnError(e.groupName)) {
+              console.warn(`Encountered error while processing ${e.groupName}.${e.eventName} on transaction ${transactionId}:`, error)
+              return undefined
+            }
+            throw error
+          }
+        })
+    })
+    .filter((e) => !!e) as EmittedArc28Event[]
 }
 
 function indexerPreFilter(
@@ -152,6 +284,8 @@ function indexerPreFilter(
 }
 
 function indexerPreFilterInMemory(subscription: TransactionFilter): (t: TransactionResult) => boolean {
+  // This is needed so we can overcome the problem that when indexer matches on an inner transaction it doesn't return that inner transaction,
+  // it returns the parent so we need to re-run these filters in-memory to identify the actual transaction(s) that were matched
   return (t) => {
     let result = true
     if (subscription.sender) {
@@ -196,7 +330,11 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Transact
   }
 }
 
-function indexerPostFilter(subscription: TransactionFilter): (t: TransactionResult) => boolean {
+function indexerPostFilter(
+  subscription: TransactionFilter,
+  arc28Events: Arc28EventToProcess[],
+  arc28EventGroups: Arc28EventGroup[],
+): (t: TransactionResult) => boolean {
   return (t) => {
     let result = true
     if (subscription.assetCreate) {
@@ -237,6 +375,19 @@ function indexerPostFilter(subscription: TransactionFilter): (t: TransactionResu
         !!t['application-transaction'] &&
         subscription.appCallArgumentsMatch(t['application-transaction']['application-args']?.map((a) => Buffer.from(a, 'base64')))
     }
+    if (subscription.arc28Events) {
+      result &&=
+        !!t['application-transaction'] &&
+        !!t.logs &&
+        hasEmittedMatchingArc28Event(
+          t.logs.map((l) => Buffer.from(l, 'base64')),
+          arc28Events,
+          arc28EventGroups,
+          subscription.arc28Events,
+          t['created-application-index'] ?? t['application-transaction']?.['application-id'] ?? 0,
+          () => t,
+        )
+    }
     return result
   }
 }
@@ -249,11 +400,11 @@ function getMethodSelectorBase64(methodSignature: string) {
 
 function transactionFilter(
   subscription: TransactionFilter,
-  createdAssetId?: number,
-  createdAppId?: number,
-): (t: { transaction: Transaction }) => boolean {
+  arc28Events: Arc28EventToProcess[],
+  arc28EventGroups: Arc28EventGroup[],
+): (t: TransactionInBlock) => boolean {
   return (txn) => {
-    const { transaction: t } = txn
+    const { transaction: t, createdAppId, createdAssetId, logs } = txn
     let result = true
     if (subscription.sender) {
       result &&= !!t.from && encodeAddress(t.from.publicKey) === subscription.sender
@@ -303,6 +454,14 @@ function transactionFilter(
       ).length > 0
         ? (result &&= true)
         : (result &&= false)
+    }
+    if (subscription.arc28Events) {
+      result &&=
+        t.type === TransactionType.appl &&
+        !!logs &&
+        hasEmittedMatchingArc28Event(logs, arc28Events, arc28EventGroups, subscription.arc28Events, createdAppId ?? t.appIndex ?? 0, () =>
+          getIndexerTransactionFromAlgodTransaction(txn),
+        )
     }
     if (subscription.appCallArgumentsMatch) {
       result &&= subscription.appCallArgumentsMatch(t.appArgs)

@@ -37,6 +37,7 @@ export interface TransactionInBlock {
   createdAppId?: number
   assetCloseAmount?: number
   closeAmount?: number
+  logs?: Uint8Array[]
 }
 
 /**
@@ -126,6 +127,7 @@ export function extractTransactionFromBlockTransaction(
   createdAppId?: number
   assetCloseAmount?: number
   closeAmount?: number
+  logs?: Uint8Array[]
 } {
   const txn = blockTransaction.txn
 
@@ -148,6 +150,7 @@ export function extractTransactionFromBlockTransaction(
     createdAppId: blockTransaction.apid,
     assetCloseAmount: blockTransaction.aca,
     closeAmount: blockTransaction.ca,
+    logs: blockTransaction.dt?.lg,
   }
 }
 
