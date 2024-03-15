@@ -58,60 +58,18 @@ export interface Arc28EventGroup {
 
 /** The common model used to expose a transaction that is returned from a subscription.
  *
- * Substantively, based on the Indexer `TransactionResult` model with some modifications to:
- * * Add the `parentTransactionId` field so inner transactions have a reference to their parent.
- * * Add correct types for state proof transactions.
- * * Add ARC-28 events.
+ * Substantively, based on the Indexer  [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
+ * * Add the `parentTransactionId` field so inner transactions have a reference to their parent
+ * * Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
+ * * Add emitted ARC-28 events via `arc28Events`
  */
 export type SubscribedTransaction = TransactionResult & {
+  /** The transaction ID of the parent of this transaction (if it's an inner transaction) */
   parentTransactionId?: string
+  /** Inner transactions produced by application execution. */
   'inner-txns'?: SubscribedTransaction[]
+  /** Any ARC-28 events emitted from an app call */
   arc28Events?: EmittedArc28Event[]
-  'state-proof-transaction'?: {
-    message: {
-      'block-headers-commitment': string
-      'first-attested-round': number
-      'latest-attested-round': number
-      'ln-proven-weight': number
-      'voters-commitment': string
-    }
-    'state-proof': {
-      'part-proofs': {
-        'hash-factory': { 'hash-type': number }
-        path: string[]
-        'tree-depth': number
-      }
-      'positions-to-reveal': number[]
-      reveals: {
-        participant: {
-          verifier: {
-            commitment: string
-            'key-lifetime': number
-          }
-          weight: number
-        }
-        position: number
-        'sig-slot': {
-          'lower-sig-weight': number
-          signature: {
-            'falcon-signature': string
-            'merkle-array-index': number
-            proof: {
-              'hash-factory': { 'hash-type': number }
-              path: string[]
-              'tree-depth': number
-            }
-            'verifying-key': string
-          }
-        }
-      }[]
-      'salt-version': number
-      'sig-commit': string
-      'sig-proofs': { 'hash-factory': { 'hash-type': number }; path: string[]; 'tree-depth': number }
-      'signed-weight': number
-    }
-    'state-proof-type': number
-  }
 }
 
 /** Parameters to control a single subscription pull/poll. */
@@ -210,9 +168,9 @@ export interface TransactionSubscriptionResult {
    * subscribed transactions to keep it reliable. */
   newWatermark: number
   /** Any transactions that matched the given filter within
-   * the synced round range. This uses the [indexer transaction
+   * the synced round range. This substantively uses the [indexer transaction
    * format](https://developer.algorand.org/docs/rest-apis/indexer/#transaction)
-   * to represent the data.
+   * to represent the data with some additional fields.
    */
   subscribedTransactions: SubscribedTransaction[]
 }
@@ -238,8 +196,9 @@ export interface SubscriptionConfig {
    *    current watermark is `0` in which case it will start `maxRoundsToSync` back from the tip of the chain.
    *  * `catchup-with-indexer`: Will catch up to `tipOfTheChain - maxRoundsToSync` using indexer (fast) and then
    *    continue with algod.
+   *  * `fail`: Throw an error.
    */
-  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
+  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
   /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
    * its position in the chain */
   watermarkPersistence: {

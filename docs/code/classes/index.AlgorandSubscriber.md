@@ -155,7 +155,7 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L149)
+[subscriber.ts:150](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L150)
 
 ___
 
@@ -192,7 +192,7 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:166](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L166)
+[subscriber.ts:167](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L167)
 
 ___
 
@@ -240,7 +240,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:92](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L92)
+[subscriber.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L93)
 
 ___
 
@@ -264,4 +264,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:135](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L135)
+[subscriber.ts:136](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L136)
