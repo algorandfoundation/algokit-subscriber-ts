@@ -22,6 +22,8 @@ export async function getSubscribedTransactions(
 ): Promise<TransactionSubscriptionResult>
 ```
 
+## TransactionSubscriptionParams
+
 Specifying a subscription requires passing in a `TransactionSubscriptionParams` object, which configures the behaviour:
 
 ```typescript
@@ -29,6 +31,8 @@ Specifying a subscription requires passing in a `TransactionSubscriptionParams` 
 export interface TransactionSubscriptionParams {
   /** The filter to apply to find transactions of interest. */
   filter: TransactionFilter
+  /** Any ARC-28 event definitions to process from app call logs */
+  arc28Events?: Arc28EventGroup[]
   /** The current round watermark that transactions have previously been synced to.
    *
    * Persist this value as you process transactions processed from this method
@@ -66,7 +70,13 @@ export interface TransactionSubscriptionParams {
    **/
   syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
 }
+```
 
+## TransactionFilter
+
+The [`filter` parameter](#transactionsubscriptionparams) allows you to specify the subset of transactions you are interested in:
+
+```typescript
 /** Specify a filter to apply to find transactions of interest. */
 export interface TransactionFilter {
   /** Filter based on the given transaction type. */
@@ -96,10 +106,22 @@ export interface TransactionFilter {
   /** Filter to app transactions that have the given ARC-0004 method selector for
    * the given method signature as the first app argument. */
   methodSignature?: string
+  /** Filter to app transactions that match one of the given ARC-0004 method selectors as the first app argument. */
+  methodSignatures?: string[]
   /** Filter to app transactions that meet the given app arguments predicate. */
   appCallArgumentsMatch?: (appCallArguments?: Uint8Array[]) => boolean
+  /** Filter to app transactions that emit the given ARC-28 events.
+   * Note: the definitions for these events must be passed in to the subscription config via `arc28Events`.
+   */
+  arc28Events?: { groupName: string; eventName: string }[]
 }
 ```
+
+## Arc28EventGroup
+
+The [`arc28Events` parameter](#transactionsubscriptionparams) allows you to define any ARC-28 events that may appear in subscribed transactions so they can either be subscribed to, or be processed and added to the resulting [subscribed transaction object](#subscribedtransaction).
+
+## TransactionSubscriptionResult
 
 The result of calling `getSubscribedTransactions` is a `TransactionSubscriptionResult`:
 
@@ -119,9 +141,59 @@ export interface TransactionSubscriptionResult {
   /** Any transactions that matched the given filter within
    * the synced round range. This uses the [indexer transaction
    * format](https://developer.algorand.org/docs/rest-apis/indexer/#transaction)
-   * to represent the data.
+   * to represent the data with some additional fields.
    */
   subscribedTransactions: SubscribedTransaction[]
+}
+```
+
+## SubscribedTransaction
+
+The common model used to expose a transaction that is returned from a subscription is a `SubscribedTransaction`, which can be imported like so:
+
+```typescript
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
+```
+
+This type is substantively, based on the Indexer [`TransactionResult`](https://github.com/algorandfoundation/algokit-utils-ts/blob/main/src/types/indexer.ts#L77) [model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format. While the indexer type is used, the subscriber itself doesn't have to use indexer - any transactions it retrieves from algod are transformed to this common model type. Beyond the indexer type it has some modifications to:
+
+- Add the `parentTransactionId` field so inner transactions have a reference to their parent
+- Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
+- Add emitted ARC-28 events via `arc28Events`
+
+The definition of the type is:
+
+```typescript
+import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+type SubscribedTransaction = TransactionResult & {
+  /** The transaction ID of the parent of this transaction (if it's an inner transaction) */
+  parentTransactionId?: string
+  /** Inner transactions produced by application execution. */
+  'inner-txns'?: SubscribedTransaction[]
+  /** Any ARC-28 events emitted from an app call */
+  arc28Events?: EmittedArc28Event[]
+}
+
+/** An emitted ARC-28 event extracted from an app call log. */
+export interface EmittedArc28Event extends Arc28EventToProcess {
+  /** The ordered arguments extracted from the event that was emitted */
+  args: ABIValue[]
+  /** The named arguments extracted from the event that was emitted (where the arguments had a name defined) */
+  argsByName: Record<string, ABIValue>
+}
+
+/** An ARC-28 event to be processed */
+export interface Arc28EventToProcess {
+  /** The name of the ARC-28 event group the event belongs to */
+  groupName: string
+  /** The name of the ARC-28 event that was triggered */
+  eventName: string
+  /** The signature of the event e.g. `EventName(type1,type2)` */
+  eventSignature: string
+  /** The 4-byte hex prefix for the event */
+  eventPrefix: string
+  /** The ARC-28 definition of the event */
+  eventDefinition: Arc28Event
 }
 ```
 

@@ -29,6 +29,8 @@ export interface SubscriptionConfig {
   maxRoundsToSync?: number
   /** The set of events to subscribe to / emit */
   events: SubscriptionConfigEvent<unknown>[]
+  /** Any ARC-28 event definitions to process from app call logs */
+  arc28Events?: Arc28EventGroup[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
    *  * `skip-sync-newest`: Discard old rounds.
    *  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
@@ -38,8 +40,9 @@ export interface SubscriptionConfig {
    *    current watermark is `0` in which case it will start `maxRoundsToSync` back from the tip of the chain.
    *  * `catchup-with-indexer`: Will catch up to `tipOfTheChain - maxRoundsToSync` using indexer (fast) and then
    *    continue with algod.
+   *  * `fail`: Throw an error.
    */
-  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer'
+  syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
   /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
    * its position in the chain */
   watermarkPersistence: {
@@ -56,6 +59,8 @@ export interface SubscriptionConfig {
 `maxRoundsToSync` and `syncBehaviour` allow you to control the subscription semantics as your code falls behind the tip of the chain (either on first run or after an outage).
 
 `frequencyInSeconds` allows you to control the polling frequency and by association your latency tolerance for new events once you've caught up to the tip of the chain. Alternatively, you can set `waitForBlockWhenAtTip` to get the subscriber to ask algod to tell it when there is a new block ready to reduce latency when it's caught up to the tip of the chain.
+
+`arc28Events` are any [ARC-28 event definitions](subscriptions.md#arc-28-events).
 
 Events defines the different subscription(s) you want to make, and is defined by the following interface:
 
@@ -74,7 +79,7 @@ export interface SubscriptionConfigEvent<T> {
 }
 ```
 
-The event name is a unique name that describes the event you are subscribing to. The filter defines how to interpret transactions on the chain as being "collected" by that event and the mapper is an optional ability to map from the raw transaction to a more targeted type for your event subscribers.
+The event name is a unique name that describes the event you are subscribing to. The [filter](subscriptions.md#transactionfilter) defines how to interpret transactions on the chain as being "collected" by that event and the mapper is an optional ability to map from the raw transaction to a more targeted type for your event subscribers to consume.
 
 ## Subscribing to events
 
@@ -124,7 +129,7 @@ The default type that will be received is a `SubscribedTransaction`, which can b
 import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
 ```
 
-It's a superset of the [indexer `TransactionResult` type](https://developer.algorand.org/docs/rest-apis/indexer/#transaction). Even if you aren't using indexer, this is the type that will be returned because it's a convenient and comprehensive type that has all the data you would want about a transaction including the transaction ID.
+See the [detail about this type](subscriptions.md#subscribedtransaction).
 
 ## Poll the chain
 
@@ -138,7 +143,7 @@ There are two methods to poll the chain for events: `pollOnce` and `start`:
  * triggered by a recurring schedule / cron.
  * @returns The poll result
  */
-async pollOnce(): Promise<>
+async pollOnce(): Promise<TransactionSubscriptionResult> {}
 
 /**
  * Start the subscriber in a loop until `stop` is called.
@@ -147,14 +152,14 @@ async pollOnce(): Promise<>
  * @param inspect A function that is called for each poll so the inner workings can be inspected / logged / etc.
  * @returns An object that contains a promise you can wait for after calling stop
  */
-start(inspect?: (pollResult: TransactionSubscriptionResult) => void, suppressLog?: boolean): void
+start(inspect?: (pollResult: TransactionSubscriptionResult) => void, suppressLog?: boolean): void {}
 ```
 
 `pollOnce` is useful when you want to take control of scheduling the different polls, such as when running a Lambda on a schedule or a process via cron, etc. - it will do a single poll of the chain and return the result of that poll.
 
-`start` is useful when you have a long-running process or container and you want it to loop infinitely at the specified polling frequency from the constructor config. If you want to inspect or log what happens under the covers you can pass in an inspect lambda that will be called for each poll.
+`start` is useful when you have a long-running process or container and you want it to loop infinitely at the specified polling frequency from the constructor config. If you want to inspect or log what happens under the covers you can pass in an `inspect` lambda that will be called for each poll.
 
-If you use `start` then you can stop the polling by calling `stop`, which can be awaited to wait until everything is cleaned up. You may want to subscribe to NodeJS kill signals to exit cleanly:
+If you use `start` then you can stop the polling by calling `stop`, which can be awaited to wait until everything is cleaned up. You may want to subscribe to Node.JS kill signals to exit cleanly:
 
 ```typescript
 ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) =>

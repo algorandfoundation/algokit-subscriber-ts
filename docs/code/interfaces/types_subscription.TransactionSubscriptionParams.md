@@ -10,12 +10,25 @@ Parameters to control a single subscription pull/poll.
 
 ### Properties
 
+- [arc28Events](types_subscription.TransactionSubscriptionParams.md#arc28events)
 - [filter](types_subscription.TransactionSubscriptionParams.md#filter)
 - [maxRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxroundstosync)
 - [syncBehaviour](types_subscription.TransactionSubscriptionParams.md#syncbehaviour)
 - [watermark](types_subscription.TransactionSubscriptionParams.md#watermark)
 
 ## Properties
+
+### arc28Events
+
+• `Optional` **arc28Events**: [`Arc28EventGroup`](types_subscription.Arc28EventGroup.md)[]
+
+Any ARC-28 event definitions to process from app call logs
+
+#### Defined in
+
+[types/subscription.ts:80](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L80)
+
+___
 
 ### filter
 
@@ -25,7 +38,7 @@ The filter to apply to find transactions of interest.
 
 #### Defined in
 
-[types/subscription.ts:56](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L56)
+[types/subscription.ts:78](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L78)
 
 ___
 
@@ -41,7 +54,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:74](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L74)
+[types/subscription.ts:98](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L98)
 
 ___
 
@@ -68,7 +81,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:92](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L92)
+[types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L116)
 
 ___
 
@@ -88,4 +101,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L67)
+[types/subscription.ts:91](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L91)

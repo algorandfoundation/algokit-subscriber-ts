@@ -6,6 +6,10 @@
 
 ### Interfaces
 
+- [Arc28Event](../interfaces/types_subscription.Arc28Event.md)
+- [Arc28EventGroup](../interfaces/types_subscription.Arc28EventGroup.md)
+- [Arc28EventToProcess](../interfaces/types_subscription.Arc28EventToProcess.md)
+- [EmittedArc28Event](../interfaces/types_subscription.EmittedArc28Event.md)
 - [SubscriptionConfig](../interfaces/types_subscription.SubscriptionConfig.md)
 - [SubscriptionConfigEvent](../interfaces/types_subscription.SubscriptionConfigEvent.md)
 - [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
@@ -21,11 +25,18 @@
 
 ### SubscribedTransaction
 
-Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `parentTransactionId?`: `string` ; `state-proof-transaction?`: \{ `message`: \{ `block-headers-commitment`: `string` ; `first-attested-round`: `number` ; `latest-attested-round`: `number` ; `ln-proven-weight`: `number` ; `voters-commitment`: `string`  } ; `state-proof`: \{ `part-proofs`: \{ `hash-factory`: \{ `hash-type`: `number`  } ; `path`: `string`[] ; `tree-depth`: `number`  } ; `positions-to-reveal`: `number`[] ; `reveals`: \{ `participant`: \{ `verifier`: \{ `commitment`: `string` ; `key-lifetime`: `number`  } ; `weight`: `number`  } ; `position`: `number` ; `sig-slot`: \{ `lower-sig-weight`: `number` ; `signature`: \{ `falcon-signature`: `string` ; `merkle-array-index`: `number` ; `proof`: \{ `hash-factory`: \{ `hash-type`: `number`  } ; `path`: `string`[] ; `tree-depth`: `number`  } ; `verifying-key`: `string`  }  }  }[] ; `salt-version`: `number` ; `sig-commit`: `string` ; `sig-proofs`: \{ `hash-factory`: \{ `hash-type`: `number`  } ; `path`: `string`[] ; `tree-depth`: `number`  } ; `signed-weight`: `number`  } ; `state-proof-type`: `number`  }  }
+Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_subscription.EmittedArc28Event.md)[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
+
+The common model used to expose a transaction that is returned from a subscription.
+
+Substantively, based on the Indexer  [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
+* Add the `parentTransactionId` field so inner transactions have a reference to their parent
+* Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
+* Add emitted ARC-28 events via `arc28Events`
 
 #### Defined in
 
-[types/subscription.ts:4](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L4)
+[types/subscription.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L66)
 
 ___
 
@@ -56,4 +67,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:194](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L194)
+[types/subscription.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L225)

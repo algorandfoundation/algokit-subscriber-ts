@@ -1,5 +1,5 @@
 import type { MultisigTransactionSubSignature } from '@algorandfoundation/algokit-utils/types/indexer'
-import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
+import { ApplicationOnComplete, StateProofTransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
 import algosdk, { OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
 import { Buffer } from 'buffer'
@@ -429,7 +429,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                         commitment: Buffer.from(r.p.p.cmt).toString('base64'),
                       },
                     },
-                  }
+                  } satisfies StateProofTransactionResult['state-proof']['reveals'][number]
                 }),
               },
               message: {
