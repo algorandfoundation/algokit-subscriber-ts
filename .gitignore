@@ -61,4 +61,6 @@ out/
 .env.local
 
 watermark.txt
-synced-transactions.txt
+examples/**/*.json
+
+__pycache__

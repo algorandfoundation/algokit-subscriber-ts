@@ -1,3 +1,9 @@
 {
-  "recommendations": ["esbenp.prettier-vscode", "mikestead.dotenv", "EditorConfig.EditorConfig"]
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "mikestead.dotenv",
+    "EditorConfig.EditorConfig",
+    "Orta.vscode-jest",
+    "dbaeumer.vscode-eslint"
+  ]
 }

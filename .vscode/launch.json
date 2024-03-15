@@ -2,11 +2,56 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run indexer",
+      "name": "Run examples/data-history-museum",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["run", "dhm"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "presentation": {
+        "hidden": false,
+        "group": "2. Main",
+        "order": 1
+      }
+    },
+    {
+      "name": "Run examples/data-history-museum (loop)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "watch-dhm"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "presentation": {
+        "hidden": false,
+        "group": "2. Main",
+        "order": 1
+      }
+    },
+    {
+      "name": "Run examples/xgov-voting",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "xgov"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "presentation": {
+        "hidden": false,
+        "group": "2. Main",
+        "order": 1
+      }
+    },
+    {
+      "name": "Run examples/xgov-voting (loop)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "watch-xgov"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
@@ -18,11 +63,11 @@
     },
 
     {
-      "name": "Run indexer (loop)",
+      "name": "Run examples/usdc (loop)",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "watch"],
+      "runtimeArgs": ["run", "usdc"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
