@@ -26,7 +26,7 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:80](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L80)
+[types/subscription.ts:82](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L82)
 
 ___
 
@@ -38,7 +38,7 @@ The filter to apply to find transactions of interest.
 
 #### Defined in
 
-[types/subscription.ts:78](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L78)
+[types/subscription.ts:80](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L80)
 
 ___
 
@@ -54,7 +54,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:98](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L98)
+[types/subscription.ts:100](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L100)
 
 ___
 
@@ -81,7 +81,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L116)
+[types/subscription.ts:118](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L118)
 
 ___
 
@@ -101,4 +101,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:91](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L91)
+[types/subscription.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L93)

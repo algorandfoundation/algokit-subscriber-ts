@@ -1,5 +1,7 @@
 import type { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import type { ABIValue, TransactionType } from 'algosdk'
+import algosdk from 'algosdk'
+import ABIValue = algosdk.ABIValue
+import TransactionType = algosdk.TransactionType
 
 /**
  * The definition of metadata for an ARC-28 event per https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#event.

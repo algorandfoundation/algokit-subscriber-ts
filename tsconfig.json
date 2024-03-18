@@ -1,8 +1,24 @@
 {
-  "extends": "@makerx/ts-config",
   "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
   },
-  "include": ["index.ts", "examples/**/*.ts", "src/**/*.ts", "tests/**/*.ts"]
+  "include": ["examples/**/*.ts", "src/**/*.ts", "tests/**/*.ts", "rollup/**/*.ts", "rollup.config.ts"],
 }

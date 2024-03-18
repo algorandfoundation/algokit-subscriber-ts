@@ -63,11 +63,11 @@ ___
 
 • **off**: (`eventName`: `string` \| `symbol`, `listener`: [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener)) => [`AsyncEventEmitter`](types_async_event_emitter.AsyncEventEmitter.md)
 
+Alias for `removeListener`.
+
 #### Type declaration
 
 ▸ (`eventName`, `listener`): [`AsyncEventEmitter`](types_async_event_emitter.AsyncEventEmitter.md)
-
-Alias for `removeListener`.
 
 ##### Parameters
 

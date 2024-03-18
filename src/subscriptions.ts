@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
-import { ABITupleType, ABIValue, Algodv2, Indexer, TransactionType, encodeAddress } from 'algosdk'
+import algosdk from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import sha512, { sha512_256 } from 'js-sha512'
 import {
@@ -21,6 +21,11 @@ import type {
   TransactionSubscriptionResult,
 } from './types/subscription'
 import { chunkArray, range } from './utils'
+import ABITupleType = algosdk.ABITupleType
+import ABIValue = algosdk.ABIValue
+import Algodv2 = algosdk.Algodv2
+import Indexer = algosdk.Indexer
+import TransactionType = algosdk.TransactionType
 
 /**
  * Executes a single pull/poll to subscribe to transactions on the configured Algorand
@@ -407,10 +412,10 @@ function transactionFilter(
     const { transaction: t, createdAppId, createdAssetId, logs } = txn
     let result = true
     if (subscription.sender) {
-      result &&= !!t.from && encodeAddress(t.from.publicKey) === subscription.sender
+      result &&= !!t.from && algosdk.encodeAddress(t.from.publicKey) === subscription.sender
     }
     if (subscription.receiver) {
-      result &&= !!t.to && encodeAddress(t.to.publicKey) === subscription.receiver
+      result &&= !!t.to && algosdk.encodeAddress(t.to.publicKey) === subscription.receiver
     }
     if (subscription.type) {
       result &&= t.type === subscription.type
