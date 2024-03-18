@@ -19,11 +19,11 @@
     "generate:code-docs": "typedoc",
     "generate:contract-client": "cd tests/contract && poetry run python -m build",
     "pre-commit": "run-s check-types lint:fix audit format test generate:code-docs",
-    "dhm": "ts-node-dev --transpile-only --watch .env -r dotenv/config ./examples/data-history-museum/index.ts",
+    "dhm": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/data-history-museum/index.ts",
     "watch-dhm": "cross-env RUN_LOOP=true npm run dhm",
-    "xgov": "ts-node-dev --transpile-only --watch .env -r dotenv/config ./examples/xgov-voting/index.ts",
+    "xgov": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/xgov-voting/index.ts",
     "watch-xgov": "cross-env RUN_LOOP=true npm run xgov",
-    "usdc": "ts-node-dev --transpile-only --watch .env -r dotenv/config ./examples/usdc/index.ts"
+    "usdc": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/usdc/index.ts"
   },
   "author": "Algorand Foundation",
   "license": "MIT",
