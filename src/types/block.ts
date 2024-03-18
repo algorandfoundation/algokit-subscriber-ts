@@ -52,7 +52,7 @@ export interface Block {
    */
   txn256: string
   /** The transactions within the block. */
-  txns: BlockTransaction[]
+  txns?: BlockTransaction[]
 }
 
 /** Data that is returned in a raw Algorand block for a single transaction

@@ -235,7 +235,7 @@ ___
 
 ### txns
 
-• **txns**: [`BlockTransaction`](types_block.BlockTransaction.md)[]
+• `Optional` **txns**: [`BlockTransaction`](types_block.BlockTransaction.md)[]
 
 The transactions within the block.
 

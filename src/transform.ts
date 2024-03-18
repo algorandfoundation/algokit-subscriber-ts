@@ -49,7 +49,7 @@ export function getBlockTransactions(block: Block): TransactionInBlock[] {
   let offset = 0
   const getOffset = () => offset++
 
-  return block.txns.flatMap((blockTransaction, roundIndex) => {
+  return (block.txns ?? []).flatMap((blockTransaction, roundIndex) => {
     let parentOffset = 0
     const getParentOffset = () => parentOffset++
     const parentData = extractTransactionFromBlockTransaction(blockTransaction, block)

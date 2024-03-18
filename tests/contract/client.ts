@@ -28,337 +28,338 @@ import type { SendTransactionResult, TransactionToSign, SendTransactionFrom } fr
 import type { ABIResult, TransactionWithSigner } from 'algosdk'
 import { Algodv2, OnApplicationComplete, Transaction, AtomicTransactionComposer, modelsv2 } from 'algosdk'
 export const APP_SPEC: AppSpec = {
-  "hints": {
-    "call_abi(string)string": {
-      "read_only": true,
-      "call_config": {
-        "no_op": "CALL"
-      }
+  hints: {
+    'call_abi(string)string': {
+      read_only: true,
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "call_abi_foreign_refs()string": {
-      "read_only": true,
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'call_abi_foreign_refs()string': {
+      read_only: true,
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "set_global(uint64,uint64,string,byte[4])void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'set_global(uint64,uint64,string,byte[4])void': {
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "set_local(uint64,uint64,string,byte[4])void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'set_local(uint64,uint64,string,byte[4])void': {
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "issue_transfer_to_sender(uint64)void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'issue_transfer_to_sender(uint64)void': {
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "set_box(byte[4],string)void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'set_box(byte[4],string)void': {
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "error()void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'error()void': {
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "opt_in()void": {
-      "call_config": {
-        "opt_in": "CALL"
-      }
+    'opt_in()void': {
+      call_config: {
+        opt_in: 'CALL',
+      },
     },
-    "emitSwapped(uint64,uint64)void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'emitSwapped(uint64,uint64)void': {
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "emitSwappedTwice(uint64,uint64)void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
+    'emitSwappedTwice(uint64,uint64)void': {
+      call_config: {
+        no_op: 'CALL',
+      },
     },
-    "emitComplex(uint64,uint64,uint32[])void": {
-      "call_config": {
-        "no_op": "CALL"
-      }
-    }
+    'emitComplex(uint64,uint64,uint32[])void': {
+      call_config: {
+        no_op: 'CALL',
+      },
+    },
   },
-  "source": {
-    "approval": "I3ByYWdtYSB2ZXJzaW9uIDgKaW50Y2Jsb2NrIDAgMSAxMApieXRlY2Jsb2NrIDB4IDB4MWNjYmQ5MjUgMHgxNTFmN2M3NQp0eG4gTnVtQXBwQXJncwppbnRjXzAgLy8gMAo9PQpibnogbWFpbl9sMjQKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhmMTdlODBhNSAvLyAiY2FsbF9hYmkoc3RyaW5nKXN0cmluZyIKPT0KYm56IG1haW5fbDIzCnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQ3NTYwMmMgLy8gImNhbGxfYWJpX2ZvcmVpZ25fcmVmcygpc3RyaW5nIgo9PQpibnogbWFpbl9sMjIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGNmOGRlYSAvLyAic2V0X2dsb2JhbCh1aW50NjQsdWludDY0LHN0cmluZyxieXRlWzRdKXZvaWQiCj09CmJueiBtYWluX2wyMQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGNlYzI4MzRhIC8vICJzZXRfbG9jYWwodWludDY0LHVpbnQ2NCxzdHJpbmcsYnl0ZVs0XSl2b2lkIgo9PQpibnogbWFpbl9sMjAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg5OGJlMjIxOSAvLyAiaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyKHVpbnQ2NCl2b2lkIgo9PQpibnogbWFpbl9sMTkKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGI0YTIzMCAvLyAic2V0X2JveChieXRlWzRdLHN0cmluZyl2b2lkIgo9PQpibnogbWFpbl9sMTgKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg0NGQwZGEwZCAvLyAiZXJyb3IoKXZvaWQiCj09CmJueiBtYWluX2wxNwp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDMwYzZkNThhIC8vICJvcHRfaW4oKXZvaWQiCj09CmJueiBtYWluX2wxNgp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGQ0M2NlZTVkIC8vICJlbWl0U3dhcHBlZCh1aW50NjQsdWludDY0KXZvaWQiCj09CmJueiBtYWluX2wxNQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDExYjA5NzVhIC8vICJlbWl0U3dhcHBlZFR3aWNlKHVpbnQ2NCx1aW50NjQpdm9pZCIKPT0KYm56IG1haW5fbDE0CnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQyMzBkMGMgLy8gImVtaXRDb21wbGV4KHVpbnQ2NCx1aW50NjQsdWludDMyW10pdm9pZCIKPT0KYm56IG1haW5fbDEzCmVycgptYWluX2wxMzoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBlbWl0Q29tcGxleGNhc3Rlcl8yNQppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTQ6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTU6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRjYXN0ZXJfMjMKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE2Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBvcHRpbmNhc3Rlcl8yMgppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTc6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZXJyb3JjYXN0ZXJfMjEKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE4Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIHNldGJveGNhc3Rlcl8yMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTk6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMDoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBzZXRsb2NhbGNhc3Rlcl8xOAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMjE6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgc2V0Z2xvYmFsY2FzdGVyXzE3CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMjoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBjYWxsYWJpZm9yZWlnbnJlZnNjYXN0ZXJfMTYKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDIzOgp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIGNhbGxhYmljYXN0ZXJfMTUKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDI0Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CmJueiBtYWluX2wzMgp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQpibnogbWFpbl9sMzEKdHhuIE9uQ29tcGxldGlvbgpwdXNoaW50IDQgLy8gVXBkYXRlQXBwbGljYXRpb24KPT0KYm56IG1haW5fbDMwCnR4biBPbkNvbXBsZXRpb24KcHVzaGludCA1IC8vIERlbGV0ZUFwcGxpY2F0aW9uCj09CmJueiBtYWluX2wyOQplcnIKbWFpbl9sMjk6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIGRlbGV0ZV8xMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMzA6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIHVwZGF0ZV85CmludGNfMSAvLyAxCnJldHVybgptYWluX2wzMToKdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKPT0KYXNzZXJ0CmNhbGxzdWIgY3JlYXRlXzgKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDMyOgp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAo9PQphc3NlcnQKY2FsbHN1YiBjcmVhdGVfOAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGNhbGxfYWJpCmNhbGxhYmlfMDoKcHJvdG8gMSAxCmJ5dGVjXzAgLy8gIiIKcHVzaGJ5dGVzIDB4NDg2NTZjNmM2ZjJjMjAgLy8gIkhlbGxvLCAiCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApjb25jYXQKZnJhbWVfYnVyeSAwCmZyYW1lX2RpZyAwCmxlbgppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAwCmNvbmNhdApmcmFtZV9idXJ5IDAKcmV0c3ViCgovLyBpdG9hCml0b2FfMToKcHJvdG8gMSAxCmZyYW1lX2RpZyAtMQppbnRjXzAgLy8gMAo9PQpibnogaXRvYV8xX2w1CmZyYW1lX2RpZyAtMQppbnRjXzIgLy8gMTAKLwppbnRjXzAgLy8gMAo+CmJueiBpdG9hXzFfbDQKYnl0ZWNfMCAvLyAiIgppdG9hXzFfbDM6CnB1c2hieXRlcyAweDMwMzEzMjMzMzQzNTM2MzczODM5IC8vICIwMTIzNDU2Nzg5IgpmcmFtZV9kaWcgLTEKaW50Y18yIC8vIDEwCiUKaW50Y18xIC8vIDEKZXh0cmFjdDMKY29uY2F0CmIgaXRvYV8xX2w2Cml0b2FfMV9sNDoKZnJhbWVfZGlnIC0xCmludGNfMiAvLyAxMAovCmNhbGxzdWIgaXRvYV8xCmIgaXRvYV8xX2wzCml0b2FfMV9sNToKcHVzaGJ5dGVzIDB4MzAgLy8gIjAiCml0b2FfMV9sNjoKcmV0c3ViCgovLyBjYWxsX2FiaV9mb3JlaWduX3JlZnMKY2FsbGFiaWZvcmVpZ25yZWZzXzI6CnByb3RvIDAgMQpieXRlY18wIC8vICIiCnB1c2hieXRlcyAweDQxNzA3MDNhMjAgLy8gIkFwcDogIgp0eG5hIEFwcGxpY2F0aW9ucyAxCmNhbGxzdWIgaXRvYV8xCmNvbmNhdApwdXNoYnl0ZXMgMHgyYzIwNDE3MzczNjU3NDNhMjAgLy8gIiwgQXNzZXQ6ICIKY29uY2F0CnR4bmEgQXNzZXRzIDAKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDJjMjA0MTYzNjM2Zjc1NmU3NDNhMjAgLy8gIiwgQWNjb3VudDogIgpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMCAvLyAwCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDNhIC8vICI6Igpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMSAvLyAxCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApsZW4KaXRvYgpleHRyYWN0IDYgMApmcmFtZV9kaWcgMApjb25jYXQKZnJhbWVfYnVyeSAwCnJldHN1YgoKLy8gc2V0X2dsb2JhbApzZXRnbG9iYWxfMzoKcHJvdG8gNCAwCnB1c2hieXRlcyAweDY5NmU3NDMxIC8vICJpbnQxIgpmcmFtZV9kaWcgLTQKYXBwX2dsb2JhbF9wdXQKcHVzaGJ5dGVzIDB4Njk2ZTc0MzIgLy8gImludDIiCmZyYW1lX2RpZyAtMwphcHBfZ2xvYmFsX3B1dApwdXNoYnl0ZXMgMHg2Mjc5NzQ2NTczMzEgLy8gImJ5dGVzMSIKZnJhbWVfZGlnIC0yCmV4dHJhY3QgMiAwCmFwcF9nbG9iYWxfcHV0CnB1c2hieXRlcyAweDYyNzk3NDY1NzMzMiAvLyAiYnl0ZXMyIgpmcmFtZV9kaWcgLTEKYXBwX2dsb2JhbF9wdXQKcmV0c3ViCgovLyBzZXRfbG9jYWwKc2V0bG9jYWxfNDoKcHJvdG8gNCAwCnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzEgLy8gImxvY2FsX2ludDEiCmZyYW1lX2RpZyAtNAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzIgLy8gImxvY2FsX2ludDIiCmZyYW1lX2RpZyAtMwphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMxIC8vICJsb2NhbF9ieXRlczEiCmZyYW1lX2RpZyAtMgpleHRyYWN0IDIgMAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMyIC8vICJsb2NhbF9ieXRlczIiCmZyYW1lX2RpZyAtMQphcHBfbG9jYWxfcHV0CnJldHN1YgoKLy8gaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyCmlzc3VldHJhbnNmZXJ0b3NlbmRlcl81Ogpwcm90byAxIDAKaXR4bl9iZWdpbgppbnRjXzEgLy8gcGF5Cml0eG5fZmllbGQgVHlwZUVudW0KZnJhbWVfZGlnIC0xCml0eG5fZmllbGQgQW1vdW50CnR4biBTZW5kZXIKaXR4bl9maWVsZCBSZWNlaXZlcgppbnRjXzAgLy8gMAppdHhuX2ZpZWxkIEZlZQppdHhuX3N1Ym1pdApyZXRzdWIKCi8vIHNldF9ib3gKc2V0Ym94XzY6CnByb3RvIDIgMApmcmFtZV9kaWcgLTIKYm94X2RlbApwb3AKZnJhbWVfZGlnIC0yCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApib3hfcHV0CnJldHN1YgoKLy8gZXJyb3IKZXJyb3JfNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCi8vIERlbGliZXJhdGUgZXJyb3IKYXNzZXJ0CnJldHN1YgoKLy8gY3JlYXRlCmNyZWF0ZV84Ogpwcm90byAwIDAKaW50Y18xIC8vIDEKcmV0dXJuCgovLyB1cGRhdGUKdXBkYXRlXzk6CnByb3RvIDAgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CmludGNfMSAvLyAxCnJldHVybgoKLy8gZGVsZXRlCmRlbGV0ZV8xMDoKcHJvdG8gMCAwCnR4biBTZW5kZXIKZ2xvYmFsIENyZWF0b3JBZGRyZXNzCj09Ci8vIHVuYXV0aG9yaXplZAphc3NlcnQKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBvcHRfaW4Kb3B0aW5fMTE6CnByb3RvIDAgMAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRTd2FwcGVkCmVtaXRTd2FwcGVkXzEyOgpwcm90byAyIDAKYnl0ZWNfMSAvLyAiU3dhcHBlZCh1aW50NjQsdWludDY0KSIKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmZyYW1lX2RpZyAtMQppdG9iCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBlbWl0U3dhcHBlZFR3aWNlCmVtaXRTd2FwcGVkVHdpY2VfMTM6CnByb3RvIDIgMApieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTIKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0xCml0b2IKY29uY2F0CmxvZwpieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTEKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmxvZwppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRDb21wbGV4CmVtaXRDb21wbGV4XzE0Ogpwcm90byAzIDAKYnl0ZWNfMCAvLyAiIgppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKZnJhbWVfZGlnIC0xCmZyYW1lX2J1cnkgNApmcmFtZV9kaWcgNApmcmFtZV9idXJ5IDMKaW50Y18yIC8vIDEwCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMQppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAtMgppdG9iCmNvbmNhdApmcmFtZV9kaWcgMwpjb25jYXQKZnJhbWVfYnVyeSAwCmJ5dGVjXzEgLy8gIlN3YXBwZWQodWludDY0LHVpbnQ2NCkiCmZyYW1lX2RpZyAtMwppdG9iCmNvbmNhdApmcmFtZV9kaWcgLTIKaXRvYgpjb25jYXQKbG9nCnB1c2hieXRlcyAweDE4ZGE1ZWE3IC8vICJDb21wbGV4KHVpbnQzMltdLHVpbnQ2NCkiCmZyYW1lX2RpZyAwCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBjYWxsX2FiaV9jYXN0ZXIKY2FsbGFiaWNhc3Rlcl8xNToKcHJvdG8gMCAwCmJ5dGVjXzAgLy8gIiIKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKZnJhbWVfYnVyeSAxCmZyYW1lX2RpZyAxCmNhbGxzdWIgY2FsbGFiaV8wCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIGNhbGxfYWJpX2ZvcmVpZ25fcmVmc19jYXN0ZXIKY2FsbGFiaWZvcmVpZ25yZWZzY2FzdGVyXzE2Ogpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpjYWxsc3ViIGNhbGxhYmlmb3JlaWducmVmc18yCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIHNldF9nbG9iYWxfY2FzdGVyCnNldGdsb2JhbGNhc3Rlcl8xNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cApieXRlY18wIC8vICIiCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwpmcmFtZV9idXJ5IDIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNApmcmFtZV9idXJ5IDMKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKZnJhbWVfZGlnIDIKZnJhbWVfZGlnIDMKY2FsbHN1YiBzZXRnbG9iYWxfMwpyZXRzdWIKCi8vIHNldF9sb2NhbF9jYXN0ZXIKc2V0bG9jYWxjYXN0ZXJfMTg6CnByb3RvIDAgMAppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCnR4bmEgQXBwbGljYXRpb25BcmdzIDQKZnJhbWVfYnVyeSAzCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmZyYW1lX2RpZyAzCmNhbGxzdWIgc2V0bG9jYWxfNApyZXRzdWIKCi8vIGlzc3VlX3RyYW5zZmVyX3RvX3NlbmRlcl9jYXN0ZXIKaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApjYWxsc3ViIGlzc3VldHJhbnNmZXJ0b3NlbmRlcl81CnJldHN1YgoKLy8gc2V0X2JveF9jYXN0ZXIKc2V0Ym94Y2FzdGVyXzIwOgpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBzZXRib3hfNgpyZXRzdWIKCi8vIGVycm9yX2Nhc3RlcgplcnJvcmNhc3Rlcl8yMToKcHJvdG8gMCAwCmNhbGxzdWIgZXJyb3JfNwpyZXRzdWIKCi8vIG9wdF9pbl9jYXN0ZXIKb3B0aW5jYXN0ZXJfMjI6CnByb3RvIDAgMApjYWxsc3ViIG9wdGluXzExCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRfY2FzdGVyCmVtaXRTd2FwcGVkY2FzdGVyXzIzOgpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKYnRvaQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpidG9pCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMApmcmFtZV9kaWcgMQpjYWxsc3ViIGVtaXRTd2FwcGVkXzEyCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRUd2ljZV9jYXN0ZXIKZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNDoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBlbWl0U3dhcHBlZFR3aWNlXzEzCnJldHN1YgoKLy8gZW1pdENvbXBsZXhfY2FzdGVyCmVtaXRDb21wbGV4Y2FzdGVyXzI1Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCmJ5dGVjXzAgLy8gIiIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmNhbGxzdWIgZW1pdENvbXBsZXhfMTQKcmV0c3Vi",
-    "clear": "I3ByYWdtYSB2ZXJzaW9uIDgKcHVzaGludCAwIC8vIDAKcmV0dXJu"
+  source: {
+    approval:
+      'I3ByYWdtYSB2ZXJzaW9uIDgKaW50Y2Jsb2NrIDAgMSAxMApieXRlY2Jsb2NrIDB4IDB4MWNjYmQ5MjUgMHgxNTFmN2M3NQp0eG4gTnVtQXBwQXJncwppbnRjXzAgLy8gMAo9PQpibnogbWFpbl9sMjQKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhmMTdlODBhNSAvLyAiY2FsbF9hYmkoc3RyaW5nKXN0cmluZyIKPT0KYm56IG1haW5fbDIzCnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQ3NTYwMmMgLy8gImNhbGxfYWJpX2ZvcmVpZ25fcmVmcygpc3RyaW5nIgo9PQpibnogbWFpbl9sMjIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGNmOGRlYSAvLyAic2V0X2dsb2JhbCh1aW50NjQsdWludDY0LHN0cmluZyxieXRlWzRdKXZvaWQiCj09CmJueiBtYWluX2wyMQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGNlYzI4MzRhIC8vICJzZXRfbG9jYWwodWludDY0LHVpbnQ2NCxzdHJpbmcsYnl0ZVs0XSl2b2lkIgo9PQpibnogbWFpbl9sMjAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg5OGJlMjIxOSAvLyAiaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyKHVpbnQ2NCl2b2lkIgo9PQpibnogbWFpbl9sMTkKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGI0YTIzMCAvLyAic2V0X2JveChieXRlWzRdLHN0cmluZyl2b2lkIgo9PQpibnogbWFpbl9sMTgKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg0NGQwZGEwZCAvLyAiZXJyb3IoKXZvaWQiCj09CmJueiBtYWluX2wxNwp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDMwYzZkNThhIC8vICJvcHRfaW4oKXZvaWQiCj09CmJueiBtYWluX2wxNgp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGQ0M2NlZTVkIC8vICJlbWl0U3dhcHBlZCh1aW50NjQsdWludDY0KXZvaWQiCj09CmJueiBtYWluX2wxNQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDExYjA5NzVhIC8vICJlbWl0U3dhcHBlZFR3aWNlKHVpbnQ2NCx1aW50NjQpdm9pZCIKPT0KYm56IG1haW5fbDE0CnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQyMzBkMGMgLy8gImVtaXRDb21wbGV4KHVpbnQ2NCx1aW50NjQsdWludDMyW10pdm9pZCIKPT0KYm56IG1haW5fbDEzCmVycgptYWluX2wxMzoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBlbWl0Q29tcGxleGNhc3Rlcl8yNQppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTQ6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTU6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRjYXN0ZXJfMjMKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE2Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBvcHRpbmNhc3Rlcl8yMgppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTc6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZXJyb3JjYXN0ZXJfMjEKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE4Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIHNldGJveGNhc3Rlcl8yMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTk6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMDoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBzZXRsb2NhbGNhc3Rlcl8xOAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMjE6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgc2V0Z2xvYmFsY2FzdGVyXzE3CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMjoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBjYWxsYWJpZm9yZWlnbnJlZnNjYXN0ZXJfMTYKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDIzOgp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIGNhbGxhYmljYXN0ZXJfMTUKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDI0Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CmJueiBtYWluX2wzMgp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQpibnogbWFpbl9sMzEKdHhuIE9uQ29tcGxldGlvbgpwdXNoaW50IDQgLy8gVXBkYXRlQXBwbGljYXRpb24KPT0KYm56IG1haW5fbDMwCnR4biBPbkNvbXBsZXRpb24KcHVzaGludCA1IC8vIERlbGV0ZUFwcGxpY2F0aW9uCj09CmJueiBtYWluX2wyOQplcnIKbWFpbl9sMjk6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIGRlbGV0ZV8xMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMzA6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIHVwZGF0ZV85CmludGNfMSAvLyAxCnJldHVybgptYWluX2wzMToKdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKPT0KYXNzZXJ0CmNhbGxzdWIgY3JlYXRlXzgKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDMyOgp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAo9PQphc3NlcnQKY2FsbHN1YiBjcmVhdGVfOAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGNhbGxfYWJpCmNhbGxhYmlfMDoKcHJvdG8gMSAxCmJ5dGVjXzAgLy8gIiIKcHVzaGJ5dGVzIDB4NDg2NTZjNmM2ZjJjMjAgLy8gIkhlbGxvLCAiCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApjb25jYXQKZnJhbWVfYnVyeSAwCmZyYW1lX2RpZyAwCmxlbgppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAwCmNvbmNhdApmcmFtZV9idXJ5IDAKcmV0c3ViCgovLyBpdG9hCml0b2FfMToKcHJvdG8gMSAxCmZyYW1lX2RpZyAtMQppbnRjXzAgLy8gMAo9PQpibnogaXRvYV8xX2w1CmZyYW1lX2RpZyAtMQppbnRjXzIgLy8gMTAKLwppbnRjXzAgLy8gMAo+CmJueiBpdG9hXzFfbDQKYnl0ZWNfMCAvLyAiIgppdG9hXzFfbDM6CnB1c2hieXRlcyAweDMwMzEzMjMzMzQzNTM2MzczODM5IC8vICIwMTIzNDU2Nzg5IgpmcmFtZV9kaWcgLTEKaW50Y18yIC8vIDEwCiUKaW50Y18xIC8vIDEKZXh0cmFjdDMKY29uY2F0CmIgaXRvYV8xX2w2Cml0b2FfMV9sNDoKZnJhbWVfZGlnIC0xCmludGNfMiAvLyAxMAovCmNhbGxzdWIgaXRvYV8xCmIgaXRvYV8xX2wzCml0b2FfMV9sNToKcHVzaGJ5dGVzIDB4MzAgLy8gIjAiCml0b2FfMV9sNjoKcmV0c3ViCgovLyBjYWxsX2FiaV9mb3JlaWduX3JlZnMKY2FsbGFiaWZvcmVpZ25yZWZzXzI6CnByb3RvIDAgMQpieXRlY18wIC8vICIiCnB1c2hieXRlcyAweDQxNzA3MDNhMjAgLy8gIkFwcDogIgp0eG5hIEFwcGxpY2F0aW9ucyAxCmNhbGxzdWIgaXRvYV8xCmNvbmNhdApwdXNoYnl0ZXMgMHgyYzIwNDE3MzczNjU3NDNhMjAgLy8gIiwgQXNzZXQ6ICIKY29uY2F0CnR4bmEgQXNzZXRzIDAKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDJjMjA0MTYzNjM2Zjc1NmU3NDNhMjAgLy8gIiwgQWNjb3VudDogIgpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMCAvLyAwCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDNhIC8vICI6Igpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMSAvLyAxCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApsZW4KaXRvYgpleHRyYWN0IDYgMApmcmFtZV9kaWcgMApjb25jYXQKZnJhbWVfYnVyeSAwCnJldHN1YgoKLy8gc2V0X2dsb2JhbApzZXRnbG9iYWxfMzoKcHJvdG8gNCAwCnB1c2hieXRlcyAweDY5NmU3NDMxIC8vICJpbnQxIgpmcmFtZV9kaWcgLTQKYXBwX2dsb2JhbF9wdXQKcHVzaGJ5dGVzIDB4Njk2ZTc0MzIgLy8gImludDIiCmZyYW1lX2RpZyAtMwphcHBfZ2xvYmFsX3B1dApwdXNoYnl0ZXMgMHg2Mjc5NzQ2NTczMzEgLy8gImJ5dGVzMSIKZnJhbWVfZGlnIC0yCmV4dHJhY3QgMiAwCmFwcF9nbG9iYWxfcHV0CnB1c2hieXRlcyAweDYyNzk3NDY1NzMzMiAvLyAiYnl0ZXMyIgpmcmFtZV9kaWcgLTEKYXBwX2dsb2JhbF9wdXQKcmV0c3ViCgovLyBzZXRfbG9jYWwKc2V0bG9jYWxfNDoKcHJvdG8gNCAwCnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzEgLy8gImxvY2FsX2ludDEiCmZyYW1lX2RpZyAtNAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzIgLy8gImxvY2FsX2ludDIiCmZyYW1lX2RpZyAtMwphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMxIC8vICJsb2NhbF9ieXRlczEiCmZyYW1lX2RpZyAtMgpleHRyYWN0IDIgMAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMyIC8vICJsb2NhbF9ieXRlczIiCmZyYW1lX2RpZyAtMQphcHBfbG9jYWxfcHV0CnJldHN1YgoKLy8gaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyCmlzc3VldHJhbnNmZXJ0b3NlbmRlcl81Ogpwcm90byAxIDAKaXR4bl9iZWdpbgppbnRjXzEgLy8gcGF5Cml0eG5fZmllbGQgVHlwZUVudW0KZnJhbWVfZGlnIC0xCml0eG5fZmllbGQgQW1vdW50CnR4biBTZW5kZXIKaXR4bl9maWVsZCBSZWNlaXZlcgppbnRjXzAgLy8gMAppdHhuX2ZpZWxkIEZlZQppdHhuX3N1Ym1pdApyZXRzdWIKCi8vIHNldF9ib3gKc2V0Ym94XzY6CnByb3RvIDIgMApmcmFtZV9kaWcgLTIKYm94X2RlbApwb3AKZnJhbWVfZGlnIC0yCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApib3hfcHV0CnJldHN1YgoKLy8gZXJyb3IKZXJyb3JfNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCi8vIERlbGliZXJhdGUgZXJyb3IKYXNzZXJ0CnJldHN1YgoKLy8gY3JlYXRlCmNyZWF0ZV84Ogpwcm90byAwIDAKaW50Y18xIC8vIDEKcmV0dXJuCgovLyB1cGRhdGUKdXBkYXRlXzk6CnByb3RvIDAgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CmludGNfMSAvLyAxCnJldHVybgoKLy8gZGVsZXRlCmRlbGV0ZV8xMDoKcHJvdG8gMCAwCnR4biBTZW5kZXIKZ2xvYmFsIENyZWF0b3JBZGRyZXNzCj09Ci8vIHVuYXV0aG9yaXplZAphc3NlcnQKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBvcHRfaW4Kb3B0aW5fMTE6CnByb3RvIDAgMAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRTd2FwcGVkCmVtaXRTd2FwcGVkXzEyOgpwcm90byAyIDAKYnl0ZWNfMSAvLyAiU3dhcHBlZCh1aW50NjQsdWludDY0KSIKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmZyYW1lX2RpZyAtMQppdG9iCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBlbWl0U3dhcHBlZFR3aWNlCmVtaXRTd2FwcGVkVHdpY2VfMTM6CnByb3RvIDIgMApieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTIKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0xCml0b2IKY29uY2F0CmxvZwpieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTEKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmxvZwppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRDb21wbGV4CmVtaXRDb21wbGV4XzE0Ogpwcm90byAzIDAKYnl0ZWNfMCAvLyAiIgppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKZnJhbWVfZGlnIC0xCmZyYW1lX2J1cnkgNApmcmFtZV9kaWcgNApmcmFtZV9idXJ5IDMKaW50Y18yIC8vIDEwCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMQppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAtMgppdG9iCmNvbmNhdApmcmFtZV9kaWcgMwpjb25jYXQKZnJhbWVfYnVyeSAwCmJ5dGVjXzEgLy8gIlN3YXBwZWQodWludDY0LHVpbnQ2NCkiCmZyYW1lX2RpZyAtMwppdG9iCmNvbmNhdApmcmFtZV9kaWcgLTIKaXRvYgpjb25jYXQKbG9nCnB1c2hieXRlcyAweDE4ZGE1ZWE3IC8vICJDb21wbGV4KHVpbnQzMltdLHVpbnQ2NCkiCmZyYW1lX2RpZyAwCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBjYWxsX2FiaV9jYXN0ZXIKY2FsbGFiaWNhc3Rlcl8xNToKcHJvdG8gMCAwCmJ5dGVjXzAgLy8gIiIKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKZnJhbWVfYnVyeSAxCmZyYW1lX2RpZyAxCmNhbGxzdWIgY2FsbGFiaV8wCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIGNhbGxfYWJpX2ZvcmVpZ25fcmVmc19jYXN0ZXIKY2FsbGFiaWZvcmVpZ25yZWZzY2FzdGVyXzE2Ogpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpjYWxsc3ViIGNhbGxhYmlmb3JlaWducmVmc18yCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIHNldF9nbG9iYWxfY2FzdGVyCnNldGdsb2JhbGNhc3Rlcl8xNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cApieXRlY18wIC8vICIiCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwpmcmFtZV9idXJ5IDIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNApmcmFtZV9idXJ5IDMKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKZnJhbWVfZGlnIDIKZnJhbWVfZGlnIDMKY2FsbHN1YiBzZXRnbG9iYWxfMwpyZXRzdWIKCi8vIHNldF9sb2NhbF9jYXN0ZXIKc2V0bG9jYWxjYXN0ZXJfMTg6CnByb3RvIDAgMAppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCnR4bmEgQXBwbGljYXRpb25BcmdzIDQKZnJhbWVfYnVyeSAzCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmZyYW1lX2RpZyAzCmNhbGxzdWIgc2V0bG9jYWxfNApyZXRzdWIKCi8vIGlzc3VlX3RyYW5zZmVyX3RvX3NlbmRlcl9jYXN0ZXIKaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApjYWxsc3ViIGlzc3VldHJhbnNmZXJ0b3NlbmRlcl81CnJldHN1YgoKLy8gc2V0X2JveF9jYXN0ZXIKc2V0Ym94Y2FzdGVyXzIwOgpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBzZXRib3hfNgpyZXRzdWIKCi8vIGVycm9yX2Nhc3RlcgplcnJvcmNhc3Rlcl8yMToKcHJvdG8gMCAwCmNhbGxzdWIgZXJyb3JfNwpyZXRzdWIKCi8vIG9wdF9pbl9jYXN0ZXIKb3B0aW5jYXN0ZXJfMjI6CnByb3RvIDAgMApjYWxsc3ViIG9wdGluXzExCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRfY2FzdGVyCmVtaXRTd2FwcGVkY2FzdGVyXzIzOgpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKYnRvaQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpidG9pCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMApmcmFtZV9kaWcgMQpjYWxsc3ViIGVtaXRTd2FwcGVkXzEyCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRUd2ljZV9jYXN0ZXIKZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNDoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBlbWl0U3dhcHBlZFR3aWNlXzEzCnJldHN1YgoKLy8gZW1pdENvbXBsZXhfY2FzdGVyCmVtaXRDb21wbGV4Y2FzdGVyXzI1Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCmJ5dGVjXzAgLy8gIiIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmNhbGxzdWIgZW1pdENvbXBsZXhfMTQKcmV0c3Vi',
+    clear: 'I3ByYWdtYSB2ZXJzaW9uIDgKcHVzaGludCAwIC8vIDAKcmV0dXJu',
   },
-  "state": {
-    "global": {
-      "num_byte_slices": 2,
-      "num_uints": 3
+  state: {
+    global: {
+      num_byte_slices: 2,
+      num_uints: 3,
     },
-    "local": {
-      "num_byte_slices": 2,
-      "num_uints": 2
-    }
-  },
-  "schema": {
-    "global": {
-      "declared": {
-        "bytes1": {
-          "type": "bytes",
-          "key": "bytes1",
-          "descr": ""
-        },
-        "bytes2": {
-          "type": "bytes",
-          "key": "bytes2",
-          "descr": ""
-        },
-        "int1": {
-          "type": "uint64",
-          "key": "int1",
-          "descr": ""
-        },
-        "int2": {
-          "type": "uint64",
-          "key": "int2",
-          "descr": ""
-        },
-        "value": {
-          "type": "uint64",
-          "key": "value",
-          "descr": ""
-        }
-      },
-      "reserved": {}
+    local: {
+      num_byte_slices: 2,
+      num_uints: 2,
     },
-    "local": {
-      "declared": {
-        "local_bytes1": {
-          "type": "bytes",
-          "key": "local_bytes1",
-          "descr": ""
-        },
-        "local_bytes2": {
-          "type": "bytes",
-          "key": "local_bytes2",
-          "descr": ""
-        },
-        "local_int1": {
-          "type": "uint64",
-          "key": "local_int1",
-          "descr": ""
-        },
-        "local_int2": {
-          "type": "uint64",
-          "key": "local_int2",
-          "descr": ""
-        }
-      },
-      "reserved": {}
-    }
   },
-  "contract": {
-    "name": "TestingApp",
-    "methods": [
+  schema: {
+    global: {
+      declared: {
+        bytes1: {
+          type: 'bytes',
+          key: 'bytes1',
+          descr: '',
+        },
+        bytes2: {
+          type: 'bytes',
+          key: 'bytes2',
+          descr: '',
+        },
+        int1: {
+          type: 'uint64',
+          key: 'int1',
+          descr: '',
+        },
+        int2: {
+          type: 'uint64',
+          key: 'int2',
+          descr: '',
+        },
+        value: {
+          type: 'uint64',
+          key: 'value',
+          descr: '',
+        },
+      },
+      reserved: {},
+    },
+    local: {
+      declared: {
+        local_bytes1: {
+          type: 'bytes',
+          key: 'local_bytes1',
+          descr: '',
+        },
+        local_bytes2: {
+          type: 'bytes',
+          key: 'local_bytes2',
+          descr: '',
+        },
+        local_int1: {
+          type: 'uint64',
+          key: 'local_int1',
+          descr: '',
+        },
+        local_int2: {
+          type: 'uint64',
+          key: 'local_int2',
+          descr: '',
+        },
+      },
+      reserved: {},
+    },
+  },
+  contract: {
+    name: 'TestingApp',
+    methods: [
       {
-        "name": "call_abi",
-        "args": [
+        name: 'call_abi',
+        args: [
           {
-            "type": "string",
-            "name": "value"
-          }
+            type: 'string',
+            name: 'value',
+          },
         ],
-        "returns": {
-          "type": "string"
-        }
+        returns: {
+          type: 'string',
+        },
       },
       {
-        "name": "call_abi_foreign_refs",
-        "args": [],
-        "returns": {
-          "type": "string"
-        }
+        name: 'call_abi_foreign_refs',
+        args: [],
+        returns: {
+          type: 'string',
+        },
       },
       {
-        "name": "set_global",
-        "args": [
+        name: 'set_global',
+        args: [
           {
-            "type": "uint64",
-            "name": "int1"
+            type: 'uint64',
+            name: 'int1',
           },
           {
-            "type": "uint64",
-            "name": "int2"
+            type: 'uint64',
+            name: 'int2',
           },
           {
-            "type": "string",
-            "name": "bytes1"
+            type: 'string',
+            name: 'bytes1',
           },
           {
-            "type": "byte[4]",
-            "name": "bytes2"
-          }
+            type: 'byte[4]',
+            name: 'bytes2',
+          },
         ],
-        "returns": {
-          "type": "void"
-        }
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "set_local",
-        "args": [
+        name: 'set_local',
+        args: [
           {
-            "type": "uint64",
-            "name": "int1"
+            type: 'uint64',
+            name: 'int1',
           },
           {
-            "type": "uint64",
-            "name": "int2"
+            type: 'uint64',
+            name: 'int2',
           },
           {
-            "type": "string",
-            "name": "bytes1"
+            type: 'string',
+            name: 'bytes1',
           },
           {
-            "type": "byte[4]",
-            "name": "bytes2"
-          }
+            type: 'byte[4]',
+            name: 'bytes2',
+          },
         ],
-        "returns": {
-          "type": "void"
-        }
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "issue_transfer_to_sender",
-        "args": [
+        name: 'issue_transfer_to_sender',
+        args: [
           {
-            "type": "uint64",
-            "name": "amount"
-          }
+            type: 'uint64',
+            name: 'amount',
+          },
         ],
-        "returns": {
-          "type": "void"
-        }
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "set_box",
-        "args": [
+        name: 'set_box',
+        args: [
           {
-            "type": "byte[4]",
-            "name": "name"
+            type: 'byte[4]',
+            name: 'name',
           },
           {
-            "type": "string",
-            "name": "value"
-          }
+            type: 'string',
+            name: 'value',
+          },
         ],
-        "returns": {
-          "type": "void"
-        }
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "error",
-        "args": [],
-        "returns": {
-          "type": "void"
-        }
+        name: 'error',
+        args: [],
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "opt_in",
-        "args": [],
-        "returns": {
-          "type": "void"
-        }
+        name: 'opt_in',
+        args: [],
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "emitSwapped",
-        "args": [
+        name: 'emitSwapped',
+        args: [
           {
-            "type": "uint64",
-            "name": "a"
+            type: 'uint64',
+            name: 'a',
           },
           {
-            "type": "uint64",
-            "name": "b"
-          }
+            type: 'uint64',
+            name: 'b',
+          },
         ],
-        "returns": {
-          "type": "void"
-        }
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "emitSwappedTwice",
-        "args": [
+        name: 'emitSwappedTwice',
+        args: [
           {
-            "type": "uint64",
-            "name": "a"
+            type: 'uint64',
+            name: 'a',
           },
           {
-            "type": "uint64",
-            "name": "b"
-          }
+            type: 'uint64',
+            name: 'b',
+          },
         ],
-        "returns": {
-          "type": "void"
-        }
+        returns: {
+          type: 'void',
+        },
       },
       {
-        "name": "emitComplex",
-        "args": [
+        name: 'emitComplex',
+        args: [
           {
-            "type": "uint64",
-            "name": "a"
+            type: 'uint64',
+            name: 'a',
           },
           {
-            "type": "uint64",
-            "name": "b"
+            type: 'uint64',
+            name: 'b',
           },
           {
-            "type": "uint32[]",
-            "name": "array"
-          }
+            type: 'uint32[]',
+            name: 'array',
+          },
         ],
-        "returns": {
-          "type": "void"
-        }
-      }
+        returns: {
+          type: 'void',
+        },
+      },
     ],
-    "networks": {}
+    networks: {},
   },
-  "bare_call_config": {
-    "delete_application": "CALL",
-    "no_op": "CREATE",
-    "opt_in": "CREATE",
-    "update_application": "CALL"
-  }
+  bare_call_config: {
+    delete_application: 'CALL',
+    no_op: 'CREATE',
+    opt_in: 'CREATE',
+    update_application: 'CALL',
+  },
 }
 
 /**
  * Defines an onCompletionAction of 'no_op'
  */
-export type OnCompleteNoOp =  { onCompleteAction?: 'no_op' | OnApplicationComplete.NoOpOC }
+export type OnCompleteNoOp = { onCompleteAction?: 'no_op' | OnApplicationComplete.NoOpOC }
 /**
  * Defines an onCompletionAction of 'opt_in'
  */
-export type OnCompleteOptIn =  { onCompleteAction: 'opt_in' | OnApplicationComplete.OptInOC }
+export type OnCompleteOptIn = { onCompleteAction: 'opt_in' | OnApplicationComplete.OptInOC }
 /**
  * Defines an onCompletionAction of 'close_out'
  */
-export type OnCompleteCloseOut =  { onCompleteAction: 'close_out' | OnApplicationComplete.CloseOutOC }
+export type OnCompleteCloseOut = { onCompleteAction: 'close_out' | OnApplicationComplete.CloseOutOC }
 /**
  * Defines an onCompletionAction of 'delete_application'
  */
-export type OnCompleteDelApp =  { onCompleteAction: 'delete_application' | OnApplicationComplete.DeleteApplicationOC }
+export type OnCompleteDelApp = { onCompleteAction: 'delete_application' | OnApplicationComplete.DeleteApplicationOC }
 /**
  * Defines an onCompletionAction of 'update_application'
  */
-export type OnCompleteUpdApp =  { onCompleteAction: 'update_application' | OnApplicationComplete.UpdateApplicationOC }
+export type OnCompleteUpdApp = { onCompleteAction: 'update_application' | OnApplicationComplete.UpdateApplicationOC }
 /**
  * A state record containing a single unsigned integer
  */
 export type IntegerState = {
   /**
-   * Gets the state value as a BigInt 
+   * Gets the state value as a BigInt
    */
   asBigInt(): bigint
   /**
@@ -390,108 +391,137 @@ export type TestingApp = {
   /**
    * Maps method signatures / names to their argument and return types.
    */
-  methods:
-    & Record<'call_abi(string)string' | 'call_abi', {
+  methods: Record<
+    'call_abi(string)string' | 'call_abi',
+    {
       argsObj: {
         value: string
       }
       argsTuple: [value: string]
       returns: string
-    }>
-    & Record<'call_abi_foreign_refs()string' | 'call_abi_foreign_refs', {
-      argsObj: {
+    }
+  > &
+    Record<
+      'call_abi_foreign_refs()string' | 'call_abi_foreign_refs',
+      {
+        argsObj: {}
+        argsTuple: []
+        returns: string
       }
-      argsTuple: []
-      returns: string
-    }>
-    & Record<'set_global(uint64,uint64,string,byte[4])void' | 'set_global', {
-      argsObj: {
-        int1: bigint | number
-        int2: bigint | number
-        bytes1: string
-        bytes2: Uint8Array
+    > &
+    Record<
+      'set_global(uint64,uint64,string,byte[4])void' | 'set_global',
+      {
+        argsObj: {
+          int1: bigint | number
+          int2: bigint | number
+          bytes1: string
+          bytes2: Uint8Array
+        }
+        argsTuple: [int1: bigint | number, int2: bigint | number, bytes1: string, bytes2: Uint8Array]
+        returns: void
       }
-      argsTuple: [int1: bigint | number, int2: bigint | number, bytes1: string, bytes2: Uint8Array]
-      returns: void
-    }>
-    & Record<'set_local(uint64,uint64,string,byte[4])void' | 'set_local', {
-      argsObj: {
-        int1: bigint | number
-        int2: bigint | number
-        bytes1: string
-        bytes2: Uint8Array
+    > &
+    Record<
+      'set_local(uint64,uint64,string,byte[4])void' | 'set_local',
+      {
+        argsObj: {
+          int1: bigint | number
+          int2: bigint | number
+          bytes1: string
+          bytes2: Uint8Array
+        }
+        argsTuple: [int1: bigint | number, int2: bigint | number, bytes1: string, bytes2: Uint8Array]
+        returns: void
       }
-      argsTuple: [int1: bigint | number, int2: bigint | number, bytes1: string, bytes2: Uint8Array]
-      returns: void
-    }>
-    & Record<'issue_transfer_to_sender(uint64)void' | 'issue_transfer_to_sender', {
-      argsObj: {
-        amount: bigint | number
+    > &
+    Record<
+      'issue_transfer_to_sender(uint64)void' | 'issue_transfer_to_sender',
+      {
+        argsObj: {
+          amount: bigint | number
+        }
+        argsTuple: [amount: bigint | number]
+        returns: void
       }
-      argsTuple: [amount: bigint | number]
-      returns: void
-    }>
-    & Record<'set_box(byte[4],string)void' | 'set_box', {
-      argsObj: {
-        name: Uint8Array
-        value: string
+    > &
+    Record<
+      'set_box(byte[4],string)void' | 'set_box',
+      {
+        argsObj: {
+          name: Uint8Array
+          value: string
+        }
+        argsTuple: [name: Uint8Array, value: string]
+        returns: void
       }
-      argsTuple: [name: Uint8Array, value: string]
-      returns: void
-    }>
-    & Record<'error()void' | 'error', {
-      argsObj: {
+    > &
+    Record<
+      'error()void' | 'error',
+      {
+        argsObj: {}
+        argsTuple: []
+        returns: void
       }
-      argsTuple: []
-      returns: void
-    }>
-    & Record<'opt_in()void' | 'opt_in', {
-      argsObj: {
+    > &
+    Record<
+      'opt_in()void' | 'opt_in',
+      {
+        argsObj: {}
+        argsTuple: []
+        returns: void
       }
-      argsTuple: []
-      returns: void
-    }>
-    & Record<'emitSwapped(uint64,uint64)void' | 'emitSwapped', {
-      argsObj: {
-        a: bigint | number
-        b: bigint | number
+    > &
+    Record<
+      'emitSwapped(uint64,uint64)void' | 'emitSwapped',
+      {
+        argsObj: {
+          a: bigint | number
+          b: bigint | number
+        }
+        argsTuple: [a: bigint | number, b: bigint | number]
+        returns: void
       }
-      argsTuple: [a: bigint | number, b: bigint | number]
-      returns: void
-    }>
-    & Record<'emitSwappedTwice(uint64,uint64)void' | 'emitSwappedTwice', {
-      argsObj: {
-        a: bigint | number
-        b: bigint | number
+    > &
+    Record<
+      'emitSwappedTwice(uint64,uint64)void' | 'emitSwappedTwice',
+      {
+        argsObj: {
+          a: bigint | number
+          b: bigint | number
+        }
+        argsTuple: [a: bigint | number, b: bigint | number]
+        returns: void
       }
-      argsTuple: [a: bigint | number, b: bigint | number]
-      returns: void
-    }>
-    & Record<'emitComplex(uint64,uint64,uint32[])void' | 'emitComplex', {
-      argsObj: {
-        a: bigint | number
-        b: bigint | number
-        array: number[]
+    > &
+    Record<
+      'emitComplex(uint64,uint64,uint32[])void' | 'emitComplex',
+      {
+        argsObj: {
+          a: bigint | number
+          b: bigint | number
+          array: number[]
+        }
+        argsTuple: [a: bigint | number, b: bigint | number, array: number[]]
+        returns: void
       }
-      argsTuple: [a: bigint | number, b: bigint | number, array: number[]]
-      returns: void
-    }>
+    >
   /**
    * Defines the shape of the global and local state of the application.
    */
   state: {
     global: {
-      'bytes1'?: BinaryState
-      'bytes2'?: BinaryState
-      'int1'?: IntegerState
-      'int2'?: IntegerState
-      'value'?: IntegerState
+      bytes1?: BinaryState
+      bytes2?: BinaryState
+      int1?: IntegerState
+      int2?: IntegerState
+      value?: IntegerState
     }
     local: {
-      'local_bytes1'?: BinaryState
-      'local_bytes2'?: BinaryState
-      'local_int1'?: IntegerState
-      'local_int2'?: IntegerState
+      local_bytes1?: BinaryState
+      local_bytes2?: BinaryState
+      local_int1?: IntegerState
+      local_int2?: IntegerState
     }
   }
 }
@@ -505,7 +535,8 @@ export type TestingAppSig = keyof TestingApp['methods']
 export type TypedCallParams<TSignature extends TestingAppSig | undefined> = {
   method: TSignature
   methodArgs: TSignature extends undefined ? undefined : Array<ABIAppCallArg | undefined>
-} & AppClientCallCoreParams & CoreAppCallArgs
+} & AppClientCallCoreParams &
+  CoreAppCallArgs
 /**
  * Defines the arguments required for a bare call
  */
@@ -526,8 +557,7 @@ export type TestingAppCreateCalls = (typeof TestingAppCallFactory)['create']
 /**
  * Defines supported create methods for this smart contract
  */
-export type TestingAppCreateCallParams =
-  | (TypedCallParams<undefined> & (OnCompleteNoOp | OnCompleteOptIn))
+export type TestingAppCreateCallParams = TypedCallParams<undefined> & (OnCompleteNoOp | OnCompleteOptIn)
 /**
  * A factory for available 'update' calls
  */
@@ -535,8 +565,7 @@ export type TestingAppUpdateCalls = (typeof TestingAppCallFactory)['update']
 /**
  * Defines supported update methods for this smart contract
  */
-export type TestingAppUpdateCallParams =
-  | TypedCallParams<undefined>
+export type TestingAppUpdateCallParams = TypedCallParams<undefined>
 /**
  * A factory for available 'delete' calls
  */
@@ -544,8 +573,7 @@ export type TestingAppDeleteCalls = (typeof TestingAppCallFactory)['delete']
 /**
  * Defines supported delete methods for this smart contract
  */
-export type TestingAppDeleteCallParams =
-  | TypedCallParams<undefined>
+export type TestingAppDeleteCallParams = TypedCallParams<undefined>
 /**
  * Defines arguments required for the deploy method.
  */
@@ -565,7 +593,6 @@ export type TestingAppDeployArgs = {
   deleteCall?: (callFactory: TestingAppDeleteCalls) => TestingAppDeleteCallParams
 }
 
-
 /**
  * Exposes methods for constructing all available smart contract calls
  */
@@ -581,7 +608,13 @@ export abstract class TestingAppCallFactory {
        * @param params Any parameters for the call
        * @returns A TypedCallParams object for the call
        */
-      bare(params: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs & AppClientCompilationParams & (OnCompleteNoOp | OnCompleteOptIn) = {}) {
+      bare(
+        params: BareCallArgs &
+          AppClientCallCoreParams &
+          CoreAppCallArgs &
+          AppClientCompilationParams &
+          (OnCompleteNoOp | OnCompleteOptIn) = {},
+      ) {
         return {
           method: undefined,
           methodArgs: undefined,
@@ -718,7 +751,10 @@ export abstract class TestingAppCallFactory {
    * @param params Any additional parameters for the call
    * @returns A TypedCallParams object for the call
    */
-  static issueTransferToSender(args: MethodArgs<'issue_transfer_to_sender(uint64)void'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+  static issueTransferToSender(
+    args: MethodArgs<'issue_transfer_to_sender(uint64)void'>,
+    params: AppClientCallCoreParams & CoreAppCallArgs,
+  ) {
     return {
       method: 'issue_transfer_to_sender(uint64)void' as const,
       methodArgs: Array.isArray(args) ? args : [args.amount],
@@ -814,12 +850,18 @@ export class TestingAppClient {
    * @param appDetails appDetails The details to identify the app to deploy
    * @param algod An algod client instance
    */
-  constructor(appDetails: AppDetails, private algod: Algodv2) {
+  constructor(
+    appDetails: AppDetails,
+    private algod: Algodv2,
+  ) {
     this.sender = appDetails.sender
-    this.appClient = algokit.getAppClient({
-      ...appDetails,
-      app: APP_SPEC
-    }, algod)
+    this.appClient = algokit.getAppClient(
+      {
+        ...appDetails,
+        app: APP_SPEC,
+      },
+      algod,
+    )
   }
 
   /**
@@ -829,14 +871,18 @@ export class TestingAppClient {
    * @param returnValueFormatter An optional delegate to format the return value if required
    * @returns The smart contract response with an updated return value
    */
-  protected mapReturnValue<TReturn, TResult extends AppCallTransactionResult = AppCallTransactionResult>(result: AppCallTransactionResult, returnValueFormatter?: (value: any) => TReturn): AppCallTransactionResultOfType<TReturn> & TResult {
-    if(result.return?.decodeError) {
+  protected mapReturnValue<TReturn, TResult extends AppCallTransactionResult = AppCallTransactionResult>(
+    result: AppCallTransactionResult,
+    returnValueFormatter?: (value: any) => TReturn,
+  ): AppCallTransactionResultOfType<TReturn> & TResult {
+    if (result.return?.decodeError) {
       throw result.return.decodeError
     }
-    const returnValue = result.return?.returnValue !== undefined && returnValueFormatter !== undefined
-      ? returnValueFormatter(result.return.returnValue)
-      : result.return?.returnValue as TReturn | undefined
-      return { ...result, return: returnValue } as AppCallTransactionResultOfType<TReturn> & TResult
+    const returnValue =
+      result.return?.returnValue !== undefined && returnValueFormatter !== undefined
+        ? returnValueFormatter(result.return.returnValue)
+        : (result.return?.returnValue as TReturn | undefined)
+    return { ...result, return: returnValue } as AppCallTransactionResultOfType<TReturn> & TResult
   }
 
   /**
@@ -846,7 +892,10 @@ export class TestingAppClient {
    * @param returnValueFormatter An optional delegate which when provided will be used to map non-undefined return values to the target type
    * @returns The result of the smart contract call
    */
-  public async call<TSignature extends keyof TestingApp['methods']>(typedCallParams: TypedCallParams<TSignature>, returnValueFormatter?: (value: any) => MethodReturn<TSignature>) {
+  public async call<TSignature extends keyof TestingApp['methods']>(
+    typedCallParams: TypedCallParams<TSignature>,
+    returnValueFormatter?: (value: any) => MethodReturn<TSignature>,
+  ) {
     return this.mapReturnValue<MethodReturn<TSignature>>(await this.appClient.call(typedCallParams), returnValueFormatter)
   }
 
@@ -881,7 +930,13 @@ export class TestingAppClient {
        * @param args The arguments for the bare call
        * @returns The create result
        */
-      async bare(args: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs & (OnCompleteNoOp | OnCompleteOptIn) = {}) {
+      async bare(
+        args: BareCallArgs &
+          AppClientCallCoreParams &
+          AppClientCompilationParams &
+          CoreAppCallArgs &
+          (OnCompleteNoOp | OnCompleteOptIn) = {},
+      ) {
         return $this.mapReturnValue<undefined, AppCreateCallTransactionResult>(await $this.appClient.create(args))
       },
     }
@@ -937,7 +992,9 @@ export class TestingAppClient {
        * @returns The optIn result
        */
       async optIn(args: MethodArgs<'opt_in()void'>, params: AppClientCallCoreParams = {}) {
-        return $this.mapReturnValue<MethodReturn<'opt_in()void'>>(await $this.appClient.optIn(TestingAppCallFactory.optIn.optIn(args, params)))
+        return $this.mapReturnValue<MethodReturn<'opt_in()void'>>(
+          await $this.appClient.optIn(TestingAppCallFactory.optIn.optIn(args, params)),
+        )
       },
     }
   }
@@ -981,7 +1038,10 @@ export class TestingAppClient {
    * @param params Any additional parameters for the call
    * @returns The result of the call
    */
-  public setGlobal(args: MethodArgs<'set_global(uint64,uint64,string,byte[4])void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+  public setGlobal(
+    args: MethodArgs<'set_global(uint64,uint64,string,byte[4])void'>,
+    params: AppClientCallCoreParams & CoreAppCallArgs = {},
+  ) {
     return this.call(TestingAppCallFactory.setGlobal(args, params))
   }
 
@@ -1003,7 +1063,10 @@ export class TestingAppClient {
    * @param params Any additional parameters for the call
    * @returns The result of the call
    */
-  public issueTransferToSender(args: MethodArgs<'issue_transfer_to_sender(uint64)void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+  public issueTransferToSender(
+    args: MethodArgs<'issue_transfer_to_sender(uint64)void'>,
+    params: AppClientCallCoreParams & CoreAppCallArgs = {},
+  ) {
     return this.call(TestingAppCallFactory.issueTransferToSender(args, params))
   }
 
@@ -1072,15 +1135,14 @@ export class TestingAppClient {
   private static getBinaryState(state: AppState, key: string): BinaryState | undefined {
     const value = state[key]
     if (!value) return undefined
-    if (!('valueRaw' in value))
-      throw new Error(`Failed to parse state value for ${key}; received an int when expected a byte array`)
+    if (!('valueRaw' in value)) throw new Error(`Failed to parse state value for ${key}; received an int when expected a byte array`)
     return {
       asString(): string {
         return value.value
       },
       asByteArray(): Uint8Array {
         return value.valueRaw
-      }
+      },
     }
   }
 
@@ -1094,8 +1156,7 @@ export class TestingAppClient {
   private static getIntegerState(state: AppState, key: string): IntegerState | undefined {
     const value = state[key]
     if (!value) return undefined
-    if ('valueRaw' in value)
-      throw new Error(`Failed to parse state value for ${key}; received a byte array when expected a number`)
+    if ('valueRaw' in value) throw new Error(`Failed to parse state value for ${key}; received a byte array when expected a number`)
     return {
       asBigInt() {
         return typeof value.value === 'bigint' ? value.value : BigInt(value.value)
@@ -1156,56 +1217,76 @@ export class TestingAppClient {
   public compose(): TestingAppComposer {
     const client = this
     const atc = new AtomicTransactionComposer()
-    let promiseChain:Promise<unknown> = Promise.resolve()
+    let promiseChain: Promise<unknown> = Promise.resolve()
     const resultMappers: Array<undefined | ((x: any) => any)> = []
     return {
       callAbi(args: MethodArgs<'call_abi(string)string'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.callAbi(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.callAbi(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       callAbiForeignRefs(args: MethodArgs<'call_abi_foreign_refs()string'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.callAbiForeignRefs(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.callAbiForeignRefs(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       setGlobal(args: MethodArgs<'set_global(uint64,uint64,string,byte[4])void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.setGlobal(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.setGlobal(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       setLocal(args: MethodArgs<'set_local(uint64,uint64,string,byte[4])void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.setLocal(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.setLocal(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       issueTransferToSender(args: MethodArgs<'issue_transfer_to_sender(uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.issueTransferToSender(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.issueTransferToSender(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       setBox(args: MethodArgs<'set_box(byte[4],string)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.setBox(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.setBox(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       error(args: MethodArgs<'error()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.error(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.error(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       emitSwapped(args: MethodArgs<'emitSwapped(uint64,uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.emitSwapped(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.emitSwapped(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       emitSwappedTwice(args: MethodArgs<'emitSwappedTwice(uint64,uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.emitSwappedTwice(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.emitSwappedTwice(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
       emitComplex(args: MethodArgs<'emitComplex(uint64,uint64,uint32[])void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.emitComplex(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() =>
+          client.emitComplex(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+        )
         resultMappers.push(undefined)
         return this
       },
@@ -1213,7 +1294,9 @@ export class TestingAppClient {
         const $this = this
         return {
           bare(args?: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs) {
-            promiseChain = promiseChain.then(() => client.update.bare({...args, sendParams: {...args?.sendParams, skipSending: true, atc}}))
+            promiseChain = promiseChain.then(() =>
+              client.update.bare({ ...args, sendParams: { ...args?.sendParams, skipSending: true, atc } }),
+            )
             resultMappers.push(undefined)
             return $this
           },
@@ -1223,7 +1306,9 @@ export class TestingAppClient {
         const $this = this
         return {
           bare(args?: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs) {
-            promiseChain = promiseChain.then(() => client.delete.bare({...args, sendParams: {...args?.sendParams, skipSending: true, atc}}))
+            promiseChain = promiseChain.then(() =>
+              client.delete.bare({ ...args, sendParams: { ...args?.sendParams, skipSending: true, atc } }),
+            )
             resultMappers.push(undefined)
             return $this
           },
@@ -1233,19 +1318,26 @@ export class TestingAppClient {
         const $this = this
         return {
           optIn(args: MethodArgs<'opt_in()void'>, params?: AppClientCallCoreParams) {
-            promiseChain = promiseChain.then(() => client.optIn.optIn(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+            promiseChain = promiseChain.then(() =>
+              client.optIn.optIn(args, { ...params, sendParams: { ...params?.sendParams, skipSending: true, atc } }),
+            )
             resultMappers.push(undefined)
             return $this
           },
         }
       },
       clearState(args?: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.clearState({...args, sendParams: {...args?.sendParams, skipSending: true, atc}}))
+        promiseChain = promiseChain.then(() => client.clearState({ ...args, sendParams: { ...args?.sendParams, skipSending: true, atc } }))
         resultMappers.push(undefined)
         return this
       },
-      addTransaction(txn: TransactionWithSigner | TransactionToSign | Transaction | Promise<SendTransactionResult>, defaultSender?: SendTransactionFrom) {
-        promiseChain = promiseChain.then(async () => atc.addTransaction(await algokit.getTransactionWithSigner(txn, defaultSender ?? client.sender)))
+      addTransaction(
+        txn: TransactionWithSigner | TransactionToSign | Transaction | Promise<SendTransactionResult>,
+        defaultSender?: SendTransactionFrom,
+      ) {
+        promiseChain = promiseChain.then(async () =>
+          atc.addTransaction(await algokit.getTransactionWithSigner(txn, defaultSender ?? client.sender)),
+        )
         return this
       },
       async atc() {
@@ -1257,7 +1349,9 @@ export class TestingAppClient {
         const result = await atc.simulate(client.algod, new modelsv2.SimulateRequest({ txnGroups: [], ...options }))
         return {
           ...result,
-          returns: result.methodResults?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i]!(val.returnValue) : val.returnValue)
+          returns: result.methodResults?.map((val, i) =>
+            resultMappers[i] !== undefined ? resultMappers[i]!(val.returnValue) : val.returnValue,
+          ),
         }
       },
       async execute() {
@@ -1265,9 +1359,9 @@ export class TestingAppClient {
         const result = await algokit.sendAtomicTransactionComposer({ atc, sendParams: {} }, client.algod)
         return {
           ...result,
-          returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i]!(val.returnValue) : val.returnValue)
+          returns: result.returns?.map((val, i) => (resultMappers[i] !== undefined ? resultMappers[i]!(val.returnValue) : val.returnValue)),
         }
-      }
+      },
     } as unknown as TestingAppComposer
   }
 }
@@ -1279,7 +1373,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  callAbi(args: MethodArgs<'call_abi(string)string'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'call_abi(string)string'>]>
+  callAbi(
+    args: MethodArgs<'call_abi(string)string'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'call_abi(string)string'>]>
 
   /**
    * Calls the call_abi_foreign_refs()string ABI method.
@@ -1288,7 +1385,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  callAbiForeignRefs(args: MethodArgs<'call_abi_foreign_refs()string'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'call_abi_foreign_refs()string'>]>
+  callAbiForeignRefs(
+    args: MethodArgs<'call_abi_foreign_refs()string'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'call_abi_foreign_refs()string'>]>
 
   /**
    * Calls the set_global(uint64,uint64,string,byte[4])void ABI method.
@@ -1297,7 +1397,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  setGlobal(args: MethodArgs<'set_global(uint64,uint64,string,byte[4])void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'set_global(uint64,uint64,string,byte[4])void'>]>
+  setGlobal(
+    args: MethodArgs<'set_global(uint64,uint64,string,byte[4])void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'set_global(uint64,uint64,string,byte[4])void'>]>
 
   /**
    * Calls the set_local(uint64,uint64,string,byte[4])void ABI method.
@@ -1306,7 +1409,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  setLocal(args: MethodArgs<'set_local(uint64,uint64,string,byte[4])void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'set_local(uint64,uint64,string,byte[4])void'>]>
+  setLocal(
+    args: MethodArgs<'set_local(uint64,uint64,string,byte[4])void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'set_local(uint64,uint64,string,byte[4])void'>]>
 
   /**
    * Calls the issue_transfer_to_sender(uint64)void ABI method.
@@ -1315,7 +1421,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  issueTransferToSender(args: MethodArgs<'issue_transfer_to_sender(uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'issue_transfer_to_sender(uint64)void'>]>
+  issueTransferToSender(
+    args: MethodArgs<'issue_transfer_to_sender(uint64)void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'issue_transfer_to_sender(uint64)void'>]>
 
   /**
    * Calls the set_box(byte[4],string)void ABI method.
@@ -1324,7 +1433,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  setBox(args: MethodArgs<'set_box(byte[4],string)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'set_box(byte[4],string)void'>]>
+  setBox(
+    args: MethodArgs<'set_box(byte[4],string)void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'set_box(byte[4],string)void'>]>
 
   /**
    * Calls the error()void ABI method.
@@ -1333,7 +1445,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  error(args: MethodArgs<'error()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'error()void'>]>
+  error(
+    args: MethodArgs<'error()void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'error()void'>]>
 
   /**
    * Calls the emitSwapped(uint64,uint64)void ABI method.
@@ -1342,7 +1457,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  emitSwapped(args: MethodArgs<'emitSwapped(uint64,uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'emitSwapped(uint64,uint64)void'>]>
+  emitSwapped(
+    args: MethodArgs<'emitSwapped(uint64,uint64)void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'emitSwapped(uint64,uint64)void'>]>
 
   /**
    * Calls the emitSwappedTwice(uint64,uint64)void ABI method.
@@ -1351,7 +1469,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  emitSwappedTwice(args: MethodArgs<'emitSwappedTwice(uint64,uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'emitSwappedTwice(uint64,uint64)void'>]>
+  emitSwappedTwice(
+    args: MethodArgs<'emitSwappedTwice(uint64,uint64)void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'emitSwappedTwice(uint64,uint64)void'>]>
 
   /**
    * Calls the emitComplex(uint64,uint64,uint32[])void ABI method.
@@ -1360,7 +1481,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  emitComplex(args: MethodArgs<'emitComplex(uint64,uint64,uint32[])void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, MethodReturn<'emitComplex(uint64,uint64,uint32[])void'>]>
+  emitComplex(
+    args: MethodArgs<'emitComplex(uint64,uint64,uint32[])void'>,
+    params?: AppClientCallCoreParams & CoreAppCallArgs,
+  ): TestingAppComposer<[...TReturns, MethodReturn<'emitComplex(uint64,uint64,uint32[])void'>]>
 
   /**
    * Gets available update methods
@@ -1372,7 +1496,9 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
      * @param args The arguments for the bare call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    bare(args?: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs): TestingAppComposer<[...TReturns, undefined]>
+    bare(
+      args?: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs,
+    ): TestingAppComposer<[...TReturns, undefined]>
   }
 
   /**
@@ -1399,7 +1525,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
      * @param params Any additional parameters for the call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    optIn(args: MethodArgs<'opt_in()void'>, params?: AppClientCallCoreParams): TestingAppComposer<[...TReturns, MethodReturn<'opt_in()void'>]>
+    optIn(
+      args: MethodArgs<'opt_in()void'>,
+      params?: AppClientCallCoreParams,
+    ): TestingAppComposer<[...TReturns, MethodReturn<'opt_in()void'>]>
   }
 
   /**
@@ -1416,7 +1545,10 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param txn One of: A TransactionWithSigner object (returned as is), a TransactionToSign object (signer is obtained from the signer property), a Transaction object (signer is extracted from the defaultSender parameter), an async SendTransactionResult returned by one of algokit utils helpers (signer is obtained from the defaultSender parameter)
    * @param defaultSender The default sender to be used to obtain a signer where the object provided to the transaction parameter does not include a signer.
    */
-  addTransaction(txn: TransactionWithSigner | TransactionToSign | Transaction | Promise<SendTransactionResult>, defaultSender?: SendTransactionFrom): TestingAppComposer<TReturns>
+  addTransaction(
+    txn: TransactionWithSigner | TransactionToSign | Transaction | Promise<SendTransactionResult>,
+    defaultSender?: SendTransactionFrom,
+  ): TestingAppComposer<TReturns>
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
