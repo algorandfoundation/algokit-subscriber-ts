@@ -484,12 +484,12 @@ function transactionFilter(
 export async function getBlocksBulk(context: { startRound: number; maxRound: number }, client: Algodv2) {
   // Grab 30 at a time in parallel to not overload the node
   const blockChunks = chunkArray(range(context.startRound, context.maxRound), 30)
-  const blocks: { block: Block }[] = []
+  let blocks: { block: Block }[] = []
   for (const chunk of blockChunks) {
     algokit.Config.logger.info(`Retrieving ${chunk.length} blocks from round ${chunk[0]} via algod`)
     const start = +new Date()
-    blocks.push(
-      ...(await Promise.all(
+    blocks = blocks.concat(
+      await Promise.all(
         chunk.map(async (round) => {
           const response = await client.c.get(`/v2/blocks/${round}`, { format: 'msgpack' }, undefined, undefined, false)
           const body = response.body as Uint8Array
@@ -504,7 +504,7 @@ export async function getBlocksBulk(context: { startRound: number; maxRound: num
           }
           return decoded
         }),
-      )),
+      ),
     )
     algokit.Config.logger.debug(`Retrieved ${chunk.length} blocks from round ${chunk[0]} via algod in ${(+new Date() - start) / 1000}s`)
   }
