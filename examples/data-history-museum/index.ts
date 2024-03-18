@@ -1,9 +1,10 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import { TransactionType } from 'algosdk'
+import algosdk from 'algosdk'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
+import TransactionType = algosdk.TransactionType
 
 if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console

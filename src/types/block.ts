@@ -1,4 +1,5 @@
-import { EncodedTransaction } from 'algosdk'
+import algosdk from 'algosdk'
+import EncodedTransaction = algosdk.EncodedTransaction
 
 /** Data that is returned in a raw Algorand block
  *
