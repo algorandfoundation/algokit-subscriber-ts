@@ -33,7 +33,7 @@ const config: RollupOptions = {
     }),
     multiInput(),
   ],
-  external: [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies)],
+  external: [...Object.keys(pkg.dependencies), ...Object.keys(pkg.peerDependencies), '@algorandfoundation/algokit-utils/types/indexer'],
   onLog(level: LogLevel, log: RollupLog, handler: LogOrStringHandler) {
     if (log.code === 'CIRCULAR_DEPENDENCY') {
       handler('error', log)
