@@ -67,7 +67,7 @@ export async function getSubscribedTransactions(
   let algodSyncFromRoundNumber = watermark + 1
   let startRound = algodSyncFromRoundNumber
   let endRound = currentRound
-  const catchupTransactions: SubscribedTransaction[] = []
+  let catchupTransactions: SubscribedTransaction[] = []
   let start = +new Date()
 
   if (currentRound - watermark > maxRoundsToSync) {
@@ -102,12 +102,12 @@ export async function getSubscribedTransactions(
           `Catching up from round ${startRound} to round ${algodSyncFromRoundNumber - 1} via indexer; this may take a few seconds`,
         )
 
-        catchupTransactions.push(
-          ...(await algokit.searchTransactions(indexer, indexerPreFilter(filter, startRound, algodSyncFromRoundNumber - 1))).transactions
-            .flatMap((t) => getFilteredIndexerTransactions(t, filter))
-            .filter(indexerPostFilter(filter, arc28Events, subscription.arc28Events ?? []))
-            .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!),
-        )
+        catchupTransactions = (
+          await algokit.searchTransactions(indexer, indexerPreFilter(filter, startRound, algodSyncFromRoundNumber - 1))
+        ).transactions
+          .flatMap((t) => getFilteredIndexerTransactions(t, filter))
+          .filter(indexerPostFilter(filter, arc28Events, subscription.arc28Events ?? []))
+          .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!)
 
         algokit.Config.logger.debug(
           `Retrieved ${catchupTransactions.length} transactions from round ${startRound} to round ${
