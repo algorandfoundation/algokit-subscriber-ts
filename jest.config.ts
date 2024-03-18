@@ -8,7 +8,7 @@ const config: Config.InitialOptions = {
   setupFiles: ['<rootDir>/tests/setup.ts'],
   moduleDirectories: ['node_modules', 'src'],
   transform: {
-    '<regex_match_files>': [
+    '^.+\\.ts?$': [
       'ts-jest',
       {
         tsconfig: 'tsconfig.test.json',

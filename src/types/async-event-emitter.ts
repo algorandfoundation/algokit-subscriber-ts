@@ -30,7 +30,7 @@ export class AsyncEventEmitter {
    * @param listener The listener to trigger
    * @returns The `AsyncEventEmitter` so you can chain registrations
    */
-  on(eventName: string | symbol, listener: AsyncEventListener): this {
+  on(eventName: string | symbol, listener: AsyncEventListener): AsyncEventEmitter {
     if (!this.listenerMap[eventName]) this.listenerMap[eventName] = []
     this.listenerMap[eventName].push(listener)
     return this
@@ -42,7 +42,7 @@ export class AsyncEventEmitter {
    * @param listener The listener to trigger
    * @returns The `AsyncEventEmitter` so you can chain registrations
    */
-  once(eventName: string | symbol, listener: AsyncEventListener): this {
+  once(eventName: string | symbol, listener: AsyncEventListener): AsyncEventEmitter {
     const wrappedListener: AsyncEventListener = async (event, eventName) => {
       try {
         return await listener(event, eventName)
@@ -60,7 +60,7 @@ export class AsyncEventEmitter {
    * @param listener The listener to remove
    * @returns The `AsyncEventEmitter` so you can chain registrations
    */
-  removeListener(eventName: string | symbol, listener: AsyncEventListener): this {
+  removeListener(eventName: string | symbol, listener: AsyncEventListener): AsyncEventEmitter {
     const wrappedListener = this.listenerWrapperMap.get(listener)
     if (wrappedListener) {
       this.listenerWrapperMap.delete(listener)

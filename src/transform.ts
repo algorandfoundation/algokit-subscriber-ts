@@ -1,12 +1,15 @@
 import type { MultisigTransactionSubSignature } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete, StateProofTransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
-import algosdk, { OnApplicationComplete, Transaction, TransactionType } from 'algosdk'
+import algosdk from 'algosdk'
 import { Buffer } from 'buffer'
 import base32 from 'hi-base32'
 import sha512 from 'js-sha512'
 import type { Block, BlockInnerTransaction, BlockTransaction, StateProof, StateProofMessage } from './types/block'
 import { SubscribedTransaction } from './types/subscription'
+import OnApplicationComplete = algosdk.OnApplicationComplete
+import Transaction = algosdk.Transaction
+import TransactionType = algosdk.TransactionType
 
 // Recursively remove all null values from object
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,7 +52,7 @@ export function getBlockTransactions(block: Block): TransactionInBlock[] {
   let offset = 0
   const getOffset = () => offset++
 
-  return block.txns.flatMap((blockTransaction, roundIndex) => {
+  return (block.txns ?? []).flatMap((blockTransaction, roundIndex) => {
     let parentOffset = 0
     const getParentOffset = () => parentOffset++
     const parentData = extractTransactionFromBlockTransaction(blockTransaction, block)
@@ -264,8 +267,8 @@ export function getIndexerTransactionFromAlgodTransaction(
   const decoder = new TextDecoder()
 
   // The types in algosdk for state proofs are incorrect, so override them
-  const stateProof = transaction.stateProof as StateProof | undefined
-  const stateProofMessage = transaction.stateProofMessage as StateProofMessage | undefined
+  const stateProof = transaction.stateProof as unknown as StateProof | undefined
+  const stateProofMessage = transaction.stateProofMessage as unknown as StateProofMessage | undefined
   const txId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
     transaction.type === TransactionType.stpf
       ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, block)

@@ -26,7 +26,7 @@ Whether or not to silently (with warning log) continue if an error is encountere
 
 #### Defined in
 
-[types/subscription.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L54)
+[types/subscription.ts:56](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L56)
 
 ___
 
@@ -38,7 +38,7 @@ The list of ARC-28 event definitions
 
 #### Defined in
 
-[types/subscription.ts:56](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L56)
+[types/subscription.ts:58](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L58)
 
 ___
 
@@ -50,7 +50,7 @@ The name to designate for this group of events.
 
 #### Defined in
 
-[types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
+[types/subscription.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
 
 ___
 
@@ -62,7 +62,7 @@ Optional list of app IDs that this event should apply to
 
 #### Defined in
 
-[types/subscription.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
+[types/subscription.ts:52](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L52)
 
 ___
 
@@ -70,11 +70,11 @@ ___
 
 • `Optional` **processTransaction**: (`transaction`: `TransactionResult`) => `boolean`
 
+Optional predicate to indicate if these ARC-28 events should be processed for the given transaction
+
 #### Type declaration
 
 ▸ (`transaction`): `boolean`
-
-Optional predicate to indicate if these ARC-28 events should be processed for the given transaction
 
 ##### Parameters
 
@@ -88,4 +88,4 @@ Optional predicate to indicate if these ARC-28 events should be processed for th
 
 #### Defined in
 
-[types/subscription.ts:52](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L52)
+[types/subscription.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L54)

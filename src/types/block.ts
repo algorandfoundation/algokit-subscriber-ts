@@ -1,4 +1,5 @@
-import { EncodedTransaction } from 'algosdk'
+import algosdk from 'algosdk'
+import EncodedTransaction = algosdk.EncodedTransaction
 
 /** Data that is returned in a raw Algorand block
  *
@@ -52,7 +53,7 @@ export interface Block {
    */
   txn256: string
   /** The transactions within the block. */
-  txns: BlockTransaction[]
+  txns?: BlockTransaction[]
 }
 
 /** Data that is returned in a raw Algorand block for a single transaction

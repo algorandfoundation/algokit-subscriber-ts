@@ -32,7 +32,7 @@ The ARC-28 definition of the event
 
 #### Defined in
 
-[types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
+[types/subscription.ts:36](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L36)
 
 ___
 
@@ -44,7 +44,7 @@ The name of the ARC-28 event that was triggered
 
 #### Defined in
 
-[types/subscription.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L28)
+[types/subscription.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L30)
 
 ___
 
@@ -56,7 +56,7 @@ The 4-byte hex prefix for the event
 
 #### Defined in
 
-[types/subscription.ts:32](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L32)
+[types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
 
 ___
 
@@ -68,7 +68,7 @@ The signature of the event e.g. `EventName(type1,type2)`
 
 #### Defined in
 
-[types/subscription.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L30)
+[types/subscription.ts:32](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L32)
 
 ___
 
@@ -80,4 +80,4 @@ The name of the ARC-28 event group the event belongs to
 
 #### Defined in
 
-[types/subscription.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L26)
+[types/subscription.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L28)

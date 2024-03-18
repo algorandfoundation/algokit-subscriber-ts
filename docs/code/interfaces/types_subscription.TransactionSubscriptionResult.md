@@ -25,7 +25,7 @@ The current detected tip of the configured Algorand blockchain.
 
 #### Defined in
 
-[types/subscription.ts:163](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L163)
+[types/subscription.ts:165](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L165)
 
 ___
 
@@ -41,7 +41,7 @@ subscribed transactions to keep it reliable.
 
 #### Defined in
 
-[types/subscription.ts:169](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L169)
+[types/subscription.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L171)
 
 ___
 
@@ -56,7 +56,7 @@ to represent the data with some additional fields.
 
 #### Defined in
 
-[types/subscription.ts:175](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L175)
+[types/subscription.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L177)
 
 ___
 
@@ -68,4 +68,4 @@ The round range that was synced from/to
 
 #### Defined in
 
-[types/subscription.ts:161](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L161)
+[types/subscription.ts:163](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L163)

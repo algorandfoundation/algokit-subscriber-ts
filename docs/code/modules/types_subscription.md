@@ -36,7 +36,7 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://develop
 
 #### Defined in
 
-[types/subscription.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L66)
+[types/subscription.ts:68](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L68)
 
 ___
 
@@ -67,4 +67,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L225)
+[types/subscription.ts:227](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L227)

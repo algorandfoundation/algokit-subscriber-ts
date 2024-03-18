@@ -24,7 +24,7 @@ The arguments of the event, in order
 
 #### Defined in
 
-[types/subscription.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L13)
+[types/subscription.ts:15](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L15)
 
 ___
 
@@ -36,7 +36,7 @@ Optional, user-friendly description for the event
 
 #### Defined in
 
-[types/subscription.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L11)
+[types/subscription.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L13)
 
 ___
 
@@ -48,4 +48,4 @@ The name of the event
 
 #### Defined in
 
-[types/subscription.ts:9](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L9)
+[types/subscription.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L11)

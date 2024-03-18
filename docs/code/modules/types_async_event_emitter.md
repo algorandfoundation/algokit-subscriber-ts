@@ -18,11 +18,11 @@
 
 Ƭ **AsyncEventListener**: (`event`: `unknown`, `eventName`: `string` \| `symbol`) => `Promise`\<`void`\> \| `void`
 
+An asynchronous event listener
+
 #### Type declaration
 
 ▸ (`event`, `eventName`): `Promise`\<`void`\> \| `void`
-
-An asynchronous event listener
 
 ##### Parameters
 

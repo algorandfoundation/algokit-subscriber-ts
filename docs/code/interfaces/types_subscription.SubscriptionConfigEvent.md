@@ -30,7 +30,7 @@ Name / identifier to uniquely describe the event
 
 #### Defined in
 
-[types/subscription.ts:215](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L215)
+[types/subscription.ts:217](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L217)
 
 ___
 
@@ -42,7 +42,7 @@ The transaction filter that determines if the event has occurred
 
 #### Defined in
 
-[types/subscription.ts:217](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L217)
+[types/subscription.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L219)
 
 ___
 
@@ -50,13 +50,13 @@ ___
 
 • `Optional` **mapper**: (`transaction`: [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction)[]) => `Promise`\<`T`[]\>
 
-#### Type declaration
-
-▸ (`transaction`): `Promise`\<`T`[]\>
-
 An optional data mapper if you want the event data to take a certain shape.
 
 If not specified, then the event will receive a `SubscribedTransaction`.
+
+#### Type declaration
+
+▸ (`transaction`): `Promise`\<`T`[]\>
 
 ##### Parameters
 
@@ -70,4 +70,4 @@ If not specified, then the event will receive a `SubscribedTransaction`.
 
 #### Defined in
 
-[types/subscription.ts:222](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L222)
+[types/subscription.ts:224](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L224)

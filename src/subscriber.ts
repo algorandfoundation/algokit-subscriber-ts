@@ -1,5 +1,5 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
-import { Algodv2, Indexer } from 'algosdk'
+import algosdk from 'algosdk'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
 import type {
@@ -9,6 +9,8 @@ import type {
   TypedAsyncEventListener,
 } from './types/subscription'
 import { race, sleep } from './utils'
+import Algodv2 = algosdk.Algodv2
+import Indexer = algosdk.Indexer
 
 /**
  * Handles the logic for subscribing to the Algorand blockchain and emitting events.
