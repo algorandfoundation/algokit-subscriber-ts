@@ -33,6 +33,9 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closing-amount": 0,
         "confirmed-round": 35600004,
         "fee": 0,
+        "filtersMatched": [
+          "default",
+        ],
         "first-valid": 35600002,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "id": "G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ",
@@ -2119,6 +2122,9 @@ describe('Complex transaction with many nested inner transactions', () => {
       {
         "confirmed-round": 35600004,
         "fee": 0,
+        "filtersMatched": [
+          "default",
+        ],
         "first-valid": 35600002,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",

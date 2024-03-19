@@ -66,18 +66,48 @@ export interface Arc28EventGroup {
  * * Add emitted ARC-28 events via `arc28Events`
  */
 export type SubscribedTransaction = TransactionResult & {
-  /** The transaction ID of the parent of this transaction (if it's an inner transaction) */
+  /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */
   'inner-txns'?: SubscribedTransaction[]
-  /** Any ARC-28 events emitted from an app call */
+  /** Any ARC-28 events emitted from an app call. */
   arc28Events?: EmittedArc28Event[]
+  /** The names of any filters that matched the given transaction to result in it being 'subscribed'. */
+  filtersMatched?: string[]
 }
 
 /** Parameters to control a single subscription pull/poll. */
 export interface TransactionSubscriptionParams {
-  /** The filter to apply to find transactions of interest. */
-  filter: TransactionFilter
+  /** The filter(s) to apply to find transactions of interest.
+   * Can be a single filter or a list of filters with corresponding names.
+   *
+   * @example **Single filter**
+   * ```typescript
+   *  filter: {
+   *    type: TransactionType.axfer,
+   *    //...
+   *  }
+   * ```
+   *
+   * @example **Multiple filters**
+   * ```typescript
+   *  filter: [{
+   *   name: 'asset-transfers',
+   *   filter: {
+   *     type: TransactionType.axfer,
+   *     //...
+   *   }
+   *  }, {
+   *   name: 'payments',
+   *   filter: {
+   *     type: TransactionType.pay,
+   *     //...
+   *   }
+   *  }]
+   * ```
+   *
+   */
+  filter: TransactionFilter | NamedTransactionFilter[]
   /** Any ARC-28 event definitions to process from app call logs */
   arc28Events?: Arc28EventGroup[]
   /** The current round watermark that transactions have previously been synced to.
@@ -116,6 +146,14 @@ export interface TransactionSubscriptionParams {
    *  * `fail`: Throw an error.
    **/
   syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
+}
+
+/** Specify a named filter to apply to find transactions of interest. */
+export interface NamedTransactionFilter {
+  /** The name to give the filter. */
+  name: string
+  /** The filter itself. */
+  filter: TransactionFilter
 }
 
 /** Specify a filter to apply to find transactions of interest. */

@@ -240,6 +240,7 @@ function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, block: 
  */
 export function getIndexerTransactionFromAlgodTransaction(
   t: TransactionInBlock & { getChildOffset?: () => number },
+  filterName?: string,
 ): SubscribedTransaction {
   const {
     transaction,
@@ -278,6 +279,7 @@ export function getIndexerTransactionFromAlgodTransaction(
     return {
       id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : txId,
       parentTransactionId,
+      filtersMatched: filterName ? [filterName] : undefined,
       'asset-config-transaction':
         transaction.type === TransactionType.acfg
           ? {
@@ -522,6 +524,7 @@ export function getIndexerTransactionFromAlgodTransaction(
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
+    // eslint-disable-next-line no-console
     console.error(`Failed to transform transaction ${txId} from block ${block.rnd} with offset ${roundOffset}`)
     throw e
   }

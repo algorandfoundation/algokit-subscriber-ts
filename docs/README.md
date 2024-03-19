@@ -310,6 +310,8 @@ Any [filter](#extensive-subscription-filtering) you apply will be seamlessly tra
 
 To see this in action, you can run the Data History Museum example in this repository against MainNet and see it sync millions of rounds in seconds.
 
+Note about how indexer isn't magic... and pre-filter vs post-filter
+
 ## Entry points
 
 There are two entry points into the subscriber functionality. The lower level [`getSubscribedTransactions`](./subscriptions.md) method that contains the raw subscription logic for a single "poll", and the [`AlgorandSubscriber`](./subscriber.md) class that provides a higher level interface that is easier to use and takes care of a lot more orchestration logic for you (particularly around the ability to continuously poll).
