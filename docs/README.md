@@ -310,7 +310,20 @@ Any [filter](#extensive-subscription-filtering) you apply will be seamlessly tra
 
 To see this in action, you can run the Data History Museum example in this repository against MainNet and see it sync millions of rounds in seconds.
 
-Note about how indexer isn't magic... and pre-filter vs post-filter
+The indexer catchup isn't magic - if the filter you are trying to catch up with generates an enormous number of transactions (e.g. hundreds of thousands or millions) then it will run very slowly and has the potential for running out of compute and memory time depending on what the constraints are in the deployment environment you are running in. To understand how the indexer behaviour works to know if you are likely to generate a lot of transactions it's worth understanding the architecture of the indexer catchup.
+
+Indexer catchup runs in two stages:
+
+1. **Pre-filtering**: Any filters that can be translated to the [indexer search transactions endpoint](https://developer.algorand.org/docs/rest-apis/indexer/#get-v2transactions). This query is then run between the rounds that need to be synced and paginated in the max number of results (1000) at a time until all of the transactions are retrieved. This ensures we get round-based transactional consistency. This is the filter that can easily explode out though and take a long time when using indexer catchup. For avoidance of doubt, the following filters are the ones that are converted to a pre-filter:
+   - `sender`
+   - `receiver`
+   - `type`
+   - `notePrefix`
+   - `appId`
+   - `assetId`
+   - `minAmount`
+   - `maxAmount`
+2. **Post-filtering**: All remaining filters are then applied in-memory to the resulting list of transactions that are returned from the pre-filter before being returned as subscribed transactions.
 
 ## Entry points
 
