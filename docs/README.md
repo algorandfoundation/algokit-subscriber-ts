@@ -146,7 +146,7 @@ There is a core type that is used to specify the filters [`TransactionFilter`](s
 ```typescript
 const subscriber = new AlgorandSubscriber({filter: {/* Filter properties */}, ...}, ...)
 // or:
-getSubscribedTransactions(filter: {/* Filter properties */, ...}, ...)
+getSubscribedTransactions({filter: {/* Filter properties */, ...}, ... }, ...)
 ```
 
 Currently this allows you filter based on any combination (AND logic) of:
@@ -183,6 +183,16 @@ Currently this allows you filter based on any combination (AND logic) of:
   - Amount transferred (min and/or max) e.g. `{ type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
 - Algo transfers (pay transactions)
   - Amount transferred (min and/or max) e.g. `{ type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
+
+You can also supply multiple, named filters via the [`NamedTransactionFilter`](subscriptions.md#namedtransactionfilter) type:
+
+```typescript
+const subscriber = new AlgorandSubscriber({filter: [{name: 'filter1Name', filter: { /* Filter properties */ }}, {name: 'filter2Name', filter: { /* Filter properties */ }}], ...}, ...)
+// or:
+getSubscribedTransactions({filter: [{name: 'filter1Name', filter: { /* Filter properties */ }}, {name: 'filter2Name', filter: { /* Filter properties */ }}], ...}, ...)
+```
+
+When subscribed transactions are returned each transaction will have a `filtersMatched` property that will have an array of any filter(s) that caused that transaction to be returned.
 
 ### ARC-28 event subscription and reads
 

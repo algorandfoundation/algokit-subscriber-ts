@@ -28,7 +28,7 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:189](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L189)
+[types/subscription.ts:227](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L227)
 
 ___
 
@@ -40,7 +40,7 @@ The set of events to subscribe to / emit
 
 #### Defined in
 
-[types/subscription.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L191)
+[types/subscription.ts:229](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L229)
 
 ___
 
@@ -52,7 +52,7 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 #### Defined in
 
-[types/subscription.ts:183](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L183)
+[types/subscription.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L221)
 
 ___
 
@@ -64,7 +64,7 @@ The maximum number of rounds to sync at a time; defaults to 500
 
 #### Defined in
 
-[types/subscription.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L187)
+[types/subscription.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L225)
 
 ___
 
@@ -85,7 +85,7 @@ The behaviour when the number of rounds to sync is greater than `maxRoundsToSync
 
 #### Defined in
 
-[types/subscription.ts:203](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L203)
+[types/subscription.ts:241](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L241)
 
 ___
 
@@ -97,7 +97,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 #### Defined in
 
-[types/subscription.ts:185](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L185)
+[types/subscription.ts:223](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L223)
 
 ___
 
@@ -117,4 +117,4 @@ its position in the chain
 
 #### Defined in
 
-[types/subscription.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L206)
+[types/subscription.ts:244](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L244)

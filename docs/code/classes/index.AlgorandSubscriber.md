@@ -155,7 +155,7 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:152](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L152)
+[subscriber.ts:156](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L156)
 
 ___
 
@@ -192,7 +192,7 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:169](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L169)
+[subscriber.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L173)
 
 ___
 
