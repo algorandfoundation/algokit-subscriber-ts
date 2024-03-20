@@ -79,17 +79,9 @@ export type SubscribedTransaction = TransactionResult & {
 /** Parameters to control a single subscription pull/poll. */
 export interface TransactionSubscriptionParams {
   /** The filter(s) to apply to find transactions of interest.
-   * Can be a single filter or a list of filters with corresponding names.
+   * A list of filters with corresponding names.
    *
-   * @example **Single filter**
-   * ```typescript
-   *  filter: {
-   *    type: TransactionType.axfer,
-   *    //...
-   *  }
-   * ```
-   *
-   * @example **Multiple filters**
+   * @example
    * ```typescript
    *  filter: [{
    *   name: 'asset-transfers',
@@ -107,7 +99,7 @@ export interface TransactionSubscriptionParams {
    * ```
    *
    */
-  filter: TransactionFilter | NamedTransactionFilter[]
+  filters: NamedTransactionFilter[]
   /** Any ARC-28 event definitions to process from app call logs */
   arc28Events?: Arc28EventGroup[]
   /** The current round watermark that transactions have previously been synced to.
@@ -225,8 +217,8 @@ export interface SubscriptionConfig {
   maxRoundsToSync?: number
   /** Any ARC-28 event definitions to process from app call logs */
   arc28Events?: Arc28EventGroup[]
-  /** The set of events to subscribe to / emit */
-  events: SubscriptionConfigEvent<unknown>[]
+  /** The set of filters to subscribe to / emit events for */
+  filters: SubscriberConfigFilter<unknown>[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
    *  * `skip-sync-newest`: Discard old rounds.
    *  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
@@ -250,14 +242,12 @@ export interface SubscriptionConfig {
 }
 
 /** A single event to subscribe to / emit. */
-export interface SubscriptionConfigEvent<T> {
-  /** Name / identifier to uniquely describe the event */
-  eventName: string
-  /** The transaction filter that determines if the event has occurred */
-  filter: TransactionFilter
-  /** An optional data mapper if you want the event data to take a certain shape.
+export interface SubscriberConfigFilter<T> extends NamedTransactionFilter {
+  /** An optional data mapper if you want the event data to take a certain shape when subscribing to events with this filter name.
    *
-   * If not specified, then the event will receive a `SubscribedTransaction`.
+   * If not specified, then the event will simply receive a `SubscribedTransaction`.
+   *
+   * Note: if you provide multiple filters with the same name then only the mapper of the first matching filter will be used
    */
   mapper?: (transaction: SubscribedTransaction[]) => Promise<T[]>
 }

@@ -11,7 +11,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   it('Can have a keyreg transaction subscribed correctly from indexer', async () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
-        filter: {
+        filters: {
           type: TransactionType.stpf,
         },
         roundsToSync: 1,
@@ -2103,7 +2103,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   it('Can have an inner transaction subscribed correctly from algod', async () => {
     const algodTxns = await GetSubscribedTransactions(
       {
-        filter: {
+        filters: {
           type: TransactionType.stpf,
         },
         roundsToSync: 1,

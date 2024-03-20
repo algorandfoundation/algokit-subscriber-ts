@@ -55,7 +55,7 @@ export async function getSubscribedTransactions(
   algod: Algodv2,
   indexer?: Indexer,
 ): Promise<TransactionSubscriptionResult> {
-  const { watermark, filter, maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
+  const { watermark, filters, maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
   const currentRound = (await algod.status().do())['last-round'] as number
 
   // Pre-calculate a flat list of all ARC-28 events to process
@@ -91,7 +91,6 @@ export async function getSubscribedTransactions(
   let endRound = currentRound
   let catchupTransactions: SubscribedTransaction[] = []
   let start = +new Date()
-  const filters = Array.isArray(filter) ? filter : [{ name: 'default', filter: filter }]
 
   // If we are less than `maxRoundstoSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
   if (currentRound - watermark > maxRoundsToSync) {
@@ -180,7 +179,7 @@ export async function getSubscribedTransactions(
     .reduce(deduplicateSubscribedTransactionsReducer, [])
 
   algokit.Config.logger.debug(
-    `Retrieved ${blockTransactions.length} blocks from algod via round ${algodSyncFromRoundNumber}-${endRound} in ${
+    `Retrieved ${blockTransactions.length} transactions from algod via round(s) ${algodSyncFromRoundNumber}-${endRound} in ${
       (+new Date() - start) / 1000
     }s`,
   )

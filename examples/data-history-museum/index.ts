@@ -27,9 +27,9 @@ async function getDHMSubscriber() {
   const indexer = await algokit.getAlgoIndexerClient()
   const subscriber = new AlgorandSubscriber(
     {
-      events: [
+      filters: [
         {
-          eventName: 'dhm-asset',
+          name: 'dhm-asset',
           filter: {
             type: TransactionType.acfg,
             // Data History Museum creator accounts

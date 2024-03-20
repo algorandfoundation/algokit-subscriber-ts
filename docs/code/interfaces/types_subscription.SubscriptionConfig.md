@@ -11,7 +11,7 @@ Configuration for a subscription
 ### Properties
 
 - [arc28Events](types_subscription.SubscriptionConfig.md#arc28events)
-- [events](types_subscription.SubscriptionConfig.md#events)
+- [filters](types_subscription.SubscriptionConfig.md#filters)
 - [frequencyInSeconds](types_subscription.SubscriptionConfig.md#frequencyinseconds)
 - [maxRoundsToSync](types_subscription.SubscriptionConfig.md#maxroundstosync)
 - [syncBehaviour](types_subscription.SubscriptionConfig.md#syncbehaviour)
@@ -28,19 +28,19 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:227](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L227)
+[types/subscription.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L219)
 
 ___
 
-### events
+### filters
 
-• **events**: [`SubscriptionConfigEvent`](types_subscription.SubscriptionConfigEvent.md)\<`unknown`\>[]
+• **filters**: [`SubscriberConfigFilter`](types_subscription.SubscriberConfigFilter.md)\<`unknown`\>[]
 
-The set of events to subscribe to / emit
+The set of filters to subscribe to / emit events for
 
 #### Defined in
 
-[types/subscription.ts:229](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L229)
+[types/subscription.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L221)
 
 ___
 
@@ -52,7 +52,7 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 #### Defined in
 
-[types/subscription.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L221)
+[types/subscription.ts:213](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L213)
 
 ___
 
@@ -64,7 +64,7 @@ The maximum number of rounds to sync at a time; defaults to 500
 
 #### Defined in
 
-[types/subscription.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L225)
+[types/subscription.ts:217](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L217)
 
 ___
 
@@ -85,7 +85,7 @@ The behaviour when the number of rounds to sync is greater than `maxRoundsToSync
 
 #### Defined in
 
-[types/subscription.ts:241](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L241)
+[types/subscription.ts:233](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L233)
 
 ___
 
@@ -97,7 +97,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 #### Defined in
 
-[types/subscription.ts:223](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L223)
+[types/subscription.ts:215](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L215)
 
 ___
 
@@ -117,4 +117,4 @@ its position in the chain
 
 #### Defined in
 
-[types/subscription.ts:244](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L244)
+[types/subscription.ts:236](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L236)

@@ -23,6 +23,7 @@ export class AlgorandSubscriber {
   private eventEmitter: AsyncEventEmitter
   private started: boolean = false
   private startPromise: Promise<void> | undefined
+  private filterNames: string[]
 
   /**
    * Create a new `AlgorandSubscriber`.
@@ -37,10 +38,12 @@ export class AlgorandSubscriber {
     this.abortController = new AbortController()
     this.eventEmitter = new AsyncEventEmitter()
 
-    if (subscription.events.length > 1) {
-      // todo: Support multiple events
-      throw new Error('Current only a single event is supported')
-    }
+    this.filterNames = this.subscription.filters
+      .map((f) => f.name)
+      .filter((value, index, self) => {
+        // Remove duplicates
+        return self.findIndex((x) => x === value) === index
+      })
 
     if (subscription.syncBehaviour === 'catchup-with-indexer' && !indexer) {
       throw new Error("Received sync behaviour of catchup-with-indexer, but didn't receive an indexer instance.")
@@ -59,7 +62,7 @@ export class AlgorandSubscriber {
 
     const pollResult = await getSubscribedTransactions(
       {
-        filter: this.subscription.events[0].filter,
+        filters: this.subscription.filters,
         arc28Events: this.subscription.arc28Events,
         watermark,
         maxRoundsToSync: this.subscription.maxRoundsToSync ?? 500,
@@ -69,13 +72,16 @@ export class AlgorandSubscriber {
       this.indexer,
     )
 
-    const mappedTransactions = this.subscription.events[0].mapper
-      ? await this.subscription.events[0].mapper(pollResult.subscribedTransactions)
-      : pollResult.subscribedTransactions
     try {
-      await this.eventEmitter.emitAsync(`batch:${this.subscription.events[0].eventName}`, mappedTransactions)
-      for (const transaction of mappedTransactions) {
-        await this.eventEmitter.emitAsync(this.subscription.events[0].eventName, transaction)
+      for (const filterName of this.filterNames) {
+        const mapper = this.subscription.filters.find((f) => f.name === filterName)?.mapper
+        const matchedTransactions = pollResult.subscribedTransactions.filter((t) => t.filtersMatched?.includes(filterName))
+        const mappedTransactions = mapper ? await mapper(matchedTransactions) : matchedTransactions
+
+        await this.eventEmitter.emitAsync(`batch:${filterName}`, mappedTransactions)
+        for (const transaction of mappedTransactions) {
+          await this.eventEmitter.emitAsync(filterName, transaction)
+        }
       }
     } catch (e) {
       algokit.Config.logger.error(`Error processing event emittance`, e)
@@ -146,32 +152,32 @@ export class AlgorandSubscriber {
   }
 
   /**
-   * Register an event handler to run on every instance the given event name.
+   * Register an event handler to run on every subscribed transaction matching the given filter name.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed event
    * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
-  on<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T>) {
-    this.eventEmitter.on(eventName, listener as AsyncEventListener)
+  on<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T>) {
+    this.eventEmitter.on(filterName, listener as AsyncEventListener)
     return this
   }
 
   /**
-   * Register an event handler to run on all instances of the given event name
+   * Register an event handler to run on all subscribed transactions matching the given filter name
    * for each subscription poll.
    *
    * This is useful when you want to efficiently process / persist events
    * in bulk rather than one-by-one.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed events
    * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
-  onBatch<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T[]>) {
-    this.eventEmitter.on(`batch:${eventName}`, listener as AsyncEventListener)
+  onBatch<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T[]>) {
+    this.eventEmitter.on(`batch:${filterName}`, listener as AsyncEventListener)
     return this
   }
 }

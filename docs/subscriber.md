@@ -27,8 +27,8 @@ export interface SubscriptionConfig {
   waitForBlockWhenAtTip?: boolean
   /** The maximum number of rounds to sync at a time; defaults to 500 */
   maxRoundsToSync?: number
-  /** The set of events to subscribe to / emit */
-  events: SubscriptionConfigEvent<unknown>[]
+  /** The set of filters to subscribe to / emit events for */
+  filters: SubscriberConfigFilter<unknown>[]
   /** Any ARC-28 event definitions to process from app call logs */
   arc28Events?: Arc28EventGroup[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
@@ -62,20 +62,26 @@ export interface SubscriptionConfig {
 
 `arc28Events` are any [ARC-28 event definitions](subscriptions.md#arc-28-events).
 
-Events defines the different subscription(s) you want to make, and is defined by the following interface:
+Filters defines the different subscription(s) you want to make, and is defined by the following interface:
 
 ```typescript
 /** A single event to subscribe to / emit. */
-export interface SubscriptionConfigEvent<T> {
-  /** Name / identifier to uniquely describe the event */
-  eventName: string
-  /** The transaction filter that determines if the event has occurred */
-  filter: TransactionFilter
-  /** An optional data mapper if you want the event data to take a certain shape.
+export interface SubscriberConfigFilter<T> extends NamedTransactionFilter {
+  /** An optional data mapper if you want the event data to take a certain shape when subscribing to events with this filter name.
    *
-   * If not specified, then the event will receive a `TransactionResult`.
+   * If not specified, then the event will simply receive a `SubscribedTransaction`.
+   *
+   * Note: if you provide multiple filters with the same name then only the mapper of the first matching filter will be used
    */
   mapper?: (transaction: SubscribedTransaction[]) => Promise<T[]>
+}
+
+/** Specify a named filter to apply to find transactions of interest. */
+export interface NamedTransactionFilter {
+  /** The name to give the filter. */
+  name: string
+  /** The filter itself. */
+  filter: TransactionFilter
 }
 ```
 
@@ -83,32 +89,34 @@ The event name is a unique name that describes the event you are subscribing to.
 
 ## Subscribing to events
 
-Once you have created the `AlgorandSubscriber`, you can register handlers/listeners for the events you have defined.
+Once you have created the `AlgorandSubscriber`, you can register handlers/listeners for the filters you have defined.
 
 You can do this via the `on` and `onBatch` methods:
 
 ```typescript
   /**
-   * Register an event handler to run on every instance the given event name.
+   * Register an event handler to run on every subscribed transaction matching the given filter name.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed event
+   * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
-  on<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T>){}
+  on<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T>) {}
 
   /**
-   * Register an event handler to run on all instances of the given event name
+   * Register an event handler to run on all subscribed transactions matching the given filter name
    * for each subscription poll.
    *
    * This is useful when you want to efficiently process / persist events
    * in bulk rather than one-by-one.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed events
+   * @returns The subscriber so `on`/`onBatch` calls can be chained
    */
-  onBatch<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T[]>){}
+  onBatch<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T[]>) {}
 ```
 
 The `TypedAsyncEventListener` type is defined as:
@@ -130,6 +138,8 @@ import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscrib
 ```
 
 See the [detail about this type](subscriptions.md#subscribedtransaction).
+
+Alternatively, if you defined a mapper against the filter then it will be applied before passing the objects through.
 
 ## Poll the chain
 

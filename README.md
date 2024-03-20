@@ -12,7 +12,16 @@ This library a simple, but flexible / configurable Algorand transaction subscrip
 // Create subscriber
 const subscriber = new AlgorandSubscriber(
   {
-    /* ... options (use intellisense to explore) */
+    filters: [
+      {
+        name: 'filter1',
+        filter: {
+          type: TransactionType.pay,
+          sender: 'ABC...',
+        },
+      },
+    ],
+    /* ... other options (use intellisense to explore) */
   },
   algod,
   optionalIndexer,
@@ -95,7 +104,6 @@ The following code, when algod is pointed to MainNet, will find all transfers of
 
 ```typescript
 const algod = await algokit.getAlgoClient()
-const indexer = await algokit.getAlgoIndexerClient()
 let watermark = 0
 
 const subscriber = new AlgorandSubscriber(
@@ -120,7 +128,6 @@ const subscriber = new AlgorandSubscriber(
     },
   },
   algod,
-  indexer,
 )
 subscriber.on('usdc', (transfer) => {
   // eslint-disable-next-line no-console

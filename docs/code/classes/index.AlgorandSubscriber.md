@@ -17,6 +17,7 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 - [abortController](index.AlgorandSubscriber.md#abortcontroller)
 - [algod](index.AlgorandSubscriber.md#algod)
 - [eventEmitter](index.AlgorandSubscriber.md#eventemitter)
+- [filterNames](index.AlgorandSubscriber.md#filternames)
 - [indexer](index.AlgorandSubscriber.md#indexer)
 - [startPromise](index.AlgorandSubscriber.md#startpromise)
 - [started](index.AlgorandSubscriber.md#started)
@@ -52,7 +53,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L33)
+[subscriber.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L34)
 
 ## Properties
 
@@ -83,6 +84,16 @@ ___
 #### Defined in
 
 [subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+
+___
+
+### filterNames
+
+• `Private` **filterNames**: `string`[]
+
+#### Defined in
+
+[subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
 
 ___
 
@@ -128,9 +139,9 @@ ___
 
 ### on
 
-▸ **on**\<`T`\>(`eventName`, `listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+▸ **on**\<`T`\>(`filterName`, `listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
 
-Register an event handler to run on every instance the given event name.
+Register an event handler to run on every subscribed transaction matching the given filter name.
 
 The listener can be async and it will be awaited if so.
 
@@ -144,7 +155,7 @@ The listener can be async and it will be awaited if so.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `eventName` | `string` | The name of the event to subscribe to |
+| `filterName` | `string` | The name of the filter to subscribe to |
 | `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`\> | The listener function to invoke with the subscribed event |
 
 #### Returns
@@ -155,15 +166,15 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:156](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L156)
+[subscriber.ts:162](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L162)
 
 ___
 
 ### onBatch
 
-▸ **onBatch**\<`T`\>(`eventName`, `listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+▸ **onBatch**\<`T`\>(`filterName`, `listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
 
-Register an event handler to run on all instances of the given event name
+Register an event handler to run on all subscribed transactions matching the given filter name
 for each subscription poll.
 
 This is useful when you want to efficiently process / persist events
@@ -181,7 +192,7 @@ The listener can be async and it will be awaited if so.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `eventName` | `string` | The name of the event to subscribe to |
+| `filterName` | `string` | The name of the filter to subscribe to |
 | `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`[]\> | The listener function to invoke with the subscribed events |
 
 #### Returns
@@ -192,7 +203,7 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L173)
+[subscriber.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L179)
 
 ___
 
@@ -213,7 +224,7 @@ The poll result
 
 #### Defined in
 
-[subscriber.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L57)
+[subscriber.ts:60](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L60)
 
 ___
 
@@ -240,7 +251,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L95)
+[subscriber.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L101)
 
 ___
 
@@ -264,4 +275,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:138](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L138)
+[subscriber.ts:144](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L144)

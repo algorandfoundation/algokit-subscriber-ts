@@ -11,8 +11,8 @@
 - [Arc28EventToProcess](../interfaces/types_subscription.Arc28EventToProcess.md)
 - [EmittedArc28Event](../interfaces/types_subscription.EmittedArc28Event.md)
 - [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
+- [SubscriberConfigFilter](../interfaces/types_subscription.SubscriberConfigFilter.md)
 - [SubscriptionConfig](../interfaces/types_subscription.SubscriptionConfig.md)
-- [SubscriptionConfigEvent](../interfaces/types_subscription.SubscriptionConfigEvent.md)
 - [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
 - [TransactionSubscriptionParams](../interfaces/types_subscription.TransactionSubscriptionParams.md)
 - [TransactionSubscriptionResult](../interfaces/types_subscription.TransactionSubscriptionResult.md)
@@ -68,4 +68,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:265](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L265)
+[types/subscription.ts:255](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L255)

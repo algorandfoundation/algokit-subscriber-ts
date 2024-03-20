@@ -1,8 +1,11 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
-import { ABIArrayDynamicType, ABIUintType, TransactionType } from 'algosdk'
+import algosdk from 'algosdk'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
+import ABIArrayDynamicType = algosdk.ABIArrayDynamicType
+import ABIUintType = algosdk.ABIUintType
+import TransactionType = algosdk.TransactionType
 
 if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
@@ -15,9 +18,9 @@ async function getXGovSubscriber() {
   const indexer = await algokit.getAlgoIndexerClient()
   const subscriber = new AlgorandSubscriber(
     {
-      events: [
+      filters: [
         {
-          eventName: 'xgov-vote',
+          name: 'xgov-vote',
           filter: {
             type: TransactionType.appl,
             appId: 1236654302, // MainNet: xGov Voting Session 2

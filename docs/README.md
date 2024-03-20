@@ -13,7 +13,7 @@ const subscriber = new AlgorandSubscriber(
 )
 
 // Set up subscription(s)
-subscriber.on('eventNameFromOptions', async (transaction) => {
+subscriber.on('filterNameFromOptions', async (transaction) => {
   // ...
 })
 //...
@@ -144,25 +144,25 @@ This library has extensive filtering options available to you so you can have fi
 There is a core type that is used to specify the filters [`TransactionFilter`](subscriptions.md#transactionfilter):
 
 ```typescript
-const subscriber = new AlgorandSubscriber({filter: {/* Filter properties */}, ...}, ...)
+const subscriber = new AlgorandSubscriber({filters: [{name: 'filterName', filter: {/* Filter properties */}}], ...}, ...)
 // or:
-getSubscribedTransactions({filter: {/* Filter properties */, ...}, ... }, ...)
+getSubscribedTransactions({filters: [{name: 'filterName', filter: {/* Filter properties */}}], ... }, ...)
 ```
 
 Currently this allows you filter based on any combination (AND logic) of:
 
-- Transaction type e.g. `{ type: TransactionType.axfer }`
-- Account (sender and receiver) e.g. `{ sender: "ABCDE..F" }` and `{ receiver: "12345..6" }`
-- Note prefix e.g. `{ notePrefix: "xyz" }`
+- Transaction type e.g. `filter: { type: TransactionType.axfer }`
+- Account (sender and receiver) e.g. `filter: { sender: "ABCDE..F" }` and `filter: { receiver: "12345..6" }`
+- Note prefix e.g. `filter: { notePrefix: "xyz" }`
 - Apps
 
-  - ID e.g. `{ appId: 54321 }`
-  - Creation e.g. `{ appCreate: true }`
-  - Call on-complete(s) e.g. `{ appOnComplete: ApplicationOnComplete.optin }` and `{ appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop] }`
-  - ARC4 method signature(s) e.g. `{ methodSignature: "MyMethod(uint64,string)" }` and `{ methodSignatures: ["MyMethod(uint64,string)uint64", "MyMethod2(unit64)"] }`
+  - ID e.g. `filter: { appId: 54321 }`
+  - Creation e.g. `filter: { appCreate: true }`
+  - Call on-complete(s) e.g. `filter: { appOnComplete: ApplicationOnComplete.optin }` and `filter: { appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop] }`
+  - ARC4 method signature(s) e.g. `filter: { methodSignature: "MyMethod(uint64,string)" }` and `filter: { methodSignatures: ["MyMethod(uint64,string)uint64", "MyMethod2(unit64)"] }`
   - Call arguments e.g.
     ```typescript
-    {
+    filter: {
       appCallArgumentsMatch: (appCallArguments) =>
         appCallArguments.length > 1 && Buffer.from(appCallArguments[1]).toString('utf-8') === 'hello_world'
     }
@@ -170,7 +170,7 @@ Currently this allows you filter based on any combination (AND logic) of:
   - Emitted ARC-28 event(s) e.g.
 
     ```typescript
-    {
+    filter: {
       arc28Events: [{ groupName: 'group1', eventName: 'MyEvent' }]
     }
     ```
@@ -178,21 +178,13 @@ Currently this allows you filter based on any combination (AND logic) of:
     Note: For this to work you need to [specify ARC-28 events in the subscription config](#arc-28-event-subscription-and-reads).
 
 - Assets
-  - ID e.g. `{ assetId: 123456 }`
-  - Creation e.g. `{ assetCreate: true }`
-  - Amount transferred (min and/or max) e.g. `{ type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
+  - ID e.g. `filter: { assetId: 123456 }`
+  - Creation e.g. `filter: { assetCreate: true }`
+  - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
 - Algo transfers (pay transactions)
-  - Amount transferred (min and/or max) e.g. `{ type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
+  - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
 
-You can also supply multiple, named filters via the [`NamedTransactionFilter`](subscriptions.md#namedtransactionfilter) type:
-
-```typescript
-const subscriber = new AlgorandSubscriber({filter: [{name: 'filter1Name', filter: { /* Filter properties */ }}, {name: 'filter2Name', filter: { /* Filter properties */ }}], ...}, ...)
-// or:
-getSubscribedTransactions({filter: [{name: 'filter1Name', filter: { /* Filter properties */ }}, {name: 'filter2Name', filter: { /* Filter properties */ }}], ...}, ...)
-```
-
-When subscribed transactions are returned each transaction will have a `filtersMatched` property that will have an array of any filter(s) that caused that transaction to be returned.
+You can supply multiple, named filters via the [`NamedTransactionFilter`](subscriptions.md#namedtransactionfilter) type. When subscribed transactions are returned each transaction will have a `filtersMatched` property that will have an array of any filter(s) that caused that transaction to be returned. When using [`AlgorandSubscriber`](./subscriber.md), you can subscribe to events that are emitted with the filter name.
 
 ### ARC-28 event subscription and reads
 
