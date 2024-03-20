@@ -146,7 +146,7 @@ There is a core type that is used to specify the filters [`TransactionFilter`](s
 ```typescript
 const subscriber = new AlgorandSubscriber({filter: {/* Filter properties */}, ...}, ...)
 // or:
-getSubscribedTransactions(filter: {/* Filter properties */, ...}, ...)
+getSubscribedTransactions({filter: {/* Filter properties */, ...}, ... }, ...)
 ```
 
 Currently this allows you filter based on any combination (AND logic) of:
@@ -183,6 +183,16 @@ Currently this allows you filter based on any combination (AND logic) of:
   - Amount transferred (min and/or max) e.g. `{ type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
 - Algo transfers (pay transactions)
   - Amount transferred (min and/or max) e.g. `{ type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
+
+You can also supply multiple, named filters via the [`NamedTransactionFilter`](subscriptions.md#namedtransactionfilter) type:
+
+```typescript
+const subscriber = new AlgorandSubscriber({filter: [{name: 'filter1Name', filter: { /* Filter properties */ }}, {name: 'filter2Name', filter: { /* Filter properties */ }}], ...}, ...)
+// or:
+getSubscribedTransactions({filter: [{name: 'filter1Name', filter: { /* Filter properties */ }}, {name: 'filter2Name', filter: { /* Filter properties */ }}], ...}, ...)
+```
+
+When subscribed transactions are returned each transaction will have a `filtersMatched` property that will have an array of any filter(s) that caused that transaction to be returned.
 
 ### ARC-28 event subscription and reads
 
@@ -309,6 +319,21 @@ To make use of this feature, you need to set the `syncBehaviour` config to `catc
 Any [filter](#extensive-subscription-filtering) you apply will be seamlessly translated to indexer searches to get the historic transactions in the most efficient way possible based on the apis indexer exposes. Once the subscriber is within `maxRoundsToSync` of the tip of the chain it will switch to subscribing using `algod`.
 
 To see this in action, you can run the Data History Museum example in this repository against MainNet and see it sync millions of rounds in seconds.
+
+The indexer catchup isn't magic - if the filter you are trying to catch up with generates an enormous number of transactions (e.g. hundreds of thousands or millions) then it will run very slowly and has the potential for running out of compute and memory time depending on what the constraints are in the deployment environment you are running in. To understand how the indexer behaviour works to know if you are likely to generate a lot of transactions it's worth understanding the architecture of the indexer catchup.
+
+Indexer catchup runs in two stages:
+
+1. **Pre-filtering**: Any filters that can be translated to the [indexer search transactions endpoint](https://developer.algorand.org/docs/rest-apis/indexer/#get-v2transactions). This query is then run between the rounds that need to be synced and paginated in the max number of results (1000) at a time until all of the transactions are retrieved. This ensures we get round-based transactional consistency. This is the filter that can easily explode out though and take a long time when using indexer catchup. For avoidance of doubt, the following filters are the ones that are converted to a pre-filter:
+   - `sender`
+   - `receiver`
+   - `type`
+   - `notePrefix`
+   - `appId`
+   - `assetId`
+   - `minAmount`
+   - `maxAmount`
+2. **Post-filtering**: All remaining filters are then applied in-memory to the resulting list of transactions that are returned from the pre-filter before being returned as subscribed transactions.
 
 ## Entry points
 

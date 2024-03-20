@@ -117,6 +117,22 @@ export interface TransactionFilter {
 }
 ```
 
+### NamedTransactionFilter
+
+You can specify multiple filters in an array, where each filter is a `NamedTransactionFilter`, which consists of:
+
+```typescript
+/** Specify a named filter to apply to find transactions of interest. */
+export interface NamedTransactionFilter {
+  /** The name to give the filter. */
+  name: string
+  /** The filter itself. */
+  filter: TransactionFilter
+}
+```
+
+This gives you the ability to detect which filter got matched when a transaction is returned, noting that you can use the same name multiple times if there are multiple filters (aka OR logic) that comprise the same logical filter.
+
 ## Arc28EventGroup
 
 The [`arc28Events` parameter](#transactionsubscriptionparams) allows you to define any ARC-28 events that may appear in subscribed transactions so they can either be subscribed to, or be processed and added to the resulting [subscribed transaction object](#subscribedtransaction).
@@ -160,6 +176,7 @@ This type is substantively, based on the Indexer [`TransactionResult`](https://g
 - Add the `parentTransactionId` field so inner transactions have a reference to their parent
 - Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
 - Add emitted ARC-28 events via `arc28Events`
+- The list of filter(s) that caused the transaction to be matched
 
 The definition of the type is:
 
@@ -172,6 +189,8 @@ type SubscribedTransaction = TransactionResult & {
   'inner-txns'?: SubscribedTransaction[]
   /** Any ARC-28 events emitted from an app call */
   arc28Events?: EmittedArc28Event[]
+  /** The names of any filters that matched the given transaction to result in it being 'subscribed'. */
+  filtersMatched?: string[]
 }
 
 /** An emitted ARC-28 event extracted from an app call log. */

@@ -164,6 +164,9 @@ describe('Complex transaction with many nested inner transactions', () => {
         },
         "confirmed-round": 35214367,
         "fee": 2000,
+        "filtersMatched": [
+          "default",
+        ],
         "first-valid": 35214365,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",

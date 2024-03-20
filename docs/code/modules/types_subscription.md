@@ -10,6 +10,7 @@
 - [Arc28EventGroup](../interfaces/types_subscription.Arc28EventGroup.md)
 - [Arc28EventToProcess](../interfaces/types_subscription.Arc28EventToProcess.md)
 - [EmittedArc28Event](../interfaces/types_subscription.EmittedArc28Event.md)
+- [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
 - [SubscriptionConfig](../interfaces/types_subscription.SubscriptionConfig.md)
 - [SubscriptionConfigEvent](../interfaces/types_subscription.SubscriptionConfigEvent.md)
 - [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
@@ -25,7 +26,7 @@
 
 ### SubscribedTransaction
 
-Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_subscription.EmittedArc28Event.md)[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
+Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_subscription.EmittedArc28Event.md)[] ; `filtersMatched?`: `string`[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
 
 The common model used to expose a transaction that is returned from a subscription.
 
@@ -67,4 +68,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:227](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L227)
+[types/subscription.ts:265](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L265)

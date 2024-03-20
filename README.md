@@ -134,13 +134,6 @@ subscriber.on('usdc', (transfer) => {
 subscriber.start()
 ```
 
-## Roadmap
-
-- Subscribe to contract events ([ARC-28](https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md))
-- Multiple filters
-- Dynamic filters (e.g. subscribe to axfer's for assets that you subscribe to the creation of)
-- GraphQL example ideally with subscriptions
-
 ## Getting started
 
 To try examples in this repository:

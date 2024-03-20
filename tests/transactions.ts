@@ -3,7 +3,7 @@ import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/
 import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
 import { getSubscribedTransactions } from '../src'
 import { TransactionInBlock } from '../src/transform'
-import { Arc28EventGroup, TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
+import { Arc28EventGroup, NamedTransactionFilter, TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
 
 export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
   const txns: SendTransactionResult[] = []
@@ -35,7 +35,7 @@ export const GetSubscribedTransactions = (
     roundsToSync: number
     watermark?: number
     currentRound?: number
-    filter: TransactionFilter
+    filter: TransactionFilter | NamedTransactionFilter[]
     arc28Events?: Arc28EventGroup[]
   },
   algod: Algodv2,
@@ -78,16 +78,17 @@ export const GetSubscribedTransactionsFromSender = (
     watermark?: number
     currentRound?: number
   },
-  account: SendTransactionFrom,
+  account: SendTransactionFrom | SendTransactionFrom[],
   algod: Algodv2,
   indexer?: Indexer,
 ) => {
   return GetSubscribedTransactions(
     {
       ...subscription,
-      filter: {
-        sender: algokit.getSenderAddress(account),
-      },
+      filter:
+        account instanceof Array
+          ? account.map((a) => algokit.getSenderAddress(a)).map((a) => ({ name: a, filter: { sender: a } }))
+          : { sender: algokit.getSenderAddress(account) },
     },
     algod,
     indexer,

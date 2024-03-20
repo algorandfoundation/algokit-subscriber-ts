@@ -138,7 +138,11 @@ export class AlgorandSubscriber {
   stop(reason: unknown): Promise<void> {
     if (!this.started) return Promise.resolve()
     this.abortController.abort(reason)
-    return this.startPromise!
+    return this.startPromise!.catch((e) => {
+      // Abort signal throws a DOMException when aborted, which is expected
+      //  and should be ignoredIf we get a different exception then we should re-throw it
+      if (!(e instanceof DOMException)) throw e
+    })
   }
 
   /**
