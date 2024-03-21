@@ -1,27 +1,29 @@
-[@algorandfoundation/algokit-subscriber](../README.md) / [types/subscription](../modules/types_subscription.md) / TransactionSubscriptionParams
+[@algorandfoundation/algokit-subscriber](../README.md) / [types/subscription](../modules/types_subscription.md) / AlgorandSubscriberConfig
 
-# Interface: TransactionSubscriptionParams
+# Interface: AlgorandSubscriberConfig
 
-[types/subscription](../modules/types_subscription.md).TransactionSubscriptionParams
+[types/subscription](../modules/types_subscription.md).AlgorandSubscriberConfig
 
-Parameters to control a single subscription pull/poll.
+Configuration for an `AlgorandSubscriber`.
 
 ## Hierarchy
 
 - [`CoreTransactionSubscriptionParams`](types_subscription.CoreTransactionSubscriptionParams.md)
 
-  ↳ **`TransactionSubscriptionParams`**
+  ↳ **`AlgorandSubscriberConfig`**
 
 ## Table of contents
 
 ### Properties
 
-- [arc28Events](types_subscription.TransactionSubscriptionParams.md#arc28events)
-- [filters](types_subscription.TransactionSubscriptionParams.md#filters)
-- [maxIndexerRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxindexerroundstosync)
-- [maxRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxroundstosync)
-- [syncBehaviour](types_subscription.TransactionSubscriptionParams.md#syncbehaviour)
-- [watermark](types_subscription.TransactionSubscriptionParams.md#watermark)
+- [arc28Events](types_subscription.AlgorandSubscriberConfig.md#arc28events)
+- [filters](types_subscription.AlgorandSubscriberConfig.md#filters)
+- [frequencyInSeconds](types_subscription.AlgorandSubscriberConfig.md#frequencyinseconds)
+- [maxIndexerRoundsToSync](types_subscription.AlgorandSubscriberConfig.md#maxindexerroundstosync)
+- [maxRoundsToSync](types_subscription.AlgorandSubscriberConfig.md#maxroundstosync)
+- [syncBehaviour](types_subscription.AlgorandSubscriberConfig.md#syncbehaviour)
+- [waitForBlockWhenAtTip](types_subscription.AlgorandSubscriberConfig.md#waitforblockwhenattip)
+- [watermarkPersistence](types_subscription.AlgorandSubscriberConfig.md#watermarkpersistence)
 
 ## Properties
 
@@ -43,36 +45,29 @@ ___
 
 ### filters
 
-• **filters**: [`NamedTransactionFilter`](types_subscription.NamedTransactionFilter.md)[]
+• **filters**: [`SubscriberConfigFilter`](types_subscription.SubscriberConfigFilter.md)\<`unknown`\>[]
 
-The filter(s) to apply to find transactions of interest.
-A list of filters with corresponding names.
+The set of filters to subscribe to / emit events for, along with optional data mappers.
 
-**`Example`**
-
-```typescript
- filter: [{
-  name: 'asset-transfers',
-  filter: {
-    type: TransactionType.axfer,
-    //...
-  }
- }, {
-  name: 'payments',
-  filter: {
-    type: TransactionType.pay,
-    //...
-  }
- }]
-```
-
-#### Inherited from
+#### Overrides
 
 [CoreTransactionSubscriptionParams](types_subscription.CoreTransactionSubscriptionParams.md).[filters](types_subscription.CoreTransactionSubscriptionParams.md#filters)
 
 #### Defined in
 
-[types/subscription.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L67)
+[types/subscription.ts:175](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L175)
+
+___
+
+### frequencyInSeconds
+
+• `Optional` **frequencyInSeconds**: `number`
+
+The frequency to poll for new blocks in seconds; defaults to 1s
+
+#### Defined in
+
+[types/subscription.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L177)
 
 ___
 
@@ -152,20 +147,32 @@ past `watermark` then how should that be handled:
 
 ___
 
-### watermark
+### waitForBlockWhenAtTip
 
-• **watermark**: `number`
+• `Optional` **waitForBlockWhenAtTip**: `boolean`
 
-The current round watermark that transactions have previously been synced to.
-
-Persist this value as you process transactions processed from this method
-to allow for resilient and incremental syncing.
-
-Syncing will start from `watermark + 1`.
-
-Start from 0 if you want to start from the beginning of time, noting that
-will be slow if `onMaxRounds` is `sync-oldest`.
+Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription
 
 #### Defined in
 
-[types/subscription.ts:169](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L169)
+[types/subscription.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L179)
+
+___
+
+### watermarkPersistence
+
+• **watermarkPersistence**: `Object`
+
+Methods to retrieve and persist the current watermark so syncing is resilient and maintains
+its position in the chain
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `get` | () => `Promise`\<`number`\> | - |
+| `set` | (`newWatermark`: `number`) => `Promise`\<`void`\> | - |
+
+#### Defined in
+
+[types/subscription.ts:182](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L182)
