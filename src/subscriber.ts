@@ -3,8 +3,8 @@ import algosdk from 'algosdk'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
 import type {
+  AlgorandSubscriberConfig,
   SubscribedTransaction,
-  SubscriptionConfig,
   TransactionSubscriptionResult,
   TypedAsyncEventListener,
 } from './types/subscription'
@@ -18,7 +18,7 @@ import Indexer = algosdk.Indexer
 export class AlgorandSubscriber {
   private algod: Algodv2
   private indexer: Indexer | undefined
-  private subscription: SubscriptionConfig
+  private subscription: AlgorandSubscriberConfig
   private abortController: AbortController
   private eventEmitter: AsyncEventEmitter
   private started: boolean = false
@@ -27,14 +27,14 @@ export class AlgorandSubscriber {
 
   /**
    * Create a new `AlgorandSubscriber`.
-   * @param subscription The subscription configuration
+   * @param config The subscriber configuration
    * @param algod An algod client
    * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
    */
-  constructor(subscription: SubscriptionConfig, algod: Algodv2, indexer?: Indexer) {
+  constructor(config: AlgorandSubscriberConfig, algod: Algodv2, indexer?: Indexer) {
     this.algod = algod
     this.indexer = indexer
-    this.subscription = subscription
+    this.subscription = config
     this.abortController = new AbortController()
     this.eventEmitter = new AsyncEventEmitter()
 
@@ -45,7 +45,7 @@ export class AlgorandSubscriber {
         return self.findIndex((x) => x === value) === index
       })
 
-    if (subscription.syncBehaviour === 'catchup-with-indexer' && !indexer) {
+    if (config.syncBehaviour === 'catchup-with-indexer' && !indexer) {
       throw new Error("Received sync behaviour of catchup-with-indexer, but didn't receive an indexer instance.")
     }
   }

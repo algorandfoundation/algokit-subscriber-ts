@@ -9,25 +9,25 @@ To create an `AlgorandSubscriber` you can use the constructor:
 ```typescript
   /**
    * Create a new `AlgorandSubscriber`.
-   * @param subscription The subscription configuration
+   * @param config The subscriber configuration
    * @param algod An algod client
    * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
    */
-  constructor(subscription: SubscriptionConfig, algod: Algodv2, indexer?: Indexer)
+  constructor(config: AlgorandSubscriberConfig, algod: Algodv2, indexer?: Indexer)
 ```
 
-The key configuration is the `SubscriptionConfig` interface:
+The key configuration is the `AlgorandSubscriberConfig` interface:
 
 ```typescript
 /** Configuration for a subscription */
-export interface SubscriptionConfig {
+export interface AlgorandSubscriberConfig {
   /** The frequency to poll for new blocks in seconds; defaults to 1s */
   frequencyInSeconds?: number
   /** Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription */
   waitForBlockWhenAtTip?: boolean
   /** The maximum number of rounds to sync at a time; defaults to 500 */
   maxRoundsToSync?: number
-  /** The set of filters to subscribe to / emit events for */
+  /** The set of filters to subscribe to / emit events for, along with optional data mappers */
   filters: SubscriberConfigFilter<unknown>[]
   /** Any ARC-28 event definitions to process from app call logs */
   arc28Events?: Arc28EventGroup[]
@@ -134,7 +134,7 @@ If you call `onBatch` it will be called first, with the full set of transactions
 The default type that will be received is a `SubscribedTransaction`, which can be imported like so:
 
 ```typescript
-import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types'
 ```
 
 See the [detail about this type](subscriptions.md#subscribedtransaction).
