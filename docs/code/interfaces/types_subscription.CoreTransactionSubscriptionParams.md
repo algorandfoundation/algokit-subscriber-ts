@@ -20,6 +20,7 @@ Common parameters to control a single subscription pull/poll for both `AlgorandS
 
 - [arc28Events](types_subscription.CoreTransactionSubscriptionParams.md#arc28events)
 - [filters](types_subscription.CoreTransactionSubscriptionParams.md#filters)
+- [maxIndexerRoundsToSync](types_subscription.CoreTransactionSubscriptionParams.md#maxindexerroundstosync)
 - [maxRoundsToSync](types_subscription.CoreTransactionSubscriptionParams.md#maxroundstosync)
 - [syncBehaviour](types_subscription.CoreTransactionSubscriptionParams.md#syncbehaviour)
 
@@ -68,11 +69,30 @@ A list of filters with corresponding names.
 
 ___
 
+### maxIndexerRoundsToSync
+
+• `Optional` **maxIndexerRoundsToSync**: `number`
+
+The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
+
+By default there is no limit and it will paginate through all of the rounds.
+Sometimes this can result in an incredibly long catchup time that may break the service
+due to execution and memory constraints, particularly for filters that result in a large number of transactions.
+
+Instead, this allows indexer catchup to be split into multiple polls, each with a transactionally consistent
+boundary based on the number of rounds specified here.
+
+#### Defined in
+
+[types/subscription.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L89)
+
+___
+
 ### maxRoundsToSync
 
 • `Optional` **maxRoundsToSync**: `number`
 
-The maximum number of rounds to sync for each subscription pull/poll.
+The maximum number of rounds to sync from algod for each subscription pull/poll.
 
 Defaults to 500.
 
@@ -109,4 +129,4 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:96](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L96)
+[types/subscription.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L107)

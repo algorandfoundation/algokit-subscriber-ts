@@ -85,11 +85,13 @@ export async function getSubscribedTransactions(
     }
   }
 
+  let indexerSyncToRoundNumber = 0
   let algodSyncFromRoundNumber = watermark + 1
   let startRound = algodSyncFromRoundNumber
   let endRound = currentRound
   let catchupTransactions: SubscribedTransaction[] = []
   let start = +new Date()
+  let skipAlgodSync = false
 
   // If we are less than `maxRoundstoSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
   if (currentRound - watermark > maxRoundsToSync) {
@@ -118,10 +120,18 @@ export async function getSubscribedTransactions(
           throw new Error("Can't catch up using indexer since it's not provided")
         }
 
-        algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
+        // If we have more than `maxIndexerRoundsToSync` rounds to sync from indexer then we skip algod sync and just sync that many rounds from indexer
+        indexerSyncToRoundNumber = currentRound - maxRoundsToSync
+        if (subscription.maxIndexerRoundsToSync && indexerSyncToRoundNumber - startRound + 1 > subscription.maxIndexerRoundsToSync) {
+          indexerSyncToRoundNumber = startRound + subscription.maxIndexerRoundsToSync - 1
+          endRound = indexerSyncToRoundNumber
+          skipAlgodSync = true
+        } else {
+          algodSyncFromRoundNumber = indexerSyncToRoundNumber + 1
+        }
 
         algokit.Config.logger.debug(
-          `Catching up from round ${startRound} to round ${algodSyncFromRoundNumber - 1} via indexer; this may take a few seconds`,
+          `Catching up from round ${startRound} to round ${indexerSyncToRoundNumber} via indexer; this may take a few seconds`,
         )
 
         // Retrieve and process transactions from indexer in groups of 30 so we don't get rate limited
@@ -132,9 +142,7 @@ export async function getSubscribedTransactions(
                 // For each filter
                 chunkedFilters.map(async (f) =>
                   // Retrieve all pre-filtered transactions from the indexer
-                  (
-                    await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, algodSyncFromRoundNumber - 1))
-                  ).transactions
+                  (await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
                     // Re-run the pre-filter in-memory so we properly extract inner transactions
                     .flatMap((t) => getFilteredIndexerTransactions(t, f))
                     // Run the post-filter so we get the final list of matching transactions
@@ -166,22 +174,29 @@ export async function getSubscribedTransactions(
   }
 
   // Retrieve and process blocks from algod
-  start = +new Date()
-  const blocks = await getBlocksBulk({ startRound: algodSyncFromRoundNumber, maxRound: endRound }, algod)
-  const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
-  const algodTransactions = filters
-    .flatMap((f) =>
-      blockTransactions
-        .filter((t) => transactionFilter(f.filter, arc28Events, subscription.arc28Events ?? [])(t!))
-        .map((t) => getIndexerTransactionFromAlgodTransaction(t, f.name)),
-    )
-    .reduce(deduplicateSubscribedTransactionsReducer, [])
+  let algodTransactions: SubscribedTransaction[] = []
+  if (!skipAlgodSync) {
+    start = +new Date()
+    const blocks = await getBlocksBulk({ startRound: algodSyncFromRoundNumber, maxRound: endRound }, algod)
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    algodTransactions = filters
+      .flatMap((f) =>
+        blockTransactions
+          .filter((t) => transactionFilter(f.filter, arc28Events, subscription.arc28Events ?? [])(t!))
+          .map((t) => getIndexerTransactionFromAlgodTransaction(t, f.name)),
+      )
+      .reduce(deduplicateSubscribedTransactionsReducer, [])
 
-  algokit.Config.logger.debug(
-    `Retrieved ${blockTransactions.length} transactions from algod via round(s) ${algodSyncFromRoundNumber}-${endRound} in ${
-      (+new Date() - start) / 1000
-    }s`,
-  )
+    algokit.Config.logger.debug(
+      `Retrieved ${blockTransactions.length} transactions from algod via round(s) ${algodSyncFromRoundNumber}-${endRound} in ${
+        (+new Date() - start) / 1000
+      }s`,
+    )
+  } else {
+    algokit.Config.logger.debug(
+      `Skipping algod sync since we have more than ${subscription.maxIndexerRoundsToSync} rounds to sync from indexer.`,
+    )
+  }
 
   return {
     syncedRoundRange: [startRound, endRound],

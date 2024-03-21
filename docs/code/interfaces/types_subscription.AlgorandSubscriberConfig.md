@@ -19,6 +19,7 @@ Configuration for an `AlgorandSubscriber`.
 - [arc28Events](types_subscription.AlgorandSubscriberConfig.md#arc28events)
 - [filters](types_subscription.AlgorandSubscriberConfig.md#filters)
 - [frequencyInSeconds](types_subscription.AlgorandSubscriberConfig.md#frequencyinseconds)
+- [maxIndexerRoundsToSync](types_subscription.AlgorandSubscriberConfig.md#maxindexerroundstosync)
 - [maxRoundsToSync](types_subscription.AlgorandSubscriberConfig.md#maxroundstosync)
 - [syncBehaviour](types_subscription.AlgorandSubscriberConfig.md#syncbehaviour)
 - [waitForBlockWhenAtTip](types_subscription.AlgorandSubscriberConfig.md#waitforblockwhenattip)
@@ -54,7 +55,7 @@ The set of filters to subscribe to / emit events for, along with optional data m
 
 #### Defined in
 
-[types/subscription.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L164)
+[types/subscription.ts:175](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L175)
 
 ___
 
@@ -66,7 +67,30 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 #### Defined in
 
-[types/subscription.ts:166](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L166)
+[types/subscription.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L177)
+
+___
+
+### maxIndexerRoundsToSync
+
+• `Optional` **maxIndexerRoundsToSync**: `number`
+
+The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
+
+By default there is no limit and it will paginate through all of the rounds.
+Sometimes this can result in an incredibly long catchup time that may break the service
+due to execution and memory constraints, particularly for filters that result in a large number of transactions.
+
+Instead, this allows indexer catchup to be split into multiple polls, each with a transactionally consistent
+boundary based on the number of rounds specified here.
+
+#### Inherited from
+
+[CoreTransactionSubscriptionParams](types_subscription.CoreTransactionSubscriptionParams.md).[maxIndexerRoundsToSync](types_subscription.CoreTransactionSubscriptionParams.md#maxindexerroundstosync)
+
+#### Defined in
+
+[types/subscription.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L89)
 
 ___
 
@@ -74,7 +98,7 @@ ___
 
 • `Optional` **maxRoundsToSync**: `number`
 
-The maximum number of rounds to sync for each subscription pull/poll.
+The maximum number of rounds to sync from algod for each subscription pull/poll.
 
 Defaults to 500.
 
@@ -119,7 +143,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:96](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L96)
+[types/subscription.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L107)
 
 ___
 
@@ -131,7 +155,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 #### Defined in
 
-[types/subscription.ts:168](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L168)
+[types/subscription.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L179)
 
 ___
 
@@ -151,4 +175,4 @@ its position in the chain
 
 #### Defined in
 
-[types/subscription.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L171)
+[types/subscription.ts:182](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L182)

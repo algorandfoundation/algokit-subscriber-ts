@@ -73,6 +73,17 @@ export interface TransactionSubscriptionParams {
    * your catchup speed when using `sync-oldest`.
    **/
   maxRoundsToSync?: number
+  /**
+   * The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
+   *
+   * By default there is no limit and it will paginate through all of the rounds.
+   * Sometimes this can result in an incredibly long catchup time that may break the service
+   * due to execution and memory constraints, particularly for filters that result in a large number of transactions.
+   *
+   * Instead, this allows indexer catchup to be split into multiple polls, each with a transactionally consistent
+   * boundary based on the number of rounds specified here.
+   */
+  maxIndexerRoundsToSync?: number
   /** If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
    * past `watermark` then how should that be handled:
    *  * `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful

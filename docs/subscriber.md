@@ -27,6 +27,17 @@ export interface AlgorandSubscriberConfig {
   waitForBlockWhenAtTip?: boolean
   /** The maximum number of rounds to sync at a time; defaults to 500 */
   maxRoundsToSync?: number
+  /**
+   * The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
+   *
+   * By default there is no limit and it will paginate through all of the rounds.
+   * Sometimes this can result in an incredibly long catchup time that may break the service
+   * due to execution and memory constraints, particularly for filters that result in a large number of transactions.
+   *
+   * Instead, this allows indexer catchup to be split into multiple polls, each with a transactionally consistent
+   * boundary based on the number of rounds specified here.
+   */
+  maxIndexerRoundsToSync?: number
   /** The set of filters to subscribe to / emit events for, along with optional data mappers */
   filters: SubscriberConfigFilter<unknown>[]
   /** Any ARC-28 event definitions to process from app call logs */
