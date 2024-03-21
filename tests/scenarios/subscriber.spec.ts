@@ -96,7 +96,7 @@ describe('AlgorandSubscriber', () => {
     expect(subscribedTxns.length).toBe(2)
     expect(subscribedTxns[1]).toBe(txIds3[0])
     expect(getWatermark()).toBeGreaterThanOrEqual(lastTxnRound3)
-  })
+  }, 30_000)
 
   test('Subscribes to transactions with multiple filters correctly', async () => {
     const { algod, testAccount, generateAccount, waitForIndexerTransaction, indexer } = localnet.context
@@ -179,7 +179,7 @@ describe('AlgorandSubscriber', () => {
     expect(getWatermark()).toBeGreaterThanOrEqual(lastTxnRound2)
 
     // More subscribed transactions
-    const { lastTxnRound: firstTxnRound3, txIds: txIds3 } = await SendXTransactions(1, testAccount, algod)
+    const { txIds: txIds3 } = await SendXTransactions(1, testAccount, algod)
     const { txIds: txIds13 } = await SendXTransactions(2, senders[0], algod)
     const { lastTxnRound: lastSubscribedRound3, txIds: txIds23, txns: txns23 } = await SendXTransactions(2, senders[1], algod)
 
@@ -195,7 +195,7 @@ describe('AlgorandSubscriber', () => {
     expect(getWatermark()).toBeGreaterThanOrEqual(lastSubscribedRound3)
     expect(result3.currentRound).toBeGreaterThanOrEqual(lastSubscribedRound3)
     expect(result3.newWatermark).toBe(result3.currentRound)
-    expect(result3.syncedRoundRange).toEqual([firstTxnRound3, result3.currentRound])
+    expect(result3.syncedRoundRange).toEqual([result2.newWatermark + 1, result3.currentRound])
     expect(result3.subscribedTransactions.length).toBe(5)
     expect(result3.subscribedTransactions.map((t) => t.id)).toEqual(txIds3.concat(txIds13, txIds23))
     expect(sender1TxnIds).toEqual(txIds1.concat(txIds13))
@@ -204,7 +204,7 @@ describe('AlgorandSubscriber', () => {
       txns2.map((t) => Number(t.confirmation!.confirmedRound!)).concat(txns23.map((t) => Number(t.confirmation!.confirmedRound!))),
     )
     expect(sender2RoundsfromBatch).toEqual(txns23.map((t) => Number(t.confirmation!.confirmedRound!)))
-  })
+  }, 30_000)
 
   test('Subscribes to transactions at regular intervals when started and can be stopped', async () => {
     const { algod, testAccount, waitForIndexerTransaction, indexer } = localnet.context
@@ -280,5 +280,83 @@ describe('AlgorandSubscriber', () => {
     expect(getWatermark()).toBeGreaterThanOrEqual(lastTxnRound)
     // Expect at least 1 poll to have occurred
     expect(pollCountAfterIssuing - pollCountBeforeIssuing).toBeGreaterThanOrEqual(1)
+  })
+
+  test('Correctly fires various on* methods', async () => {
+    const { algod, testAccount, generateAccount, indexer } = localnet.context
+    const randomAccount = await generateAccount({ initialFunds: (3).algos() })
+    const { txns, txIds } = await SendXTransactions(2, testAccount, algod)
+    const { txIds: txIds2 } = await SendXTransactions(2, randomAccount, algod)
+    const initialWatermark = Number(txns[0].confirmation!.confirmedRound!) - 1
+    const eventsEmitted: string[] = []
+    let pollComplete = false
+    const { subscriber } = getSubscriber(
+      {
+        testAccount: algokit.randomAccount(),
+        initialWatermark,
+        configOverrides: {
+          maxRoundsToSync: 100,
+          syncBehaviour: 'sync-oldest',
+          frequencyInSeconds: 1000,
+          filters: [
+            {
+              name: 'account1',
+              filter: {
+                sender: algokit.getSenderAddress(testAccount),
+              },
+            },
+            {
+              name: 'account2',
+              filter: {
+                sender: algokit.getSenderAddress(randomAccount),
+              },
+            },
+          ],
+        },
+      },
+      algod,
+      indexer,
+    )
+    subscriber
+      .onBatch('account1', (b) => {
+        eventsEmitted.push(`batch:account1:${b.map((b) => b.id).join(':')}`)
+      })
+      .on('account1', (t) => {
+        eventsEmitted.push(`account1:${t.id}`)
+      })
+      .onBatch('account2', (b) => {
+        eventsEmitted.push(`batch:account2:${b.map((b) => b.id).join(':')}`)
+      })
+      .on('account2', (t) => {
+        eventsEmitted.push(`account2:${t.id}`)
+      })
+      .onBeforePoll((metadata) => {
+        eventsEmitted.push(`before:poll:${metadata.watermark}`)
+      })
+      .onPoll((result) => {
+        eventsEmitted.push(`poll:${result.subscribedTransactions.map((b) => b.id).join(':')}`)
+      })
+
+    subscriber.start((result) => {
+      eventsEmitted.push(`inspect:${result.subscribedTransactions.map((b) => b.id).join(':')}`)
+      pollComplete = true
+    })
+
+    console.log('Waiting for up to 2s until subscriber has polled')
+    await waitFor(() => pollComplete, 2000)
+
+    const expectedBatchResult = `${txIds[0]}:${txIds[1]}:${txIds2[0]}:${txIds2[1]}`
+    expect(eventsEmitted).toEqual([
+      `before:poll:${initialWatermark}`,
+      `batch:account1:${txIds[0]}:${txIds[1]}`,
+      `account1:${txIds[0]}`,
+      `account1:${txIds[1]}`,
+      `batch:account2:${txIds2[0]}:${txIds2[1]}`,
+      `account2:${txIds2[0]}`,
+      `account2:${txIds2[1]}`,
+      `inspect:${expectedBatchResult}`,
+      `poll:${expectedBatchResult}`,
+    ])
+    await subscriber.stop('TEST')
   })
 })

@@ -37,7 +37,7 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:69](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L69)
+[types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L77)
 
 ___
 
@@ -72,7 +72,7 @@ A list of filters with corresponding names.
 
 #### Defined in
 
-[types/subscription.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L67)
+[types/subscription.ts:75](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L75)
 
 ___
 
@@ -95,7 +95,7 @@ boundary based on the number of rounds specified here.
 
 #### Defined in
 
-[types/subscription.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L89)
+[types/subscription.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L97)
 
 ___
 
@@ -117,7 +117,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:78](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L78)
+[types/subscription.ts:86](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L86)
 
 ___
 
@@ -148,7 +148,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L107)
+[types/subscription.ts:115](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L115)
 
 ___
 
@@ -168,4 +168,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:169](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L169)
+[types/subscription.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L177)
