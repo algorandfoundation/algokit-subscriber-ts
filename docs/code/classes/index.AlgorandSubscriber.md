@@ -27,6 +27,8 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 
 - [on](index.AlgorandSubscriber.md#on)
 - [onBatch](index.AlgorandSubscriber.md#onbatch)
+- [onBeforePoll](index.AlgorandSubscriber.md#onbeforepoll)
+- [onPoll](index.AlgorandSubscriber.md#onpoll)
 - [pollOnce](index.AlgorandSubscriber.md#pollonce)
 - [start](index.AlgorandSubscriber.md#start)
 - [stop](index.AlgorandSubscriber.md#stop)
@@ -53,7 +55,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L34)
+[subscriber.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L35)
 
 ## Properties
 
@@ -63,7 +65,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
+[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
 
 ___
 
@@ -73,7 +75,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:19](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L19)
+[subscriber.ts:20](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L20)
 
 ___
 
@@ -83,7 +85,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
+[subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
 
 ___
 
@@ -93,7 +95,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+[subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
 
 ___
 
@@ -103,7 +105,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
+[subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
 
 ___
 
@@ -113,7 +115,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:20](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L20)
+[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
 
 ___
 
@@ -123,7 +125,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
+[subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
 
 ___
 
@@ -133,7 +135,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
+[subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
 
 ## Methods
 
@@ -162,11 +164,24 @@ The listener can be async and it will be awaited if so.
 
 [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
 
-The subscriber so `on`/`onBatch` calls can be chained
+The subscriber so `on*` calls can be chained
+
+**`Example`**
+
+```typescript
+subscriber.on('my-filter', async (transaction) => { console.log(transaction.id) })
+```
+
+**`Example`**
+
+```typescript
+new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+ .on<string>('my-filter', async (transactionId) => { console.log(transactionId) })
+```
 
 #### Defined in
 
-[subscriber.ts:159](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L159)
+[subscriber.ts:176](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L176)
 
 ___
 
@@ -199,11 +214,95 @@ The listener can be async and it will be awaited if so.
 
 [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
 
-The subscriber so `on`/`onBatch` calls can be chained
+The subscriber so `on*` calls can be chained
+
+**`Example`**
+
+```typescript
+subscriber.onBatch('my-filter', async (transactions) => { console.log(transactions.length) })
+```
+
+**`Example`**
+
+```typescript
+new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+ .onBatch<string>('my-filter', async (transactionIds) => { console.log(transactionIds) })
+```
 
 #### Defined in
 
-[subscriber.ts:176](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L176)
+[subscriber.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L202)
+
+___
+
+### onBeforePoll
+
+▸ **onBeforePoll**(`listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+Register an event handler to run before every subscription poll.
+
+This is useful when you want to do pre-poll logging or start a transaction etc.
+
+The listener can be async and it will be awaited if so.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<[`BeforePollMetadata`](../interfaces/types_subscription.BeforePollMetadata.md)\> | The listener function to invoke with the pre-poll metadata |
+
+#### Returns
+
+[`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+The subscriber so `on*` calls can be chained
+
+**`Example`**
+
+```typescript
+subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
+```
+
+#### Defined in
+
+[subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
+
+___
+
+### onPoll
+
+▸ **onPoll**(`listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+Register an event handler to run after every subscription poll.
+
+This is useful when you want to process all subscribed transactions
+in a transactionally consistent manner rather than piecemeal for each
+filter, or to have a hook that occurs at the end of each poll to commit
+transactions etc.
+
+The listener can be async and it will be awaited if so.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<[`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)\> | The listener function to invoke with the poll result |
+
+#### Returns
+
+[`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+The subscriber so `on*` calls can be chained
+
+**`Example`**
+
+```typescript
+subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange) })
+```
+
+#### Defined in
+
+[subscriber.ts:241](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L241)
 
 ___
 
@@ -224,7 +323,7 @@ The poll result
 
 #### Defined in
 
-[subscriber.ts:60](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L60)
+[subscriber.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L61)
 
 ___
 
@@ -251,7 +350,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:98](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L98)
+[subscriber.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L105)
 
 ___
 
@@ -275,4 +374,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:141](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L141)
+[subscriber.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L149)

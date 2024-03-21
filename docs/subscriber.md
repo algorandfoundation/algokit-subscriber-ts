@@ -100,18 +100,27 @@ The event name is a unique name that describes the event you are subscribing to.
 
 ## Subscribing to events
 
-Once you have created the `AlgorandSubscriber`, you can register handlers/listeners for the filters you have defined.
+Once you have created the `AlgorandSubscriber`, you can register handlers/listeners for the filters you have defined, or each poll as a whole batch.
 
-You can do this via the `on` and `onBatch` methods:
+You can do this via the `on`, `onBatch` and `onPoll` methods:
 
-```typescript
+````typescript
   /**
    * Register an event handler to run on every subscribed transaction matching the given filter name.
    *
    * The listener can be async and it will be awaited if so.
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.on('my-filter', async (transaction) => { console.log(transaction.id) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .on<string>('my-filter', async (transactionId) => { console.log(transactionId) })
+   * ```
    * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed event
-   * @returns The subscriber so `on`/`onBatch` calls can be chained
+   * @returns The subscriber so `on*` calls can be chained
    */
   on<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T>) {}
 
@@ -123,12 +132,54 @@ You can do this via the `on` and `onBatch` methods:
    * in bulk rather than one-by-one.
    *
    * The listener can be async and it will be awaited if so.
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.onBatch('my-filter', async (transactions) => { console.log(transactions.length) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .onBatch<string>('my-filter', async (transactionIds) => { console.log(transactionIds) })
+   * ```
    * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed events
-   * @returns The subscriber so `on`/`onBatch` calls can be chained
+   * @returns The subscriber so `on*` calls can be chained
    */
   onBatch<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T[]>) {}
-```
+
+  /**
+   * Register an event handler to run before every subscription poll.
+   *
+   * This is useful when you want to do pre-poll logging or start a transaction etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
+   * ```
+   * @param listener The listener function to invoke with the pre-poll metadata
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onBeforePoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {}
+
+  /**
+   * Register an event handler to run after every subscription poll.
+   *
+   * This is useful when you want to process all subscribed transactions
+   * in a transactionally consistent manner rather than piecemeal for each
+   * filter, or to have a hook that occurs at the end of each poll to commit
+   * transactions etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange) })
+   * ```
+   * @param listener The listener function to invoke with the poll result
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onPoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {}
+````
 
 The `TypedAsyncEventListener` type is defined as:
 
@@ -151,6 +202,10 @@ import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscrib
 See the [detail about this type](subscriptions.md#subscribedtransaction).
 
 Alternatively, if you defined a mapper against the filter then it will be applied before passing the objects through.
+
+If you call `onPoll` it will be called last (after all `on` and `onBatch` listeners) for each poll, with the full set of transactions for that poll and [metadata about the poll result](./subscriptions.md#transactionsubscriptionresult). This allows you to process the entire poll batch in one transaction or have a hook to call after processing individual listeners (e.g. to commit a transaction).
+
+If you want to run code before a poll starts (e.g. to log or start a transaction) you can do so with `onBeforePoll`.
 
 ## Poll the chain
 

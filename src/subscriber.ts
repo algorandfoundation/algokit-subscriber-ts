@@ -4,6 +4,7 @@ import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
 import type {
   AlgorandSubscriberConfig,
+  BeforePollMetadata,
   SubscribedTransaction,
   TransactionSubscriptionResult,
   TypedAsyncEventListener,
@@ -60,6 +61,12 @@ export class AlgorandSubscriber {
   async pollOnce(): Promise<TransactionSubscriptionResult> {
     const watermark = await this.config.watermarkPersistence.get()
 
+    const currentRound = (await this.algod.status().do())['last-round'] as number
+    await this.eventEmitter.emitAsync('before:poll', {
+      watermark,
+      currentRound,
+    } satisfies BeforePollMetadata)
+
     const pollResult = await getSubscribedTransactions(
       {
         watermark,
@@ -103,7 +110,6 @@ export class AlgorandSubscriber {
         // eslint-disable-next-line no-console
         const start = +new Date()
         const result = await this.pollOnce()
-        inspect?.(result)
         const durationInSeconds = (+new Date() - start) / 1000
         algokit.Config.getLogger(suppressLog).debug('Subscription poll', {
           currentRound: result.currentRound,
@@ -111,6 +117,8 @@ export class AlgorandSubscriber {
           syncedRoundRange: result.syncedRoundRange,
           subscribedTransactionsLength: result.subscribedTransactions.length,
         })
+        inspect?.(result)
+        await this.eventEmitter.emitAsync('poll', result)
         // eslint-disable-next-line no-console
         if (result.currentRound > result.newWatermark || !this.config.waitForBlockWhenAtTip) {
           algokit.Config.getLogger(suppressLog).info(
@@ -152,9 +160,18 @@ export class AlgorandSubscriber {
    * Register an event handler to run on every subscribed transaction matching the given filter name.
    *
    * The listener can be async and it will be awaited if so.
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.on('my-filter', async (transaction) => { console.log(transaction.id) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .on<string>('my-filter', async (transactionId) => { console.log(transactionId) })
+   * ```
    * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed event
-   * @returns The subscriber so `on`/`onBatch` calls can be chained
+   * @returns The subscriber so `on*` calls can be chained
    */
   on<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T>) {
     this.eventEmitter.on(filterName, listener as AsyncEventListener)
@@ -169,12 +186,60 @@ export class AlgorandSubscriber {
    * in bulk rather than one-by-one.
    *
    * The listener can be async and it will be awaited if so.
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.onBatch('my-filter', async (transactions) => { console.log(transactions.length) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .onBatch<string>('my-filter', async (transactionIds) => { console.log(transactionIds) })
+   * ```
    * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed events
-   * @returns The subscriber so `on`/`onBatch` calls can be chained
+   * @returns The subscriber so `on*` calls can be chained
    */
   onBatch<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T[]>) {
     this.eventEmitter.on(`batch:${filterName}`, listener as AsyncEventListener)
+    return this
+  }
+
+  /**
+   * Register an event handler to run before every subscription poll.
+   *
+   * This is useful when you want to do pre-poll logging or start a transaction etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
+   * ```
+   * @param listener The listener function to invoke with the pre-poll metadata
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onBeforePoll(listener: TypedAsyncEventListener<BeforePollMetadata>) {
+    this.eventEmitter.on('before:poll', listener as AsyncEventListener)
+    return this
+  }
+
+  /**
+   * Register an event handler to run after every subscription poll.
+   *
+   * This is useful when you want to process all subscribed transactions
+   * in a transactionally consistent manner rather than piecemeal for each
+   * filter, or to have a hook that occurs at the end of each poll to commit
+   * transactions etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange) })
+   * ```
+   * @param listener The listener function to invoke with the poll result
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onPoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {
+    this.eventEmitter.on('poll', listener as AsyncEventListener)
     return this
   }
 }
