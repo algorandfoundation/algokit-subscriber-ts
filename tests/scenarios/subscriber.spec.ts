@@ -11,11 +11,7 @@ import { waitFor } from '../wait'
 import { InMemoryWatermark } from '../watermarks'
 
 describe('AlgorandSubscriber', () => {
-  const localnet = algorandFixture(undefined, {
-    algodConfig: algokit.getDefaultLocalNetConfig('algod'),
-    indexerConfig: algokit.getDefaultLocalNetConfig('indexer'),
-    kmdConfig: algokit.getDefaultLocalNetConfig('kmd'),
-  })
+  const localnet = algorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {

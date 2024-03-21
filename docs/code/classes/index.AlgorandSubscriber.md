@@ -16,12 +16,12 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 
 - [abortController](index.AlgorandSubscriber.md#abortcontroller)
 - [algod](index.AlgorandSubscriber.md#algod)
+- [config](index.AlgorandSubscriber.md#config)
 - [eventEmitter](index.AlgorandSubscriber.md#eventemitter)
 - [filterNames](index.AlgorandSubscriber.md#filternames)
 - [indexer](index.AlgorandSubscriber.md#indexer)
 - [startPromise](index.AlgorandSubscriber.md#startpromise)
 - [started](index.AlgorandSubscriber.md#started)
-- [subscription](index.AlgorandSubscriber.md#subscription)
 
 ### Methods
 
@@ -77,6 +77,16 @@ ___
 
 ___
 
+### config
+
+• `Private` **config**: [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
+
+#### Defined in
+
+[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
+
+___
+
 ### eventEmitter
 
 • `Private` **eventEmitter**: [`AsyncEventEmitter`](types_async_event_emitter.AsyncEventEmitter.md)
@@ -125,16 +135,6 @@ ___
 
 [subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
 
-___
-
-### subscription
-
-• `Private` **subscription**: [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
-
-#### Defined in
-
-[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
-
 ## Methods
 
 ### on
@@ -166,7 +166,7 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:162](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L162)
+[subscriber.ts:159](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L159)
 
 ___
 
@@ -203,7 +203,7 @@ The subscriber so `on`/`onBatch` calls can be chained
 
 #### Defined in
 
-[subscriber.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L179)
+[subscriber.ts:176](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L176)
 
 ___
 
@@ -251,7 +251,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L101)
+[subscriber.ts:98](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L98)
 
 ___
 
@@ -275,4 +275,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:144](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L144)
+[subscriber.ts:141](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L141)
