@@ -4,7 +4,7 @@ import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@al
 import { beforeEach, describe, test } from '@jest/globals'
 import { Account } from 'algosdk'
 import invariant from 'tiny-invariant'
-import { Arc28Event, Arc28EventGroup, TransactionFilter } from '../../src/types/subscription'
+import { Arc28Event, Arc28EventGroup, TransactionFilter } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 

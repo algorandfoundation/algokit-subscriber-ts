@@ -4,7 +4,7 @@ import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/i
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { beforeEach, describe, test } from '@jest/globals'
 import algosdk, { Account, TransactionType } from 'algosdk'
-import { TransactionFilter } from '../../src/types/subscription'
+import { TransactionFilter } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 

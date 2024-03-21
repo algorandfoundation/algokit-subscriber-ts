@@ -35,7 +35,7 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 
 ### constructor
 
-• **new AlgorandSubscriber**(`subscription`, `algod`, `indexer?`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+• **new AlgorandSubscriber**(`config`, `algod`, `indexer?`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
 
 Create a new `AlgorandSubscriber`.
 
@@ -43,7 +43,7 @@ Create a new `AlgorandSubscriber`.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `subscription` | [`SubscriptionConfig`](../interfaces/types_subscription.SubscriptionConfig.md) | The subscription configuration |
+| `config` | [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md) | The subscriber configuration |
 | `algod` | `default` | An algod client |
 | `indexer?` | `default` | An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer` |
 
@@ -129,7 +129,7 @@ ___
 
 ### subscription
 
-• `Private` **subscription**: [`SubscriptionConfig`](../interfaces/types_subscription.SubscriptionConfig.md)
+• `Private` **subscription**: [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
 
 #### Defined in
 
