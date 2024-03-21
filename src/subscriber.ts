@@ -3,8 +3,8 @@ import algosdk from 'algosdk'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
 import type {
+  AlgorandSubscriberConfig,
   SubscribedTransaction,
-  SubscriptionConfig,
   TransactionSubscriptionResult,
   TypedAsyncEventListener,
 } from './types/subscription'
@@ -18,7 +18,7 @@ import Indexer = algosdk.Indexer
 export class AlgorandSubscriber {
   private algod: Algodv2
   private indexer: Indexer | undefined
-  private subscription: SubscriptionConfig
+  private config: AlgorandSubscriberConfig
   private abortController: AbortController
   private eventEmitter: AsyncEventEmitter
   private started: boolean = false
@@ -27,25 +27,25 @@ export class AlgorandSubscriber {
 
   /**
    * Create a new `AlgorandSubscriber`.
-   * @param subscription The subscription configuration
+   * @param config The subscriber configuration
    * @param algod An algod client
    * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
    */
-  constructor(subscription: SubscriptionConfig, algod: Algodv2, indexer?: Indexer) {
+  constructor(config: AlgorandSubscriberConfig, algod: Algodv2, indexer?: Indexer) {
     this.algod = algod
     this.indexer = indexer
-    this.subscription = subscription
+    this.config = config
     this.abortController = new AbortController()
     this.eventEmitter = new AsyncEventEmitter()
 
-    this.filterNames = this.subscription.filters
+    this.filterNames = this.config.filters
       .map((f) => f.name)
       .filter((value, index, self) => {
         // Remove duplicates
         return self.findIndex((x) => x === value) === index
       })
 
-    if (subscription.syncBehaviour === 'catchup-with-indexer' && !indexer) {
+    if (config.syncBehaviour === 'catchup-with-indexer' && !indexer) {
       throw new Error("Received sync behaviour of catchup-with-indexer, but didn't receive an indexer instance.")
     }
   }
@@ -58,15 +58,12 @@ export class AlgorandSubscriber {
    * @returns The poll result
    */
   async pollOnce(): Promise<TransactionSubscriptionResult> {
-    const watermark = await this.subscription.watermarkPersistence.get()
+    const watermark = await this.config.watermarkPersistence.get()
 
     const pollResult = await getSubscribedTransactions(
       {
-        filters: this.subscription.filters,
-        arc28Events: this.subscription.arc28Events,
         watermark,
-        maxRoundsToSync: this.subscription.maxRoundsToSync ?? 500,
-        syncBehaviour: this.subscription.syncBehaviour,
+        ...this.config,
       },
       this.algod,
       this.indexer,
@@ -74,7 +71,7 @@ export class AlgorandSubscriber {
 
     try {
       for (const filterName of this.filterNames) {
-        const mapper = this.subscription.filters.find((f) => f.name === filterName)?.mapper
+        const mapper = this.config.filters.find((f) => f.name === filterName)?.mapper
         const matchedTransactions = pollResult.subscribedTransactions.filter((t) => t.filtersMatched?.includes(filterName))
         const mappedTransactions = mapper ? await mapper(matchedTransactions) : matchedTransactions
 
@@ -87,7 +84,7 @@ export class AlgorandSubscriber {
       algokit.Config.logger.error(`Error processing event emittance`, e)
       throw e
     }
-    await this.subscription.watermarkPersistence.set(pollResult.newWatermark)
+    await this.config.watermarkPersistence.set(pollResult.newWatermark)
     return pollResult
   }
 
@@ -115,11 +112,11 @@ export class AlgorandSubscriber {
           subscribedTransactionsLength: result.subscribedTransactions.length,
         })
         // eslint-disable-next-line no-console
-        if (result.currentRound > result.newWatermark || !this.subscription.waitForBlockWhenAtTip) {
+        if (result.currentRound > result.newWatermark || !this.config.waitForBlockWhenAtTip) {
           algokit.Config.getLogger(suppressLog).info(
-            `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.subscription.frequencyInSeconds ?? 1}s`,
+            `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.config.frequencyInSeconds ?? 1}s`,
           )
-          await sleep((this.subscription.frequencyInSeconds ?? 1) * 1000, this.abortController.signal)
+          await sleep((this.config.frequencyInSeconds ?? 1) * 1000, this.abortController.signal)
         } else {
           // Wait until the next block is published
           algokit.Config.getLogger(suppressLog).info(

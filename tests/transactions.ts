@@ -3,7 +3,7 @@ import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/
 import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
 import { getSubscribedTransactions } from '../src'
 import { TransactionInBlock } from '../src/transform'
-import { Arc28EventGroup, NamedTransactionFilter, TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
+import type { Arc28EventGroup, NamedTransactionFilter, TransactionFilter, TransactionSubscriptionParams } from '../src/types'
 
 export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
   const txns: SendTransactionResult[] = []
@@ -33,6 +33,7 @@ export const GetSubscribedTransactions = (
   subscription: {
     syncBehaviour: TransactionSubscriptionParams['syncBehaviour']
     roundsToSync: number
+    indexerRoundsToSync?: number
     watermark?: number
     currentRound?: number
     filters: TransactionFilter | NamedTransactionFilter[]
@@ -41,7 +42,7 @@ export const GetSubscribedTransactions = (
   algod: Algodv2,
   indexer?: Indexer,
 ) => {
-  const { roundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
+  const { roundsToSync, indexerRoundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
 
   if (currentRound !== undefined) {
     const existingStatus = algod.status
@@ -62,6 +63,7 @@ export const GetSubscribedTransactions = (
     {
       filters: Array.isArray(filters) ? filters : [{ name: 'default', filter: filters }],
       maxRoundsToSync: roundsToSync,
+      maxIndexerRoundsToSync: indexerRoundsToSync,
       syncBehaviour: syncBehaviour,
       watermark: watermark ?? 0,
       arc28Events,
@@ -75,6 +77,7 @@ export const GetSubscribedTransactionsFromSender = (
   subscription: {
     syncBehaviour: TransactionSubscriptionParams['syncBehaviour']
     roundsToSync: number
+    indexerRoundsToSync?: number
     watermark?: number
     currentRound?: number
   },

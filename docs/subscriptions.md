@@ -66,11 +66,24 @@ export interface TransactionSubscriptionParams {
   watermark: number
   /** The maximum number of rounds to sync for each subscription pull/poll.
    *
+   * Defaults to 500.
+   *
    * This gives you control over how many rounds you wait for at a time,
    * your staleness tolerance when using `skip-sync-newest` or `fail`, and
    * your catchup speed when using `sync-oldest`.
    **/
-  maxRoundsToSync: number
+  maxRoundsToSync?: number
+  /**
+   * The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
+   *
+   * By default there is no limit and it will paginate through all of the rounds.
+   * Sometimes this can result in an incredibly long catchup time that may break the service
+   * due to execution and memory constraints, particularly for filters that result in a large number of transactions.
+   *
+   * Instead, this allows indexer catchup to be split into multiple polls, each with a transactionally consistent
+   * boundary based on the number of rounds specified here.
+   */
+  maxIndexerRoundsToSync?: number
   /** If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
    * past `watermark` then how should that be handled:
    *  * `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
@@ -199,7 +212,7 @@ export interface TransactionSubscriptionResult {
 The common model used to expose a transaction that is returned from a subscription is a `SubscribedTransaction`, which can be imported like so:
 
 ```typescript
-import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types'
 ```
 
 This type is substantively, based on the Indexer [`TransactionResult`](https://github.com/algorandfoundation/algokit-utils-ts/blob/main/src/types/indexer.ts#L77) [model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format. While the indexer type is used, the subscriber itself doesn't have to use indexer - any transactions it retrieves from algod are transformed to this common model type. Beyond the indexer type it has some modifications to:

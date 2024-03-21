@@ -5,17 +5,13 @@ import { SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/tra
 import { beforeEach, describe, test } from '@jest/globals'
 import { Algodv2, Indexer } from 'algosdk'
 import { AlgorandSubscriber } from '../../src'
-import { SubscriptionConfig } from '../../src/types/subscription'
+import { AlgorandSubscriberConfig } from '../../src/types'
 import { SendXTransactions } from '../transactions'
 import { waitFor } from '../wait'
 import { InMemoryWatermark } from '../watermarks'
 
 describe('AlgorandSubscriber', () => {
-  const localnet = algorandFixture(undefined, {
-    algodConfig: algokit.getDefaultLocalNetConfig('algod'),
-    indexerConfig: algokit.getDefaultLocalNetConfig('indexer'),
-    kmdConfig: algokit.getDefaultLocalNetConfig('kmd'),
-  })
+  const localnet = algorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
@@ -23,7 +19,7 @@ describe('AlgorandSubscriber', () => {
   })
 
   const getSubscriber = (
-    config: { testAccount: SendTransactionFrom; configOverrides?: Partial<SubscriptionConfig>; initialWatermark?: number },
+    config: { testAccount: SendTransactionFrom; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: number },
     algod: Algodv2,
     indexer?: Indexer,
   ) => {
