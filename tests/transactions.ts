@@ -35,13 +35,13 @@ export const GetSubscribedTransactions = (
     roundsToSync: number
     watermark?: number
     currentRound?: number
-    filter: TransactionFilter | NamedTransactionFilter[]
+    filters: TransactionFilter | NamedTransactionFilter[]
     arc28Events?: Arc28EventGroup[]
   },
   algod: Algodv2,
   indexer?: Indexer,
 ) => {
-  const { roundsToSync, syncBehaviour, watermark, currentRound, filter, arc28Events } = subscription
+  const { roundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
 
   if (currentRound !== undefined) {
     const existingStatus = algod.status
@@ -60,7 +60,7 @@ export const GetSubscribedTransactions = (
 
   return getSubscribedTransactions(
     {
-      filter: filter,
+      filters: Array.isArray(filters) ? filters : [{ name: 'default', filter: filters }],
       maxRoundsToSync: roundsToSync,
       syncBehaviour: syncBehaviour,
       watermark: watermark ?? 0,
@@ -85,7 +85,7 @@ export const GetSubscribedTransactionsFromSender = (
   return GetSubscribedTransactions(
     {
       ...subscription,
-      filter:
+      filters:
         account instanceof Array
           ? account.map((a) => algokit.getSenderAddress(a)).map((a) => ({ name: a, filter: { sender: a } }))
           : { sender: algokit.getSenderAddress(account) },

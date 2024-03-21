@@ -11,7 +11,7 @@ Parameters to control a single subscription pull/poll.
 ### Properties
 
 - [arc28Events](types_subscription.TransactionSubscriptionParams.md#arc28events)
-- [filter](types_subscription.TransactionSubscriptionParams.md#filter)
+- [filters](types_subscription.TransactionSubscriptionParams.md#filters)
 - [maxRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxroundstosync)
 - [syncBehaviour](types_subscription.TransactionSubscriptionParams.md#syncbehaviour)
 - [watermark](types_subscription.TransactionSubscriptionParams.md#watermark)
@@ -26,25 +26,16 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:112](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L112)
+[types/subscription.ts:104](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L104)
 
 ___
 
-### filter
+### filters
 
-• **filter**: [`TransactionFilter`](types_subscription.TransactionFilter.md) \| [`NamedTransactionFilter`](types_subscription.NamedTransactionFilter.md)[]
+• **filters**: [`NamedTransactionFilter`](types_subscription.NamedTransactionFilter.md)[]
 
 The filter(s) to apply to find transactions of interest.
-Can be a single filter or a list of filters with corresponding names.
-
-**`Example`**
-
-```typescript
- filter: {
-   type: TransactionType.axfer,
-   //...
- }
-```
+A list of filters with corresponding names.
 
 **`Example`**
 
@@ -66,7 +57,7 @@ Can be a single filter or a list of filters with corresponding names.
 
 #### Defined in
 
-[types/subscription.ts:110](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L110)
+[types/subscription.ts:102](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L102)
 
 ___
 
@@ -82,7 +73,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:130](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L130)
+[types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)
 
 ___
 
@@ -109,7 +100,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:148](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L148)
+[types/subscription.ts:140](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L140)
 
 ___
 
@@ -129,4 +120,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:123](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L123)
+[types/subscription.ts:115](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L115)

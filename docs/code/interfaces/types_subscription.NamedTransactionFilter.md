@@ -6,6 +6,12 @@
 
 Specify a named filter to apply to find transactions of interest.
 
+## Hierarchy
+
+- **`NamedTransactionFilter`**
+
+  ↳ [`SubscriberConfigFilter`](types_subscription.SubscriberConfigFilter.md)
+
 ## Table of contents
 
 ### Properties
@@ -23,7 +29,7 @@ The filter itself.
 
 #### Defined in
 
-[types/subscription.ts:156](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L156)
+[types/subscription.ts:148](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L148)
 
 ___
 
@@ -35,4 +41,4 @@ The name to give the filter.
 
 #### Defined in
 
-[types/subscription.ts:154](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L154)
+[types/subscription.ts:146](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L146)

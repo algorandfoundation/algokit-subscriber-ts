@@ -26,11 +26,31 @@ export async function getSubscribedTransactions(
 
 Specifying a subscription requires passing in a `TransactionSubscriptionParams` object, which configures the behaviour:
 
-```typescript
+````typescript
 /** Parameters to control a single subscription pull/poll. */
 export interface TransactionSubscriptionParams {
-  /** The filter to apply to find transactions of interest. */
-  filter: TransactionFilter
+  /** The filter(s) to apply to find transactions of interest.
+   * A list of filters with corresponding names.
+   *
+   * @example
+   * ```typescript
+   *  filter: [{
+   *   name: 'asset-transfers',
+   *   filter: {
+   *     type: TransactionType.axfer,
+   *     //...
+   *   }
+   *  }, {
+   *   name: 'payments',
+   *   filter: {
+   *     type: TransactionType.pay,
+   *     //...
+   *   }
+   *  }]
+   * ```
+   *
+   */
+  filters: NamedTransactionFilter[]
   /** Any ARC-28 event definitions to process from app call logs */
   arc28Events?: Arc28EventGroup[]
   /** The current round watermark that transactions have previously been synced to.
@@ -70,11 +90,11 @@ export interface TransactionSubscriptionParams {
    **/
   syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
 }
-```
+````
 
 ## TransactionFilter
 
-The [`filter` parameter](#transactionsubscriptionparams) allows you to specify the subset of transactions you are interested in:
+The [`filters` parameter](#transactionsubscriptionparams) allows you to specify a set of filters to return a subset of transactions you are interested in. Each filter contains a `filter` property of type `TransactionFilter`, which matches the following type:
 
 ```typescript
 /** Specify a filter to apply to find transactions of interest. */
@@ -116,6 +136,17 @@ export interface TransactionFilter {
   arc28Events?: { groupName: string; eventName: string }[]
 }
 ```
+
+Each filter you provide within this type will apply an AND logic between the specified filters, e.g.
+
+```typescript
+filter: {
+  type: TransactionType.axfer,
+  sender: "ABC..."
+}
+```
+
+Will return transactions that are `axfer` type AND have a sender of `"ABC..."`.
 
 ### NamedTransactionFilter
 
@@ -231,9 +262,14 @@ const algod = await algokit.getAlgoClient()
 const watermark = await getLastWatermark()
 const subscription = await getSubscribedTransactions(
   {
-    filter: {
-      sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
-    },
+    filters: [
+      {
+        name: 'filter1',
+        filter: {
+          sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
+        },
+      },
+    ],
     watermark,
     maxRoundsToSync: 100,
     onMaxRounds: 'skip-sync-newest',
@@ -259,9 +295,14 @@ const algod = await algokit.getAlgoClient()
 const watermark = await getLastWatermark()
 const subscription = await getSubscribedTransactions(
   {
-    filter: {
-      sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
-    },
+    filters: [
+      {
+        name: 'filter1',
+        filter: {
+          sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
+        },
+      },
+    ],
     watermark,
     maxRoundsToSync: 100,
     onMaxRounds: 'sync-oldest-start-now',
@@ -287,11 +328,16 @@ const indexer = await algokit.getAlgoIndexerClient()
 const watermark = await getLastWatermark()
 const subscription = await getSubscribedTransactions(
   {
-    filter: {
-      type: TransactionType.acfg,
-      sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
-      assetCreate: true,
-    },
+    filters: [
+      {
+        name: 'filter1',
+        filter: {
+          type: TransactionType.acfg,
+          sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
+          assetCreate: true,
+        },
+      },
+    ],
     watermark,
     maxRoundsToSync: 1000,
     onMaxRounds: 'catchup-with-indexer',
