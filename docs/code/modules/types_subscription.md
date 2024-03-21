@@ -7,6 +7,7 @@
 ### Interfaces
 
 - [AlgorandSubscriberConfig](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
+- [BeforePollMetadata](../interfaces/types_subscription.BeforePollMetadata.md)
 - [CoreTransactionSubscriptionParams](../interfaces/types_subscription.CoreTransactionSubscriptionParams.md)
 - [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
 - [SubscriberConfigFilter](../interfaces/types_subscription.SubscriberConfigFilter.md)
@@ -65,4 +66,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:201](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L201)
+[types/subscription.ts:209](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L209)

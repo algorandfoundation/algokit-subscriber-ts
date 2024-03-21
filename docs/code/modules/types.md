@@ -12,6 +12,7 @@
 - [Arc28EventToProcess](types.md#arc28eventtoprocess)
 - [AsyncEventEmitter](types.md#asynceventemitter)
 - [AsyncEventListener](types.md#asynceventlistener)
+- [BeforePollMetadata](types.md#beforepollmetadata)
 - [Block](types.md#block)
 - [BlockInnerTransaction](types.md#blockinnertransaction)
 - [BlockTransaction](types.md#blocktransaction)
@@ -66,6 +67,12 @@ ___
 ### AsyncEventListener
 
 Re-exports [AsyncEventListener](types_async_event_emitter.md#asynceventlistener)
+
+___
+
+### BeforePollMetadata
+
+Re-exports [BeforePollMetadata](../interfaces/types_subscription.BeforePollMetadata.md)
 
 ___
 

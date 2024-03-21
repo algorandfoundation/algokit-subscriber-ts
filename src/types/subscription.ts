@@ -41,6 +41,14 @@ export type SubscribedTransaction = TransactionResult & {
   filtersMatched?: string[]
 }
 
+/** Metadata about an impending subscription poll. */
+export interface BeforePollMetadata {
+  /** The current watermark of the subscriber */
+  watermark: number
+  /** The current round of algod */
+  currentRound: number
+}
+
 /** Common parameters to control a single subscription pull/poll for both `AlgorandSubscriber` and `getSubscribedTransactions`. */
 export interface CoreTransactionSubscriptionParams {
   /** The filter(s) to apply to find transactions of interest.

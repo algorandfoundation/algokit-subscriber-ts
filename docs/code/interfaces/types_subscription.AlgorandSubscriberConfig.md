@@ -39,7 +39,7 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:69](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L69)
+[types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L77)
 
 ___
 
@@ -55,7 +55,7 @@ The set of filters to subscribe to / emit events for, along with optional data m
 
 #### Defined in
 
-[types/subscription.ts:175](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L175)
+[types/subscription.ts:183](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L183)
 
 ___
 
@@ -67,7 +67,7 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 #### Defined in
 
-[types/subscription.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L177)
+[types/subscription.ts:185](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L185)
 
 ___
 
@@ -90,7 +90,7 @@ boundary based on the number of rounds specified here.
 
 #### Defined in
 
-[types/subscription.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L89)
+[types/subscription.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L97)
 
 ___
 
@@ -112,7 +112,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:78](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L78)
+[types/subscription.ts:86](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L86)
 
 ___
 
@@ -143,7 +143,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L107)
+[types/subscription.ts:115](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L115)
 
 ___
 
@@ -155,7 +155,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 #### Defined in
 
-[types/subscription.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L179)
+[types/subscription.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L187)
 
 ___
 
@@ -175,4 +175,4 @@ its position in the chain
 
 #### Defined in
 
-[types/subscription.ts:182](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L182)
+[types/subscription.ts:190](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L190)
