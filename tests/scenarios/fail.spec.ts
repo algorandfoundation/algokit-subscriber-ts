@@ -1,9 +1,9 @@
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { beforeEach, describe, test } from '@jest/globals'
+import { cachedAlgorandFixture } from '../fixture'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
 describe('Subscribing using fail', () => {
-  const localnet = algorandFixture()
+  const localnet = cachedAlgorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {

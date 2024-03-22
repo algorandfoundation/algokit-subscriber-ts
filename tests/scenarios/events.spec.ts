@@ -1,11 +1,11 @@
 import { sendGroupOfTransactions, transferAlgos } from '@algorandfoundation/algokit-utils'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { beforeEach, describe, test } from '@jest/globals'
 import { Account } from 'algosdk'
 import invariant from 'tiny-invariant'
 import { Arc28Event, Arc28EventGroup, TransactionFilter } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
+import { cachedAlgorandFixture } from '../fixture'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 
 describe('Subscribing to app calls that emit events', () => {
@@ -39,7 +39,7 @@ describe('Subscribing to app calls that emit events', () => {
     ],
   }
 
-  const localnet = algorandFixture()
+  const localnet = cachedAlgorandFixture()
   let systemAccount: Account
 
   beforeAll(async () => {

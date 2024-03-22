@@ -1,15 +1,15 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { beforeEach, describe, test } from '@jest/globals'
 import algosdk, { Account, TransactionType } from 'algosdk'
 import { TransactionFilter } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
+import { cachedAlgorandFixture } from '../fixture'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 
 describe('Subscribing using various filters', () => {
-  const localnet = algorandFixture()
+  const localnet = cachedAlgorandFixture()
   let systemAccount: Account
 
   beforeAll(async () => {

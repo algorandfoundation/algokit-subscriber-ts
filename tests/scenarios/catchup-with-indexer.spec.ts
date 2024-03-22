@@ -1,14 +1,9 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { beforeEach, describe, test } from '@jest/globals'
+import { cachedAlgorandFixture } from '../fixture'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
 describe('Subscribing using catchup-with-indexer', () => {
-  const localnet = algorandFixture(undefined, {
-    algodConfig: algokit.getDefaultLocalNetConfig('algod'),
-    indexerConfig: algokit.getDefaultLocalNetConfig('indexer'),
-    kmdConfig: algokit.getDefaultLocalNetConfig('kmd'),
-  })
+  const localnet = cachedAlgorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {

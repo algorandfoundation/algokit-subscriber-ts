@@ -1,17 +1,17 @@
 /* eslint-disable no-console */
 import * as algokit from '@algorandfoundation/algokit-utils'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
 import { beforeEach, describe, test } from '@jest/globals'
 import { Algodv2, Indexer } from 'algosdk'
 import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig } from '../../src/types'
+import { cachedAlgorandFixture } from '../fixture'
 import { SendXTransactions } from '../transactions'
 import { waitFor } from '../wait'
 import { InMemoryWatermark } from '../watermarks'
 
 describe('AlgorandSubscriber', () => {
-  const localnet = algorandFixture()
+  const localnet = cachedAlgorandFixture()
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
