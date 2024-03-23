@@ -2,8 +2,8 @@ import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { beforeEach, describe, test } from '@jest/globals'
 import algosdk, { Account, TransactionType } from 'algosdk'
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { TransactionFilter } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
@@ -19,7 +19,7 @@ describe('Subscribing using various filters', () => {
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   const subscribeAndVerifyFilter = async (filter: TransactionFilter, result: SendTransactionResult) => {

@@ -1,9 +1,9 @@
 import { sendGroupOfTransactions, transferAlgos } from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { beforeEach, describe, test } from '@jest/globals'
 import { Account } from 'algosdk'
 import invariant from 'tiny-invariant'
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { Arc28Event, Arc28EventGroup, TransactionFilter } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
@@ -49,7 +49,7 @@ describe('Subscribing to app calls that emit events', () => {
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   const subscribeAlgod = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {

@@ -1,6 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { beforeEach, describe, test } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
 describe('Subscribing using catchup-with-indexer', () => {
@@ -12,7 +12,7 @@ describe('Subscribing using catchup-with-indexer', () => {
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   test('Processes start of chain to now when starting from beginning of chain', async () => {

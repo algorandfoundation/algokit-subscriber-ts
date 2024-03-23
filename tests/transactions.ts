@@ -1,6 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
+import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import { TransactionInBlock } from '../src/transform'
 import type { Arc28EventGroup, NamedTransactionFilter, TransactionFilter, TransactionSubscriptionParams } from '../src/types'
@@ -47,7 +48,7 @@ export const GetSubscribedTransactions = (
   if (currentRound !== undefined) {
     const existingStatus = algod.status
     Object.assign(algod, {
-      status: jest.fn().mockImplementation(() => {
+      status: vi.fn().mockImplementation(() => {
         return {
           do: async () => {
             const status = await existingStatus.apply(algod).do()

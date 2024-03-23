@@ -1,5 +1,5 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { beforeEach, describe, test } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
 describe('Subscribing using skip-sync-newest', () => {
@@ -7,7 +7,7 @@ describe('Subscribing using skip-sync-newest', () => {
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   test('Only processes the latest transaction when starting from beginning of chain', async () => {
