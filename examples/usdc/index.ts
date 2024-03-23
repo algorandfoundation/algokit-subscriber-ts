@@ -14,14 +14,13 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 process.on('uncaughtException', (e) => console.error(e))
 ;(async () => {
   const algod = await algokit.getAlgoClient()
-  const indexer = await algokit.getAlgoIndexerClient()
   let watermark = 0
 
   const subscriber = new AlgorandSubscriber(
     {
-      events: [
+      filters: [
         {
-          eventName: 'usdc',
+          name: 'usdc',
           filter: {
             type: TransactionType.axfer,
             assetId: 31566704, // MainNet: USDC

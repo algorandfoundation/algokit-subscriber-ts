@@ -6,12 +6,11 @@
 
 ### Interfaces
 
-- [Arc28Event](../interfaces/types_subscription.Arc28Event.md)
-- [Arc28EventGroup](../interfaces/types_subscription.Arc28EventGroup.md)
-- [Arc28EventToProcess](../interfaces/types_subscription.Arc28EventToProcess.md)
-- [EmittedArc28Event](../interfaces/types_subscription.EmittedArc28Event.md)
-- [SubscriptionConfig](../interfaces/types_subscription.SubscriptionConfig.md)
-- [SubscriptionConfigEvent](../interfaces/types_subscription.SubscriptionConfigEvent.md)
+- [AlgorandSubscriberConfig](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
+- [BeforePollMetadata](../interfaces/types_subscription.BeforePollMetadata.md)
+- [CoreTransactionSubscriptionParams](../interfaces/types_subscription.CoreTransactionSubscriptionParams.md)
+- [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
+- [SubscriberConfigFilter](../interfaces/types_subscription.SubscriberConfigFilter.md)
 - [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
 - [TransactionSubscriptionParams](../interfaces/types_subscription.TransactionSubscriptionParams.md)
 - [TransactionSubscriptionResult](../interfaces/types_subscription.TransactionSubscriptionResult.md)
@@ -25,7 +24,7 @@
 
 ### SubscribedTransaction
 
-Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_subscription.EmittedArc28Event.md)[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
+Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_arc_28.EmittedArc28Event.md)[] ; `filtersMatched?`: `string`[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
 
 The common model used to expose a transaction that is returned from a subscription.
 
@@ -36,7 +35,7 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://develop
 
 #### Defined in
 
-[types/subscription.ts:68](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L68)
+[types/subscription.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L33)
 
 ___
 
@@ -67,4 +66,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:227](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L227)
+[types/subscription.ts:209](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L209)

@@ -5,14 +5,9 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
-  "jest.jestCommandLine": "npm run test --",
-  "jest.runMode": {
-    "runAllTestsOnStartup": false,
-    "showInlineError": true,
-    "type": "on-demand"
-  },
-  "jest.outputConfig": { "revealWithFocus": "none" },
-  "testing.openTesting": "neverOpen",
+  "jest.enable": false,
+  "vitest.enable": true,
+  "vitest.watchOnStartup": false,
   "files.associations": {
     ".github/**/*.yml": "github-actions-workflow"
   },

@@ -1,9 +1,10 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
+import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import { TransactionInBlock } from '../src/transform'
-import { Arc28EventGroup, TransactionFilter, TransactionSubscriptionParams } from '../src/types/subscription'
+import type { Arc28EventGroup, NamedTransactionFilter, TransactionFilter, TransactionSubscriptionParams } from '../src/types'
 
 export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
   const txns: SendTransactionResult[] = []
@@ -33,20 +34,21 @@ export const GetSubscribedTransactions = (
   subscription: {
     syncBehaviour: TransactionSubscriptionParams['syncBehaviour']
     roundsToSync: number
+    indexerRoundsToSync?: number
     watermark?: number
     currentRound?: number
-    filter: TransactionFilter
+    filters: TransactionFilter | NamedTransactionFilter[]
     arc28Events?: Arc28EventGroup[]
   },
   algod: Algodv2,
   indexer?: Indexer,
 ) => {
-  const { roundsToSync, syncBehaviour, watermark, currentRound, filter, arc28Events } = subscription
+  const { roundsToSync, indexerRoundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
 
   if (currentRound !== undefined) {
     const existingStatus = algod.status
     Object.assign(algod, {
-      status: jest.fn().mockImplementation(() => {
+      status: vi.fn().mockImplementation(() => {
         return {
           do: async () => {
             const status = await existingStatus.apply(algod).do()
@@ -60,8 +62,9 @@ export const GetSubscribedTransactions = (
 
   return getSubscribedTransactions(
     {
-      filter: filter,
+      filters: Array.isArray(filters) ? filters : [{ name: 'default', filter: filters }],
       maxRoundsToSync: roundsToSync,
+      maxIndexerRoundsToSync: indexerRoundsToSync,
       syncBehaviour: syncBehaviour,
       watermark: watermark ?? 0,
       arc28Events,
@@ -75,19 +78,21 @@ export const GetSubscribedTransactionsFromSender = (
   subscription: {
     syncBehaviour: TransactionSubscriptionParams['syncBehaviour']
     roundsToSync: number
+    indexerRoundsToSync?: number
     watermark?: number
     currentRound?: number
   },
-  account: SendTransactionFrom,
+  account: SendTransactionFrom | SendTransactionFrom[],
   algod: Algodv2,
   indexer?: Indexer,
 ) => {
   return GetSubscribedTransactions(
     {
       ...subscription,
-      filter: {
-        sender: algokit.getSenderAddress(account),
-      },
+      filters:
+        account instanceof Array
+          ? account.map((a) => algokit.getSenderAddress(a)).map((a) => ({ name: a, filter: { sender: a } }))
+          : { sender: algokit.getSenderAddress(account) },
     },
     algod,
     indexer,

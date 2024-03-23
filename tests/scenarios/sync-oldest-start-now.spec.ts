@@ -1,5 +1,5 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { beforeEach, describe, test } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
 describe('Subscribing using sync-oldest-start-now', () => {
@@ -7,7 +7,7 @@ describe('Subscribing using sync-oldest-start-now', () => {
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   test('Processes the current round when starting from beginning of chain', async () => {

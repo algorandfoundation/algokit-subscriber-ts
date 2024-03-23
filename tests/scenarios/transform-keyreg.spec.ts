@@ -1,5 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { TransactionType } from 'algosdk'
+import { describe, expect, it } from 'vitest'
 import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
 
 describe('Complex transaction with many nested inner transactions', () => {
@@ -11,7 +12,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   it('Can have a keyreg transaction subscribed correctly from indexer', async () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
-        filter: {
+        filters: {
           type: TransactionType.keyreg,
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
@@ -34,6 +35,9 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closing-amount": 0,
         "confirmed-round": 34418662,
         "fee": 1000,
+        "filtersMatched": [
+          "default",
+        ],
         "first-valid": 34418595,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",
@@ -64,7 +68,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   it('Can have an inner transaction subscribed correctly from algod', async () => {
     const algodTxns = await GetSubscribedTransactions(
       {
-        filter: {
+        filters: {
           type: TransactionType.keyreg,
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
@@ -84,6 +88,9 @@ describe('Complex transaction with many nested inner transactions', () => {
       {
         "confirmed-round": 34418662,
         "fee": 1000,
+        "filtersMatched": [
+          "default",
+        ],
         "first-valid": 34418595,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",

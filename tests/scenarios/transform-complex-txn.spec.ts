@@ -1,4 +1,5 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
+import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src'
 import { getBlockTransactions } from '../../src/transform'
 import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
@@ -12,7 +13,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   it('Can have an inner transaction subscribed correctly from indexer', async () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
-        filter: {
+        filters: {
           appId: 1390675395,
           sender: 'AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A',
         },
@@ -129,7 +130,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   it('Can have an inner transaction subscribed correctly from algod', async () => {
     const algodTxns = await GetSubscribedTransactions(
       {
-        filter: {
+        filters: {
           appId: 1390675395,
           sender: 'AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A',
         },
@@ -164,6 +165,9 @@ describe('Complex transaction with many nested inner transactions', () => {
         },
         "confirmed-round": 35214367,
         "fee": 2000,
+        "filtersMatched": [
+          "default",
+        ],
         "first-valid": 35214365,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",

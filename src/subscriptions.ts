@@ -10,11 +10,10 @@ import {
   getBlockTransactions,
   getIndexerTransactionFromAlgodTransaction,
 } from './transform'
+import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './types/arc-28'
 import type { Block } from './types/block'
 import type {
-  Arc28EventGroup,
-  Arc28EventToProcess,
-  EmittedArc28Event,
+  NamedTransactionFilter,
   SubscribedTransaction,
   TransactionFilter,
   TransactionSubscriptionParams,
@@ -26,6 +25,20 @@ import ABIValue = algosdk.ABIValue
 import Algodv2 = algosdk.Algodv2
 import Indexer = algosdk.Indexer
 import TransactionType = algosdk.TransactionType
+
+const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: SubscribedTransaction[], t: SubscribedTransaction) => {
+  const existing = dedupedTransactions.find((e) => e.id === t.id)
+  if (existing) {
+    // Concat new filters to existing filters
+    existing.filtersMatched = (existing.filtersMatched ?? []).concat(t.filtersMatched ?? []).filter((value, index, self) => {
+      // Remove duplicates
+      return self.indexOf(value) === index
+    })
+  } else {
+    dedupedTransactions.push(t)
+  }
+  return dedupedTransactions
+}
 
 /**
  * Executes a single pull/poll to subscribe to transactions on the configured Algorand
@@ -40,9 +53,11 @@ export async function getSubscribedTransactions(
   algod: Algodv2,
   indexer?: Indexer,
 ): Promise<TransactionSubscriptionResult> {
-  const { watermark, filter, maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
+  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
+  const maxRoundsToSync = _maxRoundsToSync ?? 500
   const currentRound = (await algod.status().do())['last-round'] as number
 
+  // Pre-calculate a flat list of all ARC-28 events to process
   const arc28Events = (subscription.arc28Events ?? []).flatMap((g) =>
     g.events.map((e) => {
       // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#sample-interpretation-of-event-log-data
@@ -60,6 +75,7 @@ export async function getSubscribedTransactions(
     }),
   )
 
+  // Nothing to sync we at the tip of the chain already
   if (currentRound <= watermark) {
     return {
       currentRound: currentRound,
@@ -69,12 +85,15 @@ export async function getSubscribedTransactions(
     }
   }
 
+  let indexerSyncToRoundNumber = 0
   let algodSyncFromRoundNumber = watermark + 1
   let startRound = algodSyncFromRoundNumber
   let endRound = currentRound
   let catchupTransactions: SubscribedTransaction[] = []
   let start = +new Date()
+  let skipAlgodSync = false
 
+  // If we are less than `maxRoundstoSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
   if (currentRound - watermark > maxRoundsToSync) {
     switch (onMaxRounds) {
       case 'fail':
@@ -101,18 +120,46 @@ export async function getSubscribedTransactions(
           throw new Error("Can't catch up using indexer since it's not provided")
         }
 
-        algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
+        // If we have more than `maxIndexerRoundsToSync` rounds to sync from indexer then we skip algod sync and just sync that many rounds from indexer
+        indexerSyncToRoundNumber = currentRound - maxRoundsToSync
+        if (subscription.maxIndexerRoundsToSync && indexerSyncToRoundNumber - startRound + 1 > subscription.maxIndexerRoundsToSync) {
+          indexerSyncToRoundNumber = startRound + subscription.maxIndexerRoundsToSync - 1
+          endRound = indexerSyncToRoundNumber
+          skipAlgodSync = true
+        } else {
+          algodSyncFromRoundNumber = indexerSyncToRoundNumber + 1
+        }
 
         algokit.Config.logger.debug(
-          `Catching up from round ${startRound} to round ${algodSyncFromRoundNumber - 1} via indexer; this may take a few seconds`,
+          `Catching up from round ${startRound} to round ${indexerSyncToRoundNumber} via indexer; this may take a few seconds`,
         )
 
-        catchupTransactions = (
-          await algokit.searchTransactions(indexer, indexerPreFilter(filter, startRound, algodSyncFromRoundNumber - 1))
-        ).transactions
-          .flatMap((t) => getFilteredIndexerTransactions(t, filter))
-          .filter(indexerPostFilter(filter, arc28Events, subscription.arc28Events ?? []))
+        // Retrieve and process transactions from indexer in groups of 30 so we don't get rate limited
+        for (const chunkedFilters of chunkArray(filters, 30)) {
+          catchupTransactions = catchupTransactions.concat(
+            (
+              await Promise.all(
+                // For each filter
+                chunkedFilters.map(async (f) =>
+                  // Retrieve all pre-filtered transactions from the indexer
+                  (await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
+                    // Re-run the pre-filter in-memory so we properly extract inner transactions
+                    .flatMap((t) => getFilteredIndexerTransactions(t, f))
+                    // Run the post-filter so we get the final list of matching transactions
+                    .filter(indexerPostFilter(f.filter, arc28Events, subscription.arc28Events ?? [])),
+                ),
+              )
+            )
+              // Collapse the filtered transactions into a single array
+              .flat(),
+          )
+        }
+
+        catchupTransactions = catchupTransactions
+          // Sort by transaction order
           .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!)
+          // Collapse duplicate transactions
+          .reduce(deduplicateSubscribedTransactionsReducer, [] as SubscribedTransaction[])
 
         algokit.Config.logger.debug(
           `Retrieved ${catchupTransactions.length} transactions from round ${startRound} to round ${
@@ -126,23 +173,37 @@ export async function getSubscribedTransactions(
     }
   }
 
-  start = +new Date()
-  const blocks = await getBlocksBulk({ startRound: algodSyncFromRoundNumber, maxRound: endRound }, algod)
-  algokit.Config.logger.debug(
-    `Retrieved ${blocks.length} blocks from algod via round ${algodSyncFromRoundNumber}-${endRound} in ${(+new Date() - start) / 1000}s`,
-  )
+  // Retrieve and process blocks from algod
+  let algodTransactions: SubscribedTransaction[] = []
+  if (!skipAlgodSync) {
+    start = +new Date()
+    const blocks = await getBlocksBulk({ startRound: algodSyncFromRoundNumber, maxRound: endRound }, algod)
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    algodTransactions = filters
+      .flatMap((f) =>
+        blockTransactions
+          .filter((t) => transactionFilter(f.filter, arc28Events, subscription.arc28Events ?? [])(t!))
+          .map((t) => getIndexerTransactionFromAlgodTransaction(t, f.name)),
+      )
+      .reduce(deduplicateSubscribedTransactionsReducer, [])
+
+    algokit.Config.logger.debug(
+      `Retrieved ${blockTransactions.length} transactions from algod via round(s) ${algodSyncFromRoundNumber}-${endRound} in ${
+        (+new Date() - start) / 1000
+      }s`,
+    )
+  } else {
+    algokit.Config.logger.debug(
+      `Skipping algod sync since we have more than ${subscription.maxIndexerRoundsToSync} rounds to sync from indexer.`,
+    )
+  }
 
   return {
     syncedRoundRange: [startRound, endRound],
     newWatermark: endRound,
     currentRound,
     subscribedTransactions: catchupTransactions
-      .concat(
-        blocks
-          .flatMap((b) => getBlockTransactions(b.block))
-          .filter((t) => transactionFilter(filter, arc28Events, subscription.arc28Events ?? [])(t!))
-          .map((t) => getIndexerTransactionFromAlgodTransaction(t)),
-      )
+      .concat(algodTransactions)
       .map((t) => processArc28Events(t, arc28Events, subscription.arc28Events ?? [])),
   }
 }
@@ -242,6 +303,7 @@ function extractArc28Events(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) {
             if (continueOnError(e.groupName)) {
+              // eslint-disable-next-line no-console
               console.warn(`Encountered error while processing ${e.groupName}.${e.eventName} on transaction ${transactionId}:`, error)
               return undefined
             }
@@ -538,15 +600,21 @@ function blockMapToObject(object: Map<any, any>) {
   return result
 }
 
-/** Process an indexer transaction and return that transaction or any of it's inner transactions that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through */
-function getFilteredIndexerTransactions(transaction: TransactionResult, filter: TransactionFilter): SubscribedTransaction[] {
+/** Process an indexer transaction and return that transaction or any of it's inner transactions
+ * that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through.
+ */
+function getFilteredIndexerTransactions(transaction: TransactionResult, filter: NamedTransactionFilter): SubscribedTransaction[] {
   let parentOffset = 0
   const getParentOffset = () => parentOffset++
 
-  const transactions = [transaction, ...getIndexerInnerTransactions(transaction, transaction, getParentOffset)]
-  return transactions.filter(indexerPreFilterInMemory(filter))
+  const transactions = [
+    { ...transaction, filtersMatched: [filter.name] } as SubscribedTransaction,
+    ...getIndexerInnerTransactions(transaction, transaction, getParentOffset),
+  ]
+  return transactions.filter(indexerPreFilterInMemory(filter.filter))
 }
 
+/** Return a transaction and its inner transactions as an array of `SubscribedTransaction` objects. */
 function getIndexerInnerTransactions(root: TransactionResult, parent: TransactionResult, offset: () => number): SubscribedTransaction[] {
   return (parent['inner-txns'] ?? []).flatMap((t) => {
     const parentOffset = offset()
@@ -558,6 +626,6 @@ function getIndexerInnerTransactions(root: TransactionResult, parent: Transactio
         'intra-round-offset': root['intra-round-offset']! + parentOffset + 1,
       },
       ...getIndexerInnerTransactions(root, t, offset),
-    ]
+    ] satisfies SubscribedTransaction[]
   })
 }

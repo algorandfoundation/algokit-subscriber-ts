@@ -1,13 +1,18 @@
+import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { beforeEach, describe, test } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
 describe('Subscribing using catchup-with-indexer', () => {
-  const localnet = algorandFixture()
+  const localnet = algorandFixture(undefined, {
+    algodConfig: algokit.getDefaultLocalNetConfig('algod'),
+    indexerConfig: algokit.getDefaultLocalNetConfig('indexer'),
+    kmdConfig: algokit.getDefaultLocalNetConfig('kmd'),
+  })
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   test('Processes start of chain to now when starting from beginning of chain', async () => {
@@ -29,6 +34,38 @@ describe('Subscribing using catchup-with-indexer', () => {
     expect(subscribed.syncedRoundRange).toEqual([1, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
     expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
+  })
+
+  test('Limits the number of synced transactions to maxIndexerRoundsToSync', async () => {
+    const { algod, indexer, testAccount, generateAccount, waitForIndexerTransaction } = localnet.context
+    // Ensure that if we are at round 0 there is a different transaction that won't be synced
+    const randomAccount = await generateAccount({ initialFunds: (3).algos() })
+    const { lastTxnRound: initialWatermark } = await SendXTransactions(1, randomAccount, algod)
+    const { txns } = await SendXTransactions(5, testAccount, algod)
+    const { lastTxnRound, txIds } = await SendXTransactions(1, randomAccount, algod)
+    await waitForIndexerTransaction(txIds[0])
+    const expectedNewWatermark = Number(txns[2].confirmation!.confirmedRound!) - 1
+    const indexerRoundsToSync = expectedNewWatermark - initialWatermark
+
+    const subscribed = await GetSubscribedTransactionsFromSender(
+      {
+        roundsToSync: 1,
+        indexerRoundsToSync,
+        syncBehaviour: 'catchup-with-indexer',
+        watermark: initialWatermark,
+        currentRound: lastTxnRound,
+      },
+      testAccount,
+      algod,
+      indexer,
+    )
+
+    expect(subscribed.currentRound).toBe(lastTxnRound)
+    expect(subscribed.newWatermark).toBe(expectedNewWatermark)
+    expect(subscribed.syncedRoundRange).toEqual([initialWatermark + 1, expectedNewWatermark])
+    expect(subscribed.subscribedTransactions.length).toBe(2)
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
+    expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txID())
   })
 
   // Same behaviour as sync-oldest

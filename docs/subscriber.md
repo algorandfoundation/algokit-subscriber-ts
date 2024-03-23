@@ -9,26 +9,37 @@ To create an `AlgorandSubscriber` you can use the constructor:
 ```typescript
   /**
    * Create a new `AlgorandSubscriber`.
-   * @param subscription The subscription configuration
+   * @param config The subscriber configuration
    * @param algod An algod client
    * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
    */
-  constructor(subscription: SubscriptionConfig, algod: Algodv2, indexer?: Indexer)
+  constructor(config: AlgorandSubscriberConfig, algod: Algodv2, indexer?: Indexer)
 ```
 
-The key configuration is the `SubscriptionConfig` interface:
+The key configuration is the `AlgorandSubscriberConfig` interface:
 
 ```typescript
 /** Configuration for a subscription */
-export interface SubscriptionConfig {
+export interface AlgorandSubscriberConfig {
   /** The frequency to poll for new blocks in seconds; defaults to 1s */
   frequencyInSeconds?: number
   /** Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription */
   waitForBlockWhenAtTip?: boolean
   /** The maximum number of rounds to sync at a time; defaults to 500 */
   maxRoundsToSync?: number
-  /** The set of events to subscribe to / emit */
-  events: SubscriptionConfigEvent<unknown>[]
+  /**
+   * The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
+   *
+   * By default there is no limit and it will paginate through all of the rounds.
+   * Sometimes this can result in an incredibly long catchup time that may break the service
+   * due to execution and memory constraints, particularly for filters that result in a large number of transactions.
+   *
+   * Instead, this allows indexer catchup to be split into multiple polls, each with a transactionally consistent
+   * boundary based on the number of rounds specified here.
+   */
+  maxIndexerRoundsToSync?: number
+  /** The set of filters to subscribe to / emit events for, along with optional data mappers */
+  filters: SubscriberConfigFilter<unknown>[]
   /** Any ARC-28 event definitions to process from app call logs */
   arc28Events?: Arc28EventGroup[]
   /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
@@ -62,20 +73,26 @@ export interface SubscriptionConfig {
 
 `arc28Events` are any [ARC-28 event definitions](subscriptions.md#arc-28-events).
 
-Events defines the different subscription(s) you want to make, and is defined by the following interface:
+Filters defines the different subscription(s) you want to make, and is defined by the following interface:
 
 ```typescript
 /** A single event to subscribe to / emit. */
-export interface SubscriptionConfigEvent<T> {
-  /** Name / identifier to uniquely describe the event */
-  eventName: string
-  /** The transaction filter that determines if the event has occurred */
-  filter: TransactionFilter
-  /** An optional data mapper if you want the event data to take a certain shape.
+export interface SubscriberConfigFilter<T> extends NamedTransactionFilter {
+  /** An optional data mapper if you want the event data to take a certain shape when subscribing to events with this filter name.
    *
-   * If not specified, then the event will receive a `TransactionResult`.
+   * If not specified, then the event will simply receive a `SubscribedTransaction`.
+   *
+   * Note: if you provide multiple filters with the same name then only the mapper of the first matching filter will be used
    */
   mapper?: (transaction: SubscribedTransaction[]) => Promise<T[]>
+}
+
+/** Specify a named filter to apply to find transactions of interest. */
+export interface NamedTransactionFilter {
+  /** The name to give the filter. */
+  name: string
+  /** The filter itself. */
+  filter: TransactionFilter
 }
 ```
 
@@ -83,33 +100,86 @@ The event name is a unique name that describes the event you are subscribing to.
 
 ## Subscribing to events
 
-Once you have created the `AlgorandSubscriber`, you can register handlers/listeners for the events you have defined.
+Once you have created the `AlgorandSubscriber`, you can register handlers/listeners for the filters you have defined, or each poll as a whole batch.
 
-You can do this via the `on` and `onBatch` methods:
+You can do this via the `on`, `onBatch` and `onPoll` methods:
 
-```typescript
+````typescript
   /**
-   * Register an event handler to run on every instance the given event name.
+   * Register an event handler to run on every subscribed transaction matching the given filter name.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.on('my-filter', async (transaction) => { console.log(transaction.id) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .on<string>('my-filter', async (transactionId) => { console.log(transactionId) })
+   * ```
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed event
+   * @returns The subscriber so `on*` calls can be chained
    */
-  on<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T>){}
+  on<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T>) {}
 
   /**
-   * Register an event handler to run on all instances of the given event name
+   * Register an event handler to run on all subscribed transactions matching the given filter name
    * for each subscription poll.
    *
    * This is useful when you want to efficiently process / persist events
    * in bulk rather than one-by-one.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.onBatch('my-filter', async (transactions) => { console.log(transactions.length) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .onBatch<string>('my-filter', async (transactionIds) => { console.log(transactionIds) })
+   * ```
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed events
+   * @returns The subscriber so `on*` calls can be chained
    */
-  onBatch<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T[]>){}
-```
+  onBatch<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T[]>) {}
+
+  /**
+   * Register an event handler to run before every subscription poll.
+   *
+   * This is useful when you want to do pre-poll logging or start a transaction etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
+   * ```
+   * @param listener The listener function to invoke with the pre-poll metadata
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onBeforePoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {}
+
+  /**
+   * Register an event handler to run after every subscription poll.
+   *
+   * This is useful when you want to process all subscribed transactions
+   * in a transactionally consistent manner rather than piecemeal for each
+   * filter, or to have a hook that occurs at the end of each poll to commit
+   * transactions etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange) })
+   * ```
+   * @param listener The listener function to invoke with the poll result
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onPoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {}
+````
 
 The `TypedAsyncEventListener` type is defined as:
 
@@ -126,10 +196,16 @@ If you call `onBatch` it will be called first, with the full set of transactions
 The default type that will be received is a `SubscribedTransaction`, which can be imported like so:
 
 ```typescript
-import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types'
 ```
 
 See the [detail about this type](subscriptions.md#subscribedtransaction).
+
+Alternatively, if you defined a mapper against the filter then it will be applied before passing the objects through.
+
+If you call `onPoll` it will be called last (after all `on` and `onBatch` listeners) for each poll, with the full set of transactions for that poll and [metadata about the poll result](./subscriptions.md#transactionsubscriptionresult). This allows you to process the entire poll batch in one transaction or have a hook to call after processing individual listeners (e.g. to commit a transaction).
+
+If you want to run code before a poll starts (e.g. to log or start a transaction) you can do so with `onBeforePoll`.
 
 ## Poll the chain
 

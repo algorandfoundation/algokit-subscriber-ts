@@ -3,8 +3,9 @@ import algosdk from 'algosdk'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
 import type {
+  AlgorandSubscriberConfig,
+  BeforePollMetadata,
   SubscribedTransaction,
-  SubscriptionConfig,
   TransactionSubscriptionResult,
   TypedAsyncEventListener,
 } from './types/subscription'
@@ -18,31 +19,34 @@ import Indexer = algosdk.Indexer
 export class AlgorandSubscriber {
   private algod: Algodv2
   private indexer: Indexer | undefined
-  private subscription: SubscriptionConfig
+  private config: AlgorandSubscriberConfig
   private abortController: AbortController
   private eventEmitter: AsyncEventEmitter
   private started: boolean = false
   private startPromise: Promise<void> | undefined
+  private filterNames: string[]
 
   /**
    * Create a new `AlgorandSubscriber`.
-   * @param subscription The subscription configuration
+   * @param config The subscriber configuration
    * @param algod An algod client
    * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
    */
-  constructor(subscription: SubscriptionConfig, algod: Algodv2, indexer?: Indexer) {
+  constructor(config: AlgorandSubscriberConfig, algod: Algodv2, indexer?: Indexer) {
     this.algod = algod
     this.indexer = indexer
-    this.subscription = subscription
+    this.config = config
     this.abortController = new AbortController()
     this.eventEmitter = new AsyncEventEmitter()
 
-    if (subscription.events.length > 1) {
-      // todo: Support multiple events
-      throw new Error('Current only a single event is supported')
-    }
+    this.filterNames = this.config.filters
+      .map((f) => f.name)
+      .filter((value, index, self) => {
+        // Remove duplicates
+        return self.findIndex((x) => x === value) === index
+      })
 
-    if (subscription.syncBehaviour === 'catchup-with-indexer' && !indexer) {
+    if (config.syncBehaviour === 'catchup-with-indexer' && !indexer) {
       throw new Error("Received sync behaviour of catchup-with-indexer, but didn't receive an indexer instance.")
     }
   }
@@ -55,33 +59,39 @@ export class AlgorandSubscriber {
    * @returns The poll result
    */
   async pollOnce(): Promise<TransactionSubscriptionResult> {
-    const watermark = await this.subscription.watermarkPersistence.get()
+    const watermark = await this.config.watermarkPersistence.get()
+
+    const currentRound = (await this.algod.status().do())['last-round'] as number
+    await this.eventEmitter.emitAsync('before:poll', {
+      watermark,
+      currentRound,
+    } satisfies BeforePollMetadata)
 
     const pollResult = await getSubscribedTransactions(
       {
-        filter: this.subscription.events[0].filter,
-        arc28Events: this.subscription.arc28Events,
         watermark,
-        maxRoundsToSync: this.subscription.maxRoundsToSync ?? 500,
-        syncBehaviour: this.subscription.syncBehaviour,
+        ...this.config,
       },
       this.algod,
       this.indexer,
     )
 
-    const mappedTransactions = this.subscription.events[0].mapper
-      ? await this.subscription.events[0].mapper(pollResult.subscribedTransactions)
-      : pollResult.subscribedTransactions
     try {
-      await this.eventEmitter.emitAsync(`batch:${this.subscription.events[0].eventName}`, mappedTransactions)
-      for (const transaction of mappedTransactions) {
-        await this.eventEmitter.emitAsync(this.subscription.events[0].eventName, transaction)
+      for (const filterName of this.filterNames) {
+        const mapper = this.config.filters.find((f) => f.name === filterName)?.mapper
+        const matchedTransactions = pollResult.subscribedTransactions.filter((t) => t.filtersMatched?.includes(filterName))
+        const mappedTransactions = mapper ? await mapper(matchedTransactions) : matchedTransactions
+
+        await this.eventEmitter.emitAsync(`batch:${filterName}`, mappedTransactions)
+        for (const transaction of mappedTransactions) {
+          await this.eventEmitter.emitAsync(filterName, transaction)
+        }
       }
     } catch (e) {
       algokit.Config.logger.error(`Error processing event emittance`, e)
       throw e
     }
-    await this.subscription.watermarkPersistence.set(pollResult.newWatermark)
+    await this.config.watermarkPersistence.set(pollResult.newWatermark)
     return pollResult
   }
 
@@ -100,7 +110,6 @@ export class AlgorandSubscriber {
         // eslint-disable-next-line no-console
         const start = +new Date()
         const result = await this.pollOnce()
-        inspect?.(result)
         const durationInSeconds = (+new Date() - start) / 1000
         algokit.Config.getLogger(suppressLog).debug('Subscription poll', {
           currentRound: result.currentRound,
@@ -108,12 +117,14 @@ export class AlgorandSubscriber {
           syncedRoundRange: result.syncedRoundRange,
           subscribedTransactionsLength: result.subscribedTransactions.length,
         })
+        inspect?.(result)
+        await this.eventEmitter.emitAsync('poll', result)
         // eslint-disable-next-line no-console
-        if (result.currentRound > result.newWatermark || !this.subscription.waitForBlockWhenAtTip) {
+        if (result.currentRound > result.newWatermark || !this.config.waitForBlockWhenAtTip) {
           algokit.Config.getLogger(suppressLog).info(
-            `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.subscription.frequencyInSeconds ?? 1}s`,
+            `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.config.frequencyInSeconds ?? 1}s`,
           )
-          await sleep((this.subscription.frequencyInSeconds ?? 1) * 1000, this.abortController.signal)
+          await sleep((this.config.frequencyInSeconds ?? 1) * 1000, this.abortController.signal)
         } else {
           // Wait until the next block is published
           algokit.Config.getLogger(suppressLog).info(
@@ -138,36 +149,97 @@ export class AlgorandSubscriber {
   stop(reason: unknown): Promise<void> {
     if (!this.started) return Promise.resolve()
     this.abortController.abort(reason)
-    return this.startPromise!
+    return this.startPromise!.catch((e) => {
+      // Abort signal throws a DOMException when aborted, which is expected
+      //  and should be ignoredIf we get a different exception then we should re-throw it
+      if (!(e instanceof DOMException)) throw e
+    })
   }
 
   /**
-   * Register an event handler to run on every instance the given event name.
+   * Register an event handler to run on every subscribed transaction matching the given filter name.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.on('my-filter', async (transaction) => { console.log(transaction.id) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .on<string>('my-filter', async (transactionId) => { console.log(transactionId) })
+   * ```
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed event
-   * @returns The subscriber so `on`/`onBatch` calls can be chained
+   * @returns The subscriber so `on*` calls can be chained
    */
-  on<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T>) {
-    this.eventEmitter.on(eventName, listener as AsyncEventListener)
+  on<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T>) {
+    this.eventEmitter.on(filterName, listener as AsyncEventListener)
     return this
   }
 
   /**
-   * Register an event handler to run on all instances of the given event name
+   * Register an event handler to run on all subscribed transactions matching the given filter name
    * for each subscription poll.
    *
    * This is useful when you want to efficiently process / persist events
    * in bulk rather than one-by-one.
    *
    * The listener can be async and it will be awaited if so.
-   * @param eventName The name of the event to subscribe to
+   * @example **Non-mapped**
+   * ```typescript
+   * subscriber.onBatch('my-filter', async (transactions) => { console.log(transactions.length) })
+   * ```
+   * @example **Mapped**
+   * ```typescript
+   * new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t) => t.id}], ...}, algod)
+   *  .onBatch<string>('my-filter', async (transactionIds) => { console.log(transactionIds) })
+   * ```
+   * @param filterName The name of the filter to subscribe to
    * @param listener The listener function to invoke with the subscribed events
-   * @returns The subscriber so `on`/`onBatch` calls can be chained
+   * @returns The subscriber so `on*` calls can be chained
    */
-  onBatch<T = SubscribedTransaction>(eventName: string, listener: TypedAsyncEventListener<T[]>) {
-    this.eventEmitter.on(`batch:${eventName}`, listener as AsyncEventListener)
+  onBatch<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T[]>) {
+    this.eventEmitter.on(`batch:${filterName}`, listener as AsyncEventListener)
+    return this
+  }
+
+  /**
+   * Register an event handler to run before every subscription poll.
+   *
+   * This is useful when you want to do pre-poll logging or start a transaction etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
+   * ```
+   * @param listener The listener function to invoke with the pre-poll metadata
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onBeforePoll(listener: TypedAsyncEventListener<BeforePollMetadata>) {
+    this.eventEmitter.on('before:poll', listener as AsyncEventListener)
+    return this
+  }
+
+  /**
+   * Register an event handler to run after every subscription poll.
+   *
+   * This is useful when you want to process all subscribed transactions
+   * in a transactionally consistent manner rather than piecemeal for each
+   * filter, or to have a hook that occurs at the end of each poll to commit
+   * transactions etc.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange) })
+   * ```
+   * @param listener The listener function to invoke with the poll result
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onPoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {
+    this.eventEmitter.on('poll', listener as AsyncEventListener)
     return this
   }
 }

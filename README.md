@@ -12,7 +12,16 @@ This library a simple, but flexible / configurable Algorand transaction subscrip
 // Create subscriber
 const subscriber = new AlgorandSubscriber(
   {
-    /* ... options (use intellisense to explore) */
+    filters: [
+      {
+        name: 'filter1',
+        filter: {
+          type: TransactionType.pay,
+          sender: 'ABC...',
+        },
+      },
+    ],
+    /* ... other options (use intellisense to explore) */
   },
   algod,
   optionalIndexer,
@@ -95,7 +104,6 @@ The following code, when algod is pointed to MainNet, will find all transfers of
 
 ```typescript
 const algod = await algokit.getAlgoClient()
-const indexer = await algokit.getAlgoIndexerClient()
 let watermark = 0
 
 const subscriber = new AlgorandSubscriber(
@@ -120,7 +128,6 @@ const subscriber = new AlgorandSubscriber(
     },
   },
   algod,
-  indexer,
 )
 subscriber.on('usdc', (transfer) => {
   // eslint-disable-next-line no-console
@@ -133,13 +140,6 @@ subscriber.on('usdc', (transfer) => {
 
 subscriber.start()
 ```
-
-## Roadmap
-
-- Subscribe to contract events ([ARC-28](https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md))
-- Multiple filters
-- Dynamic filters (e.g. subscribe to axfer's for assets that you subscribe to the creation of)
-- GraphQL example ideally with subscriptions
 
 ## Getting started
 
