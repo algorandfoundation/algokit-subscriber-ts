@@ -143,6 +143,10 @@ describe('AlgorandSubscriber', () => {
 
     // Initial catch up
     const result = await subscriber.pollOnce()
+    console.log(
+      `Synced ${result.subscribedTransactions.length} transactions from rounds ${result.syncedRoundRange[0]}-${result.syncedRoundRange[1]} when current round is ${result.currentRound}`,
+      result.subscribedTransactions.map((t) => t.id),
+    )
     const subscribedTxns = result.subscribedTransactions
     expect(subscribedTxns.length).toBe(5)
     expect(subscribedTxns[0].id).toBe(txIds[0])
@@ -173,6 +177,10 @@ describe('AlgorandSubscriber', () => {
     const { lastTxnRound: lastSubscribedRound3, txIds: txIds23, txns: txns23 } = await SendXTransactions(2, senders[1], algod)
 
     const result3 = await subscriber.pollOnce()
+    console.log(
+      `Synced ${result3.subscribedTransactions.length} transactions from rounds ${result3.syncedRoundRange[0]}-${result3.syncedRoundRange[1]} when current round is ${result3.currentRound}`,
+      result3.subscribedTransactions.map((t) => t.id),
+    )
     const subscribedTxns3 = result3.subscribedTransactions
     expect(subscribedTxns3.length).toBe(5)
     expect(subscribedTxns3[0].id).toBe(txIds3[0])

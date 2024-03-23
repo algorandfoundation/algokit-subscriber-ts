@@ -7,7 +7,6 @@
   },
   "jest.enable": false,
   "vitest.enable": true,
-  "vitest.commandLine": "npm run test --",
   "vitest.watchOnStartup": false,
   "files.associations": {
     ".github/**/*.yml": "github-actions-workflow"
