@@ -6,14 +6,23 @@
 // Create subscriber
 const subscriber = new AlgorandSubscriber(
   {
-    /* ... options (use intellisense to explore) */
+    filters: [
+      {
+        name: 'filter1',
+        filter: {
+          type: TransactionType.pay,
+          sender: 'ABC...',
+        },
+      },
+    ],
+    /* ... other options (use intellisense to explore) */
   },
   algod,
   optionalIndexer,
 )
 
 // Set up subscription(s)
-subscriber.on('filterNameFromOptions', async (transaction) => {
+subscriber.on('filter1', async (transaction) => {
   // ...
 })
 //...
@@ -181,8 +190,10 @@ Currently this allows you filter based on any combination (AND logic) of:
   - ID e.g. `filter: { assetId: 123456 }`
   - Creation e.g. `filter: { assetCreate: true }`
   - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
+  - Balance changes (asset ID, sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{assetId: [15345, 36234], roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
 - Algo transfers (pay transactions)
   - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
+  - Balance changes (sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
 
 You can supply multiple, named filters via the [`NamedTransactionFilter`](subscriptions.md#namedtransactionfilter) type. When subscribed transactions are returned each transaction will have a `filtersMatched` property that will have an array of any filter(s) that caused that transaction to be returned. When using [`AlgorandSubscriber`](./subscriber.md), you can subscribe to events that are emitted with the filter name.
 

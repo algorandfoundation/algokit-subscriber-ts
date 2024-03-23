@@ -4,9 +4,14 @@
 
 ## Table of contents
 
+### Enumerations
+
+- [BalanceChangeRole](../enums/types_subscription.BalanceChangeRole.md)
+
 ### Interfaces
 
 - [AlgorandSubscriberConfig](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
+- [BalanceChange](../interfaces/types_subscription.BalanceChange.md)
 - [BeforePollMetadata](../interfaces/types_subscription.BeforePollMetadata.md)
 - [CoreTransactionSubscriptionParams](../interfaces/types_subscription.CoreTransactionSubscriptionParams.md)
 - [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
@@ -24,7 +29,7 @@
 
 ### SubscribedTransaction
 
-Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_arc_28.EmittedArc28Event.md)[] ; `filtersMatched?`: `string`[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
+Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_arc_28.EmittedArc28Event.md)[] ; `balanceChanges?`: [`BalanceChange`](../interfaces/types_subscription.BalanceChange.md)[] ; `filtersMatched?`: `string`[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
 
 The common model used to expose a transaction that is returned from a subscription.
 
@@ -32,10 +37,11 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://develop
 * Add the `parentTransactionId` field so inner transactions have a reference to their parent
 * Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
 * Add emitted ARC-28 events via `arc28Events`
+* Balance changes in algo or assets
 
 #### Defined in
 
-[types/subscription.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L33)
+[types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
 
 ___
 
@@ -66,4 +72,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:209](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L209)
+[types/subscription.ts:247](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L247)

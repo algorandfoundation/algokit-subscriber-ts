@@ -107,7 +107,7 @@ describe('AlgorandSubscriber', () => {
         testAccount,
         initialWatermark: firstTxnRound - 1,
         configOverrides: {
-          maxRoundsToSync: lastTxnRound - firstTxnRound + 1,
+          maxRoundsToSync: 100,
           filters: [
             {
               name: 'sender1',
