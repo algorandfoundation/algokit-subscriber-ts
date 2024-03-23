@@ -2,8 +2,8 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
-import { beforeEach, describe, test } from '@jest/globals'
 import { Algodv2, Indexer } from 'algosdk'
+import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig } from '../../src/types'
 import { SendXTransactions } from '../transactions'
@@ -15,7 +15,7 @@ describe('AlgorandSubscriber', () => {
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   const getSubscriber = (

@@ -3,7 +3,7 @@
     "esbenp.prettier-vscode",
     "mikestead.dotenv",
     "EditorConfig.EditorConfig",
-    "Orta.vscode-jest",
+    "vitest.explorer",
     "dbaeumer.vscode-eslint"
   ]
 }

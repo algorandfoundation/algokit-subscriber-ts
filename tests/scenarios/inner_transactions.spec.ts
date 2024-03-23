@@ -1,8 +1,8 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { beforeEach, describe, test } from '@jest/globals'
 import algosdk, { Account, Transaction, TransactionType } from 'algosdk'
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { TransactionFilter } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
@@ -18,7 +18,7 @@ describe('Inner transactions', () => {
 
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
   })
 
   const subscribeAndVerifyFilter = async (filter: TransactionFilter, ...result: (SendTransactionResult & { id: string })[]) => {

@@ -8,7 +8,8 @@
     "build:1-compile": "rollup -c --configPlugin typescript",
     "build:2-copy-pkg-json": "npx --yes @makerx/ts-toolkit@latest copy-package-json --custom-sections module main type types exports",
     "build:3-copy-readme": "cpy README.md dist",
-    "test": "jest --coverage --passWithNoTests",
+    "test": "vitest run --coverage --passWithNoTests",
+    "test:watch": "vitest watch --coverage --passWithNoTests",
     "lint": "eslint ./src/ --ext .ts",
     "lint:fix": "eslint ./src/ --ext .ts --fix",
     "check-types": "tsc --noEmit",
@@ -57,7 +58,7 @@
     "@makerx/eslint-config": "^3.1.0",
     "@makerx/prettier-config": "^2.0.0",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/jest": "^29.5.11",
+    "@vitest/coverage-v8": "^1.4.0",
     "better-npm-audit": "^3.7.3",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cpy-cli": "^5.0.0",
@@ -71,11 +72,11 @@
     "rollup": "^4.13.0",
     "semantic-release": "^22.0.8",
     "tiny-invariant": "^1.3.3",
-    "ts-jest": "^29.1.2",
     "ts-node-dev": "^2.0.0",
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.4.0"
   },
   "dependencies": {
     "algorand-msgpack": "^1.0.1",
