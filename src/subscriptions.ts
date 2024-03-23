@@ -665,6 +665,9 @@ function indexerPostFilter(
       const balanceChanges = extractBalanceChanges(t)
       result &&= hasBalanceChangeMatch(balanceChanges, subscription.balanceChanges)
     }
+    if (subscription.customFilter) {
+      result &&= subscription.customFilter(t)
+    }
     return result
   }
 }
@@ -746,6 +749,9 @@ function transactionFilter(
     if (subscription.balanceChanges) {
       const balanceChanges = extractBalanceChangesFromBlock(txn.blockTransaction)
       result &&= hasBalanceChangeMatch(balanceChanges, subscription.balanceChanges)
+    }
+    if (subscription.customFilter) {
+      result &&= subscription.customFilter(getIndexerTransactionFromAlgodTransaction(txn))
     }
     return result
   }

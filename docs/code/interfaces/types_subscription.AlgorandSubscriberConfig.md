@@ -55,7 +55,7 @@ The set of filters to subscribe to / emit events for, along with optional data m
 
 #### Defined in
 
-[types/subscription.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L225)
+[types/subscription.ts:227](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L227)
 
 ___
 
@@ -67,7 +67,7 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 #### Defined in
 
-[types/subscription.ts:227](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L227)
+[types/subscription.ts:229](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L229)
 
 ___
 
@@ -155,7 +155,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 #### Defined in
 
-[types/subscription.ts:229](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L229)
+[types/subscription.ts:231](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L231)
 
 ___
 
@@ -175,4 +175,4 @@ its position in the chain
 
 #### Defined in
 
-[types/subscription.ts:232](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L232)
+[types/subscription.ts:234](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L234)

@@ -168,4 +168,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L219)
+[types/subscription.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L221)
