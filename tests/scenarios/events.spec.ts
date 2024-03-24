@@ -1,14 +1,26 @@
 import { sendGroupOfTransactions, transferAlgos } from '@algorandfoundation/algokit-utils'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { Account } from 'algosdk'
 import invariant from 'tiny-invariant'
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
-import { Arc28Event, Arc28EventGroup, TransactionFilter } from '../../src/types'
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { Arc28Event } from '../../src/types'
 import { TestingAppClient } from '../contract/client'
-import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
+import { filterFixture } from '../filterFixture'
 
 describe('Subscribing to app calls that emit events', () => {
+  const {
+    localnet,
+    systemAccount,
+    subscribeAlgod,
+    subscribeIndexer,
+    subscribeAndVerify,
+    subscribeAndVerifyFilter,
+    extractFromGroupResult,
+    ...hooks
+  } = filterFixture()
+  beforeAll(hooks.beforeAll, 10_000)
+  beforeEach(hooks.beforeEach, 10_000)
+  afterEach(hooks.afterEach)
+
   const swappedEvent: Arc28Event = {
     name: 'Swapped',
     args: [
@@ -39,82 +51,6 @@ describe('Subscribing to app calls that emit events', () => {
     ],
   }
 
-  const localnet = algorandFixture()
-  let systemAccount: Account
-
-  beforeAll(async () => {
-    await localnet.beforeEach()
-    systemAccount = await localnet.context.generateAccount({ initialFunds: (100).algos() })
-  })
-
-  beforeEach(localnet.beforeEach, 10e6)
-  afterEach(() => {
-    vitest.clearAllMocks()
-  })
-
-  const subscribeAlgod = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
-    // Run the subscription
-    const subscribed = await GetSubscribedTransactions(
-      {
-        roundsToSync: 1,
-        syncBehaviour: 'sync-oldest',
-        watermark: Number(result.confirmation?.confirmedRound) - 1,
-        currentRound: Number(result.confirmation?.confirmedRound),
-        filters: filter,
-        arc28Events,
-      },
-      localnet.context.algod,
-    )
-    return subscribed
-  }
-
-  const subscribeIndexer = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
-    // Ensure there is another transaction so algod subscription can process something
-    const { txIds } = await SendXTransactions(1, systemAccount, localnet.context.algod)
-    // Wait for indexer to catch up
-    await localnet.context.waitForIndexerTransaction(txIds[0])
-    // Run the subscription
-    const subscribed = await GetSubscribedTransactions(
-      {
-        roundsToSync: 1,
-        syncBehaviour: 'catchup-with-indexer',
-        watermark: Number(result.confirmation!.confirmedRound ?? 0) - 1,
-        currentRound: Number(result.confirmation?.confirmedRound) + 1,
-        filters: filter,
-        arc28Events,
-      },
-      localnet.context.algod,
-      localnet.context.indexer,
-    )
-    return subscribed
-  }
-
-  const subscribeAndVerify = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
-    const subscribed = await subscribeAlgod(filter, result, arc28Events)
-    expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(result.transaction.txID())
-
-    return subscribed
-  }
-
-  const subscribeAndVerifyFilter = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
-    const [algod, indexer] = await Promise.all([subscribeAlgod(filter, result, arc28Events), subscribeIndexer(filter, result, arc28Events)])
-
-    expect(algod.subscribedTransactions.length).toBe(1)
-    expect(algod.subscribedTransactions[0].id).toBe(result.transaction.txID())
-    expect(indexer.subscribedTransactions.length).toBe(1)
-    expect(indexer.subscribedTransactions[0].id).toBe(result.transaction.txID())
-
-    return { algod, indexer }
-  }
-
-  const extractFromGroupResult = (groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>, index: number) => {
-    return {
-      transaction: groupResult.transactions[index],
-      confirmation: groupResult.confirmations?.[index],
-    }
-  }
-
   const app = async (config: { create: boolean }, creator?: Account) => {
     const app = new TestingAppClient(
       {
@@ -124,7 +60,7 @@ describe('Subscribing to app calls that emit events', () => {
       localnet.context.algod,
     )
     const creation = await app.create.bare({
-      sender: creator ?? systemAccount,
+      sender: creator ?? systemAccount(),
       sendParams: {
         skipSending: !config.create,
       },
