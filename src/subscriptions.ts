@@ -408,20 +408,18 @@ function extractBalanceChangesFromBlock(transaction: BlockTransaction | BlockInn
     )
   }
 
-  return balanceChanges
-    .reduce((changes, change) => {
-      const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
-      if (existing) {
-        existing.amount += change.amount
-        if (!existing.roles.includes(change.roles[0])) {
-          existing.roles.push(...change.roles)
-        }
-      } else {
-        changes.push(change)
+  return balanceChanges.reduce((changes, change) => {
+    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
+    if (existing) {
+      existing.amount += change.amount
+      if (!existing.roles.includes(change.roles[0])) {
+        existing.roles.push(...change.roles)
       }
-      return changes
-    }, [] as BalanceChange[])
-    .filter((c) => c.amount !== 0n)
+    } else {
+      changes.push(change)
+    }
+    return changes
+  }, [] as BalanceChange[])
 }
 
 function extractBalanceChanges(transaction: TransactionResult): BalanceChange[] {
@@ -508,20 +506,18 @@ function extractBalanceChanges(transaction: TransactionResult): BalanceChange[] 
     )
   }
 
-  return balanceChanges
-    .reduce((changes, change) => {
-      const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
-      if (existing) {
-        existing.amount += change.amount
-        if (!existing.roles.includes(change.roles[0])) {
-          existing.roles.push(...change.roles)
-        }
-      } else {
-        changes.push(change)
+  return balanceChanges.reduce((changes, change) => {
+    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
+    if (existing) {
+      existing.amount += change.amount
+      if (!existing.roles.includes(change.roles[0])) {
+        existing.roles.push(...change.roles)
       }
-      return changes
-    }, [] as BalanceChange[])
-    .filter((c) => c.amount !== 0n)
+    } else {
+      changes.push(change)
+    }
+    return changes
+  }, [] as BalanceChange[])
 }
 
 function indexerPreFilter(
