@@ -59,11 +59,11 @@ export interface BalanceChange {
 /** The role that an account was playing for a given balance change. */
 export enum BalanceChangeRole {
   /** Account was sending a transaction (sending asset and/or spending fee if asset `0`) */
-  Sender,
+  Sender = 'Sender',
   /** Account was receiving a transaction */
-  Receiver,
+  Receiver = 'Receiver',
   /** Account was having an asset amount closed to it */
-  CloseTo,
+  CloseTo = 'CloseTo',
 }
 
 /** Metadata about an impending subscription poll. */
@@ -187,12 +187,16 @@ export interface TransactionFilter {
   arc28Events?: { groupName: string; eventName: string }[]
   /** Filter to transactions that result in balance changes that match one or more of the given set of balance changes. */
   balanceChanges?: {
-    /** Match transactions with balance changes for one of the give asset IDs, with Algo being `0` */
-    assetId?: number[]
-    /** Match transactions with balance changes for an account with the given role(s) */
-    roles?: BalanceChangeRole[]
-    /** Match transactions with balance changes affecting the given account(s) */
-    address?: string
+    /** Match transactions with balance changes for one of the given asset ID(s), with Algo being `0` */
+    assetId?: number | number[]
+    /** Match transactions with balance changes for an account with one of the given role(s) */
+    role?: BalanceChangeRole | BalanceChangeRole[]
+    /** Match transactions with balance changes affecting one of the given account(s) */
+    address?: string | string[]
+    /** Match transactions with absolute (i.e. using Math.abs()) balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
+    minAbsoluteAmount?: number
+    /** Match transactions with absolute (i.e. using Math.abs()) balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
+    maxAbsoluteAmount?: number
     /** Match transactions with balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
     minAmount?: number
     /** Match transactions with balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */

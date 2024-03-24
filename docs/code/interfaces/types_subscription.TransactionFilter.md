@@ -130,7 +130,7 @@ ___
 
 ### balanceChanges
 
-• `Optional` **balanceChanges**: \{ `address?`: `string` ; `assetId?`: `number`[] ; `maxAmount?`: `number` ; `minAmount?`: `number` ; `roles?`: [`BalanceChangeRole`](../enums/types_subscription.BalanceChangeRole.md)[]  }[]
+• `Optional` **balanceChanges**: \{ `address?`: `string` \| `string`[] ; `assetId?`: `number` \| `number`[] ; `maxAbsoluteAmount?`: `number` ; `maxAmount?`: `number` ; `minAbsoluteAmount?`: `number` ; `minAmount?`: `number` ; `role?`: [`BalanceChangeRole`](../enums/types_subscription.BalanceChangeRole.md) \| [`BalanceChangeRole`](../enums/types_subscription.BalanceChangeRole.md)[]  }[]
 
 Filter to transactions that result in balance changes that match one or more of the given set of balance changes.
 

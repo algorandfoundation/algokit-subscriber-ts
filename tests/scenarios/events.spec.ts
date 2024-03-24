@@ -53,8 +53,6 @@ describe('Subscribing to app calls that emit events', () => {
   })
 
   const subscribeAlgod = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
-    // Ensure there is another transaction so algod subscription can process something
-    await SendXTransactions(1, systemAccount, localnet.context.algod)
     // Run the subscription
     const subscribed = await GetSubscribedTransactions(
       {
@@ -71,14 +69,16 @@ describe('Subscribing to app calls that emit events', () => {
   }
 
   const subscribeIndexer = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
+    // Ensure there is another transaction so algod subscription can process something
+    const { txIds } = await SendXTransactions(1, systemAccount, localnet.context.algod)
     // Wait for indexer to catch up
-    await localnet.context.waitForIndexerTransaction(result.transaction.txID())
+    await localnet.context.waitForIndexerTransaction(txIds[0])
     // Run the subscription
     const subscribed = await GetSubscribedTransactions(
       {
         roundsToSync: 1,
         syncBehaviour: 'catchup-with-indexer',
-        watermark: 0,
+        watermark: Number(result.confirmation!.confirmedRound ?? 0) - 1,
         currentRound: Number(result.confirmation?.confirmedRound) + 1,
         filters: filter,
         arc28Events,

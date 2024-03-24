@@ -18,7 +18,7 @@ The role that an account was playing for a given balance change.
 
 ### CloseTo
 
-• **CloseTo** = ``2``
+• **CloseTo** = ``"CloseTo"``
 
 Account was having an asset amount closed to it
 
@@ -30,7 +30,7 @@ ___
 
 ### Receiver
 
-• **Receiver** = ``1``
+• **Receiver** = ``"Receiver"``
 
 Account was receiving a transaction
 
@@ -42,7 +42,7 @@ ___
 
 ### Sender
 
-• **Sender** = ``0``
+• **Sender** = ``"Sender"``
 
 Account was sending a transaction (sending asset and/or spending fee if asset `0`)
 

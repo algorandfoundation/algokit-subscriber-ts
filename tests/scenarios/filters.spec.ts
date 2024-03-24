@@ -44,7 +44,7 @@ describe('Subscribing using various filters', () => {
         {
           roundsToSync: 1,
           syncBehaviour: 'catchup-with-indexer',
-          watermark: 0,
+          watermark: Number(result.confirmation!.confirmedRound ?? 0) - 1,
           currentRound: Number(result.confirmation?.confirmedRound) + 1,
           filters: filter,
         },
