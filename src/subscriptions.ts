@@ -547,10 +547,13 @@ function indexerPreFilter(
       filter = filter.assetID(subscription.assetId)
     }
     if (subscription.minAmount) {
-      filter = filter.currencyGreaterThan(subscription.minAmount - 1)
+      // Indexer only supports numbers, but even though this is less precise the in-memory indexer pre-filter will remove any false positives
+      filter = filter.currencyGreaterThan(
+        subscription.minAmount > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : Number(subscription.minAmount) - 1,
+      )
     }
-    if (subscription.maxAmount) {
-      filter = filter.currencyLessThan(subscription.maxAmount + 1)
+    if (subscription.maxAmount && subscription.maxAmount < Number.MAX_SAFE_INTEGER) {
+      filter = filter.currencyLessThan(Number(subscription.maxAmount) + 1)
     }
     return filter.minRound(minRound).maxRound(maxRound)
   }
@@ -595,8 +598,8 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Transact
     }
     if (subscription.maxAmount) {
       result &&=
-        (!!t['payment-transaction'] && t['payment-transaction'].amount <= subscription.maxAmount) ||
-        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].amount <= subscription.maxAmount)
+        (!!t['payment-transaction'] && BigInt(t['payment-transaction'].amount) <= subscription.maxAmount) ||
+        (!!t['asset-transfer-transaction'] && BigInt(t['asset-transfer-transaction'].amount) <= subscription.maxAmount)
     }
 
     return result

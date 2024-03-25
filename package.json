@@ -83,7 +83,7 @@
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
-    "@algorandfoundation/algokit-utils": "^5.8.0",
+    "@algorandfoundation/algokit-utils": "^6.0.0-beta.1",
     "algosdk": "^2.7.0"
   },
   "publishConfig": {
