@@ -31,6 +31,17 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(txn.id).toBe(txnId)
     expect(txn).toMatchInlineSnapshot(`
       {
+        "arc28Events": undefined,
+        "balanceChanges": [
+          {
+            "address": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
+            "amount": -1000n,
+            "assetId": 0,
+            "roles": [
+              "Sender",
+            ],
+          },
+        ],
         "close-rewards": 0,
         "closing-amount": 0,
         "confirmed-round": 34418662,
@@ -42,6 +53,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",
         "id": "LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA",
+        "inner-txns": undefined,
         "intra-round-offset": 54,
         "keyreg-transaction": {
           "non-participation": false,
@@ -86,6 +98,16 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(txn.id).toBe(txnId)
     expect(clearUndefineds(txn)).toMatchInlineSnapshot(`
       {
+        "balanceChanges": [
+          {
+            "address": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
+            "amount": -1000n,
+            "assetId": 0,
+            "roles": [
+              "Sender",
+            ],
+          },
+        ],
         "confirmed-round": 34418662,
         "fee": 1000,
         "filtersMatched": [

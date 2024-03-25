@@ -43,8 +43,6 @@ function toPromise(signal: AbortSignal) {
 
 export async function sleep(ms: number, signal: AbortSignal) {
   return new Promise<void>((resolve) => {
-    signal.throwIfAborted()
-
     const timeout = setTimeout(() => {
       resolve()
       signal.removeEventListener('abort', abort)
@@ -56,5 +54,8 @@ export async function sleep(ms: number, signal: AbortSignal) {
     }
 
     signal.addEventListener('abort', abort)
+    if (signal.aborted) {
+      abort()
+    }
   })
 }

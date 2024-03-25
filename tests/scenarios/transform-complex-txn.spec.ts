@@ -55,6 +55,17 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
           "on-completion": "noop",
         },
+        "arc28Events": undefined,
+        "balanceChanges": [
+          {
+            "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
+            "amount": -2000n,
+            "assetId": 0,
+            "roles": [
+              "Sender",
+            ],
+          },
+        ],
         "close-rewards": 0,
         "closing-amount": 0,
         "confirmed-round": 35214367,
@@ -90,17 +101,37 @@ describe('Complex transaction with many nested inner transactions', () => {
         "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "inner-txns": [
           {
+            "arc28Events": undefined,
             "asset-transfer-transaction": {
               "amount": 536012365,
               "asset-id": 1390638935,
               "close-amount": 0,
               "receiver": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
             },
+            "balanceChanges": [
+              {
+                "address": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
+                "amount": -536012365n,
+                "assetId": 1390638935,
+                "roles": [
+                  "Sender",
+                ],
+              },
+              {
+                "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
+                "amount": 536012365n,
+                "assetId": 1390638935,
+                "roles": [
+                  "Receiver",
+                ],
+              },
+            ],
             "close-rewards": 0,
             "closing-amount": 0,
             "confirmed-round": 35214367,
             "fee": 0,
             "first-valid": 35214365,
+            "inner-txns": undefined,
             "intra-round-offset": 142,
             "last-valid": 35214369,
             "receiver-rewards": 0,
@@ -163,6 +194,16 @@ describe('Complex transaction with many nested inner transactions', () => {
           ],
           "on-completion": "update",
         },
+        "balanceChanges": [
+          {
+            "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
+            "amount": -2000n,
+            "assetId": 0,
+            "roles": [
+              "Sender",
+            ],
+          },
+        ],
         "confirmed-round": 35214367,
         "fee": 2000,
         "filtersMatched": [
@@ -179,8 +220,25 @@ describe('Complex transaction with many nested inner transactions', () => {
               "amount": 536012365,
               "asset-id": 1390638935,
               "receiver": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
-              "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
             },
+            "balanceChanges": [
+              {
+                "address": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
+                "amount": -536012365n,
+                "assetId": 1390638935,
+                "roles": [
+                  "Sender",
+                ],
+              },
+              {
+                "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
+                "amount": 536012365n,
+                "assetId": 1390638935,
+                "roles": [
+                  "Receiver",
+                ],
+              },
+            ],
             "confirmed-round": 35214367,
             "fee": 0,
             "first-valid": 35214365,

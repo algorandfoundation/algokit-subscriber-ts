@@ -1,76 +1,21 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
-import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import algosdk, { Account, TransactionType } from 'algosdk'
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
-import { TransactionFilter } from '../../src/types'
+import { afterEach, beforeAll, beforeEach, describe, test } from 'vitest'
 import { TestingAppClient } from '../contract/client'
-import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
+import { filterFixture } from '../filterFixture'
 
 describe('Subscribing using various filters', () => {
-  const localnet = algorandFixture()
-  let systemAccount: Account
-
-  beforeAll(async () => {
-    await localnet.beforeEach()
-    systemAccount = await localnet.context.generateAccount({ initialFunds: (100).algos() })
-  })
-
-  beforeEach(localnet.beforeEach, 10e6)
-  afterEach(() => {
-    vitest.clearAllMocks()
-  })
-
-  const subscribeAndVerifyFilter = async (filter: TransactionFilter, result: SendTransactionResult) => {
-    // Ensure there is another transaction so algod subscription can process something
-    await SendXTransactions(1, systemAccount, localnet.context.algod)
-    // Wait for indexer to catch up
-    await localnet.context.waitForIndexerTransaction(result.transaction.txID())
-    // Run the subscription twice - once that will pick up using algod and once using indexer
-    // this allows the filtering logic for both to be tested
-    const [algod, indexer] = await Promise.all([
-      GetSubscribedTransactions(
-        {
-          roundsToSync: 1,
-          syncBehaviour: 'sync-oldest',
-          watermark: Number(result.confirmation?.confirmedRound) - 1,
-          currentRound: Number(result.confirmation?.confirmedRound),
-          filters: filter,
-        },
-        localnet.context.algod,
-      ),
-      GetSubscribedTransactions(
-        {
-          roundsToSync: 1,
-          syncBehaviour: 'catchup-with-indexer',
-          watermark: 0,
-          currentRound: Number(result.confirmation?.confirmedRound) + 1,
-          filters: filter,
-        },
-        localnet.context.algod,
-        localnet.context.indexer,
-      ),
-    ])
-    expect(algod.subscribedTransactions.length).toBe(1)
-    expect(algod.subscribedTransactions[0].id).toBe(result.transaction.txID())
-    expect(indexer.subscribedTransactions.length).toBe(1)
-    expect(indexer.subscribedTransactions[0].id).toBe(result.transaction.txID())
-    return { algod, indexer }
-  }
-
-  const extractFromGroupResult = (groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>, index: number) => {
-    return {
-      transaction: groupResult.transactions[index],
-      confirmation: groupResult.confirmations?.[index],
-    }
-  }
+  const { localnet, systemAccount, subscribeAndVerifyFilter, extractFromGroupResult, ...hooks } = filterFixture()
+  beforeAll(hooks.beforeAll, 10_000)
+  beforeEach(hooks.beforeEach, 10_000)
+  afterEach(hooks.afterEach)
 
   const createAsset = async (creator?: Account) => {
     const create = await algokit.sendTransaction(
       {
-        from: creator ?? systemAccount,
-        transaction: await createAssetTxn(creator ?? systemAccount),
+        from: creator ?? systemAccount(),
+        transaction: await createAssetTxn(creator ?? systemAccount()),
       },
       localnet.context.algod,
     )
@@ -83,7 +28,7 @@ describe('Subscribing using various filters', () => {
 
   const createAssetTxn = async (creator: Account) => {
     return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-      from: creator ? creator.addr : systemAccount.addr,
+      from: creator ? creator.addr : systemAccount().addr,
       decimals: 0,
       total: 100,
       defaultFrozen: false,
@@ -100,7 +45,7 @@ describe('Subscribing using various filters', () => {
       localnet.context.algod,
     )
     const creation = await app.create.bare({
-      sender: creator ?? systemAccount,
+      sender: creator ?? systemAccount(),
       sendParams: {
         skipSending: !config.create,
       },

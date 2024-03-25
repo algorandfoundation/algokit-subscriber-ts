@@ -12,6 +12,8 @@
 - [Arc28EventToProcess](types.md#arc28eventtoprocess)
 - [AsyncEventEmitter](types.md#asynceventemitter)
 - [AsyncEventListener](types.md#asynceventlistener)
+- [BalanceChange](types.md#balancechange)
+- [BalanceChangeRole](types.md#balancechangerole)
 - [BeforePollMetadata](types.md#beforepollmetadata)
 - [Block](types.md#block)
 - [BlockInnerTransaction](types.md#blockinnertransaction)
@@ -67,6 +69,18 @@ ___
 ### AsyncEventListener
 
 Re-exports [AsyncEventListener](types_async_event_emitter.md#asynceventlistener)
+
+___
+
+### BalanceChange
+
+Re-exports [BalanceChange](../interfaces/types_subscription.BalanceChange.md)
+
+___
+
+### BalanceChangeRole
+
+Re-exports [BalanceChangeRole](../enums/types_subscription.BalanceChangeRole.md)
 
 ___
 

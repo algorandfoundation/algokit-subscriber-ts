@@ -11,13 +11,15 @@ import {
   getIndexerTransactionFromAlgodTransaction,
 } from './transform'
 import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './types/arc-28'
-import type { Block } from './types/block'
-import type {
-  NamedTransactionFilter,
-  SubscribedTransaction,
-  TransactionFilter,
-  TransactionSubscriptionParams,
-  TransactionSubscriptionResult,
+import type { Block, BlockInnerTransaction, BlockTransaction } from './types/block'
+import {
+  BalanceChangeRole,
+  type BalanceChange,
+  type NamedTransactionFilter,
+  type SubscribedTransaction,
+  type TransactionFilter,
+  type TransactionSubscriptionParams,
+  type TransactionSubscriptionResult,
 } from './types/subscription'
 import { chunkArray, range } from './utils'
 import ABITupleType = algosdk.ABITupleType
@@ -93,7 +95,7 @@ export async function getSubscribedTransactions(
   let start = +new Date()
   let skipAlgodSync = false
 
-  // If we are less than `maxRoundstoSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
+  // If we are less than `maxRoundsToSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
   if (currentRound - watermark > maxRoundsToSync) {
     switch (onMaxRounds) {
       case 'fail':
@@ -204,7 +206,7 @@ export async function getSubscribedTransactions(
     currentRound,
     subscribedTransactions: catchupTransactions
       .concat(algodTransactions)
-      .map((t) => processArc28Events(t, arc28Events, subscription.arc28Events ?? [])),
+      .map((t) => processExtraFields(t, arc28Events, subscription.arc28Events ?? [])),
   }
 }
 
@@ -216,21 +218,22 @@ function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: number, t
   )
 }
 
-function processArc28Events(
+function processExtraFields(
   transaction: TransactionResult | SubscribedTransaction,
   arc28Events: Arc28EventToProcess[],
   arc28Groups: Arc28EventGroup[],
 ): SubscribedTransaction {
-  if (!arc28Events || transaction['tx-type'] !== TransactionType.appl) return transaction
-  const groupsToApply = arc28Groups.filter((g) =>
-    transactionIsInArc28EventGroup(
-      g,
-      transaction['created-application-index'] ?? transaction['application-transaction']?.['application-id'] ?? 0,
-      () => transaction,
-    ),
-  )
-  if (groupsToApply.length === 0) return transaction
-  const eventsToApply = arc28Events.filter((e) => groupsToApply.some((g) => g.groupName === e.groupName))
+  const groupsToApply =
+    transaction['tx-type'] !== TransactionType.appl
+      ? []
+      : arc28Groups.filter((g) =>
+          transactionIsInArc28EventGroup(
+            g,
+            transaction['created-application-index'] ?? transaction['application-transaction']?.['application-id'] ?? 0,
+            () => transaction,
+          ),
+        )
+  const eventsToApply = groupsToApply.length > 0 ? arc28Events.filter((e) => groupsToApply.some((g) => g.groupName === e.groupName)) : []
   return {
     ...transaction,
     arc28Events: extractArc28Events(
@@ -239,8 +242,9 @@ function processArc28Events(
       eventsToApply,
       (groupName) => groupsToApply.find((g) => g.groupName === groupName)!.continueOnError ?? false,
     ),
+    balanceChanges: extractBalanceChanges(transaction),
     'inner-txns': transaction['inner-txns']
-      ? transaction['inner-txns'].map((inner) => processArc28Events(inner, arc28Events, arc28Groups))
+      ? transaction['inner-txns'].map((inner) => processExtraFields(inner, arc28Events, arc28Groups))
       : undefined,
   }
 }
@@ -272,7 +276,11 @@ function extractArc28Events(
   logs: Uint8Array[],
   events: Arc28EventToProcess[],
   continueOnError: (groupName: string) => boolean,
-): EmittedArc28Event[] {
+): EmittedArc28Event[] | undefined {
+  if (events.length === 0) {
+    return undefined
+  }
+
   return logs
     .filter((log) => log.length > 4)
     .flatMap((log) => {
@@ -312,6 +320,204 @@ function extractArc28Events(
         })
     })
     .filter((e) => !!e) as EmittedArc28Event[]
+}
+
+function extractBalanceChangesFromBlock(transaction: BlockTransaction | BlockInnerTransaction): BalanceChange[] {
+  const balanceChanges: BalanceChange[] = []
+
+  if ((transaction.txn.fee ?? 0) > 0) {
+    balanceChanges.push({
+      address: algosdk.encodeAddress(transaction.txn.snd),
+      amount: -1n * BigInt(transaction.txn.fee ?? 0),
+      roles: [BalanceChangeRole.Sender],
+      assetId: 0,
+    })
+  }
+
+  if (transaction.txn.type === TransactionType.pay) {
+    balanceChanges.push(
+      {
+        address: algosdk.encodeAddress(transaction.txn.snd),
+        amount: -1n * BigInt(transaction.txn.amt ?? 0),
+        roles: [BalanceChangeRole.Sender],
+        assetId: 0,
+      },
+      ...(transaction.txn.rcv
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.rcv),
+              amount: BigInt(transaction.txn.amt ?? 0),
+              roles: [BalanceChangeRole.Receiver],
+              assetId: 0,
+            },
+          ]
+        : []),
+      ...(transaction.ca && transaction.txn.close
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.close),
+              amount: BigInt(transaction.ca ?? 0),
+              roles: [BalanceChangeRole.CloseTo],
+              assetId: 0,
+            },
+            {
+              address: algosdk.encodeAddress(transaction.txn.snd),
+              amount: -1n * BigInt(transaction.ca ?? 0),
+              roles: [BalanceChangeRole.Sender],
+              assetId: 0,
+            },
+          ]
+        : []),
+    )
+  }
+
+  if (transaction.txn.type === TransactionType.axfer && transaction.txn.xaid) {
+    balanceChanges.push(
+      {
+        address: algosdk.encodeAddress(transaction.txn.snd),
+        assetId: transaction.txn.xaid,
+        amount: -1n * BigInt(transaction.txn.aamt ?? 0),
+        roles: [BalanceChangeRole.Sender],
+      },
+      ...(transaction.txn.arcv
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.arcv),
+              assetId: transaction.txn.xaid,
+              amount: BigInt(transaction.txn.aamt ?? 0),
+              roles: [BalanceChangeRole.Receiver],
+            },
+          ]
+        : []),
+      ...(transaction.aca && transaction.txn.aclose
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.aclose),
+              assetId: transaction.txn.xaid,
+              amount: BigInt(transaction.aca ?? 0),
+              roles: [BalanceChangeRole.CloseTo],
+            },
+            {
+              address: algosdk.encodeAddress(transaction.txn.asnd ?? transaction.txn.snd),
+              assetId: transaction.txn.xaid,
+              amount: -1n * BigInt(transaction.aca ?? 0),
+              roles: [BalanceChangeRole.Sender],
+            },
+          ]
+        : []),
+    )
+  }
+
+  return balanceChanges.reduce((changes, change) => {
+    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
+    if (existing) {
+      existing.amount += change.amount
+      if (!existing.roles.includes(change.roles[0])) {
+        existing.roles.push(...change.roles)
+      }
+    } else {
+      changes.push(change)
+    }
+    return changes
+  }, [] as BalanceChange[])
+}
+
+function extractBalanceChanges(transaction: TransactionResult): BalanceChange[] {
+  const balanceChanges: BalanceChange[] = []
+
+  const getSafeBigInt = (value: number | bigint | undefined) => {
+    return BigInt(typeof value === 'bigint' ? value : Number.isNaN(value) ? 0 : value ?? 0)
+  }
+
+  if (transaction.fee > 0) {
+    balanceChanges.push({
+      address: transaction.sender,
+      amount: -1n * BigInt(transaction.fee),
+      roles: [BalanceChangeRole.Sender],
+      assetId: 0,
+    })
+  }
+
+  if (transaction['tx-type'] === TransactionType.pay && transaction['payment-transaction']) {
+    const pay = transaction['payment-transaction']
+    balanceChanges.push(
+      {
+        address: transaction.sender,
+        amount: -1n * getSafeBigInt(pay.amount),
+        roles: [BalanceChangeRole.Sender],
+        assetId: 0,
+      },
+      {
+        address: pay.receiver,
+        amount: getSafeBigInt(pay.amount),
+        roles: [BalanceChangeRole.Receiver],
+        assetId: 0,
+      },
+      ...(pay['close-amount']
+        ? [
+            {
+              address: pay['close-remainder-to']!,
+              amount: getSafeBigInt(pay['close-amount']),
+              roles: [BalanceChangeRole.CloseTo],
+              assetId: 0,
+            },
+            {
+              address: transaction.sender,
+              amount: -1n * getSafeBigInt(pay['close-amount']),
+              roles: [BalanceChangeRole.Sender],
+              assetId: 0,
+            },
+          ]
+        : []),
+    )
+  }
+
+  if (transaction['tx-type'] === TransactionType.axfer && transaction['asset-transfer-transaction']) {
+    const axfer = transaction['asset-transfer-transaction']
+    balanceChanges.push(
+      {
+        address: axfer.sender ?? transaction.sender,
+        assetId: axfer['asset-id'],
+        amount: -1n * getSafeBigInt(axfer.amount),
+        roles: [BalanceChangeRole.Sender],
+      },
+      {
+        address: axfer.receiver,
+        assetId: axfer['asset-id'],
+        amount: getSafeBigInt(axfer.amount),
+        roles: [BalanceChangeRole.Receiver],
+      },
+      ...(axfer['close-amount'] && axfer['close-to']
+        ? [
+            {
+              address: axfer['close-to'],
+              assetId: axfer['asset-id'],
+              amount: getSafeBigInt(axfer['close-amount']),
+              roles: [BalanceChangeRole.CloseTo],
+            },
+            {
+              address: axfer.sender ?? transaction.sender,
+              assetId: axfer['asset-id'],
+              amount: -1n * getSafeBigInt(axfer['close-amount']),
+              roles: [BalanceChangeRole.Sender],
+            },
+          ]
+        : []),
+    )
+  }
+
+  return balanceChanges.reduce((changes, change) => {
+    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
+    if (existing) {
+      existing.amount += change.amount
+      if (!existing.roles.includes(change.roles[0])) {
+        existing.roles.push(...change.roles)
+      }
+    } else {
+      changes.push(change)
+    }
+    return changes
+  }, [] as BalanceChange[])
 }
 
 function indexerPreFilter(
@@ -455,6 +661,10 @@ function indexerPostFilter(
           () => t,
         )
     }
+    if (subscription.balanceChanges) {
+      const balanceChanges = extractBalanceChanges(t)
+      result &&= hasBalanceChangeMatch(balanceChanges, subscription.balanceChanges)
+    }
     return result
   }
 }
@@ -533,8 +743,35 @@ function transactionFilter(
     if (subscription.appCallArgumentsMatch) {
       result &&= subscription.appCallArgumentsMatch(t.appArgs)
     }
+    if (subscription.balanceChanges) {
+      const balanceChanges = extractBalanceChangesFromBlock(txn.blockTransaction)
+      result &&= hasBalanceChangeMatch(balanceChanges, subscription.balanceChanges)
+    }
     return result
   }
+}
+
+function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filteredBalanceChanges: TransactionFilter['balanceChanges']) {
+  return (filteredBalanceChanges ?? []).some((changeFilter) =>
+    transactionBalanceChanges.some(
+      (actualChange) =>
+        (!changeFilter.address ||
+          (Array.isArray(changeFilter.address) && changeFilter.address.length === 0) ||
+          (Array.isArray(changeFilter.address) ? changeFilter.address : [changeFilter.address]).includes(actualChange.address)) &&
+        (changeFilter.minAbsoluteAmount === undefined ||
+          (actualChange.amount < 0n ? -1n * actualChange.amount : actualChange.amount) >= changeFilter.minAbsoluteAmount) &&
+        (changeFilter.maxAbsoluteAmount === undefined ||
+          (actualChange.amount < 0n ? -1n * actualChange.amount : actualChange.amount) <= changeFilter.maxAbsoluteAmount) &&
+        (changeFilter.minAmount === undefined || actualChange.amount >= changeFilter.minAmount) &&
+        (changeFilter.maxAmount === undefined || actualChange.amount <= changeFilter.maxAmount) &&
+        (changeFilter.assetId === undefined ||
+          (Array.isArray(changeFilter.assetId) && changeFilter.assetId.length === 0) ||
+          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId]).includes(actualChange.assetId)) &&
+        (changeFilter.role === undefined ||
+          (Array.isArray(changeFilter.role) && changeFilter.role.length === 0) ||
+          (Array.isArray(changeFilter.role) ? changeFilter.role : [changeFilter.role]).some((r) => actualChange.roles.includes(r))),
+    ),
+  )
 }
 
 /**

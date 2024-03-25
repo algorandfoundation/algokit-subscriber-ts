@@ -147,6 +147,23 @@ export interface TransactionFilter {
    * Note: the definitions for these events must be passed in to the subscription config via `arc28Events`.
    */
   arc28Events?: { groupName: string; eventName: string }[]
+  /** Filter to transactions that result in balance changes that match one or more of the given set of balance changes. */
+  balanceChanges?: {
+    /** Match transactions with balance changes for one of the given asset ID(s), with Algo being `0` */
+    assetId?: number | number[]
+    /** Match transactions with balance changes for an account with one of the given role(s) */
+    role?: BalanceChangeRole | BalanceChangeRole[]
+    /** Match transactions with balance changes affecting one of the given account(s) */
+    address?: string | string[]
+    /** Match transactions with absolute (i.e. using Math.abs()) balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
+    minAbsoluteAmount?: number
+    /** Match transactions with absolute (i.e. using Math.abs()) balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
+    maxAbsoluteAmount?: number
+    /** Match transactions with balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
+    minAmount?: number
+    /** Match transactions with balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
+    maxAmount?: number
+  }[]
 }
 ```
 
@@ -235,6 +252,8 @@ type SubscribedTransaction = TransactionResult & {
   arc28Events?: EmittedArc28Event[]
   /** The names of any filters that matched the given transaction to result in it being 'subscribed'. */
   filtersMatched?: string[]
+  /** The balance changes in the transaction. */
+  balanceChanges?: BalanceChange[]
 }
 
 /** An emitted ARC-28 event extracted from an app call log. */
@@ -257,6 +276,28 @@ export interface Arc28EventToProcess {
   eventPrefix: string
   /** The ARC-28 definition of the event */
   eventDefinition: Arc28Event
+}
+
+/** Represents a balance change effect for a transaction. */
+export interface BalanceChange {
+  /** The address that the balance change is for. */
+  address: string
+  /** The asset ID of the balance change, or 0 for Algos. */
+  assetId: number
+  /** The amount of the balance change in smallest divisible unit or microAlgos. */
+  amount: bigint
+  /** The roles the account was playing that led to the balance change */
+  roles: BalanceChangeRole[]
+}
+
+/** The role that an account was playing for a given balance change. */
+export enum BalanceChangeRole {
+  /** Account was sending a transaction (sending asset and/or spending fee if asset `0`) */
+  Sender,
+  /** Account was receiving a transaction */
+  Receiver,
+  /** Account was having an asset amount closed to it */
+  CloseTo,
 }
 ```
 

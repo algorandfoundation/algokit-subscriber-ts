@@ -28,7 +28,7 @@ const subscriber = new AlgorandSubscriber(
 )
 
 // Set up subscription(s)
-subscriber.on('eventNameFromOptions', async (transaction) => {
+subscriber.on('filter1', async (transaction) => {
   // ...
 })
 //...

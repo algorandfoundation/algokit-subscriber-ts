@@ -324,7 +324,7 @@ export function getIndexerTransactionFromAlgodTransaction(
               'asset-id': transaction.assetIndex,
               amount: Number(transaction.amount),
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
-              sender: algosdk.encodeAddress(transaction.from.publicKey),
+              sender: transaction.assetRevocationTarget ? algosdk.encodeAddress(transaction.assetRevocationTarget.publicKey) : undefined,
               'close-amount': assetCloseAmount,
               'close-to': transaction.closeRemainderTo ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) : undefined,
             }
