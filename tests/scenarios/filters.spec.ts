@@ -428,4 +428,26 @@ describe('Subscribing using various filters', () => {
       extractFromGroupResult(txns, 0),
     )
   })
+
+  test('Works for custom', async () => {
+    const { testAccount, algod } = localnet.context
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          algokit.transferAlgos({ amount: (1).algos(), from: testAccount, to: testAccount, skipSending: true }, algod),
+          algokit.transferAlgos({ amount: (2).algos(), from: testAccount, to: testAccount, skipSending: true }, algod),
+        ],
+        signer: testAccount,
+      },
+      algod,
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        customFilter: (t) => t.id === txns.txIds[1],
+      },
+      extractFromGroupResult(txns, 1),
+    )
+  })
 })

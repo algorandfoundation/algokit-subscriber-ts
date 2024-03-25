@@ -18,6 +18,7 @@ Specify a filter to apply to find transactions of interest.
 - [assetCreate](types_subscription.TransactionFilter.md#assetcreate)
 - [assetId](types_subscription.TransactionFilter.md#assetid)
 - [balanceChanges](types_subscription.TransactionFilter.md#balancechanges)
+- [customFilter](types_subscription.TransactionFilter.md#customfilter)
 - [maxAmount](types_subscription.TransactionFilter.md#maxamount)
 - [methodSignature](types_subscription.TransactionFilter.md#methodsignature)
 - [methodSignatures](types_subscription.TransactionFilter.md#methodsignatures)
@@ -137,6 +138,32 @@ Filter to transactions that result in balance changes that match one or more of 
 #### Defined in
 
 [types/subscription.ts:189](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L189)
+
+___
+
+### customFilter
+
+• `Optional` **customFilter**: (`transaction`: [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction)) => `boolean`
+
+Catch-all custom filter to filter for things that the rest of the filters don't provide.
+
+#### Type declaration
+
+▸ (`transaction`): `boolean`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `transaction` | [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction) |
+
+##### Returns
+
+`boolean`
+
+#### Defined in
+
+[types/subscription.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L206)
 
 ___
 

@@ -164,6 +164,8 @@ export interface TransactionFilter {
     /** Match transactions with balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
     maxAmount?: number
   }[]
+  /** Catch-all custom filter to filter for things that the rest of the filters don't provide. */
+  customFilter?: (transaction: SubscribedTransaction) => boolean
 }
 ```
 
