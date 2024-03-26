@@ -70,7 +70,7 @@ export interface BlockTransaction {
   /** App ID when an app is created by the transaction */
   apid?: number
   /** Asset closing amount in decimal units */
-  aca?: number
+  aca?: number | bigint
   /** Algo closing amount in microAlgos */
   ca?: number
   /** Has genesis id */

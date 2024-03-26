@@ -170,10 +170,10 @@ export interface TransactionFilter {
   assetCreate?: boolean
   /** Filter to transactions where the amount being transferred is greater
    * than or equal to the given minimum (microAlgos or decimal units of an ASA if type: axfer). */
-  minAmount?: number
+  minAmount?: number | bigint
   /** Filter to transactions where the amount being transferred is less than
    * or equal to the given maximum (microAlgos or decimal units of an ASA if type: axfer). */
-  maxAmount?: number
+  maxAmount?: number | bigint
   /** Filter to app transactions that have the given ARC-0004 method selector for
    * the given method signature as the first app argument. */
   methodSignature?: string
@@ -194,13 +194,13 @@ export interface TransactionFilter {
     /** Match transactions with balance changes affecting one of the given account(s) */
     address?: string | string[]
     /** Match transactions with absolute (i.e. using Math.abs()) balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
-    minAbsoluteAmount?: number
+    minAbsoluteAmount?: number | bigint
     /** Match transactions with absolute (i.e. using Math.abs()) balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
-    maxAbsoluteAmount?: number
+    maxAbsoluteAmount?: number | bigint
     /** Match transactions with balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
-    minAmount?: number
+    minAmount?: number | bigint
     /** Match transactions with balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
-    maxAmount?: number
+    maxAmount?: number | bigint
   }[]
   /** Catch-all custom filter to filter for things that the rest of the filters don't provide. */
   customFilter?: (transaction: SubscribedTransaction) => boolean

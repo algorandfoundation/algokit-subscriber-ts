@@ -42,8 +42,8 @@ process.on('uncaughtException', (e) => console.error(e))
   subscriber.on('usdc', (transfer) => {
     // eslint-disable-next-line no-console
     console.log(
-      `${transfer.sender} sent ${transfer['asset-transfer-transaction']?.receiver} USDC$${(
-        (transfer['asset-transfer-transaction']?.amount ?? 0) / 1_000_000
+      `${transfer.sender} sent ${transfer['asset-transfer-transaction']?.receiver} USDC$${Number(
+        BigInt(transfer['asset-transfer-transaction']?.amount ?? 0) / 1_000_000n,
       ).toFixed(2)} in transaction ${transfer.id}`,
     )
   })

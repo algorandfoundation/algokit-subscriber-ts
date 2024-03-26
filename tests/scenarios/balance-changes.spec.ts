@@ -20,14 +20,14 @@ describe('Subscribing to calls that effect balance changes', () => {
   beforeAll(hooks.beforeAll, 10_000)
   beforeEach(hooks.beforeEach, 10_000)
   afterEach(hooks.afterEach)
-  const acfg = (params: SuggestedParams, from: string, fee: number) => {
+  const acfg = (params: SuggestedParams, from: string, fee: number, total?: bigint | number) => {
     params.fee = fee
     params.flatFee = true
     return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
       suggestedParams: params,
       from,
       decimals: 0,
-      total: 100,
+      total: total ?? 100,
       defaultFrozen: false,
       clawback: from,
     })
@@ -47,8 +47,8 @@ describe('Subscribing to calls that effect balance changes', () => {
 
   const axfer = (
     params: SuggestedParams,
-    assetId: number,
-    amount: number,
+    assetId: number | bigint,
+    amount: number | bigint,
     from: string,
     to: string,
     revocationTarget?: string,
@@ -60,7 +60,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       from,
       to,
       closeRemainderTo,
-      assetIndex: assetId,
+      assetIndex: Number(assetId),
       revocationTarget,
     })
   }
@@ -100,6 +100,122 @@ describe('Subscribing to calls that effect balance changes', () => {
     expect(transaction.balanceChanges[0].amount).toBe(-2000n) // min txn fee
     expect(transaction.balanceChanges[0].roles).toEqual([BalanceChangeRole.Sender])
     expect(transaction.balanceChanges[0].assetId).toBe(0)
+  })
+
+  test('Works for > 53-bit totals', async () => {
+    const { testAccount, algod, generateAccount } = localnet.context
+    const params = await algokit.getTransactionParams(undefined, algod)
+    const random = await generateAccount({ initialFunds: (1).algos() })
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          {
+            signer: testAccount,
+            transaction: acfg(params, testAccount.addr, 2000, 135_640_597_783_270_612n), // this is > Number.MAX_SAFE_INTEGER
+          },
+        ],
+      },
+      algod,
+    )
+    const asset = txns.confirmations![0].assetIndex!
+    const axferTxns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          {
+            signer: random,
+            transaction: axfer(params, asset, 0, random.addr, random.addr), // Opt-in
+          },
+          {
+            signer: testAccount,
+            transaction: axfer(params, asset, 134_640_597_783_270_612n, testAccount.addr, random.addr), // this is > Number.MAX_SAFE_INTEGER
+          },
+        ],
+      },
+      algod,
+    )
+
+    const subscription = await subscribeAndVerifyFilter(
+      {
+        balanceChanges: [
+          {
+            assetId: [Number(asset)],
+            address: testAccount.addr,
+            role: [BalanceChangeRole.Sender],
+            minAbsoluteAmount: 134_640_597_783_270_612n,
+          },
+        ],
+      },
+      extractFromGroupResult(axferTxns, 1),
+    )
+
+    expect(
+      subscription.algod.subscribedTransactions[0].balanceChanges?.map((b) => ({
+        ...b,
+        address: b.address === testAccount.addr ? 'testAccount' : b.address === random.addr ? 'random' : b.address,
+        assetId: b.assetId === 0 ? 0 : b.assetId === asset ? 'ASSET' : b.assetId,
+      })),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "address": "testAccount",
+          "amount": -2000n,
+          "assetId": 0,
+          "roles": [
+            "Sender",
+          ],
+        },
+        {
+          "address": "testAccount",
+          "amount": -134640597783270612n,
+          "assetId": "ASSET",
+          "roles": [
+            "Sender",
+          ],
+        },
+        {
+          "address": "random",
+          "amount": 134640597783270612n,
+          "assetId": "ASSET",
+          "roles": [
+            "Receiver",
+          ],
+        },
+      ]
+    `)
+    expect(
+      subscription.indexer.subscribedTransactions[0].balanceChanges?.map((b) => ({
+        ...b,
+        address: b.address === testAccount.addr ? 'testAccount' : b.address === random.addr ? 'random' : b.address,
+        assetId: b.assetId === 0 ? 0 : b.assetId === asset ? 'ASSET' : b.assetId,
+      })),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "address": "testAccount",
+          "amount": -2000n,
+          "assetId": 0,
+          "roles": [
+            "Sender",
+          ],
+        },
+        {
+          "address": "testAccount",
+          "amount": -134640597783270612n,
+          "assetId": "ASSET",
+          "roles": [
+            "Sender",
+          ],
+        },
+        {
+          "address": "random",
+          "amount": 134640597783270612n,
+          "assetId": "ASSET",
+          "roles": [
+            "Receiver",
+          ],
+        },
+      ]
+    `)
   })
 
   test('Works with balance change filter on fee algos', async () => {

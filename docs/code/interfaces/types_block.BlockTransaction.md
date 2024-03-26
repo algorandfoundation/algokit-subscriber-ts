@@ -31,7 +31,7 @@ https://github.com/algorand/go-algorand/blob/master/data/transactions/signedtxn.
 
 ### aca
 
-• `Optional` **aca**: `number`
+• `Optional` **aca**: `number` \| `bigint`
 
 Asset closing amount in decimal units
 
