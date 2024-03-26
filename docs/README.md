@@ -328,14 +328,14 @@ The indexer catchup isn't magic - if the filter you are trying to catch up with 
 To understand how the indexer behaviour works to know if you are likely to generate a lot of transactions it's worth understanding the architecture of the indexer catchup; indexer catchup runs in two stages:
 
 1. **Pre-filtering**: Any filters that can be translated to the [indexer search transactions endpoint](https://developer.algorand.org/docs/rest-apis/indexer/#get-v2transactions). This query is then run between the rounds that need to be synced and paginated in the max number of results (1000) at a time until all of the transactions are retrieved. This ensures we get round-based transactional consistency. This is the filter that can easily explode out though and take a long time when using indexer catchup. For avoidance of doubt, the following filters are the ones that are converted to a pre-filter:
-   - `sender`
-   - `receiver`
-   - `type`
+   - `sender` (single value)
+   - `receiver` (single value)
+   - `type` (single value)
    - `notePrefix`
-   - `appId`
-   - `assetId`
-   - `minAmount`
-   - `maxAmount`
+   - `appId` (single value)
+   - `assetId` (single value)
+   - `minAmount` (and `type = pay` or `assetId` provided)
+   - `maxAmount` (and `maxAmount < Number.MAX_SAFE_INTEGER` and `type = pay` or (`assetId` provided and `minAmount > 0`))
 2. **Post-filtering**: All remaining filters are then applied in-memory to the resulting list of transactions that are returned from the pre-filter before being returned as subscribed transactions.
 
 ## Entry points

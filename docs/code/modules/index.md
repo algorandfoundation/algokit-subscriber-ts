@@ -38,7 +38,7 @@ The blocks
 
 #### Defined in
 
-[subscriptions.ts:858](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L858)
+[subscriptions.ts:867](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L867)
 
 ___
 

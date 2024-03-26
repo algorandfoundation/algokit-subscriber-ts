@@ -553,13 +553,22 @@ function indexerPreFilter(
     ) {
       filter = filter.assetID(Number(subscription.assetId))
     }
-    if (subscription.minAmount) {
+
+    // Indexer only supports minAmount and maxAmount for non-payments if an asset ID is provided so check
+    //  we are looking for just payments, or we have provided asset ID before adding to pre-filter
+    //  if they aren't added here they will be picked up in the in-memory pre-filter
+    if (subscription.minAmount && (subscription.type === TransactionType.pay || subscription.assetId)) {
       // Indexer only supports numbers, but even though this is less precise the in-memory indexer pre-filter will remove any false positives
       filter = filter.currencyGreaterThan(
         subscription.minAmount > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : Number(subscription.minAmount) - 1,
       )
     }
-    if (subscription.maxAmount && subscription.maxAmount < Number.MAX_SAFE_INTEGER) {
+    if (
+      subscription.maxAmount &&
+      subscription.maxAmount < Number.MAX_SAFE_INTEGER &&
+      // Only let an asset currency max search work when there is also a min > 0 otherwise opt-ins aren't picked up by the pre-filter :(
+      (subscription.type === TransactionType.pay || (subscription.assetId && (subscription?.minAmount ?? 0) > 0))
+    ) {
       filter = filter.currencyLessThan(Number(subscription.maxAmount) + 1)
     }
     return filter.minRound(minRound).maxRound(maxRound)
@@ -772,10 +781,10 @@ function transactionFilter(
       }
     }
     if (subscription.minAmount) {
-      result &&= t.amount >= subscription.minAmount
+      result &&= !!t.type && [TransactionType.axfer, TransactionType.pay].includes(t.type) && (t.amount ?? 0) >= subscription.minAmount
     }
     if (subscription.maxAmount) {
-      result &&= t.amount <= subscription.maxAmount
+      result &&= !!t.type && [TransactionType.axfer, TransactionType.pay].includes(t.type) && (t.amount ?? 0) <= subscription.maxAmount
     }
     if (subscription.assetCreate) {
       result &&= !!createdAssetId
