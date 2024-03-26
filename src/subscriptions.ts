@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
-import algosdk, { OnApplicationComplete } from 'algosdk'
+import algosdk from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import sha512, { sha512_256 } from 'js-sha512'
 import {
@@ -27,6 +27,7 @@ import ABIValue = algosdk.ABIValue
 import Algodv2 = algosdk.Algodv2
 import Indexer = algosdk.Indexer
 import TransactionType = algosdk.TransactionType
+import OnApplicationComplete = algosdk.OnApplicationComplete
 
 const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: SubscribedTransaction[], t: SubscribedTransaction) => {
   const existing = dedupedTransactions.find((e) => e.id === t.id)
