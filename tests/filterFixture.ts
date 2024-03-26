@@ -60,13 +60,21 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig) {
     return subscribed
   }
 
-  const subscribeAndVerifyFilter = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
-    const [algod, indexer] = await Promise.all([subscribeAlgod(filter, result, arc28Events), subscribeIndexer(filter, result, arc28Events)])
+  const subscribeAndVerifyFilter = async (
+    filter: TransactionFilter,
+    result: SendTransactionResult | SendTransactionResult[],
+    arc28Events?: Arc28EventGroup[],
+  ) => {
+    const results = Array.isArray(result) ? result : [result]
+    const [algod, indexer] = await Promise.all([
+      subscribeAlgod(filter, results[0], arc28Events),
+      subscribeIndexer(filter, results[0], arc28Events),
+    ])
 
-    expect(algod.subscribedTransactions.length).toBe(1)
-    expect(algod.subscribedTransactions[0].id).toBe(result.transaction.txID())
-    expect(indexer.subscribedTransactions.length).toBe(1)
-    expect(indexer.subscribedTransactions[0].id).toBe(result.transaction.txID())
+    expect(algod.subscribedTransactions.length).toBe(results.length)
+    expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    expect(indexer.subscribedTransactions.length).toBe(results.length)
+    expect(indexer.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
 
     return { algod, indexer }
   }

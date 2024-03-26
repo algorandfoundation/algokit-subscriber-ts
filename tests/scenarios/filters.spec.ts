@@ -57,18 +57,21 @@ describe('Subscribing using various filters', () => {
     }
   }
 
-  test('Works for receiver', async () => {
-    const { testAccount, algod } = localnet.context
-    const account2 = algokit.randomAccount()
-    const amount = (1).algos()
+  test('Works for receiver(s) and sender(s)', async () => {
+    const { testAccount, algod, generateAccount } = localnet.context
+    const account2 = await generateAccount({ initialFunds: (3).algos() })
     const account3 = algokit.randomAccount()
+    const amount = (1).algos()
     const txns = await algokit.sendGroupOfTransactions(
       {
         transactions: [
-          algokit.transferAlgos({ amount, from: testAccount, to: account2, skipSending: true }, algod),
-          algokit.transferAlgos({ amount, from: testAccount, to: account3, skipSending: true }, algod),
-        ],
-        signer: testAccount,
+          await algokit.transferAlgos({ amount, from: testAccount, to: account2, skipSending: true }, algod),
+          await algokit.transferAlgos({ amount, from: testAccount, to: account3, skipSending: true }, algod),
+          await algokit.transferAlgos({ amount, from: account2, to: testAccount, skipSending: true }, algod),
+        ].map((t) => ({
+          transaction: t.transaction,
+          signer: algosdk.encodeAddress(t.transaction.from.publicKey) === testAccount.addr ? testAccount : account2,
+        })),
       },
       algod,
     )
@@ -78,6 +81,27 @@ describe('Subscribing using various filters', () => {
         receiver: account2.addr,
       },
       extractFromGroupResult(txns, 0),
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        receiver: [account2.addr, account3.addr],
+      },
+      [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1)],
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: account2.addr,
+      },
+      extractFromGroupResult(txns, 2),
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: [testAccount.addr, account2.addr],
+      },
+      [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 2)],
     )
   })
 
@@ -148,7 +172,7 @@ describe('Subscribing using various filters', () => {
     )
   })
 
-  test('Works for asset ID', async () => {
+  test('Works for asset ID(s)', async () => {
     const { testAccount, algod } = localnet.context
     const asset1 = await createAsset()
     const asset2 = await createAsset()
@@ -169,6 +193,14 @@ describe('Subscribing using various filters', () => {
         assetId: asset1.assetId,
       },
       extractFromGroupResult(txns, 0),
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        assetId: [asset1.assetId, asset2.assetId],
+      },
+      [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1)],
     )
   })
 
@@ -195,30 +227,7 @@ describe('Subscribing using various filters', () => {
     )
   })
 
-  test('Works for asset config txn', async () => {
-    const { testAccount, algod } = localnet.context
-    const asset1 = await createAsset()
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          algokit.assetOptIn({ account: testAccount, assetId: asset1.assetId, skipSending: true }, algod),
-          await createAssetTxn(testAccount),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
-
-    await subscribeAndVerifyFilter(
-      {
-        sender: testAccount.addr,
-        type: TransactionType.acfg,
-      },
-      extractFromGroupResult(txns, 1),
-    )
-  })
-
-  test('Works for asset transfer txn', async () => {
+  test('Works for transaction type(s)', async () => {
     const { testAccount, algod } = localnet.context
     const asset1 = await createAsset()
     const txns = await algokit.sendGroupOfTransactions(
@@ -238,6 +247,22 @@ describe('Subscribing using various filters', () => {
         type: TransactionType.axfer,
       },
       extractFromGroupResult(txns, 0),
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        type: TransactionType.acfg,
+      },
+      extractFromGroupResult(txns, 1),
+    )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        type: [TransactionType.acfg, TransactionType.axfer],
+      },
+      [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1)],
     )
   })
 
@@ -312,7 +337,7 @@ describe('Subscribing using various filters', () => {
     )
   })
 
-  test('Works for app ID', async () => {
+  test('Works for app ID(s)', async () => {
     const { testAccount, algod } = localnet.context
     const app1 = await app({ create: true })
     const app2 = await app({ create: true })
@@ -334,9 +359,17 @@ describe('Subscribing using various filters', () => {
       },
       extractFromGroupResult(txns, 0),
     )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        appId: [Number(app1.creation.confirmation!.applicationIndex!), Number(app2.creation.confirmation!.applicationIndex!)],
+      },
+      [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1)],
+    )
   })
 
-  test('Works for on-complete', async () => {
+  test('Works for on-complete(s)', async () => {
     const { testAccount, algod } = localnet.context
     const app1 = await app({ create: true })
     const txns = await algokit.sendGroupOfTransactions(
@@ -357,9 +390,17 @@ describe('Subscribing using various filters', () => {
       },
       extractFromGroupResult(txns, 1),
     )
+
+    await subscribeAndVerifyFilter(
+      {
+        sender: testAccount.addr,
+        appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop],
+      },
+      [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1)],
+    )
   })
 
-  test('Works for method signature', async () => {
+  test('Works for method signature(s)', async () => {
     const { testAccount, algod } = localnet.context
     const app1 = await app({ create: true })
     const txns = await algokit.sendGroupOfTransactions(
@@ -380,28 +421,21 @@ describe('Subscribing using various filters', () => {
       },
       extractFromGroupResult(txns, 1),
     )
-  })
 
-  test('Works for method signatures', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await algokit.sendGroupOfTransactions(
+    await subscribeAndVerifyFilter(
       {
-        transactions: [
-          app1.app.callAbi({ value: 'test' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app1.app.optIn.optIn({}, { sender: testAccount, sendParams: { skipSending: true } }),
-        ],
-        signer: testAccount,
+        sender: testAccount.addr,
+        methodSignature: ['opt_in()void', 'madeUpMethod()void'],
       },
-      algod,
+      extractFromGroupResult(txns, 1),
     )
 
     await subscribeAndVerifyFilter(
       {
         sender: testAccount.addr,
-        methodSignatures: ['opt_in()void', 'madeUpMethod()void'],
+        methodSignature: ['opt_in()void', 'call_abi(string)string'],
       },
-      extractFromGroupResult(txns, 1),
+      [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1)],
     )
   })
 
@@ -429,7 +463,7 @@ describe('Subscribing using various filters', () => {
     )
   })
 
-  test('Works for custom', async () => {
+  test('Works for custom filter', async () => {
     const { testAccount, algod } = localnet.context
     const txns = await algokit.sendGroupOfTransactions(
       {

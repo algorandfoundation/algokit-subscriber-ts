@@ -72,4 +72,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:253](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L253)
+[types/subscription.ts:251](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L251)
