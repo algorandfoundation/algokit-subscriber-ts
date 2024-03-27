@@ -21,7 +21,6 @@ Specify a filter to apply to find transactions of interest.
 - [customFilter](types_subscription.TransactionFilter.md#customfilter)
 - [maxAmount](types_subscription.TransactionFilter.md#maxamount)
 - [methodSignature](types_subscription.TransactionFilter.md#methodsignature)
-- [methodSignatures](types_subscription.TransactionFilter.md#methodsignatures)
 - [minAmount](types_subscription.TransactionFilter.md#minamount)
 - [notePrefix](types_subscription.TransactionFilter.md#noteprefix)
 - [receiver](types_subscription.TransactionFilter.md#receiver)
@@ -52,7 +51,7 @@ Filter to app transactions that meet the given app arguments predicate.
 
 #### Defined in
 
-[types/subscription.ts:183](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L183)
+[types/subscription.ts:181](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L181)
 
 ___
 
@@ -70,9 +69,9 @@ ___
 
 ### appId
 
-• `Optional` **appId**: `number`
+• `Optional` **appId**: `number` \| `bigint` \| `number`[] \| `bigint`[]
 
-Filter to transactions against the app with the given ID.
+Filter to transactions against the app with the given ID(s).
 
 #### Defined in
 
@@ -101,7 +100,7 @@ Note: the definitions for these events must be passed in to the subscription con
 
 #### Defined in
 
-[types/subscription.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L187)
+[types/subscription.ts:185](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L185)
 
 ___
 
@@ -119,9 +118,9 @@ ___
 
 ### assetId
 
-• `Optional` **assetId**: `number`
+• `Optional` **assetId**: `number` \| `bigint` \| `number`[] \| `bigint`[]
 
-Filter to transactions against the asset with the given ID.
+Filter to transactions against the asset with the given ID(s).
 
 #### Defined in
 
@@ -131,13 +130,13 @@ ___
 
 ### balanceChanges
 
-• `Optional` **balanceChanges**: \{ `address?`: `string` \| `string`[] ; `assetId?`: `number` \| `number`[] ; `maxAbsoluteAmount?`: `number` \| `bigint` ; `maxAmount?`: `number` \| `bigint` ; `minAbsoluteAmount?`: `number` \| `bigint` ; `minAmount?`: `number` \| `bigint` ; `role?`: [`BalanceChangeRole`](../enums/types_subscription.BalanceChangeRole.md) \| [`BalanceChangeRole`](../enums/types_subscription.BalanceChangeRole.md)[]  }[]
+• `Optional` **balanceChanges**: \{ `address?`: `string` \| `string`[] ; `assetId?`: `number` \| `bigint` \| `number`[] \| `bigint`[] ; `maxAbsoluteAmount?`: `number` \| `bigint` ; `maxAmount?`: `number` \| `bigint` ; `minAbsoluteAmount?`: `number` \| `bigint` ; `minAmount?`: `number` \| `bigint` ; `role?`: [`BalanceChangeRole`](../enums/types_subscription.BalanceChangeRole.md) \| [`BalanceChangeRole`](../enums/types_subscription.BalanceChangeRole.md)[]  }[]
 
 Filter to transactions that result in balance changes that match one or more of the given set of balance changes.
 
 #### Defined in
 
-[types/subscription.ts:189](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L189)
+[types/subscription.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L187)
 
 ___
 
@@ -163,7 +162,7 @@ Catch-all custom filter to filter for things that the rest of the filters don't 
 
 #### Defined in
 
-[types/subscription.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L206)
+[types/subscription.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L204)
 
 ___
 
@@ -182,26 +181,14 @@ ___
 
 ### methodSignature
 
-• `Optional` **methodSignature**: `string`
+• `Optional` **methodSignature**: `string` \| `string`[]
 
-Filter to app transactions that have the given ARC-0004 method selector for
+Filter to app transactions that have the given ARC-0004 method selector(s) for
 the given method signature as the first app argument.
 
 #### Defined in
 
 [types/subscription.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L179)
-
-___
-
-### methodSignatures
-
-• `Optional` **methodSignatures**: `string`[]
-
-Filter to app transactions that match one of the given ARC-0004 method selectors as the first app argument.
-
-#### Defined in
-
-[types/subscription.ts:181](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L181)
 
 ___
 
@@ -232,9 +219,9 @@ ___
 
 ### receiver
 
-• `Optional` **receiver**: `string`
+• `Optional` **receiver**: `string` \| `string`[]
 
-Filter to transactions being received by the specified address.
+Filter to transactions being received by the specified address(es).
 
 #### Defined in
 
@@ -244,9 +231,9 @@ ___
 
 ### sender
 
-• `Optional` **sender**: `string`
+• `Optional` **sender**: `string` \| `string`[]
 
-Filter to transactions sent from the specified address.
+Filter to transactions sent from the specified address(es).
 
 #### Defined in
 
@@ -256,9 +243,9 @@ ___
 
 ### type
 
-• `Optional` **type**: `TransactionType`
+• `Optional` **type**: `TransactionType` \| `TransactionType`[]
 
-Filter based on the given transaction type.
+Filter based on the given transaction type(s).
 
 #### Defined in
 

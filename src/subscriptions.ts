@@ -27,6 +27,7 @@ import ABIValue = algosdk.ABIValue
 import Algodv2 = algosdk.Algodv2
 import Indexer = algosdk.Indexer
 import TransactionType = algosdk.TransactionType
+import OnApplicationComplete = algosdk.OnApplicationComplete
 
 const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: SubscribedTransaction[], t: SubscribedTransaction) => {
   const existing = dedupedTransactions.find((e) => e.id === t.id)
@@ -528,31 +529,47 @@ function indexerPreFilter(
   return (s) => {
     // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
     let filter = s
-    if (subscription.sender) {
+    if (subscription.sender && typeof subscription.sender === 'string') {
       filter = filter.address(subscription.sender).addressRole('sender')
     }
-    if (subscription.receiver) {
+    if (subscription.receiver && typeof subscription.receiver === 'string') {
       filter = filter.address(subscription.receiver).addressRole('receiver')
     }
-    if (subscription.type) {
+    if (subscription.type && typeof subscription.type === 'string') {
       filter = filter.txType(subscription.type.toString())
     }
     if (subscription.notePrefix) {
       filter = filter.notePrefix(Buffer.from(subscription.notePrefix).toString('base64'))
     }
-    if (subscription.appId) {
-      filter = filter.applicationID(subscription.appId)
+    if (
+      subscription.appId &&
+      (typeof subscription.appId === 'number' || (typeof subscription.appId === 'bigint' && subscription.appId <= Number.MAX_SAFE_INTEGER))
+    ) {
+      filter = filter.applicationID(Number(subscription.appId))
     }
-    if (subscription.assetId) {
-      filter = filter.assetID(subscription.assetId)
+    if (
+      subscription.assetId &&
+      (typeof subscription.assetId === 'number' ||
+        (typeof subscription.assetId === 'bigint' && subscription.assetId <= Number.MAX_SAFE_INTEGER))
+    ) {
+      filter = filter.assetID(Number(subscription.assetId))
     }
-    if (subscription.minAmount) {
+
+    // Indexer only supports minAmount and maxAmount for non-payments if an asset ID is provided so check
+    //  we are looking for just payments, or we have provided asset ID before adding to pre-filter
+    //  if they aren't added here they will be picked up in the in-memory pre-filter
+    if (subscription.minAmount && (subscription.type === TransactionType.pay || subscription.assetId)) {
       // Indexer only supports numbers, but even though this is less precise the in-memory indexer pre-filter will remove any false positives
       filter = filter.currencyGreaterThan(
         subscription.minAmount > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : Number(subscription.minAmount) - 1,
       )
     }
-    if (subscription.maxAmount && subscription.maxAmount < Number.MAX_SAFE_INTEGER) {
+    if (
+      subscription.maxAmount &&
+      subscription.maxAmount < Number.MAX_SAFE_INTEGER &&
+      // Only let an asset currency max search work when there is also a min > 0 otherwise opt-ins aren't picked up by the pre-filter :(
+      (subscription.type === TransactionType.pay || (subscription.assetId && (subscription?.minAmount ?? 0) > 0))
+    ) {
       filter = filter.currencyLessThan(Number(subscription.maxAmount) + 1)
     }
     return filter.minRound(minRound).maxRound(maxRound)
@@ -565,30 +582,62 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Transact
   return (t) => {
     let result = true
     if (subscription.sender) {
-      result &&= t.sender === subscription.sender
+      if (typeof subscription.sender === 'string') {
+        result &&= t.sender === subscription.sender
+      } else {
+        result &&= subscription.sender.includes(t.sender)
+      }
     }
     if (subscription.receiver) {
-      result &&=
-        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].receiver === subscription.receiver) ||
-        (!!t['payment-transaction'] && t['payment-transaction'].receiver === subscription.receiver)
+      if (typeof subscription.receiver === 'string') {
+        result &&=
+          (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].receiver === subscription.receiver) ||
+          (!!t['payment-transaction'] && t['payment-transaction'].receiver === subscription.receiver)
+      } else {
+        result &&=
+          (!!t['asset-transfer-transaction'] && subscription.receiver.includes(t['asset-transfer-transaction'].receiver)) ||
+          (!!t['payment-transaction'] && subscription.receiver.includes(t['payment-transaction'].receiver))
+      }
     }
     if (subscription.type) {
-      result &&= t['tx-type'] === subscription.type
+      if (typeof subscription.type === 'string') {
+        result &&= t['tx-type'] === subscription.type
+      } else {
+        result &&= subscription.type.includes(t['tx-type'])
+      }
     }
     if (subscription.notePrefix) {
       result &&= t.note ? Buffer.from(t.note, 'base64').toString('utf-8').startsWith(subscription.notePrefix) : false
     }
     if (subscription.appId) {
-      result &&=
-        t['created-application-index'] === subscription.appId ||
-        (!!t['application-transaction'] && t['application-transaction']['application-id'] === subscription.appId)
+      if (typeof subscription.appId === 'number' || typeof subscription.appId === 'bigint') {
+        result &&=
+          t['created-application-index'] === Number(subscription.appId) ||
+          (!!t['application-transaction'] && t['application-transaction']['application-id'] === Number(subscription.appId))
+      } else {
+        result &&=
+          (t['created-application-index'] && subscription.appId.map((i) => Number(i)).includes(t['created-application-index'])) ||
+          (!!t['application-transaction'] &&
+            subscription.appId.map((i) => Number(i)).includes(t['application-transaction']['application-id']))
+      }
     }
     if (subscription.assetId) {
-      result &&=
-        t['created-asset-index'] === subscription.assetId ||
-        (!!t['asset-config-transaction'] && t['asset-config-transaction']['asset-id'] === subscription.assetId) ||
-        (!!t['asset-freeze-transaction'] && t['asset-freeze-transaction']['asset-id'] === subscription.assetId) ||
-        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction']['asset-id'] === subscription.assetId)
+      if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
+        result &&=
+          t['created-asset-index'] === subscription.assetId ||
+          (!!t['asset-config-transaction'] && t['asset-config-transaction']['asset-id'] === subscription.assetId) ||
+          (!!t['asset-freeze-transaction'] && t['asset-freeze-transaction']['asset-id'] === subscription.assetId) ||
+          (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction']['asset-id'] === subscription.assetId)
+      } else {
+        result &&=
+          (t['created-asset-index'] && subscription.assetId.map((i) => Number(i)).includes(t['created-asset-index'])) ||
+          (!!t['asset-config-transaction'] &&
+            subscription.assetId.map((i) => Number(i)).includes(t['asset-config-transaction']['asset-id'])) ||
+          (!!t['asset-freeze-transaction'] &&
+            subscription.assetId.map((i) => Number(i)).includes(t['asset-freeze-transaction']['asset-id'])) ||
+          (!!t['asset-transfer-transaction'] &&
+            subscription.assetId.map((i) => Number(i)).includes(t['asset-transfer-transaction']['asset-id']))
+      }
     }
 
     if (subscription.minAmount) {
@@ -631,20 +680,21 @@ function indexerPostFilter(
         )
     }
     if (subscription.methodSignature) {
-      result &&=
-        !!t['application-transaction'] &&
-        !!t['application-transaction']['application-args'] &&
-        t['application-transaction']['application-args'][0] === getMethodSelectorBase64(subscription.methodSignature)
-    }
-    if (subscription.methodSignatures) {
-      subscription.methodSignatures.filter(
-        (method) =>
+      if (typeof subscription.methodSignature === 'string') {
+        result &&=
           !!t['application-transaction'] &&
           !!t['application-transaction']['application-args'] &&
-          t['application-transaction']['application-args'][0] === getMethodSelectorBase64(method),
-      ).length > 0
-        ? (result &&= true)
-        : (result &&= false)
+          t['application-transaction']['application-args'][0] === getMethodSelectorBase64(subscription.methodSignature)
+      } else {
+        subscription.methodSignature.filter(
+          (method) =>
+            !!t['application-transaction'] &&
+            !!t['application-transaction']['application-args'] &&
+            t['application-transaction']['application-args'][0] === getMethodSelectorBase64(method),
+        ).length > 0
+          ? (result &&= true)
+          : (result &&= false)
+      }
     }
     if (subscription.appCallArgumentsMatch) {
       result &&=
@@ -690,28 +740,52 @@ function transactionFilter(
     const { transaction: t, createdAppId, createdAssetId, logs } = txn
     let result = true
     if (subscription.sender) {
-      result &&= !!t.from && algosdk.encodeAddress(t.from.publicKey) === subscription.sender
+      if (typeof subscription.sender === 'string') {
+        result &&= !!t.from && algosdk.encodeAddress(t.from.publicKey) === subscription.sender
+      } else {
+        result &&= !!t.from && subscription.sender.includes(algosdk.encodeAddress(t.from.publicKey))
+      }
     }
     if (subscription.receiver) {
-      result &&= !!t.to && algosdk.encodeAddress(t.to.publicKey) === subscription.receiver
+      if (typeof subscription.receiver === 'string') {
+        result &&= !!t.to && algosdk.encodeAddress(t.to.publicKey) === subscription.receiver
+      } else {
+        result &&= !!t.to && subscription.receiver.includes(algosdk.encodeAddress(t.to.publicKey))
+      }
     }
     if (subscription.type) {
-      result &&= t.type === subscription.type
+      if (typeof subscription.type === 'string') {
+        result &&= t.type === subscription.type
+      } else {
+        result &&= !!t.type && subscription.type.includes(t.type)
+      }
     }
     if (subscription.notePrefix) {
       result &&= !!t.note && new TextDecoder().decode(t.note).startsWith(subscription.notePrefix)
     }
     if (subscription.appId) {
-      result &&= t.appIndex === subscription.appId || createdAppId === subscription.appId
+      if (typeof subscription.appId === 'number' || typeof subscription.appId === 'bigint') {
+        result &&= t.appIndex === Number(subscription.appId) || createdAppId === Number(subscription.appId)
+      } else {
+        result &&=
+          (!!t.appIndex && subscription.appId.map((i) => Number(i)).includes(t.appIndex)) ||
+          (!!createdAppId && subscription.appId.map((i) => Number(i)).includes(createdAppId))
+      }
     }
     if (subscription.assetId) {
-      result &&= t.assetIndex === subscription.assetId || createdAssetId === subscription.assetId
+      if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
+        result &&= t.assetIndex === subscription.assetId || createdAssetId === subscription.assetId
+      } else {
+        result &&=
+          (!!t.assetIndex && subscription.assetId.map((i) => Number(i)).includes(t.assetIndex)) ||
+          (!!createdAssetId && subscription.assetId.map((i) => Number(i)).includes(createdAssetId))
+      }
     }
     if (subscription.minAmount) {
-      result &&= t.amount >= subscription.minAmount
+      result &&= !!t.type && [TransactionType.axfer, TransactionType.pay].includes(t.type) && (t.amount ?? 0) >= subscription.minAmount
     }
     if (subscription.maxAmount) {
-      result &&= t.amount <= subscription.maxAmount
+      result &&= !!t.type && [TransactionType.axfer, TransactionType.pay].includes(t.type) && (t.amount ?? 0) <= subscription.maxAmount
     }
     if (subscription.assetCreate) {
       result &&= !!createdAssetId
@@ -725,18 +799,20 @@ function transactionFilter(
     }
     if (subscription.appOnComplete) {
       result &&= (typeof subscription.appOnComplete === 'string' ? [subscription.appOnComplete] : subscription.appOnComplete).includes(
-        algodOnCompleteToIndexerOnComplete(t.appOnComplete),
+        algodOnCompleteToIndexerOnComplete(t.appOnComplete ?? OnApplicationComplete.NoOpOC /* the '0' value comes through as undefined */),
       )
     }
     if (subscription.methodSignature) {
-      result &&= !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(subscription.methodSignature)
-    }
-    if (subscription.methodSignatures) {
-      subscription.methodSignatures.filter(
-        (method) => !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(method),
-      ).length > 0
-        ? (result &&= true)
-        : (result &&= false)
+      if (typeof subscription.methodSignature === 'string') {
+        result &&=
+          !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(subscription.methodSignature)
+      } else {
+        subscription.methodSignature.filter(
+          (method) => !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(method),
+        ).length > 0
+          ? (result &&= true)
+          : (result &&= false)
+      }
     }
     if (subscription.arc28Events) {
       result &&=

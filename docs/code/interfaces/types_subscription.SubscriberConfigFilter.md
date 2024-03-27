@@ -70,7 +70,7 @@ Note: if you provide multiple filters with the same name then only the mapper of
 
 #### Defined in
 
-[types/subscription.ts:250](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L250)
+[types/subscription.ts:248](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L248)
 
 ___
 

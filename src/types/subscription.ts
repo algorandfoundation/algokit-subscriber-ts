@@ -150,22 +150,22 @@ export interface NamedTransactionFilter {
 
 /** Specify a filter to apply to find transactions of interest. */
 export interface TransactionFilter {
-  /** Filter based on the given transaction type. */
-  type?: TransactionType
-  /** Filter to transactions sent from the specified address. */
-  sender?: string
-  /** Filter to transactions being received by the specified address. */
-  receiver?: string
+  /** Filter based on the given transaction type(s). */
+  type?: TransactionType | TransactionType[]
+  /** Filter to transactions sent from the specified address(es). */
+  sender?: string | string[]
+  /** Filter to transactions being received by the specified address(es). */
+  receiver?: string | string[]
   /** Filter to transactions with a note having the given prefix. */
   notePrefix?: string
-  /** Filter to transactions against the app with the given ID. */
-  appId?: number
+  /** Filter to transactions against the app with the given ID(s). */
+  appId?: number | number[] | bigint | bigint[]
   /** Filter to transactions that are creating an app. */
   appCreate?: boolean
   /** Filter to transactions that have given on complete(s). */
   appOnComplete?: ApplicationOnComplete | ApplicationOnComplete[]
-  /** Filter to transactions against the asset with the given ID. */
-  assetId?: number
+  /** Filter to transactions against the asset with the given ID(s). */
+  assetId?: number | number[] | bigint | bigint[]
   /** Filter to transactions that are creating an asset. */
   assetCreate?: boolean
   /** Filter to transactions where the amount being transferred is greater
@@ -174,11 +174,9 @@ export interface TransactionFilter {
   /** Filter to transactions where the amount being transferred is less than
    * or equal to the given maximum (microAlgos or decimal units of an ASA if type: axfer). */
   maxAmount?: number | bigint
-  /** Filter to app transactions that have the given ARC-0004 method selector for
+  /** Filter to app transactions that have the given ARC-0004 method selector(s) for
    * the given method signature as the first app argument. */
-  methodSignature?: string
-  /** Filter to app transactions that match one of the given ARC-0004 method selectors as the first app argument. */
-  methodSignatures?: string[]
+  methodSignature?: string | string[]
   /** Filter to app transactions that meet the given app arguments predicate. */
   appCallArgumentsMatch?: (appCallArguments?: Uint8Array[]) => boolean
   /** Filter to app transactions that emit the given ARC-28 events.
@@ -188,7 +186,7 @@ export interface TransactionFilter {
   /** Filter to transactions that result in balance changes that match one or more of the given set of balance changes. */
   balanceChanges?: {
     /** Match transactions with balance changes for one of the given asset ID(s), with Algo being `0` */
-    assetId?: number | number[]
+    assetId?: number | number[] | bigint | bigint[]
     /** Match transactions with balance changes for an account with one of the given role(s) */
     role?: BalanceChangeRole | BalanceChangeRole[]
     /** Match transactions with balance changes affecting one of the given account(s) */

@@ -160,15 +160,15 @@ getSubscribedTransactions({filters: [{name: 'filterName', filter: {/* Filter pro
 
 Currently this allows you filter based on any combination (AND logic) of:
 
-- Transaction type e.g. `filter: { type: TransactionType.axfer }`
-- Account (sender and receiver) e.g. `filter: { sender: "ABCDE..F" }` and `filter: { receiver: "12345..6" }`
+- Transaction type e.g. `filter: { type: TransactionType.axfer }` or `filter: {type: [TransactionType.axfer, TransactionType.pay] }`
+- Account (sender and receiver) e.g. `filter: { sender: "ABCDE..F" }` or `filter: { sender: ["ABCDE..F", "ZYXWV..A"] }` and `filter: { receiver: "12345..6" }` or `filter: { receiver: ["ABCDE..F", "ZYXWV..A"] }`
 - Note prefix e.g. `filter: { notePrefix: "xyz" }`
 - Apps
 
-  - ID e.g. `filter: { appId: 54321 }`
+  - ID e.g. `filter: { appId: 54321 }` or `filter: { appId: [54321, 12345] }`
   - Creation e.g. `filter: { appCreate: true }`
-  - Call on-complete(s) e.g. `filter: { appOnComplete: ApplicationOnComplete.optin }` and `filter: { appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop] }`
-  - ARC4 method signature(s) e.g. `filter: { methodSignature: "MyMethod(uint64,string)" }` and `filter: { methodSignatures: ["MyMethod(uint64,string)uint64", "MyMethod2(unit64)"] }`
+  - Call on-complete(s) e.g. `filter: { appOnComplete: ApplicationOnComplete.optin }` or `filter: { appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop] }`
+  - ARC4 method signature(s) e.g. `filter: { methodSignature: "MyMethod(uint64,string)" }` or `filter: { methodSignature: ["MyMethod(uint64,string)uint64", "MyMethod2(unit64)"] }`
   - Call arguments e.g.
     ```typescript
     filter: {
@@ -187,7 +187,7 @@ Currently this allows you filter based on any combination (AND logic) of:
     Note: For this to work you need to [specify ARC-28 events in the subscription config](#arc-28-event-subscription-and-reads).
 
 - Assets
-  - ID e.g. `filter: { assetId: 123456 }`
+  - ID e.g. `filter: { assetId: 123456 }` or `filter: { assetId: [123456, 456789] }`
   - Creation e.g. `filter: { assetCreate: true }`
   - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
   - Balance changes (asset ID, sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{assetId: [15345, 36234], roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
@@ -328,14 +328,14 @@ The indexer catchup isn't magic - if the filter you are trying to catch up with 
 To understand how the indexer behaviour works to know if you are likely to generate a lot of transactions it's worth understanding the architecture of the indexer catchup; indexer catchup runs in two stages:
 
 1. **Pre-filtering**: Any filters that can be translated to the [indexer search transactions endpoint](https://developer.algorand.org/docs/rest-apis/indexer/#get-v2transactions). This query is then run between the rounds that need to be synced and paginated in the max number of results (1000) at a time until all of the transactions are retrieved. This ensures we get round-based transactional consistency. This is the filter that can easily explode out though and take a long time when using indexer catchup. For avoidance of doubt, the following filters are the ones that are converted to a pre-filter:
-   - `sender`
-   - `receiver`
-   - `type`
+   - `sender` (single value)
+   - `receiver` (single value)
+   - `type` (single value)
    - `notePrefix`
-   - `appId`
-   - `assetId`
-   - `minAmount`
-   - `maxAmount`
+   - `appId` (single value)
+   - `assetId` (single value)
+   - `minAmount` (and `type = pay` or `assetId` provided)
+   - `maxAmount` (and `maxAmount < Number.MAX_SAFE_INTEGER` and `type = pay` or (`assetId` provided and `minAmount > 0`))
 2. **Post-filtering**: All remaining filters are then applied in-memory to the resulting list of transactions that are returned from the pre-filter before being returned as subscribed transactions.
 
 ## Entry points
