@@ -1,5 +1,6 @@
 import type { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
+import { TransactionInBlock } from '../transform'
 import { Arc28EventGroup, EmittedArc28Event } from './arc-28'
 import TransactionType = algosdk.TransactionType
 
@@ -92,11 +93,29 @@ export enum BalanceChangeRole {
 }
 
 /** Metadata about an impending subscription poll. */
-export interface BeforePollMetadata {
+export interface BeforeSubscriptionPollMetadata {
   /** The current watermark of the subscriber */
   watermark: number
   /** The current round of algod */
   currentRound: number
+}
+
+/** Metadata needed to conduct a single subscription poll. */
+export interface SubscriptionPollMetadata {
+  /** The range of rounds to sync using algod; if undefined then algod sync not needed. */
+  algodSyncRange?: [startRound: number, endRound: number]
+  /** The range of rounds to sync using indexer; if undefined then indexer sync not needed. */
+  indexerSyncRange?: [startRound: number, endRound: number]
+  /** The range of rounds being synced. */
+  syncedRoundRange: [startRound: number, endRound: number]
+  /** The new watermark to persist after this poll is complete. */
+  newWatermark: number
+  /** The current round according to algod when the poll was started. */
+  currentRound: number
+  /** The full set of transactions from algod for `algodSyncRange` or `undefined` if `algodSyncRange` is `undefined. */
+  blockTransactions?: TransactionInBlock[]
+  /** The set of ARC-28 event groups to process against the subscribed transactions */
+  arc28EventGroups: Arc28EventGroup[]
 }
 
 /** Common parameters to control a single subscription pull/poll for both `AlgorandSubscriber` and `getSubscribedTransactions`. */
@@ -242,6 +261,30 @@ export interface TransactionSubscriptionParams extends CoreTransactionSubscripti
    * will be slow if `onMaxRounds` is `sync-oldest`.
    **/
   watermark: number
+}
+
+/** Configuration for a `DynamicAlgorandSubscriber` */
+export interface DynamicAlgorandSubscriberConfig<T> extends Omit<AlgorandSubscriberConfig, 'filters'> {
+  /**
+   * A function that returns a set of filters based on a given filter state and hierarchical poll level.
+   * @param state The filter state to return filters for
+   * @param pollLevel The hierarchical poll level; starts at 0 and increments by 1 each time a new poll is needed because of filter changes caused by the previous poll
+   * @param watermark The current watermark being processed
+   * @returns The set of filters to subscribe to / emit events for
+   */
+  dynamicFilters: (state: T, pollLevel: number, watermark: number) => Promise<SubscriberConfigFilter<unknown>[]>
+
+  /** Methods to retrieve and persist the current filter state so syncing is resilient */
+  filterStatePersistence: {
+    /** Returns the current filter state that syncing has previously been processed to */
+    get: () => Promise<T>
+    /** Persist the new filter state that has been created */
+    set: (newState: T) => Promise<void>
+  }
+  /** The frequency to poll for new blocks in seconds; defaults to 1s */
+  frequencyInSeconds?: number
+  /** Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription */
+  waitForBlockWhenAtTip?: boolean
 }
 
 /** Configuration for an `AlgorandSubscriber`. */
