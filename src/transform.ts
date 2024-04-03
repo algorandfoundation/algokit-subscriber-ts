@@ -38,7 +38,7 @@ export interface TransactionInBlock {
   transaction: Transaction
   createdAssetId?: number
   createdAppId?: number
-  assetCloseAmount?: number
+  assetCloseAmount?: number | bigint
   closeAmount?: number
   logs?: Uint8Array[]
 }
@@ -128,7 +128,7 @@ export function extractTransactionFromBlockTransaction(
   transaction: Transaction
   createdAssetId?: number
   createdAppId?: number
-  assetCloseAmount?: number
+  assetCloseAmount?: number | bigint
   closeAmount?: number
   logs?: Uint8Array[]
 } {
@@ -154,7 +154,7 @@ export function extractTransactionFromBlockTransaction(
     assetCloseAmount: blockTransaction.aca,
     closeAmount: blockTransaction.ca,
     logs: blockTransaction.dt?.lg,
-  }
+  } satisfies Partial<TransactionInBlock>
 }
 
 /**
@@ -322,9 +322,9 @@ export function getIndexerTransactionFromAlgodTransaction(
         transaction.type === TransactionType.axfer
           ? {
               'asset-id': transaction.assetIndex,
-              amount: Number(transaction.amount),
+              amount: transaction.amount,
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
-              sender: algosdk.encodeAddress(transaction.from.publicKey),
+              sender: transaction.assetRevocationTarget ? algosdk.encodeAddress(transaction.assetRevocationTarget.publicKey) : undefined,
               'close-amount': assetCloseAmount,
               'close-to': transaction.closeRemainderTo ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) : undefined,
             }

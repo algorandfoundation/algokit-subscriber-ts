@@ -29,6 +29,7 @@ export interface TransactionSubscriptionResult {
  * * Add the `parentTransactionId` field so inner transactions have a reference to their parent
  * * Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
  * * Add emitted ARC-28 events via `arc28Events`
+ * * Balance changes in algo or assets
  */
 export type SubscribedTransaction = TransactionResult & {
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
@@ -39,6 +40,30 @@ export type SubscribedTransaction = TransactionResult & {
   arc28Events?: EmittedArc28Event[]
   /** The names of any filters that matched the given transaction to result in it being 'subscribed'. */
   filtersMatched?: string[]
+  /** The balance changes in the transaction. */
+  balanceChanges?: BalanceChange[]
+}
+
+/** Represents a balance change effect for a transaction. */
+export interface BalanceChange {
+  /** The address that the balance change is for. */
+  address: string
+  /** The asset ID of the balance change, or 0 for Algos. */
+  assetId: number
+  /** The amount of the balance change in smallest divisible unit or microAlgos. */
+  amount: bigint
+  /** The roles the account was playing that led to the balance change */
+  roles: BalanceChangeRole[]
+}
+
+/** The role that an account was playing for a given balance change. */
+export enum BalanceChangeRole {
+  /** Account was sending a transaction (sending asset and/or spending fee if asset `0`) */
+  Sender = 'Sender',
+  /** Account was receiving a transaction */
+  Receiver = 'Receiver',
+  /** Account was having an asset amount closed to it */
+  CloseTo = 'CloseTo',
 }
 
 /** Metadata about an impending subscription poll. */
@@ -125,41 +150,58 @@ export interface NamedTransactionFilter {
 
 /** Specify a filter to apply to find transactions of interest. */
 export interface TransactionFilter {
-  /** Filter based on the given transaction type. */
-  type?: TransactionType
-  /** Filter to transactions sent from the specified address. */
-  sender?: string
-  /** Filter to transactions being received by the specified address. */
-  receiver?: string
+  /** Filter based on the given transaction type(s). */
+  type?: TransactionType | TransactionType[]
+  /** Filter to transactions sent from the specified address(es). */
+  sender?: string | string[]
+  /** Filter to transactions being received by the specified address(es). */
+  receiver?: string | string[]
   /** Filter to transactions with a note having the given prefix. */
   notePrefix?: string
-  /** Filter to transactions against the app with the given ID. */
-  appId?: number
+  /** Filter to transactions against the app with the given ID(s). */
+  appId?: number | number[] | bigint | bigint[]
   /** Filter to transactions that are creating an app. */
   appCreate?: boolean
   /** Filter to transactions that have given on complete(s). */
   appOnComplete?: ApplicationOnComplete | ApplicationOnComplete[]
-  /** Filter to transactions against the asset with the given ID. */
-  assetId?: number
+  /** Filter to transactions against the asset with the given ID(s). */
+  assetId?: number | number[] | bigint | bigint[]
   /** Filter to transactions that are creating an asset. */
   assetCreate?: boolean
   /** Filter to transactions where the amount being transferred is greater
    * than or equal to the given minimum (microAlgos or decimal units of an ASA if type: axfer). */
-  minAmount?: number
+  minAmount?: number | bigint
   /** Filter to transactions where the amount being transferred is less than
    * or equal to the given maximum (microAlgos or decimal units of an ASA if type: axfer). */
-  maxAmount?: number
-  /** Filter to app transactions that have the given ARC-0004 method selector for
+  maxAmount?: number | bigint
+  /** Filter to app transactions that have the given ARC-0004 method selector(s) for
    * the given method signature as the first app argument. */
-  methodSignature?: string
-  /** Filter to app transactions that match one of the given ARC-0004 method selectors as the first app argument. */
-  methodSignatures?: string[]
+  methodSignature?: string | string[]
   /** Filter to app transactions that meet the given app arguments predicate. */
   appCallArgumentsMatch?: (appCallArguments?: Uint8Array[]) => boolean
   /** Filter to app transactions that emit the given ARC-28 events.
    * Note: the definitions for these events must be passed in to the subscription config via `arc28Events`.
    */
   arc28Events?: { groupName: string; eventName: string }[]
+  /** Filter to transactions that result in balance changes that match one or more of the given set of balance changes. */
+  balanceChanges?: {
+    /** Match transactions with balance changes for one of the given asset ID(s), with Algo being `0` */
+    assetId?: number | number[] | bigint | bigint[]
+    /** Match transactions with balance changes for an account with one of the given role(s) */
+    role?: BalanceChangeRole | BalanceChangeRole[]
+    /** Match transactions with balance changes affecting one of the given account(s) */
+    address?: string | string[]
+    /** Match transactions with absolute (i.e. using Math.abs()) balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
+    minAbsoluteAmount?: number | bigint
+    /** Match transactions with absolute (i.e. using Math.abs()) balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
+    maxAbsoluteAmount?: number | bigint
+    /** Match transactions with balance changes being greater than or equal to the given minimum (microAlgos or decimal units of an ASA) */
+    minAmount?: number | bigint
+    /** Match transactions with balance changes being less than or equal to the given maximum (microAlgos or decimal units of an ASA) */
+    maxAmount?: number | bigint
+  }[]
+  /** Catch-all custom filter to filter for things that the rest of the filters don't provide. */
+  customFilter?: (transaction: SubscribedTransaction) => boolean
 }
 
 /** Parameters to control a single subscription pull/poll. */
