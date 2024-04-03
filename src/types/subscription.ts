@@ -1,7 +1,7 @@
 import type { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
-import { TransactionInBlock } from '../transform'
 import { Arc28EventGroup, EmittedArc28Event } from './arc-28'
+import { TransactionInBlock } from './block'
 import TransactionType = algosdk.TransactionType
 
 /** The result of a single subscription pull/poll. */
@@ -116,6 +116,10 @@ export interface SubscriptionPollMetadata {
   blockTransactions?: TransactionInBlock[]
   /** The set of ARC-28 event groups to process against the subscribed transactions */
   arc28EventGroups: Arc28EventGroup[]
+  /** The metadata about any blocks that were retrieved from algod as part
+   * of the subscription poll.
+   */
+  blockMetadata?: BlockMetadata[]
 }
 
 /** Common parameters to control a single subscription pull/poll for both `AlgorandSubscriber` and `getSubscribedTransactions`. */
@@ -263,6 +267,9 @@ export interface TransactionSubscriptionParams extends CoreTransactionSubscripti
   watermark: number
 }
 
+/** A function that returns a set of filters based on a given filter state and hierarchical poll level. */
+export type DynamicFilterLambda<T> = (state: T, pollLevel: number, watermark: number) => Promise<SubscriberConfigFilter<unknown>[]>
+
 /** Configuration for a `DynamicAlgorandSubscriber` */
 export interface DynamicAlgorandSubscriberConfig<T> extends Omit<AlgorandSubscriberConfig, 'filters'> {
   /**
@@ -272,7 +279,7 @@ export interface DynamicAlgorandSubscriberConfig<T> extends Omit<AlgorandSubscri
    * @param watermark The current watermark being processed
    * @returns The set of filters to subscribe to / emit events for
    */
-  dynamicFilters: (state: T, pollLevel: number, watermark: number) => Promise<SubscriberConfigFilter<unknown>[]>
+  dynamicFilters: DynamicFilterLambda<T>
 
   /** Methods to retrieve and persist the current filter state so syncing is resilient */
   filterStatePersistence: {

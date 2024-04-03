@@ -299,6 +299,7 @@ export async function getSubscribedTransactions(
     syncedRoundRange: pollMetadata.syncedRoundRange,
     newWatermark: pollMetadata.newWatermark,
     currentRound: pollMetadata.currentRound,
+    blockMetadata: pollMetadata.blockMetadata,
     subscribedTransactions: catchupTransactions
       .concat(algodTransactions)
       .map((t) => processExtraSubscriptionTransactionFields(t, arc28EventsToProcess, subscription.arc28Events ?? [])),

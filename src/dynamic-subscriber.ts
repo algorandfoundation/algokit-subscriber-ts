@@ -112,6 +112,7 @@ export class DynamicAlgorandSubscriber<T> extends AlgorandSubscriber {
       syncedRoundRange: pollMetadata.syncedRoundRange,
       newWatermark: pollMetadata.newWatermark,
       currentRound: pollMetadata.currentRound,
+      blockMetadata: pollMetadata.blockMetadata,
       subscribedTransactions: subscribedTransactions.sort(
         (a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!,
       ),
