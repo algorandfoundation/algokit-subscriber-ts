@@ -10,37 +10,9 @@
 
 ### Functions
 
-- [getBlocksBulk](index.md#getblocksbulk)
 - [getSubscribedTransactions](index.md#getsubscribedtransactions)
 
 ## Functions
-
-### getBlocksBulk
-
-▸ **getBlocksBulk**(`context`, `client`): `Promise`\<\{ `block`: [`Block`](../interfaces/types_block.Block.md)  }[]\>
-
-Retrieves blocks in bulk (30 at a time) between the given round numbers.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `context` | `Object` | The blocks to retrieve |
-| `context.maxRound` | `number` | - |
-| `context.startRound` | `number` | - |
-| `client` | `default` | The algod client |
-
-#### Returns
-
-`Promise`\<\{ `block`: [`Block`](../interfaces/types_block.Block.md)  }[]\>
-
-The blocks
-
-#### Defined in
-
-[subscriptions.ts:868](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L868)
-
-___
 
 ### getSubscribedTransactions
 
@@ -65,4 +37,4 @@ The result of this subscription pull/poll.
 
 #### Defined in
 
-[subscriptions.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L54)
+[subscriptions.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L57)

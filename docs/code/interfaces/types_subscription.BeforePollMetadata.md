@@ -23,7 +23,7 @@ The current round of algod
 
 #### Defined in
 
-[types/subscription.ts:74](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L74)
+[types/subscription.ts:99](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L99)
 
 ___
 
@@ -35,4 +35,4 @@ The current watermark of the subscriber
 
 #### Defined in
 
-[types/subscription.ts:72](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L72)
+[types/subscription.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L97)

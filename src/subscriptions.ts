@@ -1,19 +1,22 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import * as msgpack from 'algorand-msgpack'
+
 import algosdk from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import sha512, { sha512_256 } from 'js-sha512'
+import { getBlocksBulk } from './block'
 import {
-  TransactionInBlock,
   algodOnCompleteToIndexerOnComplete,
+  blockDataToBlockMetadata,
+  extractBalanceChangesFromBlockTransaction,
+  extractBalanceChangesFromIndexerTransaction,
   getBlockTransactions,
   getIndexerTransactionFromAlgodTransaction,
 } from './transform'
 import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './types/arc-28'
-import type { Block, BlockInnerTransaction, BlockTransaction } from './types/block'
+import type { TransactionInBlock } from './types/block'
 import {
-  BalanceChangeRole,
+  BlockMetadata,
   type BalanceChange,
   type NamedTransactionFilter,
   type SubscribedTransaction,
@@ -21,7 +24,7 @@ import {
   type TransactionSubscriptionParams,
   type TransactionSubscriptionResult,
 } from './types/subscription'
-import { chunkArray, range } from './utils'
+import { chunkArray } from './utils'
 import ABITupleType = algosdk.ABITupleType
 import ABIValue = algosdk.ABIValue
 import Algodv2 = algosdk.Algodv2
@@ -59,6 +62,7 @@ export async function getSubscribedTransactions(
   const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
   const currentRound = (await algod.status().do())['last-round'] as number
+  let blockMetadata: BlockMetadata[] | undefined
 
   // Pre-calculate a flat list of all ARC-28 events to process
   const arc28Events = (subscription.arc28Events ?? []).flatMap((g) =>
@@ -190,6 +194,8 @@ export async function getSubscribedTransactions(
       )
       .reduce(deduplicateSubscribedTransactionsReducer, [])
 
+    blockMetadata = blocks.map((b) => blockDataToBlockMetadata(b))
+
     algokit.Config.logger.debug(
       `Retrieved ${blockTransactions.length} transactions from algod via round(s) ${algodSyncFromRoundNumber}-${endRound} in ${
         (+new Date() - start) / 1000
@@ -205,6 +211,7 @@ export async function getSubscribedTransactions(
     syncedRoundRange: [startRound, endRound],
     newWatermark: endRound,
     currentRound,
+    blockMetadata,
     subscribedTransactions: catchupTransactions
       .concat(algodTransactions)
       .map((t) => processExtraFields(t, arc28Events, subscription.arc28Events ?? [])),
@@ -243,7 +250,7 @@ function processExtraFields(
       eventsToApply,
       (groupName) => groupsToApply.find((g) => g.groupName === groupName)!.continueOnError ?? false,
     ),
-    balanceChanges: extractBalanceChanges(transaction),
+    balanceChanges: extractBalanceChangesFromIndexerTransaction(transaction),
     'inner-txns': transaction['inner-txns']
       ? transaction['inner-txns'].map((inner) => processExtraFields(inner, arc28Events, arc28Groups))
       : undefined,
@@ -321,204 +328,6 @@ function extractArc28Events(
         })
     })
     .filter((e) => !!e) as EmittedArc28Event[]
-}
-
-function extractBalanceChangesFromBlock(transaction: BlockTransaction | BlockInnerTransaction): BalanceChange[] {
-  const balanceChanges: BalanceChange[] = []
-
-  if ((transaction.txn.fee ?? 0) > 0) {
-    balanceChanges.push({
-      address: algosdk.encodeAddress(transaction.txn.snd),
-      amount: -1n * BigInt(transaction.txn.fee ?? 0),
-      roles: [BalanceChangeRole.Sender],
-      assetId: 0,
-    })
-  }
-
-  if (transaction.txn.type === TransactionType.pay) {
-    balanceChanges.push(
-      {
-        address: algosdk.encodeAddress(transaction.txn.snd),
-        amount: -1n * BigInt(transaction.txn.amt ?? 0),
-        roles: [BalanceChangeRole.Sender],
-        assetId: 0,
-      },
-      ...(transaction.txn.rcv
-        ? [
-            {
-              address: algosdk.encodeAddress(transaction.txn.rcv),
-              amount: BigInt(transaction.txn.amt ?? 0),
-              roles: [BalanceChangeRole.Receiver],
-              assetId: 0,
-            },
-          ]
-        : []),
-      ...(transaction.ca && transaction.txn.close
-        ? [
-            {
-              address: algosdk.encodeAddress(transaction.txn.close),
-              amount: BigInt(transaction.ca ?? 0),
-              roles: [BalanceChangeRole.CloseTo],
-              assetId: 0,
-            },
-            {
-              address: algosdk.encodeAddress(transaction.txn.snd),
-              amount: -1n * BigInt(transaction.ca ?? 0),
-              roles: [BalanceChangeRole.Sender],
-              assetId: 0,
-            },
-          ]
-        : []),
-    )
-  }
-
-  if (transaction.txn.type === TransactionType.axfer && transaction.txn.xaid) {
-    balanceChanges.push(
-      {
-        address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: transaction.txn.xaid,
-        amount: -1n * BigInt(transaction.txn.aamt ?? 0),
-        roles: [BalanceChangeRole.Sender],
-      },
-      ...(transaction.txn.arcv
-        ? [
-            {
-              address: algosdk.encodeAddress(transaction.txn.arcv),
-              assetId: transaction.txn.xaid,
-              amount: BigInt(transaction.txn.aamt ?? 0),
-              roles: [BalanceChangeRole.Receiver],
-            },
-          ]
-        : []),
-      ...(transaction.aca && transaction.txn.aclose
-        ? [
-            {
-              address: algosdk.encodeAddress(transaction.txn.aclose),
-              assetId: transaction.txn.xaid,
-              amount: BigInt(transaction.aca ?? 0),
-              roles: [BalanceChangeRole.CloseTo],
-            },
-            {
-              address: algosdk.encodeAddress(transaction.txn.asnd ?? transaction.txn.snd),
-              assetId: transaction.txn.xaid,
-              amount: -1n * BigInt(transaction.aca ?? 0),
-              roles: [BalanceChangeRole.Sender],
-            },
-          ]
-        : []),
-    )
-  }
-
-  return balanceChanges.reduce((changes, change) => {
-    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
-    if (existing) {
-      existing.amount += change.amount
-      if (!existing.roles.includes(change.roles[0])) {
-        existing.roles.push(...change.roles)
-      }
-    } else {
-      changes.push(change)
-    }
-    return changes
-  }, [] as BalanceChange[])
-}
-
-function extractBalanceChanges(transaction: TransactionResult): BalanceChange[] {
-  const balanceChanges: BalanceChange[] = []
-
-  const getSafeBigInt = (value: number | bigint | undefined) => {
-    return BigInt(typeof value === 'bigint' ? value : Number.isNaN(value) ? 0 : value ?? 0)
-  }
-
-  if (transaction.fee > 0) {
-    balanceChanges.push({
-      address: transaction.sender,
-      amount: -1n * BigInt(transaction.fee),
-      roles: [BalanceChangeRole.Sender],
-      assetId: 0,
-    })
-  }
-
-  if (transaction['tx-type'] === TransactionType.pay && transaction['payment-transaction']) {
-    const pay = transaction['payment-transaction']
-    balanceChanges.push(
-      {
-        address: transaction.sender,
-        amount: -1n * getSafeBigInt(pay.amount),
-        roles: [BalanceChangeRole.Sender],
-        assetId: 0,
-      },
-      {
-        address: pay.receiver,
-        amount: getSafeBigInt(pay.amount),
-        roles: [BalanceChangeRole.Receiver],
-        assetId: 0,
-      },
-      ...(pay['close-amount']
-        ? [
-            {
-              address: pay['close-remainder-to']!,
-              amount: getSafeBigInt(pay['close-amount']),
-              roles: [BalanceChangeRole.CloseTo],
-              assetId: 0,
-            },
-            {
-              address: transaction.sender,
-              amount: -1n * getSafeBigInt(pay['close-amount']),
-              roles: [BalanceChangeRole.Sender],
-              assetId: 0,
-            },
-          ]
-        : []),
-    )
-  }
-
-  if (transaction['tx-type'] === TransactionType.axfer && transaction['asset-transfer-transaction']) {
-    const axfer = transaction['asset-transfer-transaction']
-    balanceChanges.push(
-      {
-        address: axfer.sender ?? transaction.sender,
-        assetId: axfer['asset-id'],
-        amount: -1n * getSafeBigInt(axfer.amount),
-        roles: [BalanceChangeRole.Sender],
-      },
-      {
-        address: axfer.receiver,
-        assetId: axfer['asset-id'],
-        amount: getSafeBigInt(axfer.amount),
-        roles: [BalanceChangeRole.Receiver],
-      },
-      ...(axfer['close-amount'] && axfer['close-to']
-        ? [
-            {
-              address: axfer['close-to'],
-              assetId: axfer['asset-id'],
-              amount: getSafeBigInt(axfer['close-amount']),
-              roles: [BalanceChangeRole.CloseTo],
-            },
-            {
-              address: axfer.sender ?? transaction.sender,
-              assetId: axfer['asset-id'],
-              amount: -1n * getSafeBigInt(axfer['close-amount']),
-              roles: [BalanceChangeRole.Sender],
-            },
-          ]
-        : []),
-    )
-  }
-
-  return balanceChanges.reduce((changes, change) => {
-    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
-    if (existing) {
-      existing.amount += change.amount
-      if (!existing.roles.includes(change.roles[0])) {
-        existing.roles.push(...change.roles)
-      }
-    } else {
-      changes.push(change)
-    }
-    return changes
-  }, [] as BalanceChange[])
 }
 
 function indexerPreFilter(
@@ -715,7 +524,7 @@ function indexerPostFilter(
         )
     }
     if (subscription.balanceChanges) {
-      const balanceChanges = extractBalanceChanges(t)
+      const balanceChanges = extractBalanceChangesFromIndexerTransaction(t)
       result &&= hasBalanceChangeMatch(balanceChanges, subscription.balanceChanges)
     }
     if (subscription.customFilter) {
@@ -826,7 +635,7 @@ function transactionFilter(
       result &&= subscription.appCallArgumentsMatch(t.appArgs)
     }
     if (subscription.balanceChanges) {
-      const balanceChanges = extractBalanceChangesFromBlock(txn.blockTransaction)
+      const balanceChanges = extractBalanceChangesFromBlockTransaction(txn.blockTransaction)
       result &&= hasBalanceChangeMatch(balanceChanges, subscription.balanceChanges)
     }
     if (subscription.customFilter) {
@@ -857,69 +666,6 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
           (Array.isArray(changeFilter.role) ? changeFilter.role : [changeFilter.role]).some((r) => actualChange.roles.includes(r))),
     ),
   )
-}
-
-/**
- * Retrieves blocks in bulk (30 at a time) between the given round numbers.
- * @param context The blocks to retrieve
- * @param client The algod client
- * @returns The blocks
- */
-export async function getBlocksBulk(context: { startRound: number; maxRound: number }, client: Algodv2) {
-  // Grab 30 at a time in parallel to not overload the node
-  const blockChunks = chunkArray(range(context.startRound, context.maxRound), 30)
-  let blocks: { block: Block }[] = []
-  for (const chunk of blockChunks) {
-    algokit.Config.logger.info(`Retrieving ${chunk.length} blocks from round ${chunk[0]} via algod`)
-    const start = +new Date()
-    blocks = blocks.concat(
-      await Promise.all(
-        chunk.map(async (round) => {
-          const response = await client.c.get(`/v2/blocks/${round}`, { format: 'msgpack' }, undefined, undefined, false)
-          const body = response.body as Uint8Array
-          const decodedWithMap = msgpack.decode(body, {
-            intMode: msgpack.IntMode.AS_ENCODED,
-            useMap: true,
-            rawBinaryStringValues: true,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          }) as Map<any, any>
-          const decoded = blockMapToObject(decodedWithMap) as {
-            block: Block
-          }
-          return decoded
-        }),
-      ),
-    )
-    algokit.Config.logger.debug(`Retrieved ${chunk.length} blocks from round ${chunk[0]} via algod in ${(+new Date() - start) / 1000}s`)
-  }
-  return blocks
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function blockMapToObject(object: Map<any, any>) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result: { [key: string]: any } = {}
-  const decoder = new TextDecoder()
-  for (const [key, value] of object) {
-    if (key === 'r' && value instanceof Map) {
-      // State proof transactions have a property `r` with a map with numeric keys that must stay intact
-      const rMap = new Map()
-      for (const [k, v] of value) {
-        rMap.set(k, v instanceof Map ? blockMapToObject(v) : v)
-      }
-      result[key] = rMap
-    } else if (value instanceof Map) {
-      result[key] = blockMapToObject(value)
-    } else if (value instanceof Uint8Array) {
-      // The following have UTF-8 values
-      result[key] = ['gen', 'proto', 'txn256', 'type', 'an', 'un', 'au'].includes(key) ? decoder.decode(value) : value
-    } else if (value instanceof Array) {
-      result[key] = value.map((v) => (v instanceof Map ? blockMapToObject(v) : v))
-    } else {
-      result[key] = value
-    }
-  }
-  return result
 }
 
 /** Process an indexer transaction and return that transaction or any of it's inner transactions

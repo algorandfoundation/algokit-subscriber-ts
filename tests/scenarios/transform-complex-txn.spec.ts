@@ -1,6 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { describe, expect, it } from 'vitest'
-import { getBlocksBulk } from '../../src'
+import { getBlocksBulk } from '../../src/block'
 import { getBlockTransactions } from '../../src/transform'
 import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
 
@@ -269,6 +269,22 @@ describe('Complex transaction with many nested inner transactions', () => {
         "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
         "tx-type": "appl",
       }
+    `)
+
+    expect(algodTxns.blockMetadata).toMatchInlineSnapshot(`
+      [
+        {
+          "fullTransactionCount": 171,
+          "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+          "genesisId": "mainnet-v1.0",
+          "hash": "CDVL4HL5XDN7DPYAHITVHKVZSX4KNRL65XBOCSQTBNDOFMHN7JBA",
+          "parentTransactionCount": 55,
+          "previousBlockHash": "6ELYXRVDR7DGXCVYC7AAVWLFIUNPLXT5QTNL2NL7ZQL3O66FMFWQ",
+          "round": 35214367,
+          "seed": "Tp6NntUaw17I8GGscaawpAuI0vQDMgp1TBSMAcpohtY=",
+          "timestamp": "2024-01-14T17:14:00.000Z",
+        },
+      ]
     `)
   })
 

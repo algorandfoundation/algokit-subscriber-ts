@@ -25,7 +25,7 @@ The delta of global state, keyed by key
 
 #### Defined in
 
-[types/block.ts:127](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L127)
+[types/block.ts:201](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L201)
 
 ___
 
@@ -37,7 +37,7 @@ Inner transactions
 
 #### Defined in
 
-[types/block.ts:133](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L133)
+[types/block.ts:207](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L207)
 
 ___
 
@@ -49,7 +49,7 @@ The delta of local state keyed by account ID offset in [txn.Sender, ...txn.Accou
 
 #### Defined in
 
-[types/block.ts:129](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L129)
+[types/block.ts:203](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L203)
 
 ___
 
@@ -61,4 +61,4 @@ Logs
 
 #### Defined in
 
-[types/block.ts:131](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L131)
+[types/block.ts:205](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L205)

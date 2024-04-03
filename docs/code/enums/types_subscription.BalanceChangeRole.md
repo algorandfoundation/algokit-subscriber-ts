@@ -24,7 +24,7 @@ Account was having an asset amount closed to it
 
 #### Defined in
 
-[types/subscription.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L66)
+[types/subscription.ts:91](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L91)
 
 ___
 
@@ -36,7 +36,7 @@ Account was receiving a transaction
 
 #### Defined in
 
-[types/subscription.ts:64](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L64)
+[types/subscription.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L89)
 
 ___
 
@@ -48,4 +48,4 @@ Account was sending a transaction (sending asset and/or spending fee if asset `0
 
 #### Defined in
 
-[types/subscription.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L62)
+[types/subscription.ts:87](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L87)

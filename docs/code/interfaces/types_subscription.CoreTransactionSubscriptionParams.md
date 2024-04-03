@@ -34,7 +34,7 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:102](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L102)
+[types/subscription.ts:127](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L127)
 
 ___
 
@@ -65,7 +65,7 @@ A list of filters with corresponding names.
 
 #### Defined in
 
-[types/subscription.ts:100](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L100)
+[types/subscription.ts:125](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L125)
 
 ___
 
@@ -84,7 +84,7 @@ boundary based on the number of rounds specified here.
 
 #### Defined in
 
-[types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)
+[types/subscription.ts:147](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L147)
 
 ___
 
@@ -102,7 +102,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L111)
+[types/subscription.ts:136](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L136)
 
 ___
 
@@ -129,4 +129,4 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:140](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L140)
+[types/subscription.ts:165](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L165)

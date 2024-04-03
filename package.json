@@ -43,6 +43,16 @@
       "import": "./index.mjs",
       "require": "./index.js"
     },
+    "./block": {
+      "types": "./block.d.ts",
+      "import": "./block.mjs",
+      "require": "./block.js"
+    },
+    "./transform": {
+      "types": "./transform.d.ts",
+      "import": "./transform.mjs",
+      "require": "./transform.js"
+    },
     "./types/*": {
       "types": "./types/*.d.ts",
       "import": "./types/*.mjs",
