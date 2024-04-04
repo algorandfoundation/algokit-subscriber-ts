@@ -43,6 +43,16 @@
       "import": "./index.mjs",
       "require": "./index.js"
     },
+    "./block": {
+      "types": "./block.d.ts",
+      "import": "./block.mjs",
+      "require": "./block.js"
+    },
+    "./transform": {
+      "types": "./transform.d.ts",
+      "import": "./transform.mjs",
+      "require": "./transform.js"
+    },
     "./types/*": {
       "types": "./types/*.d.ts",
       "import": "./types/*.mjs",
@@ -85,6 +95,9 @@
   "peerDependencies": {
     "@algorandfoundation/algokit-utils": "^6.0.0-beta.1",
     "algosdk": "^2.7.0"
+  },
+  "overrides": {
+    "vite": "5.2.8"
   },
   "publishConfig": {
     "access": "public"

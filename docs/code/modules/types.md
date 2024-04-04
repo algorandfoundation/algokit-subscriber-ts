@@ -16,10 +16,14 @@
 - [BalanceChangeRole](types.md#balancechangerole)
 - [BeforePollMetadata](types.md#beforepollmetadata)
 - [Block](types.md#block)
+- [BlockAgreementCertificate](types.md#blockagreementcertificate)
+- [BlockData](types.md#blockdata)
 - [BlockInnerTransaction](types.md#blockinnertransaction)
+- [BlockMetadata](types.md#blockmetadata)
 - [BlockTransaction](types.md#blocktransaction)
 - [BlockTransactionEvalDelta](types.md#blocktransactionevaldelta)
 - [BlockValueDelta](types.md#blockvaluedelta)
+- [BlockVote](types.md#blockvote)
 - [CoreTransactionSubscriptionParams](types.md#coretransactionsubscriptionparams)
 - [EmittedArc28Event](types.md#emittedarc28event)
 - [LogicSig](types.md#logicsig)
@@ -30,6 +34,7 @@
 - [SubscribedTransaction](types.md#subscribedtransaction)
 - [SubscriberConfigFilter](types.md#subscriberconfigfilter)
 - [TransactionFilter](types.md#transactionfilter)
+- [TransactionInBlock](types.md#transactioninblock)
 - [TransactionSubscriptionParams](types.md#transactionsubscriptionparams)
 - [TransactionSubscriptionResult](types.md#transactionsubscriptionresult)
 - [TypedAsyncEventListener](types.md#typedasynceventlistener)
@@ -96,9 +101,27 @@ Re-exports [Block](../interfaces/types_block.Block.md)
 
 ___
 
+### BlockAgreementCertificate
+
+Re-exports [BlockAgreementCertificate](../interfaces/types_block.BlockAgreementCertificate.md)
+
+___
+
+### BlockData
+
+Re-exports [BlockData](../interfaces/types_block.BlockData.md)
+
+___
+
 ### BlockInnerTransaction
 
 Re-exports [BlockInnerTransaction](types_block.md#blockinnertransaction)
+
+___
+
+### BlockMetadata
+
+Re-exports [BlockMetadata](../interfaces/types_subscription.BlockMetadata.md)
 
 ___
 
@@ -117,6 +140,12 @@ ___
 ### BlockValueDelta
 
 Re-exports [BlockValueDelta](../interfaces/types_block.BlockValueDelta.md)
+
+___
+
+### BlockVote
+
+Re-exports [BlockVote](../interfaces/types_block.BlockVote.md)
 
 ___
 
@@ -177,6 +206,12 @@ ___
 ### TransactionFilter
 
 Re-exports [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
+
+___
+
+### TransactionInBlock
+
+Re-exports [TransactionInBlock](../interfaces/types_block.TransactionInBlock.md)
 
 ___
 

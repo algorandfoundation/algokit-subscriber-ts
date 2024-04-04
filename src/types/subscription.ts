@@ -21,6 +21,31 @@ export interface TransactionSubscriptionResult {
    * to represent the data with some additional fields.
    */
   subscribedTransactions: SubscribedTransaction[]
+  /** The metadata about any blocks that were retrieved from algod as part
+   * of the subscription poll.
+   */
+  blockMetadata?: BlockMetadata[]
+}
+
+/** Metadata about a block that was retrieved from algod. */
+export interface BlockMetadata {
+  hash?: string
+  /** The round of the block. */
+  round: number
+  /** The ISO 8601 timestamp of the block. */
+  timestamp: string
+  /** The genesis ID of the chain. */
+  genesisId: string
+  /** The base64 genesis hash of the chain. */
+  genesisHash: string
+  /** The previous block hash. */
+  previousBlockHash?: string
+  /** The base64 seed of the block. */
+  seed?: string
+  /** Count of parent transactions in this block */
+  parentTransactionCount: number
+  /** Full count of transactions and inner transactions (recursively) in this block. */
+  fullTransactionCount: number
 }
 
 /** The common model used to expose a transaction that is returned from a subscription.

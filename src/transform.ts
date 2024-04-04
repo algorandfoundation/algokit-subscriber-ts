@@ -1,12 +1,20 @@
-import type { MultisigTransactionSubSignature } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete, StateProofTransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
 import algosdk from 'algosdk'
 import { Buffer } from 'buffer'
 import base32 from 'hi-base32'
 import sha512 from 'js-sha512'
-import type { Block, BlockInnerTransaction, BlockTransaction, StateProof, StateProofMessage } from './types/block'
-import { SubscribedTransaction } from './types/subscription'
+import type {
+  Block,
+  BlockData,
+  BlockInnerTransaction,
+  BlockTransaction,
+  StateProof,
+  StateProofMessage,
+  TransactionInBlock,
+} from './types/block'
+import { BalanceChange, BalanceChangeRole, BlockMetadata, SubscribedTransaction } from './types/subscription'
 import OnApplicationComplete = algosdk.OnApplicationComplete
 import Transaction = algosdk.Transaction
 import TransactionType = algosdk.TransactionType
@@ -24,25 +32,6 @@ function removeNulls(obj: any) {
   }
 }
 
-export interface TransactionInBlock {
-  // Raw data
-  blockTransaction: BlockTransaction | BlockInnerTransaction
-  block: Block
-  roundOffset: number
-  roundIndex: number
-  parentTransaction?: BlockTransaction
-  parentTransactionId?: string
-  parentOffset?: number
-
-  // Processed data
-  transaction: Transaction
-  createdAssetId?: number
-  createdAppId?: number
-  assetCloseAmount?: number | bigint
-  closeAmount?: number
-  logs?: Uint8Array[]
-}
-
 /**
  * Processes a block and returns all transactions from it, including inner transactions, with key information populated.
  * @param block An Algorand block
@@ -55,13 +44,17 @@ export function getBlockTransactions(block: Block): TransactionInBlock[] {
   return (block.txns ?? []).flatMap((blockTransaction, roundIndex) => {
     let parentOffset = 0
     const getParentOffset = () => parentOffset++
-    const parentData = extractTransactionFromBlockTransaction(blockTransaction, block)
+    const parentData = extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen)
     return [
       {
         blockTransaction,
         block,
         roundOffset: getOffset(),
         roundIndex,
+        roundNumber: block.rnd,
+        roundTimestamp: block.ts,
+        genesisId: block.gen,
+        genesisHash: Buffer.from(block.gh),
         ...parentData,
       } as TransactionInBlock,
       ...(blockTransaction.dt?.itx ?? []).flatMap((innerTransaction) =>
@@ -91,13 +84,15 @@ function getBlockInnerTransactions(
   return [
     {
       blockTransaction,
-      block,
       roundIndex,
+      roundNumber: block.rnd,
+      roundTimestamp: block.ts,
+      genesisId: block.gen,
+      genesisHash: Buffer.from(block.gh),
       roundOffset: getRoundOffset(),
       parentOffset: getParentOffset(),
-      parentTransaction,
       parentTransactionId,
-      ...extractTransactionFromBlockTransaction(blockTransaction, block),
+      ...extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen),
     },
     ...(blockTransaction.dt?.itx ?? []).flatMap((innerInnerTransaction) =>
       getBlockInnerTransactions(
@@ -121,9 +116,10 @@ function getBlockInnerTransactions(
  * @param block The block the transaction belongs to
  * @returns The `algosdk.Transaction` object along with key secondary information from the block.
  */
-export function extractTransactionFromBlockTransaction(
+function extractTransactionFromBlockTransaction(
   blockTransaction: BlockTransaction | BlockInnerTransaction,
-  block: Block,
+  genesisHash: Buffer,
+  genesisId: string,
 ): {
   transaction: Transaction
   createdAssetId?: number
@@ -137,8 +133,8 @@ export function extractTransactionFromBlockTransaction(
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
   // Remove nulls (mainly where an appl txn contains a null app arg)
   removeNulls(txn)
-  txn.gh = Buffer.from(block.gh)
-  txn.gen = block.gen
+  txn.gh = genesisHash
+  txn.gen = genesisId
   // Unset gen if `hgi` isn't set
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ('hgi' in blockTransaction && !blockTransaction.hgi) txn.gen = null as any
@@ -189,11 +185,11 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
-function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, block: Block) {
+function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesisHash: Buffer, genesisId: string): string {
   const txn = blockTransaction.txn
 
-  txn.gh = Buffer.from(block.gh)
-  txn.gen = block.gen
+  txn.gh = genesisHash
+  txn.gen = genesisId
   // Unset gen if `hgi` isn't set
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!('hgi' in blockTransaction) || !blockTransaction.hgi) txn.gen = null as any
@@ -249,12 +245,14 @@ export function getIndexerTransactionFromAlgodTransaction(
     assetCloseAmount,
     closeAmount,
     createdAppId,
-    block,
     roundOffset,
     parentOffset,
     parentTransactionId,
     roundIndex,
-    parentTransaction,
+    roundNumber,
+    roundTimestamp,
+    genesisHash,
+    genesisId,
   } = t
 
   if (!transaction.type) {
@@ -272,7 +270,7 @@ export function getIndexerTransactionFromAlgodTransaction(
   const stateProofMessage = transaction.stateProofMessage as unknown as StateProofMessage | undefined
   const txId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
     transaction.type === TransactionType.stpf
-      ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, block)
+      ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, genesisHash, genesisId)
       : transaction.txID()
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
@@ -452,8 +450,8 @@ export function getIndexerTransactionFromAlgodTransaction(
       'tx-type': transaction.type,
       fee: transaction.fee ?? 0,
       sender: algosdk.encodeAddress(transaction.from.publicKey),
-      'confirmed-round': block.rnd,
-      'round-time': block.ts,
+      'confirmed-round': roundNumber,
+      'round-time': roundTimestamp,
       'intra-round-offset': roundOffset,
       'created-asset-index': createdAssetId,
       'genesis-hash': Buffer.from(transaction.genesisHash).toString('base64'),
@@ -467,15 +465,17 @@ export function getIndexerTransactionFromAlgodTransaction(
       'auth-addr': blockTransaction.sgnr ? algosdk.encodeAddress(blockTransaction.sgnr) : undefined,
       'inner-txns': blockTransaction.dt?.itx?.map((ibt) =>
         getIndexerTransactionFromAlgodTransaction({
-          block,
           blockTransaction: ibt,
           roundIndex,
           roundOffset: getChildOffset(),
-          ...extractTransactionFromBlockTransaction(ibt, block),
+          ...extractTransactionFromBlockTransaction(ibt, genesisHash, genesisId),
           getChildOffset,
           parentOffset,
-          parentTransaction,
           parentTransactionId,
+          roundNumber,
+          roundTimestamp,
+          genesisHash,
+          genesisId,
         }),
       ),
       signature:
@@ -525,7 +525,7 @@ export function getIndexerTransactionFromAlgodTransaction(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     // eslint-disable-next-line no-console
-    console.error(`Failed to transform transaction ${txId} from block ${block.rnd} with offset ${roundOffset}`)
+    console.error(`Failed to transform transaction ${txId} from block ${roundNumber} with offset ${roundOffset}`)
     throw e
   }
 }
@@ -536,4 +536,236 @@ function mapKeys<TKey>(map: Map<TKey, any>): TKey[] {
   const keys: TKey[] = []
   map.forEach((_, key) => keys.push(key))
   return keys
+}
+
+/**
+ * Extract key metadata from a block.
+ * @param blockData The raw block data
+ * @returns The block metadata
+ */
+export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
+  const { block, cert } = blockData
+  return {
+    round: block.rnd,
+    hash: cert?.prop?.dig ? base32.encode(cert.prop.dig).replace(/=/g, '') : undefined,
+    timestamp: new Date(block.ts * 1000).toISOString(),
+    genesisId: block.gen,
+    genesisHash: Buffer.from(block.gh).toString('base64'),
+    previousBlockHash: block.prev ? base32.encode(block.prev).replace(/=/g, '') : undefined,
+    seed: block.seed ? Buffer.from(block.seed).toString('base64') : undefined,
+    parentTransactionCount: block.txns?.length ?? 0,
+    fullTransactionCount: countAllTransactions(block.txns ?? []),
+  }
+}
+
+function countAllTransactions(txns: (BlockTransaction | BlockInnerTransaction)[]): number {
+  return txns.reduce((sum, txn) => sum + 1 + countAllTransactions(txn.dt?.itx ?? []), 0)
+}
+
+/**
+ * Extracts balance changes from a block transaction or inner transaction.
+ * @param transaction The transaction
+ * @returns The balance changes
+ */
+export function extractBalanceChangesFromBlockTransaction(transaction: BlockTransaction | BlockInnerTransaction): BalanceChange[] {
+  const balanceChanges: BalanceChange[] = []
+
+  if ((transaction.txn.fee ?? 0) > 0) {
+    balanceChanges.push({
+      address: algosdk.encodeAddress(transaction.txn.snd),
+      amount: -1n * BigInt(transaction.txn.fee ?? 0),
+      roles: [BalanceChangeRole.Sender],
+      assetId: 0,
+    })
+  }
+
+  if (transaction.txn.type === TransactionType.pay) {
+    balanceChanges.push(
+      {
+        address: algosdk.encodeAddress(transaction.txn.snd),
+        amount: -1n * BigInt(transaction.txn.amt ?? 0),
+        roles: [BalanceChangeRole.Sender],
+        assetId: 0,
+      },
+      ...(transaction.txn.rcv
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.rcv),
+              amount: BigInt(transaction.txn.amt ?? 0),
+              roles: [BalanceChangeRole.Receiver],
+              assetId: 0,
+            },
+          ]
+        : []),
+      ...(transaction.ca && transaction.txn.close
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.close),
+              amount: BigInt(transaction.ca ?? 0),
+              roles: [BalanceChangeRole.CloseTo],
+              assetId: 0,
+            },
+            {
+              address: algosdk.encodeAddress(transaction.txn.snd),
+              amount: -1n * BigInt(transaction.ca ?? 0),
+              roles: [BalanceChangeRole.Sender],
+              assetId: 0,
+            },
+          ]
+        : []),
+    )
+  }
+
+  if (transaction.txn.type === TransactionType.axfer && transaction.txn.xaid) {
+    balanceChanges.push(
+      {
+        address: algosdk.encodeAddress(transaction.txn.snd),
+        assetId: transaction.txn.xaid,
+        amount: -1n * BigInt(transaction.txn.aamt ?? 0),
+        roles: [BalanceChangeRole.Sender],
+      },
+      ...(transaction.txn.arcv
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.arcv),
+              assetId: transaction.txn.xaid,
+              amount: BigInt(transaction.txn.aamt ?? 0),
+              roles: [BalanceChangeRole.Receiver],
+            },
+          ]
+        : []),
+      ...(transaction.aca && transaction.txn.aclose
+        ? [
+            {
+              address: algosdk.encodeAddress(transaction.txn.aclose),
+              assetId: transaction.txn.xaid,
+              amount: BigInt(transaction.aca ?? 0),
+              roles: [BalanceChangeRole.CloseTo],
+            },
+            {
+              address: algosdk.encodeAddress(transaction.txn.asnd ?? transaction.txn.snd),
+              assetId: transaction.txn.xaid,
+              amount: -1n * BigInt(transaction.aca ?? 0),
+              roles: [BalanceChangeRole.Sender],
+            },
+          ]
+        : []),
+    )
+  }
+
+  return balanceChanges.reduce((changes, change) => {
+    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
+    if (existing) {
+      existing.amount += change.amount
+      if (!existing.roles.includes(change.roles[0])) {
+        existing.roles.push(...change.roles)
+      }
+    } else {
+      changes.push(change)
+    }
+    return changes
+  }, [] as BalanceChange[])
+}
+
+/**
+ * Extracts balance changes from an indexer transaction result object.
+ * @param transaction The transaction to extract balance changes from
+ * @returns The set of balance changes
+ */
+export function extractBalanceChangesFromIndexerTransaction(transaction: TransactionResult): BalanceChange[] {
+  const balanceChanges: BalanceChange[] = []
+
+  const getSafeBigInt = (value: number | bigint | undefined) => {
+    return BigInt(typeof value === 'bigint' ? value : Number.isNaN(value) ? 0 : value ?? 0)
+  }
+
+  if (transaction.fee > 0) {
+    balanceChanges.push({
+      address: transaction.sender,
+      amount: -1n * BigInt(transaction.fee),
+      roles: [BalanceChangeRole.Sender],
+      assetId: 0,
+    })
+  }
+
+  if (transaction['tx-type'] === TransactionType.pay && transaction['payment-transaction']) {
+    const pay = transaction['payment-transaction']
+    balanceChanges.push(
+      {
+        address: transaction.sender,
+        amount: -1n * getSafeBigInt(pay.amount),
+        roles: [BalanceChangeRole.Sender],
+        assetId: 0,
+      },
+      {
+        address: pay.receiver,
+        amount: getSafeBigInt(pay.amount),
+        roles: [BalanceChangeRole.Receiver],
+        assetId: 0,
+      },
+      ...(pay['close-amount']
+        ? [
+            {
+              address: pay['close-remainder-to']!,
+              amount: getSafeBigInt(pay['close-amount']),
+              roles: [BalanceChangeRole.CloseTo],
+              assetId: 0,
+            },
+            {
+              address: transaction.sender,
+              amount: -1n * getSafeBigInt(pay['close-amount']),
+              roles: [BalanceChangeRole.Sender],
+              assetId: 0,
+            },
+          ]
+        : []),
+    )
+  }
+
+  if (transaction['tx-type'] === TransactionType.axfer && transaction['asset-transfer-transaction']) {
+    const axfer = transaction['asset-transfer-transaction']
+    balanceChanges.push(
+      {
+        address: axfer.sender ?? transaction.sender,
+        assetId: axfer['asset-id'],
+        amount: -1n * getSafeBigInt(axfer.amount),
+        roles: [BalanceChangeRole.Sender],
+      },
+      {
+        address: axfer.receiver,
+        assetId: axfer['asset-id'],
+        amount: getSafeBigInt(axfer.amount),
+        roles: [BalanceChangeRole.Receiver],
+      },
+      ...(axfer['close-amount'] && axfer['close-to']
+        ? [
+            {
+              address: axfer['close-to'],
+              assetId: axfer['asset-id'],
+              amount: getSafeBigInt(axfer['close-amount']),
+              roles: [BalanceChangeRole.CloseTo],
+            },
+            {
+              address: axfer.sender ?? transaction.sender,
+              assetId: axfer['asset-id'],
+              amount: -1n * getSafeBigInt(axfer['close-amount']),
+              roles: [BalanceChangeRole.Sender],
+            },
+          ]
+        : []),
+    )
+  }
+
+  return balanceChanges.reduce((changes, change) => {
+    const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
+    if (existing) {
+      existing.amount += change.amount
+      if (!existing.roles.includes(change.roles[0])) {
+        existing.roles.push(...change.roles)
+      }
+    } else {
+      changes.push(change)
+    }
+    return changes
+  }, [] as BalanceChange[])
 }
