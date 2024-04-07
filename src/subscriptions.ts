@@ -3,6 +3,7 @@ import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/
 
 import algosdk from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
+import { Buffer } from 'buffer'
 import sha512, { sha512_256 } from 'js-sha512'
 import { getBlocksBulk } from './block'
 import {
