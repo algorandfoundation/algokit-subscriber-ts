@@ -18,6 +18,7 @@ import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './
 import type { TransactionInBlock } from './types/block'
 import {
   BlockMetadata,
+  SubscriptionPollMetadata,
   type BalanceChange,
   type NamedTransactionFilter,
   type SubscribedTransaction,
@@ -48,25 +49,12 @@ const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: Subscribe
 }
 
 /**
- * Executes a single pull/poll to subscribe to transactions on the configured Algorand
- * blockchain for the given subscription context.
- * @param subscription The subscription context.
- * @param algod An Algod client.
- * @param indexer An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`.
- * @returns The result of this subscription pull/poll.
+ * Returns a flat list of arc-28 event definitions ready for processing.
+ * @param arc28Events The definition of ARC-28 event groups
+ * @returns The individual event definitions
  */
-export async function getSubscribedTransactions(
-  subscription: TransactionSubscriptionParams,
-  algod: Algodv2,
-  indexer?: Indexer,
-): Promise<TransactionSubscriptionResult> {
-  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
-  const maxRoundsToSync = _maxRoundsToSync ?? 500
-  const currentRound = (await algod.status().do())['last-round'] as number
-  let blockMetadata: BlockMetadata[] | undefined
-
-  // Pre-calculate a flat list of all ARC-28 events to process
-  const arc28Events = (subscription.arc28Events ?? []).flatMap((g) =>
+export function getArc28EventsToProcess(arc28Events: Arc28EventGroup[]) {
+  return (arc28Events ?? []).flatMap((g) =>
     g.events.map((e) => {
       // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#sample-interpretation-of-event-log-data
       const eventSignature = `${e.name}(${e.args.map((a) => a.type).join(',')})`
@@ -82,14 +70,30 @@ export async function getSubscribedTransactions(
       } satisfies Arc28EventToProcess
     }),
   )
+}
+
+/**
+ * Creates the metadata needed to perform a single subscription poll.
+ * @param subscription The subscription configuration
+ * @param algod An algod instance
+ * @returns The metadata for the poll
+ */
+export async function prepareSubscriptionPoll(
+  subscription: TransactionSubscriptionParams,
+  algod: Algodv2,
+): Promise<SubscriptionPollMetadata> {
+  const { watermark, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
+  const maxRoundsToSync = _maxRoundsToSync ?? 500
+  const currentRound = (await algod.status().do())['last-round'] as number
+  let blockMetadata: BlockMetadata[] | undefined
 
   // Nothing to sync we at the tip of the chain already
   if (currentRound <= watermark) {
     return {
       currentRound: currentRound,
       newWatermark: watermark,
-      subscribedTransactions: [],
       syncedRoundRange: [currentRound, currentRound],
+      arc28EventGroups: subscription.arc28Events ?? [],
     }
   }
 
@@ -97,8 +101,6 @@ export async function getSubscribedTransactions(
   let algodSyncFromRoundNumber = watermark + 1
   let startRound = algodSyncFromRoundNumber
   let endRound = currentRound
-  let catchupTransactions: SubscribedTransaction[] = []
-  let start = +new Date()
   let skipAlgodSync = false
 
   // If we are less than `maxRoundsToSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
@@ -124,10 +126,6 @@ export async function getSubscribedTransactions(
         }
         break
       case 'catchup-with-indexer':
-        if (!indexer) {
-          throw new Error("Can't catch up using indexer since it's not provided")
-        }
-
         // If we have more than `maxIndexerRoundsToSync` rounds to sync from indexer then we skip algod sync and just sync that many rounds from indexer
         indexerSyncToRoundNumber = currentRound - maxRoundsToSync
         if (subscription.maxIndexerRoundsToSync && indexerSyncToRoundNumber - startRound + 1 > subscription.maxIndexerRoundsToSync) {
@@ -138,43 +136,6 @@ export async function getSubscribedTransactions(
           algodSyncFromRoundNumber = indexerSyncToRoundNumber + 1
         }
 
-        algokit.Config.logger.debug(
-          `Catching up from round ${startRound} to round ${indexerSyncToRoundNumber} via indexer; this may take a few seconds`,
-        )
-
-        // Retrieve and process transactions from indexer in groups of 30 so we don't get rate limited
-        for (const chunkedFilters of chunkArray(filters, 30)) {
-          catchupTransactions = catchupTransactions.concat(
-            (
-              await Promise.all(
-                // For each filter
-                chunkedFilters.map(async (f) =>
-                  // Retrieve all pre-filtered transactions from the indexer
-                  (await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
-                    // Re-run the pre-filter in-memory so we properly extract inner transactions
-                    .flatMap((t) => getFilteredIndexerTransactions(t, f))
-                    // Run the post-filter so we get the final list of matching transactions
-                    .filter(indexerPostFilter(f.filter, arc28Events, subscription.arc28Events ?? [])),
-                ),
-              )
-            )
-              // Collapse the filtered transactions into a single array
-              .flat(),
-          )
-        }
-
-        catchupTransactions = catchupTransactions
-          // Sort by transaction order
-          .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!)
-          // Collapse duplicate transactions
-          .reduce(deduplicateSubscribedTransactionsReducer, [] as SubscribedTransaction[])
-
-        algokit.Config.logger.debug(
-          `Retrieved ${catchupTransactions.length} transactions from round ${startRound} to round ${
-            algodSyncFromRoundNumber - 1
-          } via indexer in ${(+new Date() - start) / 1000}s`,
-        )
-
         break
       default:
         throw new Error('Not implemented')
@@ -182,19 +143,11 @@ export async function getSubscribedTransactions(
   }
 
   // Retrieve and process blocks from algod
-  let algodTransactions: SubscribedTransaction[] = []
+  let blockTransactions: TransactionInBlock[] | undefined = undefined
   if (!skipAlgodSync) {
-    start = +new Date()
+    const start = +new Date()
     const blocks = await getBlocksBulk({ startRound: algodSyncFromRoundNumber, maxRound: endRound }, algod)
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
-    algodTransactions = filters
-      .flatMap((f) =>
-        blockTransactions
-          .filter((t) => transactionFilter(f.filter, arc28Events, subscription.arc28Events ?? [])(t!))
-          .map((t) => getIndexerTransactionFromAlgodTransaction(t, f.name)),
-      )
-      .reduce(deduplicateSubscribedTransactionsReducer, [])
-
+    blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
     blockMetadata = blocks.map((b) => blockDataToBlockMetadata(b))
 
     algokit.Config.logger.debug(
@@ -202,20 +155,155 @@ export async function getSubscribedTransactions(
         (+new Date() - start) / 1000
       }s`,
     )
-  } else {
-    algokit.Config.logger.debug(
-      `Skipping algod sync since we have more than ${subscription.maxIndexerRoundsToSync} rounds to sync from indexer.`,
-    )
   }
 
   return {
+    algodSyncRange: !skipAlgodSync ? [algodSyncFromRoundNumber, endRound] : undefined,
+    indexerSyncRange: indexerSyncToRoundNumber ? [startRound, indexerSyncToRoundNumber] : undefined,
     syncedRoundRange: [startRound, endRound],
     newWatermark: endRound,
     currentRound,
     blockMetadata,
+    blockTransactions,
+    arc28EventGroups: subscription.arc28Events ?? [],
+  }
+}
+
+/**
+ * Run indexer catchup for the given filters and poll metadata
+ * @param filters The filters to apply
+ * @param pollMetadata The metadata for the poll
+ * @param indexer The indexer instance
+ * @returns The set of caught up, filtered transactions
+ */
+export async function getIndexerCatchupTransactions(
+  filters: NamedTransactionFilter[],
+  pollMetadata: SubscriptionPollMetadata,
+  arc28EventsToProcess: Arc28EventToProcess[],
+  indexer?: Indexer,
+): Promise<SubscribedTransaction[]> {
+  const { indexerSyncRange, arc28EventGroups } = pollMetadata
+
+  if (!indexerSyncRange) {
+    return []
+  } else if (!indexer) {
+    throw new Error("Can't catch up using indexer since it's not provided")
+  }
+
+  const [startRound, endRound] = indexerSyncRange
+  const start = +new Date()
+
+  let catchupTransactions: SubscribedTransaction[] = []
+
+  const filtersToRetrieve = filters.flatMap((f) =>
+    Array.isArray(f.filter.assetId)
+      ? f.filter.assetId.map((id) => ({ name: f.name, filter: { ...f.filter, assetId: id } }))
+      : Array.isArray(f.filter.appId)
+        ? f.filter.appId.map((id) => ({ name: f.name, filter: { ...f.filter, appId: id } }))
+        : [f],
+  )
+
+  algokit.Config.logger.debug(
+    `Catching up from round ${startRound} to round ${endRound} via indexer${filtersToRetrieve.length > 10 ? ` for ${filtersToRetrieve.length} paginated searches, 10 at a time` : ''}; this may take a few seconds`,
+  )
+
+  // Retrieve and process transactions from indexer in groups of 10 so we don't get rate limited
+  for (const chunkedFilters of chunkArray(filtersToRetrieve, 10)) {
+    catchupTransactions = catchupTransactions.concat(
+      (
+        await Promise.all(
+          // For each filter
+          chunkedFilters.map(async (f) =>
+            // Retrieve all pre-filtered transactions from the indexer
+            (await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, endRound))).transactions
+              // Re-run the pre-filter in-memory so we properly extract inner transactions
+              .flatMap((t) => getFilteredIndexerTransactions(t, f))
+              // Run the post-filter so we get the final list of matching transactions
+              .filter(indexerPostFilter(f.filter, arc28EventsToProcess, arc28EventGroups ?? [])),
+          ),
+        )
+      )
+        // Collapse the filtered transactions into a single array
+        .flat(),
+    )
+  }
+
+  catchupTransactions = catchupTransactions
+    // Sort by transaction order
+    .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!)
+    // Collapse duplicate transactions
+    .reduce(deduplicateSubscribedTransactionsReducer, [] as SubscribedTransaction[])
+
+  algokit.Config.logger.debug(
+    `Retrieved ${catchupTransactions.length} transactions from round ${startRound} to round ${endRound} via indexer in ${(+new Date() - start) / 1000}s`,
+  )
+  return catchupTransactions
+}
+
+/**
+ * Run indexer catchup for the given filters and poll metadata
+ * @param filters The filters to apply
+ * @param pollMetadata The metadata for the poll
+ * @param indexer The indexer instance
+ * @returns The set of caught up, filtered transactions
+ */
+export async function getAlgodSubscribedTransactions(
+  filters: NamedTransactionFilter[],
+  pollMetadata: SubscriptionPollMetadata,
+  arc28EventsToProcess: Arc28EventToProcess[],
+): Promise<SubscribedTransaction[]> {
+  const { algodSyncRange, arc28EventGroups, blockTransactions } = pollMetadata
+
+  if (!algodSyncRange) {
+    return []
+  } else if (blockTransactions === undefined) {
+    throw new Error("Can't catch up using algod since no block transactions were provided")
+  }
+
+  const [startRound, endRound] = algodSyncRange
+  const start = +new Date()
+
+  const algodTransactions = filters
+    .flatMap((f) =>
+      blockTransactions
+        .filter((t) => transactionFilter(f.filter, arc28EventsToProcess, arc28EventGroups)(t!))
+        .map((t) => getIndexerTransactionFromAlgodTransaction(t, f.name)),
+    )
+    .reduce(deduplicateSubscribedTransactionsReducer, [])
+
+  algokit.Config.logger.debug(
+    `Processed ${blockTransactions.length} algod transactions for round(s) ${startRound}-${endRound} in ${(+new Date() - start) / 1000}s`,
+  )
+
+  return algodTransactions
+}
+
+/**
+ * Executes a single pull/poll to subscribe to transactions on the configured Algorand
+ * blockchain for the given subscription context.
+ * @param subscription The subscription context.
+ * @param algod An Algod client.
+ * @param indexer An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`.
+ * @returns The result of this subscription pull/poll.
+ */
+export async function getSubscribedTransactions(
+  subscription: TransactionSubscriptionParams,
+  algod: Algodv2,
+  indexer?: Indexer,
+): Promise<TransactionSubscriptionResult> {
+  const pollMetadata = await prepareSubscriptionPoll(subscription, algod)
+  const arc28EventsToProcess = getArc28EventsToProcess(subscription.arc28Events ?? [])
+  const catchupTransactions = await getIndexerCatchupTransactions(subscription.filters, pollMetadata, arc28EventsToProcess, indexer)
+  const algodTransactions = await getAlgodSubscribedTransactions(subscription.filters, pollMetadata, arc28EventsToProcess)
+
+  return {
+    syncedRoundRange: pollMetadata.syncedRoundRange,
+    newWatermark: pollMetadata.newWatermark,
+    currentRound: pollMetadata.currentRound,
+    blockMetadata: pollMetadata.blockMetadata,
     subscribedTransactions: catchupTransactions
       .concat(algodTransactions)
-      .map((t) => processExtraFields(t, arc28Events, subscription.arc28Events ?? [])),
+      .map((t) => processExtraSubscriptionTransactionFields(t, arc28EventsToProcess, subscription.arc28Events ?? [])),
   }
 }
 
@@ -227,7 +315,7 @@ function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: number, t
   )
 }
 
-function processExtraFields(
+export function processExtraSubscriptionTransactionFields(
   transaction: TransactionResult | SubscribedTransaction,
   arc28Events: Arc28EventToProcess[],
   arc28Groups: Arc28EventGroup[],
@@ -253,7 +341,7 @@ function processExtraFields(
     ),
     balanceChanges: extractBalanceChangesFromIndexerTransaction(transaction),
     'inner-txns': transaction['inner-txns']
-      ? transaction['inner-txns'].map((inner) => processExtraFields(inner, arc28Events, arc28Groups))
+      ? transaction['inner-txns'].map((inner) => processExtraSubscriptionTransactionFields(inner, arc28Events, arc28Groups))
       : undefined,
   }
 }

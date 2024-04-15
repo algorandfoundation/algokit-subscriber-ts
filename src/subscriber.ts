@@ -4,7 +4,7 @@ import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
 import type {
   AlgorandSubscriberConfig,
-  BeforePollMetadata,
+  BeforeSubscriptionPollMetadata,
   SubscribedTransaction,
   TransactionSubscriptionResult,
   TypedAsyncEventListener,
@@ -17,14 +17,14 @@ import Indexer = algosdk.Indexer
  * Handles the logic for subscribing to the Algorand blockchain and emitting events.
  */
 export class AlgorandSubscriber {
-  private algod: Algodv2
-  private indexer: Indexer | undefined
-  private config: AlgorandSubscriberConfig
-  private abortController: AbortController
-  private eventEmitter: AsyncEventEmitter
-  private started: boolean = false
-  private startPromise: Promise<void> | undefined
-  private filterNames: string[]
+  protected algod: Algodv2
+  protected indexer: Indexer | undefined
+  protected config: AlgorandSubscriberConfig
+  protected abortController: AbortController
+  protected eventEmitter: AsyncEventEmitter
+  protected started: boolean = false
+  protected startPromise: Promise<void> | undefined
+  protected filterNames: string[]
 
   /**
    * Create a new `AlgorandSubscriber`.
@@ -51,31 +51,20 @@ export class AlgorandSubscriber {
     }
   }
 
-  /**
-   * Execute a single subscription poll.
-   *
-   * This is useful when executing in the context of a process
-   * triggered by a recurring schedule / cron.
-   * @returns The poll result
-   */
-  async pollOnce(): Promise<TransactionSubscriptionResult> {
-    const watermark = await this.config.watermarkPersistence.get()
-
-    const currentRound = (await this.algod.status().do())['last-round'] as number
-    await this.eventEmitter.emitAsync('before:poll', {
-      watermark,
-      currentRound,
-    } satisfies BeforePollMetadata)
-
-    const pollResult = await getSubscribedTransactions(
+  /** Perform a single subscribe for a given watermark and subscription config */
+  protected async _pollSubscribe(watermark: number, config: AlgorandSubscriberConfig): Promise<TransactionSubscriptionResult> {
+    return await getSubscribedTransactions(
       {
         watermark,
-        ...this.config,
+        ...config,
       },
       this.algod,
       this.indexer,
     )
+  }
 
+  /** Process the filters and event emittance for the result of a single poll */
+  protected async _processFilters(pollResult: TransactionSubscriptionResult) {
     try {
       for (const filterName of this.filterNames) {
         const mapper = this.config.filters.find((f) => f.name === filterName)?.mapper
@@ -91,6 +80,34 @@ export class AlgorandSubscriber {
       algokit.Config.logger.error(`Error processing event emittance`, e)
       throw e
     }
+  }
+
+  /** Perform a single poll for the given watermark */
+  protected async _pollOnce(watermark: number): Promise<TransactionSubscriptionResult> {
+    const pollResult = await this._pollSubscribe(watermark, this.config)
+    await this._processFilters(pollResult)
+
+    return pollResult
+  }
+
+  /**
+   * Execute a single subscription poll.
+   *
+   * This is useful when executing in the context of a process
+   * triggered by a recurring schedule / cron.
+   * @returns The poll result
+   */
+  async pollOnce(): Promise<TransactionSubscriptionResult> {
+    const watermark = await this.config.watermarkPersistence.get()
+
+    const currentRound = (await this.algod.status().do())['last-round'] as number
+    await this.eventEmitter.emitAsync('before:poll', {
+      watermark,
+      currentRound,
+    } satisfies BeforeSubscriptionPollMetadata)
+
+    const pollResult = await this._pollOnce(watermark)
+
     await this.config.watermarkPersistence.set(pollResult.newWatermark)
     return pollResult
   }
@@ -217,7 +234,7 @@ export class AlgorandSubscriber {
    * @param listener The listener function to invoke with the pre-poll metadata
    * @returns The subscriber so `on*` calls can be chained
    */
-  onBeforePoll(listener: TypedAsyncEventListener<BeforePollMetadata>) {
+  onBeforePoll(listener: TypedAsyncEventListener<BeforeSubscriptionPollMetadata>) {
     this.eventEmitter.on('before:poll', listener as AsyncEventListener)
     return this
   }
