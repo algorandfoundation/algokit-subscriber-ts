@@ -274,6 +274,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       : transaction.txID()
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
+
     return {
       id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : txId,
       parentTransactionId,
@@ -320,7 +321,7 @@ export function getIndexerTransactionFromAlgodTransaction(
         transaction.type === TransactionType.axfer
           ? {
               'asset-id': transaction.assetIndex,
-              amount: transaction.amount,
+              amount: transaction.amount ?? 0, // The amount can be undefined
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
               sender: transaction.assetRevocationTarget ? algosdk.encodeAddress(transaction.assetRevocationTarget.publicKey) : undefined,
               'close-amount': assetCloseAmount,
@@ -364,7 +365,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       'payment-transaction':
         transaction.type === TransactionType.pay
           ? {
-              amount: Number(transaction.amount),
+              amount: Number(transaction.amount ?? 0), // The amount can be undefined
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
               'close-amount': closeAmount,
               'close-remainder-to': transaction.closeRemainderTo
