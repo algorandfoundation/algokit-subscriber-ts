@@ -351,8 +351,8 @@ describe('AlgorandSubscriber', () => {
       `batch:account2:${txIds2[0]}:${txIds2[1]}`,
       `account2:${txIds2[0]}`,
       `account2:${txIds2[1]}`,
-      `inspect:${expectedBatchResult}`,
       `poll:${expectedBatchResult}`,
+      `inspect:${expectedBatchResult}`,
     ])
     await subscriber.stop('TEST')
   })

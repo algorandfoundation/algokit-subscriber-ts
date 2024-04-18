@@ -87,6 +87,7 @@ export class AlgorandSubscriber {
           await this.eventEmitter.emitAsync(filterName, transaction)
         }
       }
+      await this.eventEmitter.emitAsync('poll', pollResult)
     } catch (e) {
       algokit.Config.logger.error(`Error processing event emittance`, e)
       throw e
@@ -118,7 +119,6 @@ export class AlgorandSubscriber {
           subscribedTransactionsLength: result.subscribedTransactions.length,
         })
         inspect?.(result)
-        await this.eventEmitter.emitAsync('poll', result)
         // eslint-disable-next-line no-console
         if (result.currentRound > result.newWatermark || !this.config.waitForBlockWhenAtTip) {
           algokit.Config.getLogger(suppressLog).info(
