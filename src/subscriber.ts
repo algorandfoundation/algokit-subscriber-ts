@@ -61,11 +61,13 @@ export class AlgorandSubscriber {
   async pollOnce(): Promise<TransactionSubscriptionResult> {
     const watermark = await this.config.watermarkPersistence.get()
 
-    const currentRound = (await this.algod.status().do())['last-round'] as number
-    await this.eventEmitter.emitAsync('before:poll', {
-      watermark,
-      currentRound,
-    } satisfies BeforePollMetadata)
+    await this.eventEmitter.emitAsync('before:poll', async () => {
+      const currentRound = (await this.algod.status().do())['last-round'] as number
+      return {
+        watermark,
+        currentRound,
+      } satisfies BeforePollMetadata
+    })
 
     const pollResult = await getSubscribedTransactions(
       {

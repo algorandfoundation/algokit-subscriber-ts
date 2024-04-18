@@ -82,7 +82,7 @@ Alias for `removeListener`.
 
 #### Defined in
 
-[types/async-event-emitter.ts:82](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L82)
+[types/async-event-emitter.ts:85](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L85)
 
 ## Methods
 
@@ -131,7 +131,7 @@ The `AsyncEventEmitter` so you can chain registrations
 
 #### Defined in
 
-[types/async-event-emitter.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L33)
+[types/async-event-emitter.ts:36](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L36)
 
 ___
 
@@ -156,7 +156,7 @@ The `AsyncEventEmitter` so you can chain registrations
 
 #### Defined in
 
-[types/async-event-emitter.ts:45](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L45)
+[types/async-event-emitter.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L48)
 
 ___
 
@@ -181,4 +181,4 @@ The `AsyncEventEmitter` so you can chain registrations
 
 #### Defined in
 
-[types/async-event-emitter.ts:63](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L63)
+[types/async-event-emitter.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L66)

@@ -18,7 +18,7 @@
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
-  "include": ["examples/**/*.ts", "src/**/*.ts", "tests/**/*.ts", "rollup/**/*.ts", "rollup.config.ts"],
+  "include": ["examples/**/*.ts", "src/**/*.ts", "tests/**/*.ts", "rollup/**/*.ts", "rollup.config.ts"]
 }

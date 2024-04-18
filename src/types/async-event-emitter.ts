@@ -18,9 +18,12 @@ export class AsyncEventEmitter {
    * @param eventName The name of the event
    * @param event The event payload
    */
-  async emitAsync(eventName: string | symbol, event: unknown): Promise<void> {
-    for (const listener of this.listenerMap[eventName] ?? []) {
-      await listener(event, eventName)
+  async emitAsync(eventName: string | symbol, event: unknown | (() => Promise<unknown>)): Promise<void> {
+    if (this.listenerMap[eventName] && this.listenerMap[eventName].length > 0) {
+      const emittedEvent = typeof event === 'function' ? await event() : event
+      for (const listener of this.listenerMap[eventName]) {
+        await listener(emittedEvent, eventName)
+      }
     }
   }
 

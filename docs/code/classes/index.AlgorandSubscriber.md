@@ -181,7 +181,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:176](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L176)
+[subscriber.ts:178](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L178)
 
 ___
 
@@ -231,7 +231,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L202)
+[subscriber.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L204)
 
 ___
 
@@ -265,7 +265,7 @@ subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
 
 #### Defined in
 
-[subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
+[subscriber.ts:222](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L222)
 
 ___
 
@@ -302,7 +302,7 @@ subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTrans
 
 #### Defined in
 
-[subscriber.ts:241](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L241)
+[subscriber.ts:243](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L243)
 
 ___
 
@@ -350,7 +350,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L105)
+[subscriber.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L107)
 
 ___
 
@@ -374,4 +374,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L149)
+[subscriber.ts:151](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L151)
