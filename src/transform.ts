@@ -458,7 +458,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       'genesis-hash': Buffer.from(transaction.genesisHash).toString('base64'),
       'genesis-id': transaction.genesisID,
       group: transaction.group ? Buffer.from(transaction.group).toString('base64') : undefined,
-      note: transaction.note ? Buffer.from(transaction.note).toString('utf-8') : undefined,
+      note: transaction.note ? Buffer.from(transaction.note).toString('base64') : undefined,
       lease: transaction.lease ? Buffer.from(transaction.lease).toString('base64') : undefined,
       'rekey-to': transaction.reKeyTo ? algosdk.encodeAddress(transaction.reKeyTo.publicKey) : undefined,
       'closing-amount': closeAmount,
