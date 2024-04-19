@@ -350,7 +350,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L105)
+[subscriber.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L106)
 
 ___
 
