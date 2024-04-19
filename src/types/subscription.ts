@@ -242,6 +242,12 @@ export interface TransactionSubscriptionParams extends CoreTransactionSubscripti
    * will be slow if `onMaxRounds` is `sync-oldest`.
    **/
   watermark: number
+
+  /** The round to sync transactions to.
+   *
+   * If not specified, then transactions will be syned to the current round.
+   */
+  syncTo?: number
 }
 
 /** Configuration for an `AlgorandSubscriber`. */

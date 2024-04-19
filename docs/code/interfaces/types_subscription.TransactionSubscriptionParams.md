@@ -21,6 +21,7 @@ Parameters to control a single subscription pull/poll.
 - [maxIndexerRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxindexerroundstosync)
 - [maxRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxroundstosync)
 - [syncBehaviour](types_subscription.TransactionSubscriptionParams.md#syncbehaviour)
+- [syncTo](types_subscription.TransactionSubscriptionParams.md#syncto)
 - [watermark](types_subscription.TransactionSubscriptionParams.md#watermark)
 
 ## Properties
@@ -149,6 +150,20 @@ past `watermark` then how should that be handled:
 #### Defined in
 
 [types/subscription.ts:165](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L165)
+
+___
+
+### syncTo
+
+• `Optional` **syncTo**: `number`
+
+The round to sync transactions to.
+
+If not specified, then transactions will be syned to the current round.
+
+#### Defined in
+
+[types/subscription.ts:250](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L250)
 
 ___
 

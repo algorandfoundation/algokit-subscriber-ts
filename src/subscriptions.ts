@@ -60,9 +60,10 @@ export async function getSubscribedTransactions(
   algod: Algodv2,
   indexer?: Indexer,
 ): Promise<TransactionSubscriptionResult> {
-  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
+  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds, syncTo } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
-  const currentRound = (await algod.status().do())['last-round'] as number
+
+  const syncToRound = syncTo ?? ((await algod.status().do())['last-round'] as number)
   let blockMetadata: BlockMetadata[] | undefined
 
   // Pre-calculate a flat list of all ARC-28 events to process
@@ -84,30 +85,30 @@ export async function getSubscribedTransactions(
   )
 
   // Nothing to sync we at the tip of the chain already
-  if (currentRound <= watermark) {
+  if (syncToRound <= watermark) {
     return {
-      currentRound: currentRound,
+      currentRound: syncToRound,
       newWatermark: watermark,
       subscribedTransactions: [],
-      syncedRoundRange: [currentRound, currentRound],
+      syncedRoundRange: [syncToRound, syncToRound],
     }
   }
 
   let indexerSyncToRoundNumber = 0
   let algodSyncFromRoundNumber = watermark + 1
   let startRound = algodSyncFromRoundNumber
-  let endRound = currentRound
+  let endRound = syncToRound
   let catchupTransactions: SubscribedTransaction[] = []
   let start = +new Date()
   let skipAlgodSync = false
 
   // If we are less than `maxRoundsToSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
-  if (currentRound - watermark > maxRoundsToSync) {
+  if (syncToRound - watermark > maxRoundsToSync) {
     switch (onMaxRounds) {
       case 'fail':
-        throw new Error(`Invalid round number to subscribe from ${algodSyncFromRoundNumber}; current round number is ${currentRound}`)
+        throw new Error(`Invalid round number to subscribe from ${algodSyncFromRoundNumber}; current round number is ${syncToRound}`)
       case 'skip-sync-newest':
-        algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
+        algodSyncFromRoundNumber = syncToRound - maxRoundsToSync + 1
         startRound = algodSyncFromRoundNumber
         break
       case 'sync-oldest':
@@ -116,7 +117,7 @@ export async function getSubscribedTransactions(
       case 'sync-oldest-start-now':
         // When watermark is 0 same behaviour as skip-sync-newest
         if (watermark === 0) {
-          algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
+          algodSyncFromRoundNumber = syncToRound - maxRoundsToSync + 1
           startRound = algodSyncFromRoundNumber
         } else {
           // Otherwise same behaviour as sync-oldest
@@ -129,7 +130,7 @@ export async function getSubscribedTransactions(
         }
 
         // If we have more than `maxIndexerRoundsToSync` rounds to sync from indexer then we skip algod sync and just sync that many rounds from indexer
-        indexerSyncToRoundNumber = currentRound - maxRoundsToSync
+        indexerSyncToRoundNumber = syncToRound - maxRoundsToSync
         if (subscription.maxIndexerRoundsToSync && indexerSyncToRoundNumber - startRound + 1 > subscription.maxIndexerRoundsToSync) {
           indexerSyncToRoundNumber = startRound + subscription.maxIndexerRoundsToSync - 1
           endRound = indexerSyncToRoundNumber
@@ -211,7 +212,7 @@ export async function getSubscribedTransactions(
   return {
     syncedRoundRange: [startRound, endRound],
     newWatermark: endRound,
-    currentRound,
+    currentRound: syncToRound,
     blockMetadata,
     subscribedTransactions: catchupTransactions
       .concat(algodTransactions)

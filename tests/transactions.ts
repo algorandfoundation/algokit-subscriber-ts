@@ -1,7 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
-import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {
   Arc28EventGroup,
@@ -50,21 +49,6 @@ export const GetSubscribedTransactions = (
 ) => {
   const { roundsToSync, indexerRoundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
 
-  if (currentRound !== undefined) {
-    const existingStatus = algod.status
-    Object.assign(algod, {
-      status: vi.fn().mockImplementation(() => {
-        return {
-          do: async () => {
-            const status = await existingStatus.apply(algod).do()
-            status['last-round'] = currentRound
-            return status
-          },
-        }
-      }),
-    })
-  }
-
   return getSubscribedTransactions(
     {
       filters: Array.isArray(filters) ? filters : [{ name: 'default', filter: filters }],
@@ -72,6 +56,7 @@ export const GetSubscribedTransactions = (
       maxIndexerRoundsToSync: indexerRoundsToSync,
       syncBehaviour: syncBehaviour,
       watermark: watermark ?? 0,
+      syncTo: currentRound,
       arc28Events,
     },
     algod,

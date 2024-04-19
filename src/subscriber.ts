@@ -70,6 +70,7 @@ export class AlgorandSubscriber {
     const pollResult = await getSubscribedTransactions(
       {
         watermark,
+        syncTo: currentRound,
         ...this.config,
       },
       this.algod,
