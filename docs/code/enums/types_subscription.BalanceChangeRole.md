@@ -18,7 +18,7 @@ The role that an account was playing for a given balance change.
 
 ### CloseTo
 
-• **CloseTo** = ``"CloseTo"``
+• **CloseTo** = `"CloseTo"`
 
 Account was having an asset amount closed to it
 
@@ -26,11 +26,11 @@ Account was having an asset amount closed to it
 
 [types/subscription.ts:91](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L91)
 
-___
+---
 
 ### Receiver
 
-• **Receiver** = ``"Receiver"``
+• **Receiver** = `"Receiver"`
 
 Account was receiving a transaction
 
@@ -38,11 +38,11 @@ Account was receiving a transaction
 
 [types/subscription.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L89)
 
-___
+---
 
 ### Sender
 
-• **Sender** = ``"Sender"``
+• **Sender** = `"Sender"`
 
 Account was sending a transaction (sending asset and/or spending fee if asset `0`)
 

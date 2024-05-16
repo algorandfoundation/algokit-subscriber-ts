@@ -60,8 +60,8 @@ export class AlgorandSubscriber {
    */
   async pollOnce(): Promise<TransactionSubscriptionResult> {
     const watermark = await this.config.watermarkPersistence.get()
+    const currentRound = this.config.syncToRound ?? ((await this.algod.status().do())['last-round'] as number)
 
-    const currentRound = (await this.algod.status().do())['last-round'] as number
     await this.eventEmitter.emitAsync('before:poll', {
       watermark,
       currentRound,
@@ -70,7 +70,7 @@ export class AlgorandSubscriber {
     const pollResult = await getSubscribedTransactions(
       {
         watermark,
-        syncTo: currentRound,
+        syncToRound: currentRound,
         ...this.config,
       },
       this.algod,
@@ -121,6 +121,7 @@ export class AlgorandSubscriber {
         })
         inspect?.(result)
         // eslint-disable-next-line no-console
+        console.log(`${result.currentRound} > result.newWatermark`)
         if (result.currentRound > result.newWatermark || !this.config.waitForBlockWhenAtTip) {
           algokit.Config.getLogger(suppressLog).info(
             `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.config.frequencyInSeconds ?? 1}s`,

@@ -32,7 +32,7 @@ Full count of transactions and inner transactions (recursively) in this block.
 
 [types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
 
-___
+---
 
 ### genesisHash
 
@@ -44,7 +44,7 @@ The base64 genesis hash of the chain.
 
 [types/subscription.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L40)
 
-___
+---
 
 ### genesisId
 
@@ -56,7 +56,7 @@ The genesis ID of the chain.
 
 [types/subscription.ts:38](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L38)
 
-___
+---
 
 ### hash
 
@@ -66,7 +66,7 @@ ___
 
 [types/subscription.ts:32](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L32)
 
-___
+---
 
 ### parentTransactionCount
 
@@ -78,7 +78,7 @@ Count of parent transactions in this block
 
 [types/subscription.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L46)
 
-___
+---
 
 ### previousBlockHash
 
@@ -90,7 +90,7 @@ The previous block hash.
 
 [types/subscription.ts:42](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L42)
 
-___
+---
 
 ### round
 
@@ -102,7 +102,7 @@ The round of the block.
 
 [types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
 
-___
+---
 
 ### seed
 
@@ -114,7 +114,7 @@ The base64 seed of the block.
 
 [types/subscription.ts:44](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L44)
 
-___
+---
 
 ### timestamp
 

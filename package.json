@@ -24,7 +24,8 @@
     "watch-dhm": "cross-env RUN_LOOP=true npm run dhm",
     "xgov": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/xgov-voting/index.ts",
     "watch-xgov": "cross-env RUN_LOOP=true npm run xgov",
-    "usdc": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/usdc/index.ts"
+    "usdc": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/usdc/index.ts",
+    "bug": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/bug/index.ts"
   },
   "author": "Algorand Foundation",
   "license": "MIT",

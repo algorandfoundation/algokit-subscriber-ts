@@ -56,7 +56,7 @@ export const GetSubscribedTransactions = (
       maxIndexerRoundsToSync: indexerRoundsToSync,
       syncBehaviour: syncBehaviour,
       watermark: watermark ?? 0,
-      syncTo: currentRound,
+      syncToRound: currentRound,
       arc28Events,
     },
     algod,

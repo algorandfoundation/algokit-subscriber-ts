@@ -163,6 +163,12 @@ export interface CoreTransactionSubscriptionParams {
    *  * `fail`: Throw an error.
    **/
   syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
+
+  /** The round to sync to.
+   *
+   * Defaults to the current round.
+   */
+  syncToRound?: number
 }
 
 /** Specify a named filter to apply to find transactions of interest. */
@@ -242,12 +248,6 @@ export interface TransactionSubscriptionParams extends CoreTransactionSubscripti
    * will be slow if `onMaxRounds` is `sync-oldest`.
    **/
   watermark: number
-
-  /** The round to sync transactions to.
-   *
-   * If not specified, then transactions will be syned to the current round.
-   */
-  syncTo?: number
 }
 
 /** Configuration for an `AlgorandSubscriber`. */
