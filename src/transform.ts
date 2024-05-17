@@ -654,6 +654,16 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     )
   }
 
+  if (transaction.txn.type === TransactionType.acfg && !transaction.txn.caid && transaction.caid) {
+    // Handle balance changes related to the creation of an asset.
+    balanceChanges.push({
+      address: algosdk.encodeAddress(transaction.txn.snd),
+      assetId: transaction.caid,
+      amount: BigInt(transaction.txn.apar?.t ?? 0),
+      roles: [BalanceChangeRole.Receiver],
+    })
+  }
+
   return balanceChanges.reduce((changes, change) => {
     const existing = changes.find((c) => c.address === change.address && c.assetId === change.assetId)
     if (existing) {
@@ -755,6 +765,22 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Transac
           ]
         : []),
     )
+  }
+
+  if (
+    transaction['tx-type'] === TransactionType.acfg &&
+    transaction['asset-config-transaction'] &&
+    !transaction['asset-config-transaction']['asset-id'] &&
+    transaction['created-asset-index']
+  ) {
+    // Handle balance changes related to the creation of an asset.
+    const acfg = transaction['asset-config-transaction']
+    balanceChanges.push({
+      address: transaction.sender,
+      assetId: transaction['created-asset-index'],
+      amount: BigInt(acfg.params?.total ?? 0),
+      roles: [BalanceChangeRole.Receiver],
+    })
   }
 
   return balanceChanges.reduce((changes, change) => {

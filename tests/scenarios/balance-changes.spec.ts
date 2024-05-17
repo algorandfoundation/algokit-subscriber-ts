@@ -65,7 +65,8 @@ describe('Subscribing to calls that effect balance changes', () => {
     })
   }
 
-  test('Works for non transfer', async () => {
+  test('Works for asset create transactions', async () => {
+    // Assets are always minted into the creator/sender account, even if a reserve address is supplied
     const { testAccount, algod } = localnet.context
     const params = await algokit.getTransactionParams(undefined, algod)
     const txns = await algokit.sendGroupOfTransactions(
@@ -73,20 +74,19 @@ describe('Subscribing to calls that effect balance changes', () => {
         transactions: [
           {
             signer: testAccount,
-            transaction: acfg(params, testAccount.addr, 2000),
+            transaction: acfg(params, testAccount.addr, 2000, 100_000_000),
           },
         ],
       },
       algod,
     )
+    const asset = txns.confirmations![0].assetIndex!
 
     const subscription = await subscribeAndVerify(
       {
         balanceChanges: [
           {
-            assetId: [0],
             address: testAccount.addr,
-            role: [BalanceChangeRole.Sender],
           },
         ],
       },
@@ -95,11 +95,17 @@ describe('Subscribing to calls that effect balance changes', () => {
 
     const transaction = subscription.subscribedTransactions[0]
     invariant(transaction.balanceChanges)
-    expect(transaction.balanceChanges.length).toBe(1)
+    expect(transaction.balanceChanges.length).toBe(2)
+
     expect(transaction.balanceChanges[0].address).toBe(testAccount.addr)
     expect(transaction.balanceChanges[0].amount).toBe(-2000n) // min txn fee
     expect(transaction.balanceChanges[0].roles).toEqual([BalanceChangeRole.Sender])
     expect(transaction.balanceChanges[0].assetId).toBe(0)
+
+    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[1].amount).toBe(100_000_000n)
+    expect(transaction.balanceChanges[1].roles).toEqual([BalanceChangeRole.Receiver])
+    expect(transaction.balanceChanges[1].assetId).toBe(asset)
   })
 
   test('Works for > 53-bit totals', async () => {
