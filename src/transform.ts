@@ -654,14 +654,24 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     )
   }
 
-  if (transaction.txn.type === TransactionType.acfg && !transaction.txn.caid && transaction.caid) {
-    // Handle balance changes related to the creation of an asset.
-    balanceChanges.push({
-      address: algosdk.encodeAddress(transaction.txn.snd),
-      assetId: transaction.caid,
-      amount: BigInt(transaction.txn.apar?.t ?? 0),
-      roles: [BalanceChangeRole.Receiver],
-    })
+  if (transaction.txn.type === TransactionType.acfg) {
+    if (!transaction.txn.caid && transaction.caid) {
+      // Handle balance changes related to the creation of an asset.
+      balanceChanges.push({
+        address: algosdk.encodeAddress(transaction.txn.snd),
+        assetId: transaction.caid,
+        amount: BigInt(transaction.txn.apar?.t ?? 0),
+        roles: [BalanceChangeRole.AssetCreator],
+      })
+    } else if (transaction.txn.caid && !transaction.txn.apar) {
+      // Handle balance changes related to the destruction of an asset.
+      balanceChanges.push({
+        address: algosdk.encodeAddress(transaction.txn.snd),
+        assetId: transaction.txn.caid,
+        amount: BigInt(0),
+        roles: [BalanceChangeRole.AssetDestroyer],
+      })
+    }
   }
 
   return balanceChanges.reduce((changes, change) => {
@@ -767,20 +777,25 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Transac
     )
   }
 
-  if (
-    transaction['tx-type'] === TransactionType.acfg &&
-    transaction['asset-config-transaction'] &&
-    !transaction['asset-config-transaction']['asset-id'] &&
-    transaction['created-asset-index']
-  ) {
-    // Handle balance changes related to the creation of an asset.
+  if (transaction['tx-type'] === TransactionType.acfg && transaction['asset-config-transaction']) {
     const acfg = transaction['asset-config-transaction']
-    balanceChanges.push({
-      address: transaction.sender,
-      assetId: transaction['created-asset-index'],
-      amount: BigInt(acfg.params?.total ?? 0),
-      roles: [BalanceChangeRole.Receiver],
-    })
+    if (!transaction['asset-config-transaction']['asset-id'] && transaction['created-asset-index']) {
+      // Handle balance changes related to the creation of an asset.
+      balanceChanges.push({
+        address: transaction.sender,
+        assetId: transaction['created-asset-index'],
+        amount: BigInt(acfg.params?.total ?? 0),
+        roles: [BalanceChangeRole.AssetCreator],
+      })
+    } else if (acfg['asset-id'] && !acfg['params']) {
+      // Handle balance changes related to the destruction of an asset.
+      balanceChanges.push({
+        address: transaction.sender,
+        assetId: acfg['asset-id'],
+        amount: BigInt(0),
+        roles: [BalanceChangeRole.AssetDestroyer],
+      })
+    }
   }
 
   return balanceChanges.reduce((changes, change) => {

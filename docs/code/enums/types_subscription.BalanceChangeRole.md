@@ -10,11 +10,37 @@ The role that an account was playing for a given balance change.
 
 ### Enumeration Members
 
+- [AssetCreator](types_subscription.BalanceChangeRole.md#assetcreator)
+- [AssetDestroyer](types_subscription.BalanceChangeRole.md#assetdestroyer)
 - [CloseTo](types_subscription.BalanceChangeRole.md#closeto)
 - [Receiver](types_subscription.BalanceChangeRole.md#receiver)
 - [Sender](types_subscription.BalanceChangeRole.md#sender)
 
 ## Enumeration Members
+
+### AssetCreator
+
+• **AssetCreator** = ``"AssetCreator"``
+
+Account was creating an asset and holds the full asset supply
+
+#### Defined in
+
+[types/subscription.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L93)
+
+___
+
+### AssetDestroyer
+
+• **AssetDestroyer** = ``"AssetDestroyer"``
+
+Account was destroying an asset and has removed the full asset supply from circulation
+
+#### Defined in
+
+[types/subscription.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L95)
+
+___
 
 ### CloseTo
 

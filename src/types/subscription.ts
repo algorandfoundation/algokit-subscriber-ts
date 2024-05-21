@@ -89,6 +89,10 @@ export enum BalanceChangeRole {
   Receiver = 'Receiver',
   /** Account was having an asset amount closed to it */
   CloseTo = 'CloseTo',
+  /** Account was creating an asset and holds the full asset supply */
+  AssetCreator = 'AssetCreator',
+  /** Account was destroying an asset and has removed the full asset supply from circulation */
+  AssetDestroyer = 'AssetDestroyer',
 }
 
 /** Metadata about an impending subscription poll. */

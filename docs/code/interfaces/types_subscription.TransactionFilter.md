@@ -51,7 +51,7 @@ Filter to app transactions that meet the given app arguments predicate.
 
 #### Defined in
 
-[types/subscription.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L206)
+[types/subscription.ts:210](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L210)
 
 ___
 
@@ -63,7 +63,7 @@ Filter to transactions that are creating an app.
 
 #### Defined in
 
-[types/subscription.ts:189](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L189)
+[types/subscription.ts:193](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L193)
 
 ___
 
@@ -75,7 +75,7 @@ Filter to transactions against the app with the given ID(s).
 
 #### Defined in
 
-[types/subscription.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L187)
+[types/subscription.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L191)
 
 ___
 
@@ -87,7 +87,7 @@ Filter to transactions that have given on complete(s).
 
 #### Defined in
 
-[types/subscription.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L191)
+[types/subscription.ts:195](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L195)
 
 ___
 
@@ -100,7 +100,7 @@ Note: the definitions for these events must be passed in to the subscription con
 
 #### Defined in
 
-[types/subscription.ts:210](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L210)
+[types/subscription.ts:214](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L214)
 
 ___
 
@@ -112,7 +112,7 @@ Filter to transactions that are creating an asset.
 
 #### Defined in
 
-[types/subscription.ts:195](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L195)
+[types/subscription.ts:199](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L199)
 
 ___
 
@@ -124,7 +124,7 @@ Filter to transactions against the asset with the given ID(s).
 
 #### Defined in
 
-[types/subscription.ts:193](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L193)
+[types/subscription.ts:197](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L197)
 
 ___
 
@@ -136,7 +136,7 @@ Filter to transactions that result in balance changes that match one or more of 
 
 #### Defined in
 
-[types/subscription.ts:212](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L212)
+[types/subscription.ts:216](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L216)
 
 ___
 
@@ -162,7 +162,7 @@ Catch-all custom filter to filter for things that the rest of the filters don't 
 
 #### Defined in
 
-[types/subscription.ts:229](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L229)
+[types/subscription.ts:233](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L233)
 
 ___
 
@@ -175,7 +175,7 @@ or equal to the given maximum (microAlgos or decimal units of an ASA if type: ax
 
 #### Defined in
 
-[types/subscription.ts:201](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L201)
+[types/subscription.ts:205](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L205)
 
 ___
 
@@ -188,7 +188,7 @@ the given method signature as the first app argument.
 
 #### Defined in
 
-[types/subscription.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L204)
+[types/subscription.ts:208](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L208)
 
 ___
 
@@ -201,7 +201,7 @@ than or equal to the given minimum (microAlgos or decimal units of an ASA if typ
 
 #### Defined in
 
-[types/subscription.ts:198](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L198)
+[types/subscription.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L202)
 
 ___
 
@@ -213,7 +213,7 @@ Filter to transactions with a note having the given prefix.
 
 #### Defined in
 
-[types/subscription.ts:185](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L185)
+[types/subscription.ts:189](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L189)
 
 ___
 
@@ -225,7 +225,7 @@ Filter to transactions being received by the specified address(es).
 
 #### Defined in
 
-[types/subscription.ts:183](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L183)
+[types/subscription.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L187)
 
 ___
 
@@ -237,7 +237,7 @@ Filter to transactions sent from the specified address(es).
 
 #### Defined in
 
-[types/subscription.ts:181](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L181)
+[types/subscription.ts:185](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L185)
 
 ___
 
@@ -249,4 +249,4 @@ Filter based on the given transaction type(s).
 
 #### Defined in
 
-[types/subscription.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L179)
+[types/subscription.ts:183](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L183)

@@ -40,7 +40,7 @@ The filter itself.
 
 #### Defined in
 
-[types/subscription.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L173)
+[types/subscription.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L177)
 
 ___
 
@@ -70,7 +70,7 @@ Note: if you provide multiple filters with the same name then only the mapper of
 
 #### Defined in
 
-[types/subscription.ts:273](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L273)
+[types/subscription.ts:277](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L277)
 
 ___
 
@@ -86,4 +86,4 @@ The name to give the filter.
 
 #### Defined in
 
-[types/subscription.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L171)
+[types/subscription.ts:175](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L175)

@@ -54,6 +54,38 @@ subscriber.pollOnce()
 - **Easy to deploy** - You have full control over how you want to deploy and use the subscriber; it will work with whatever persistence (e.g. sql, no-sql, etc.), queuing/messaging (e.g. queues, topics, buses, web hooks, web sockets) and compute (e.g. serverless periodic lambdas, continually running containers, virtual machines, etc.) services you want to use
 - **Fast initial index** - There is an indexer catch up mode that allows you to use indexer to catch up to the tip of the chain in seconds or minutes rather than days; alternatively, if you prefer to just use algod and not indexer that option is available too!
 
+## Balance change notes
+
+The balance change semantics work mostly as expected, however the sematics around asset creation and destruction warrants further clarification.
+
+When an asset is created, the full asset supply is attributed to the asset creators account.
+
+The balance change for an asset create transaction will be as below:
+
+```json
+{
+  "address": "VIDHG4SYANCP2GUQXXSFSNBPJWS4TAQSI3GH4GYO54FSYPDIBYPMSF7HBY", // The asset creator
+  "assetId": 2391, // The created asset id
+  "amount": 100000, // Full asset supply of the created asset
+  "roles": ["AssetCreator"]
+}
+```
+
+When an asset is destroyed, the full asset supply must be in the asset creators account and the asset manager must send the destroy transaction.
+Unfortunately we cannot determine the asset creator or full asset supply from the transaction data.
+If you need to account for the asset supply being destroyed from the creators account, you'll need to handle this separately.
+
+The balance change for an asset destroy transaction will be as below:
+
+```json
+{
+  "address": "PIDHG4SYANCP2GUQXXSFSNBPJWS4TAQSI3GH4GYO54FSYPDIBYPMSF7HBY", // The asset destroyer, which will always be the asset manager
+  "assetId": 2391, // The destroyed asset id
+  "amount": 0, // This value will always be 0
+  "roles": ["AssetDestroyer"]
+}
+```
+
 ## Examples
 
 ### Data History Museum index
