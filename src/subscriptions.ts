@@ -60,9 +60,9 @@ export async function getSubscribedTransactions(
   algod: Algodv2,
   indexer?: Indexer,
 ): Promise<TransactionSubscriptionResult> {
-  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds } = subscription
+  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds, currentRound: _currentRound } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
-  const currentRound = (await algod.status().do())['last-round'] as number
+  const currentRound = _currentRound ?? ((await algod.status().do())['last-round'] as number)
   let blockMetadata: BlockMetadata[] | undefined
 
   // Pre-calculate a flat list of all ARC-28 events to process

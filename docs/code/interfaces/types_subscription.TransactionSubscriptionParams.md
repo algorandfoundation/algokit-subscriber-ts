@@ -17,6 +17,7 @@ Parameters to control a single subscription pull/poll.
 ### Properties
 
 - [arc28Events](types_subscription.TransactionSubscriptionParams.md#arc28events)
+- [currentRound](types_subscription.TransactionSubscriptionParams.md#currentround)
 - [filters](types_subscription.TransactionSubscriptionParams.md#filters)
 - [maxIndexerRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxindexerroundstosync)
 - [maxRoundsToSync](types_subscription.TransactionSubscriptionParams.md#maxroundstosync)
@@ -38,6 +39,19 @@ Any ARC-28 event definitions to process from app call logs
 #### Defined in
 
 [types/subscription.ts:133](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L133)
+
+___
+
+### currentRound
+
+• `Optional` **currentRound**: `number`
+
+The current tip of the configured Algorand blockchain.
+If not provided, it will be resolved on demand.
+
+#### Defined in
+
+[types/subscription.ts:255](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L255)
 
 ___
 
