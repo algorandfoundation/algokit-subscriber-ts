@@ -72,7 +72,7 @@ The balance change for an asset create transaction will be as below:
 ```
 
 When an asset is destroyed, the full asset supply must be in the asset creators account and the asset manager must send the destroy transaction.
-Unfortunately we cannot determine the asset creator or full asset supply from the transaction data.
+Unfortunately we cannot determine the asset creator or full asset supply from the transaction data. As a result the balance change will always be attributed to the asset manager and will have a 0 amount.
 If you need to account for the asset supply being destroyed from the creators account, you'll need to handle this separately.
 
 The balance change for an asset destroy transaction will be as below:

@@ -91,7 +91,9 @@ export enum BalanceChangeRole {
   CloseTo = 'CloseTo',
   /** Account was creating an asset and holds the full asset supply */
   AssetCreator = 'AssetCreator',
-  /** Account was destroying an asset and has removed the full asset supply from circulation */
+  /** Account was destroying an asset and has removed the full asset supply from circulation.
+   * A balance change with this role will always have a 0 amount and use the asset manager address.
+   */
   AssetDestroyer = 'AssetDestroyer',
 }
 

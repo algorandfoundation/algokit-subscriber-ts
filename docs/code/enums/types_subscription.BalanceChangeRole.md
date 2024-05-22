@@ -34,11 +34,12 @@ ___
 
 • **AssetDestroyer** = ``"AssetDestroyer"``
 
-Account was destroying an asset and has removed the full asset supply from circulation
+Account was destroying an asset and has removed the full asset supply from circulation.
+A balance change with this role will always have a 0 amount and use the asset manager address.
 
 #### Defined in
 
-[types/subscription.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L95)
+[types/subscription.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L97)
 
 ___
 

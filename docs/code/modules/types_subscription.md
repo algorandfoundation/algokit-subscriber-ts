@@ -73,4 +73,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L280)
+[types/subscription.ts:282](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L282)
