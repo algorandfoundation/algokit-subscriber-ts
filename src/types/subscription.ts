@@ -248,6 +248,11 @@ export interface TransactionSubscriptionParams extends CoreTransactionSubscripti
    * will be slow if `onMaxRounds` is `sync-oldest`.
    **/
   watermark: number
+
+  /** The current tip of the configured Algorand blockchain.
+   * If not provided, it will be resolved on demand.
+   */
+  currentRound?: number
 }
 
 /** Configuration for an `AlgorandSubscriber`. */
