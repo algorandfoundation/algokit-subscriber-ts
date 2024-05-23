@@ -56,6 +56,8 @@ const subscriber = new AlgorandSubscriber({syncBehaviour: 'skip-sync-newest', ma
 getSubscribedTransactions({syncBehaviour: 'skip-sync-newest', maxRoundsToSync: 100, ...}, ...)
 ```
 
+The `currentRound` parameter (availble when calling `getSubscribedTransactions`) can be used to set the tip of the chain. If not specified, the tip will be automatically detected. Whilst this is generally not needed, it is useful in scenarios where the tip is being detected as part of another process and you only want to sync to that point and no further.
+
 The `maxRoundsToSync` parameter controls how many rounds it will process when first starting when it's not caught up to the tip of the chain. While it's caught up to the chain it will keep processing as many rounds as are available from the last round it processed to when it next tries to sync (see below for how to control that).
 
 If you expect your service will resiliently always stay running, should never get more than `maxRoundsToSync` from the tip of the chain, there is a problem if it processes old records and you'd prefer it throws an error when losing track of the tip of the chain rather than continue or skip to newest you can set the `syncBehaviour` parameter to `fail`.
