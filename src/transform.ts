@@ -19,6 +19,9 @@ import OnApplicationComplete = algosdk.OnApplicationComplete
 import Transaction = algosdk.Transaction
 import TransactionType = algosdk.TransactionType
 
+export const ALGORAND_ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ'
+export const ALGORAND_ZERO_ADDRESS_BYTES = algosdk.decodeAddress(ALGORAND_ZERO_ADDRESS).publicKey
+
 // Recursively remove all null values from object
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function removeNulls(obj: any) {
@@ -141,6 +144,11 @@ function extractTransactionFromBlockTransaction(
   // Unset gh if `hgh` is set to false
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ('hgh' in blockTransaction && blockTransaction.hgh === false) txn.gh = null as any
+
+  if (txn.type === TransactionType.axfer && !txn.arcv) {
+    // from_obj_for_encoding expects arcv to be set, which may not be defined when performing an opt out.
+    txn.arcv = Buffer.from(ALGORAND_ZERO_ADDRESS_BYTES)
+  }
 
   const t = Transaction.from_obj_for_encoding(txn)
   return {
