@@ -148,7 +148,7 @@ export interface BlockTransaction {
   /** Algo closing amount in microAlgos */
   ca?: number
   /** Has genesis id */
-  hgi: boolean
+  hgi?: boolean
   /** Has genesis hash */
   hgh?: boolean
   /** Transaction ED25519 signature */

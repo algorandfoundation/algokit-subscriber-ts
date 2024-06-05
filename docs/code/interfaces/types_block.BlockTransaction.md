@@ -103,7 +103,7 @@ ___
 
 ### hgi
 
-• **hgi**: `boolean`
+• `Optional` **hgi**: `boolean`
 
 Has genesis id
 

@@ -3,13 +3,13 @@ import { TransactionType } from 'algosdk'
 import { describe, expect, it } from 'vitest'
 import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
 
-describe('Complex transaction with many nested inner transactions', () => {
+describe('State proof transaction', () => {
   const txnId = 'G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ'
   const roundNumber = 35600004
   const algod = algokit.getAlgoClient(algokit.getAlgoNodeConfig('mainnet', 'algod'))
   const indexer = algokit.getAlgoIndexerClient(algokit.getAlgoNodeConfig('mainnet', 'indexer'))
 
-  it('Can have a keyreg transaction subscribed correctly from indexer', async () => {
+  it('Can have a stpf transaction subscribed correctly from indexer', async () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
@@ -2104,7 +2104,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     `)
   })
 
-  it('Can have an inner transaction subscribed correctly from algod', async () => {
+  it('Can have a stpf transaction subscribed correctly from algod', async () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
@@ -2132,7 +2132,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "first-valid": 35600002,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-        "genesis-id": "mainnet-v1.0",
         "id": "G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ",
         "intra-round-offset": 1,
         "last-valid": 35601002,

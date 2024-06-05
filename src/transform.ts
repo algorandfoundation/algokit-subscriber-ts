@@ -131,19 +131,22 @@ function extractTransactionFromBlockTransaction(
   closeAmount?: number
   logs?: Uint8Array[]
 } {
-  const txn = blockTransaction.txn
+  const txn = { ...blockTransaction.txn }
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
   // Remove nulls (mainly where an appl txn contains a null app arg)
   removeNulls(txn)
-  txn.gh = genesisHash
-  txn.gen = genesisId
-  // Unset gen if `hgi` isn't set
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ('hgi' in blockTransaction && !blockTransaction.hgi) txn.gen = null as any
-  // Unset gh if `hgh` is set to false
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ('hgh' in blockTransaction && blockTransaction.hgh === false) txn.gh = null as any
+
+  // Add genesisId (gen) as the transaction was processed with it, and is required to generate the correct txID.
+  if ('hgi' in blockTransaction && blockTransaction.hgi === true) {
+    txn.gen = genesisId
+  }
+
+  // Add genesisHash (gh) as the transaction was processed with it, and is required to generate the correct txID.
+  // gh is mandatory on MainNet and TestNet (see https://forum.algorand.org/t/calculating-transaction-id/3119/7), so set gh unless hgh is explicitly false.
+  if (!('hgh' in blockTransaction) || blockTransaction.hgh !== false) {
+    txn.gh = genesisHash
+  }
 
   if (txn.type === TransactionType.axfer && !txn.arcv) {
     // from_obj_for_encoding expects arcv to be set, which may not be defined when performing an opt out.
@@ -194,20 +197,22 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
 }
 
 function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesisHash: Buffer, genesisId: string): string {
-  const txn = blockTransaction.txn
-
-  txn.gh = genesisHash
-  txn.gen = genesisId
-  // Unset gen if `hgi` isn't set
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!('hgi' in blockTransaction) || !blockTransaction.hgi) txn.gen = null as any
-  // Unset gh if `hgh` is set to false
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ('hgh' in blockTransaction && blockTransaction.hgh === false) txn.gh = null as any
+  const txn = { ...blockTransaction.txn }
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
   // Remove nulls (mainly where an appl txn contains a null app arg)
   removeNulls(txn)
+
+  // Add genesisId (gen) as the transaction was processed with it, and is required to generate the correct txID.
+  if ('hgi' in blockTransaction && blockTransaction.hgi === true) {
+    txn.gen = genesisId
+  }
+
+  // Add genesisHash (gh) as the transaction was processed with it, and is required to generate the correct txID.
+  // gh is mandatory on MainNet and TestNet (see https://forum.algorand.org/t/calculating-transaction-id/3119/7), so set gh unless hgh is explicitly false.
+  if (!('hgh' in blockTransaction) || blockTransaction.hgh !== false) {
+    txn.gh = genesisHash
+  }
 
   // Translated from algosdk.Transaction.txID()
   const ALGORAND_TRANSACTION_LENGTH = 52
@@ -280,6 +285,7 @@ export function getIndexerTransactionFromAlgodTransaction(
     transaction.type === TransactionType.stpf
       ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, genesisHash, genesisId)
       : transaction.txID()
+
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
 
