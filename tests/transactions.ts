@@ -3,8 +3,13 @@ import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/
 import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
-import { TransactionInBlock } from '../src/transform'
-import type { Arc28EventGroup, NamedTransactionFilter, TransactionFilter, TransactionSubscriptionParams } from '../src/types'
+import type {
+  Arc28EventGroup,
+  NamedTransactionFilter,
+  TransactionFilter,
+  TransactionInBlock,
+  TransactionSubscriptionParams,
+} from '../src/types'
 
 export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
   const txns: SendTransactionResult[] = []

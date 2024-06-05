@@ -37,7 +37,7 @@ Asset closing amount in decimal units
 
 #### Defined in
 
-[types/block.ts:73](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L73)
+[types/block.ts:147](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L147)
 
 ___
 
@@ -49,7 +49,7 @@ App ID when an app is created by the transaction
 
 #### Defined in
 
-[types/block.ts:71](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L71)
+[types/block.ts:145](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L145)
 
 ___
 
@@ -61,7 +61,7 @@ Algo closing amount in microAlgos
 
 #### Defined in
 
-[types/block.ts:75](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L75)
+[types/block.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L149)
 
 ___
 
@@ -73,7 +73,7 @@ Asset ID when an asset is created by the transaction
 
 #### Defined in
 
-[types/block.ts:69](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L69)
+[types/block.ts:143](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L143)
 
 ___
 
@@ -85,7 +85,7 @@ The eval deltas for the block
 
 #### Defined in
 
-[types/block.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L67)
+[types/block.ts:141](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L141)
 
 ___
 
@@ -97,19 +97,19 @@ Has genesis hash
 
 #### Defined in
 
-[types/block.ts:79](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L79)
+[types/block.ts:153](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L153)
 
 ___
 
 ### hgi
 
-• **hgi**: `boolean`
+• `Optional` **hgi**: `boolean`
 
 Has genesis id
 
 #### Defined in
 
-[types/block.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L77)
+[types/block.ts:151](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L151)
 
 ___
 
@@ -121,7 +121,7 @@ Logic signature
 
 #### Defined in
 
-[types/block.ts:83](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L83)
+[types/block.ts:157](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L157)
 
 ___
 
@@ -133,7 +133,7 @@ Transaction multisig signature
 
 #### Defined in
 
-[types/block.ts:85](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L85)
+[types/block.ts:159](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L159)
 
 ___
 
@@ -145,7 +145,7 @@ The signer, if signing with a different key than the Transaction type `from` pro
 
 #### Defined in
 
-[types/block.ts:87](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L87)
+[types/block.ts:161](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L161)
 
 ___
 
@@ -157,7 +157,7 @@ Transaction ED25519 signature
 
 #### Defined in
 
-[types/block.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L81)
+[types/block.ts:155](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L155)
 
 ___
 
@@ -169,4 +169,4 @@ The encoded transaction data
 
 #### Defined in
 
-[types/block.ts:65](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L65)
+[types/block.ts:139](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L139)

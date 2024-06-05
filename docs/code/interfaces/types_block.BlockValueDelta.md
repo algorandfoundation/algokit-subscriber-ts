@@ -4,6 +4,8 @@
 
 [types/block](../modules/types_block.md).BlockValueDelta
 
+A value delta as a result of a block transaction
+
 ## Table of contents
 
 ### Properties
@@ -25,7 +27,7 @@ DeltaAction is an enum of actions that may be performed when applying a delta to
 
 #### Defined in
 
-[types/block.ts:142](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L142)
+[types/block.ts:217](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L217)
 
 ___
 
@@ -37,7 +39,7 @@ Bytes value
 
 #### Defined in
 
-[types/block.ts:145](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L145)
+[types/block.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L220)
 
 ___
 
@@ -49,4 +51,4 @@ Uint64 value
 
 #### Defined in
 
-[types/block.ts:148](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L148)
+[types/block.ts:223](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L223)

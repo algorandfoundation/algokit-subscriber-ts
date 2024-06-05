@@ -10,12 +10,26 @@ The result of a single subscription pull/poll.
 
 ### Properties
 
+- [blockMetadata](types_subscription.TransactionSubscriptionResult.md#blockmetadata)
 - [currentRound](types_subscription.TransactionSubscriptionResult.md#currentround)
 - [newWatermark](types_subscription.TransactionSubscriptionResult.md#newwatermark)
 - [subscribedTransactions](types_subscription.TransactionSubscriptionResult.md#subscribedtransactions)
 - [syncedRoundRange](types_subscription.TransactionSubscriptionResult.md#syncedroundrange)
 
 ## Properties
+
+### blockMetadata
+
+• `Optional` **blockMetadata**: [`BlockMetadata`](types_subscription.BlockMetadata.md)[]
+
+The metadata about any blocks that were retrieved from algod as part
+of the subscription poll.
+
+#### Defined in
+
+[types/subscription.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L27)
+
+___
 
 ### currentRound
 

@@ -1,7 +1,8 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
+import algosdk from 'algosdk'
 import { describe, expect, it } from 'vitest'
-import { getBlocksBulk } from '../../src'
-import { getBlockTransactions } from '../../src/transform'
+import { getBlocksBulk } from '../../src/block'
+import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
 import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
 
 describe('Complex transaction with many nested inner transactions', () => {
@@ -211,7 +212,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "first-valid": 35214365,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-        "genesis-id": "mainnet-v1.0",
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
         "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "inner-txns": [
@@ -243,7 +243,6 @@ describe('Complex transaction with many nested inner transactions', () => {
             "fee": 0,
             "first-valid": 35214365,
             "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-            "genesis-id": "mainnet-v1.0",
             "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
             "intra-round-offset": 148,
             "last-valid": 35214369,
@@ -269,6 +268,22 @@ describe('Complex transaction with many nested inner transactions', () => {
         "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
         "tx-type": "appl",
       }
+    `)
+
+    expect(algodTxns.blockMetadata).toMatchInlineSnapshot(`
+      [
+        {
+          "fullTransactionCount": 171,
+          "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+          "genesisId": "mainnet-v1.0",
+          "hash": "CDVL4HL5XDN7DPYAHITVHKVZSX4KNRL65XBOCSQTBNDOFMHN7JBA",
+          "parentTransactionCount": 55,
+          "previousBlockHash": "6ELYXRVDR7DGXCVYC7AAVWLFIUNPLXT5QTNL2NL7ZQL3O66FMFWQ",
+          "round": 35214367,
+          "seed": "Tp6NntUaw17I8GGscaawpAuI0vQDMgp1TBSMAcpohtY=",
+          "timestamp": "2024-01-14T17:14:00.000Z",
+        },
+      ]
     `)
   })
 
@@ -348,7 +363,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "group": "bLXdzryB627WoBOJ446eOJsiCi1Kfe/CKPTHRYKDsp0=",
           "lastRound": 35214369,
           "tag": "VFg=",
@@ -386,7 +400,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "group": "bLXdzryB627WoBOJ446eOJsiCi1Kfe/CKPTHRYKDsp0=",
           "lastRound": 35214369,
           "tag": "VFg=",
@@ -412,7 +425,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "QDNLKZLNM6ZUD4ZI24RSY6O4QHWF3RHDQIYDV7S5AAHKFZSV2MSSULCE4U",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "lastRound": 35214369,
           "tag": "VFg=",
           "to": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
@@ -439,7 +451,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
           "lastRound": 35214369,
           "tag": "VFg=",
@@ -475,7 +486,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
           "lastRound": 35214369,
           "tag": "VFg=",
@@ -501,7 +511,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "lastRound": 35214369,
           "tag": "VFg=",
           "to": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
@@ -528,7 +537,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "group": "dsT4D4kYR3KthS3jbi4rJee2ej8gQChwzsQD8auclWw=",
           "lastRound": 35214369,
           "tag": "VFg=",
@@ -566,7 +574,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "group": "dsT4D4kYR3KthS3jbi4rJee2ej8gQChwzsQD8auclWw=",
           "lastRound": 35214369,
           "tag": "VFg=",
@@ -591,7 +598,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "lastRound": 35214369,
           "tag": "VFg=",
           "to": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
@@ -616,7 +622,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "firstRound": 35214365,
           "from": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
           "lastRound": 35214369,
           "reKeyTo": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "tag": "VFg=",
@@ -625,5 +630,22 @@ describe('Complex transaction with many nested inner transactions', () => {
         },
       }
     `)
+  })
+
+  it('Transforms axfer without an arcv address', async () => {
+    const blocks = await getBlocksBulk({ startRound: 39373576, maxRound: 39373576 }, algod) // Contains an axfer opt out inner transaction without an arcv address
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+
+    expect(blockTransactions.length).toBe(30)
+    expect(algosdk.encodeAddress(blockTransactions[5].transaction.to.publicKey)).toBe(ALGORAND_ZERO_ADDRESS)
+  })
+
+  it('Produces the correct txID for a non hgi transaction', async () => {
+    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+
+    const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
+    expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
+    expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
   })
 })

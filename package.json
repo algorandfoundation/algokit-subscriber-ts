@@ -8,7 +8,8 @@
     "build:1-compile": "rollup -c --configPlugin typescript",
     "build:2-copy-pkg-json": "npx --yes @makerx/ts-toolkit@latest copy-package-json --custom-sections module main type types exports",
     "build:3-copy-readme": "cpy README.md dist",
-    "test": "vitest --coverage --passWithNoTests",
+    "test": "vitest run --coverage --passWithNoTests",
+    "test:watch": "vitest watch --coverage --passWithNoTests",
     "lint": "eslint ./src/ --ext .ts",
     "lint:fix": "eslint ./src/ --ext .ts --fix",
     "check-types": "tsc --noEmit",
@@ -42,6 +43,16 @@
       "types": "./index.d.ts",
       "import": "./index.mjs",
       "require": "./index.js"
+    },
+    "./block": {
+      "types": "./block.d.ts",
+      "import": "./block.mjs",
+      "require": "./block.js"
+    },
+    "./transform": {
+      "types": "./transform.d.ts",
+      "import": "./transform.mjs",
+      "require": "./transform.js"
     },
     "./types/*": {
       "types": "./types/*.d.ts",
@@ -85,6 +96,9 @@
   "peerDependencies": {
     "@algorandfoundation/algokit-utils": "^6.0.0-beta.1",
     "algosdk": "^2.7.0"
+  },
+  "overrides": {
+    "vite": "5.2.8"
   },
   "publishConfig": {
     "access": "public"

@@ -20,7 +20,7 @@ describe('Subscribing to calls that effect balance changes', () => {
   beforeAll(hooks.beforeAll, 10_000)
   beforeEach(hooks.beforeEach, 10_000)
   afterEach(hooks.afterEach)
-  const acfg = (params: SuggestedParams, from: string, fee: number, total?: bigint | number) => {
+  const acfgCreate = (params: SuggestedParams, from: string, fee: number, total?: bigint | number) => {
     params.fee = fee
     params.flatFee = true
     return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
@@ -30,6 +30,17 @@ describe('Subscribing to calls that effect balance changes', () => {
       total: total ?? 100,
       defaultFrozen: false,
       clawback: from,
+      manager: from,
+    })
+  }
+
+  const acfgDestroy = (params: SuggestedParams, from: string, fee: number, assetIndex: number) => {
+    params.fee = fee
+    params.flatFee = true
+    return algosdk.makeAssetDestroyTxnWithSuggestedParamsFromObject({
+      suggestedParams: params,
+      from,
+      assetIndex,
     })
   }
 
@@ -65,7 +76,8 @@ describe('Subscribing to calls that effect balance changes', () => {
     })
   }
 
-  test('Works for non transfer', async () => {
+  test('Works for asset create transactions', async () => {
+    // Assets are always minted into the creator/sender account, even if a reserve address is supplied
     const { testAccount, algod } = localnet.context
     const params = await algokit.getTransactionParams(undefined, algod)
     const txns = await algokit.sendGroupOfTransactions(
@@ -73,7 +85,62 @@ describe('Subscribing to calls that effect balance changes', () => {
         transactions: [
           {
             signer: testAccount,
-            transaction: acfg(params, testAccount.addr, 2000),
+            transaction: acfgCreate(params, testAccount.addr, 2000, 100_000_000),
+          },
+        ],
+      },
+      algod,
+    )
+    const asset = txns.confirmations![0].assetIndex!
+
+    const subscription = await subscribeAndVerify(
+      {
+        balanceChanges: [
+          {
+            role: [BalanceChangeRole.AssetCreator],
+          },
+        ],
+      },
+      extractFromGroupResult(txns, 0),
+    )
+
+    const transaction = subscription.subscribedTransactions[0]
+    invariant(transaction.balanceChanges)
+    expect(transaction.balanceChanges.length).toBe(2)
+
+    expect(transaction.balanceChanges[0].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[0].amount).toBe(-2000n) // min txn fee
+    expect(transaction.balanceChanges[0].roles).toEqual([BalanceChangeRole.Sender])
+    expect(transaction.balanceChanges[0].assetId).toBe(0)
+
+    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[1].amount).toBe(100_000_000n)
+    expect(transaction.balanceChanges[1].roles).toEqual([BalanceChangeRole.AssetCreator])
+    expect(transaction.balanceChanges[1].assetId).toBe(asset)
+  })
+
+  test('Works for asset destroy transactions', async () => {
+    const { testAccount, algod } = localnet.context
+    const params = await algokit.getTransactionParams(undefined, algod)
+    const createAssetTxns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          {
+            signer: testAccount,
+            transaction: acfgCreate(params, testAccount.addr, 2000, 100_000_000),
+          },
+        ],
+      },
+      algod,
+    )
+    const asset = createAssetTxns.confirmations![0].assetIndex!
+
+    const txns = await algokit.sendGroupOfTransactions(
+      {
+        transactions: [
+          {
+            signer: testAccount,
+            transaction: acfgDestroy(params, testAccount.addr, 2000, Number(asset)),
           },
         ],
       },
@@ -84,9 +151,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       {
         balanceChanges: [
           {
-            assetId: [0],
-            address: testAccount.addr,
-            role: [BalanceChangeRole.Sender],
+            role: [BalanceChangeRole.AssetDestroyer],
           },
         ],
       },
@@ -95,11 +160,17 @@ describe('Subscribing to calls that effect balance changes', () => {
 
     const transaction = subscription.subscribedTransactions[0]
     invariant(transaction.balanceChanges)
-    expect(transaction.balanceChanges.length).toBe(1)
+    expect(transaction.balanceChanges.length).toBe(2)
+
     expect(transaction.balanceChanges[0].address).toBe(testAccount.addr)
     expect(transaction.balanceChanges[0].amount).toBe(-2000n) // min txn fee
     expect(transaction.balanceChanges[0].roles).toEqual([BalanceChangeRole.Sender])
     expect(transaction.balanceChanges[0].assetId).toBe(0)
+
+    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[1].amount).toBe(0n)
+    expect(transaction.balanceChanges[1].roles).toEqual([BalanceChangeRole.AssetDestroyer])
+    expect(transaction.balanceChanges[1].assetId).toBe(asset)
   })
 
   test('Works for > 53-bit totals', async () => {
@@ -111,7 +182,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         transactions: [
           {
             signer: testAccount,
-            transaction: acfg(params, testAccount.addr, 2000, 135_640_597_783_270_612n), // this is > Number.MAX_SAFE_INTEGER
+            transaction: acfgCreate(params, testAccount.addr, 2000, 135_640_597_783_270_612n), // this is > Number.MAX_SAFE_INTEGER
           },
         ],
       },
@@ -227,19 +298,19 @@ describe('Subscribing to calls that effect balance changes', () => {
         transactions: [
           {
             signer: randomAccount,
-            transaction: acfg(params, randomAccount.addr, 3000),
+            transaction: acfgCreate(params, randomAccount.addr, 3000),
           },
           {
             signer: testAccount,
-            transaction: acfg(params, testAccount.addr, 1000),
+            transaction: acfgCreate(params, testAccount.addr, 1000),
           },
           {
             signer: testAccount,
-            transaction: acfg(params, testAccount.addr, 3000),
+            transaction: acfgCreate(params, testAccount.addr, 3000),
           },
           {
             signer: testAccount,
-            transaction: acfg(params, testAccount.addr, 5000),
+            transaction: acfgCreate(params, testAccount.addr, 5000),
           },
         ],
       },
@@ -563,7 +634,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         (
           await algokit.sendTransaction(
             {
-              transaction: acfg(params, testAccount.addr, 1000),
+              transaction: acfgCreate(params, testAccount.addr, 1000),
               from: testAccount,
             },
             algod,
@@ -574,7 +645,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         (
           await algokit.sendTransaction(
             {
-              transaction: acfg(params, testAccount.addr, 1001),
+              transaction: acfgCreate(params, testAccount.addr, 1001),
               from: testAccount,
             },
             algod,
