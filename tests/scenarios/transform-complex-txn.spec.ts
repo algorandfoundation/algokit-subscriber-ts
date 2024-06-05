@@ -1,7 +1,8 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
+import algosdk from 'algosdk'
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
-import { getBlockTransactions } from '../../src/transform'
+import { ALGORAND_ZERO_ADDRESS, getBlockTransactions } from '../../src/transform'
 import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
 
 describe('Complex transaction with many nested inner transactions', () => {
@@ -641,5 +642,13 @@ describe('Complex transaction with many nested inner transactions', () => {
         },
       }
     `)
+  })
+
+  it('Transforms axfer without an arcv address', async () => {
+    const blocks = await getBlocksBulk({ startRound: 39373576, maxRound: 39373576 }, algod) // Contains an axfer opt out inner transaction without an arcv address
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+
+    expect(blockTransactions.length).toBe(30)
+    expect(algosdk.encodeAddress(blockTransactions[5].blockTransaction.txn.arcv!)).toBe(ALGORAND_ZERO_ADDRESS)
   })
 })
