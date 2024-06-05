@@ -637,7 +637,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     expect(blockTransactions.length).toBe(30)
-    expect(algosdk.encodeAddress(blockTransactions[5].blockTransaction.txn.arcv!)).toBe(ALGORAND_ZERO_ADDRESS)
+    expect(algosdk.encodeAddress(blockTransactions[5].transaction.to.publicKey)).toBe(ALGORAND_ZERO_ADDRESS)
   })
 
   it('Produces the correct txID for a non hgi transaction', async () => {
