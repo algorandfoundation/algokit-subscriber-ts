@@ -131,28 +131,7 @@ function extractTransactionFromBlockTransaction(
   closeAmount?: number
   logs?: Uint8Array[]
 } {
-  const txn = { ...blockTransaction.txn }
-
-  // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
-  // Remove nulls (mainly where an appl txn contains a null app arg)
-  removeNulls(txn)
-
-  // Add genesisId (gen) as the transaction was processed with it, and is required to generate the correct txID.
-  if ('hgi' in blockTransaction && blockTransaction.hgi === true) {
-    txn.gen = genesisId
-  }
-
-  // Add genesisHash (gh) as the transaction was processed with it, and is required to generate the correct txID.
-  // gh is mandatory on MainNet and TestNet (see https://forum.algorand.org/t/calculating-transaction-id/3119/7), so set gh unless hgh is explicitly false.
-  if (!('hgh' in blockTransaction) || blockTransaction.hgh !== false) {
-    txn.gh = genesisHash
-  }
-
-  if (txn.type === TransactionType.axfer && !txn.arcv) {
-    // from_obj_for_encoding expects arcv to be set, which may not be defined when performing an opt out.
-    txn.arcv = Buffer.from(ALGORAND_ZERO_ADDRESS_BYTES)
-  }
-
+  const txn = extractAndNormaliseTransaction(blockTransaction, genesisHash, genesisId)
   const t = Transaction.from_obj_for_encoding(txn)
   return {
     transaction: t,
@@ -196,7 +175,11 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
-function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesisHash: Buffer, genesisId: string): string {
+function extractAndNormaliseTransaction(
+  blockTransaction: BlockTransaction | BlockInnerTransaction,
+  genesisHash: Buffer,
+  genesisId: string,
+) {
   const txn = { ...blockTransaction.txn }
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
@@ -213,6 +196,17 @@ function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesis
   if (!('hgh' in blockTransaction) || blockTransaction.hgh !== false) {
     txn.gh = genesisHash
   }
+
+  if (txn.type === TransactionType.axfer && !txn.arcv) {
+    // from_obj_for_encoding expects arcv to be set, which may not be defined when performing an opt out.
+    txn.arcv = Buffer.from(ALGORAND_ZERO_ADDRESS_BYTES)
+  }
+
+  return txn
+}
+
+function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesisHash: Buffer, genesisId: string): string {
+  const txn = extractAndNormaliseTransaction(blockTransaction, genesisHash, genesisId)
 
   // Translated from algosdk.Transaction.txID()
   const ALGORAND_TRANSACTION_LENGTH = 52
