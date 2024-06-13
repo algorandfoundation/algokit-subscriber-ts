@@ -640,6 +640,14 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(algosdk.encodeAddress(blockTransactions[5].transaction.to.publicKey)).toBe(ALGORAND_ZERO_ADDRESS)
   })
 
+  it('Transforms pay without a rcv address', async () => {
+    const blocks = await getBlocksBulk({ startRound: 39723800, maxRound: 39723800 }, algod) // Contains a pay close account inner transaction without a rcv address
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+
+    expect(blockTransactions.length).toBe(486)
+    expect(algosdk.encodeAddress(blockTransactions[371].transaction.to.publicKey)).toBe(ALGORAND_ZERO_ADDRESS)
+  })
+
   it('Produces the correct txID for a non hgi transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
