@@ -202,6 +202,11 @@ function extractAndNormaliseTransaction(
     txn.arcv = Buffer.from(ALGORAND_ZERO_ADDRESS_BYTES)
   }
 
+  if (txn.type === TransactionType.pay && !txn.rcv) {
+    // from_obj_for_encoding expects rcv to be set, which may not be defined when closing an account.
+    txn.rcv = Buffer.from(ALGORAND_ZERO_ADDRESS_BYTES)
+  }
+
   return txn
 }
 
