@@ -115,6 +115,7 @@ export class AlgorandSubscriber {
         const durationInSeconds = (+new Date() - start) / 1000
         algokit.Config.getLogger(suppressLog).debug('Subscription poll', {
           currentRound: result.currentRound,
+          startingWatermark: result.startingWatermark,
           newWatermark: result.newWatermark,
           syncedRoundRange: result.syncedRoundRange,
           subscribedTransactionsLength: result.subscribedTransactions.length,

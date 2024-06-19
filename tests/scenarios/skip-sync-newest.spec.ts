@@ -21,6 +21,7 @@ describe('Subscribing using skip-sync-newest', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
+    expect(subscribed.startingWatermark).toBe(0)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([lastTxnRound, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
@@ -39,6 +40,7 @@ describe('Subscribing using skip-sync-newest', () => {
     )
 
     expect(subscribed.currentRound).toBe(currentRound)
+    expect(subscribed.startingWatermark).toBe(olderTxnRound - 1)
     expect(subscribed.newWatermark).toBe(currentRound)
     expect(subscribed.syncedRoundRange).toEqual([currentRound, currentRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
@@ -56,6 +58,7 @@ describe('Subscribing using skip-sync-newest', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
+    expect(subscribed.startingWatermark).toBe(0)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([rounds[1], lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(2)

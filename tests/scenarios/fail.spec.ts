@@ -35,6 +35,7 @@ describe('Subscribing using fail', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
+    expect(subscribed.startingWatermark).toBe(lastTxnRound - 1)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([lastTxnRound, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)

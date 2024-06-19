@@ -211,6 +211,8 @@ export interface TransactionSubscriptionResult {
   syncedRoundRange: [startRound: number, endRound: number]
   /** The current detected tip of the configured Algorand blockchain. */
   currentRound: number
+  /** The watermark value that was retrieved at the start of the subscription poll. */
+  startingWatermark: number
   /** The new watermark value to persist for the next call to
    * `getSubscribedTransactions` to continue the sync.
    * Will be equal to `syncedRoundRange[1]`. Only persist this

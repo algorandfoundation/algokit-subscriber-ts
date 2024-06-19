@@ -87,6 +87,7 @@ export async function getSubscribedTransactions(
   if (currentRound <= watermark) {
     return {
       currentRound: currentRound,
+      startingWatermark: watermark,
       newWatermark: watermark,
       subscribedTransactions: [],
       syncedRoundRange: [currentRound, currentRound],
@@ -210,6 +211,7 @@ export async function getSubscribedTransactions(
 
   return {
     syncedRoundRange: [startRound, endRound],
+    startingWatermark: watermark,
     newWatermark: endRound,
     currentRound,
     blockMetadata,
