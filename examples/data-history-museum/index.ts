@@ -33,9 +33,7 @@ async function getDHMSubscriber() {
           filter: {
             type: TransactionType.acfg,
             // Data History Museum creator accounts
-            sender: (await algokit.isTestNet(algod))
-              ? 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU'
-              : 'EHYQCYHUC6CIWZLBX5TDTLVJ4SSVE4RRTMKFDCG4Z4Q7QSQ2XWIQPMKBPU',
+            sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
           },
         },
       ],
@@ -50,6 +48,7 @@ async function getDHMSubscriber() {
     algod,
     indexer,
   )
+  subscriber.on('error', () => {})
   subscriber.onBatch('dhm-asset', async (events) => {
     // eslint-disable-next-line no-console
     console.log(`Received ${events.length} asset changes`)
@@ -129,12 +128,26 @@ async function saveTransactions(transactions: unknown[], fileName: string) {
   console.log(`Saved ${transactions.length} transactions to ${fileName}`)
 }
 
-// eslint-disable-next-line no-console
-process.on('uncaughtException', (e) => console.error(e))
 ;(async () => {
   const subscriber = await getDHMSubscriber()
 
   if (process.env.RUN_LOOP === 'true') {
+    // Restart on error
+    const maxRetries = 3
+    let retryCount = 0
+    subscriber.onError(async (e) => {
+      retryCount++
+      if (retryCount > maxRetries) {
+        // eslint-disable-next-line no-console
+        console.error(e)
+        return
+      }
+      // eslint-disable-next-line no-console
+      console.log(`Error occurred, retrying in 2 seconds (${retryCount}/${maxRetries})`)
+      await new Promise((r) => setTimeout(r, 2_000))
+      subscriber.start()
+    })
+
     subscriber.start()
     ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) =>
       process.on(signal, () => {

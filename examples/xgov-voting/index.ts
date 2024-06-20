@@ -63,12 +63,14 @@ async function getLastWatermark(): Promise<number> {
   return Number(existing)
 }
 
-// eslint-disable-next-line no-console
-process.on('uncaughtException', (e) => console.error(e))
 ;(async () => {
   const subscriber = await getXGovSubscriber()
 
   if (process.env.RUN_LOOP === 'true') {
+    subscriber.onError((e) => {
+      // eslint-disable-next-line no-console
+      console.error(e)
+    })
     subscriber.start()
     ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) =>
       process.on(signal, () => {

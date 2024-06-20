@@ -21,15 +21,16 @@ A value delta as a result of a block transaction
 • **at**: `number`
 
 DeltaAction is an enum of actions that may be performed when applying a delta to a TEAL key/value store:
-  * `1`: SetBytesAction indicates that a TEAL byte slice should be stored at a key
-  * `2`: SetUintAction indicates that a Uint should be stored at a key
-  * `3`: DeleteAction indicates that the value for a particular key should be deleted
+
+- `1`: SetBytesAction indicates that a TEAL byte slice should be stored at a key
+- `2`: SetUintAction indicates that a Uint should be stored at a key
+- `3`: DeleteAction indicates that the value for a particular key should be deleted
 
 #### Defined in
 
 [types/block.ts:217](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L217)
 
-___
+---
 
 ### bs
 
@@ -41,7 +42,7 @@ Bytes value
 
 [types/block.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L220)
 
-___
+---
 
 ### ui
 

@@ -25,7 +25,7 @@ The current round of algod
 
 [types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L105)
 
-___
+---
 
 ### watermark
 
