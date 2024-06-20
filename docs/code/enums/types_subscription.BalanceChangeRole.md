@@ -20,7 +20,7 @@ The role that an account was playing for a given balance change.
 
 ### AssetCreator
 
-• **AssetCreator** = `"AssetCreator"`
+• **AssetCreator** = ``"AssetCreator"``
 
 Account was creating an asset and holds the full asset supply
 
@@ -28,11 +28,11 @@ Account was creating an asset and holds the full asset supply
 
 [types/subscription.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L93)
 
----
+___
 
 ### AssetDestroyer
 
-• **AssetDestroyer** = `"AssetDestroyer"`
+• **AssetDestroyer** = ``"AssetDestroyer"``
 
 Account was destroying an asset and has removed the full asset supply from circulation.
 A balance change with this role will always have a 0 amount and use the asset manager address.
@@ -41,11 +41,11 @@ A balance change with this role will always have a 0 amount and use the asset ma
 
 [types/subscription.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L97)
 
----
+___
 
 ### CloseTo
 
-• **CloseTo** = `"CloseTo"`
+• **CloseTo** = ``"CloseTo"``
 
 Account was having an asset amount closed to it
 
@@ -53,11 +53,11 @@ Account was having an asset amount closed to it
 
 [types/subscription.ts:91](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L91)
 
----
+___
 
 ### Receiver
 
-• **Receiver** = `"Receiver"`
+• **Receiver** = ``"Receiver"``
 
 Account was receiving a transaction
 
@@ -65,11 +65,11 @@ Account was receiving a transaction
 
 [types/subscription.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L89)
 
----
+___
 
 ### Sender
 
-• **Sender** = `"Sender"`
+• **Sender** = ``"Sender"``
 
 Account was sending a transaction (sending asset and/or spending fee if asset `0`)
 

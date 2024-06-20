@@ -24,18 +24,18 @@
 
 #### Type declaration
 
-| Name    | Type               |
-| :------ | :----------------- |
-| `hsh`   | \{ `t`: `number` } |
-| `hsh.t` | `number`           |
-| `pth`   | `Uint8Array`[]     |
-| `td`    | `number`           |
+| Name | Type |
+| :------ | :------ |
+| `hsh` | \{ `t`: `number`  } |
+| `hsh.t` | `number` |
+| `pth` | `Uint8Array`[] |
+| `td` | `number` |
 
 #### Defined in
 
 [types/block.ts:229](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L229)
 
----
+___
 
 ### S
 
@@ -43,18 +43,18 @@
 
 #### Type declaration
 
-| Name    | Type               |
-| :------ | :----------------- |
-| `hsh`   | \{ `t`: `number` } |
-| `hsh.t` | `number`           |
-| `pth`   | `Uint8Array`[]     |
-| `td`    | `number`           |
+| Name | Type |
+| :------ | :------ |
+| `hsh` | \{ `t`: `number`  } |
+| `hsh.t` | `number` |
+| `pth` | `Uint8Array`[] |
+| `td` | `number` |
 
 #### Defined in
 
 [types/block.ts:246](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L246)
 
----
+___
 
 ### c
 
@@ -64,7 +64,7 @@
 
 [types/block.ts:228](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L228)
 
----
+___
 
 ### pr
 
@@ -74,17 +74,17 @@
 
 [types/block.ts:230](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L230)
 
----
+___
 
 ### r
 
-• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number` } ; `w`: `bigint` } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `number` ; `prf`: \{ `hsh`: \{ `t`: `number` } ; `pth`: `Uint8Array`[] ; `td`: `number` } ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array` } } } }\>
+• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `number` ; `prf`: \{ `hsh`: \{ `t`: `number`  } ; `pth`: `Uint8Array`[] ; `td`: `number`  } ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
 
 #### Defined in
 
 [types/block.ts:231](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L231)
 
----
+___
 
 ### v
 
@@ -94,7 +94,7 @@
 
 [types/block.ts:248](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L248)
 
----
+___
 
 ### w
 

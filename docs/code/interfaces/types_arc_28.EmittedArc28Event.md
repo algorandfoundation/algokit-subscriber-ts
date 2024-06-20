@@ -36,7 +36,7 @@ The ordered arguments extracted from the event that was emitted
 
 [types/arc-28.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L41)
 
----
+___
 
 ### argsByName
 
@@ -48,7 +48,7 @@ The named arguments extracted from the event that was emitted (where the argumen
 
 [types/arc-28.ts:43](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L43)
 
----
+___
 
 ### eventDefinition
 
@@ -64,7 +64,7 @@ The ARC-28 definition of the event
 
 [types/arc-28.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L35)
 
----
+___
 
 ### eventName
 
@@ -80,7 +80,7 @@ The name of the ARC-28 event that was triggered
 
 [types/arc-28.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L29)
 
----
+___
 
 ### eventPrefix
 
@@ -96,7 +96,7 @@ The 4-byte hex prefix for the event
 
 [types/arc-28.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L33)
 
----
+___
 
 ### eventSignature
 
@@ -112,7 +112,7 @@ The signature of the event e.g. `EventName(type1,type2)`
 
 [types/arc-28.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L31)
 
----
+___
 
 ### groupName
 
