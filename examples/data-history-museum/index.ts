@@ -33,7 +33,9 @@ async function getDHMSubscriber() {
           filter: {
             type: TransactionType.acfg,
             // Data History Museum creator accounts
-            sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
+            sender: (await algokit.isTestNet(algod))
+              ? 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU'
+              : 'EHYQCYHUC6CIWZLBX5TDTLVJ4SSVE4RRTMKFDCG4Z4Q7QSQ2XWIQPMKBPU',
           },
         },
       ],
@@ -48,7 +50,6 @@ async function getDHMSubscriber() {
     algod,
     indexer,
   )
-  subscriber.on('error', () => {})
   subscriber.onBatch('dhm-asset', async (events) => {
     // eslint-disable-next-line no-console
     console.log(`Received ${events.length} asset changes`)

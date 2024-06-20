@@ -12,7 +12,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 }
 
 ;(async () => {
-  const algod = algokit.getAlgoClient()
+  const algod = await algokit.getAlgoClient()
   let watermark = 0
 
   const subscriber = new AlgorandSubscriber(

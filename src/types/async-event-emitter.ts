@@ -62,7 +62,6 @@ export class AsyncEventEmitter {
    */
   removeListener(eventName: string | symbol, listener: AsyncEventListener): AsyncEventEmitter {
     const wrappedListener = this.listenerWrapperMap.get(listener)
-
     if (wrappedListener) {
       this.listenerWrapperMap.delete(listener)
       if (this.listenerMap[eventName]?.indexOf(wrappedListener) !== -1) {

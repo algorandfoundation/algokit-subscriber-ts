@@ -82,7 +82,7 @@ Alias for `removeListener`.
 
 #### Defined in
 
-[types/async-event-emitter.ts:83](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L83)
+[types/async-event-emitter.ts:82](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L82)
 
 ## Methods
 
