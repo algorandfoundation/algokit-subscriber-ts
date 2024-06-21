@@ -11,7 +11,7 @@ describe('Subscribing using various filters', () => {
   const beforeAllFixtures: (() => Promise<void>)[] = []
   beforeAll(async () => {
     await hooks.beforeAll()
-    await beforeAllFixtures.map(async (fixture) => await fixture())
+    await Promise.all(beforeAllFixtures.map(async (fixture) => await fixture()))
     await localnet.context.waitForIndexer()
   }, 30_000)
   beforeEach(hooks.beforeEach, 10_000)
