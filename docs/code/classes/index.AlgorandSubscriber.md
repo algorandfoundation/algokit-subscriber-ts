@@ -17,6 +17,7 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 - [abortController](index.AlgorandSubscriber.md#abortcontroller)
 - [algod](index.AlgorandSubscriber.md#algod)
 - [config](index.AlgorandSubscriber.md#config)
+- [errorEventName](index.AlgorandSubscriber.md#erroreventname)
 - [eventEmitter](index.AlgorandSubscriber.md#eventemitter)
 - [filterNames](index.AlgorandSubscriber.md#filternames)
 - [indexer](index.AlgorandSubscriber.md#indexer)
@@ -25,9 +26,11 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 
 ### Methods
 
+- [defaultErrorHandler](index.AlgorandSubscriber.md#defaulterrorhandler)
 - [on](index.AlgorandSubscriber.md#on)
 - [onBatch](index.AlgorandSubscriber.md#onbatch)
 - [onBeforePoll](index.AlgorandSubscriber.md#onbeforepoll)
+- [onError](index.AlgorandSubscriber.md#onerror)
 - [onPoll](index.AlgorandSubscriber.md#onpoll)
 - [pollOnce](index.AlgorandSubscriber.md#pollonce)
 - [start](index.AlgorandSubscriber.md#start)
@@ -55,7 +58,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L35)
+[subscriber.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L41)
 
 ## Properties
 
@@ -65,7 +68,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+[subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
 
 ___
 
@@ -75,7 +78,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:20](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L20)
+[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
 
 ___
 
@@ -85,7 +88,17 @@ ___
 
 #### Defined in
 
-[subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
+[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+
+___
+
+### errorEventName
+
+• `Private` `Readonly` **errorEventName**: ``"error"``
+
+#### Defined in
+
+[subscriber.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
 
 ___
 
@@ -95,7 +108,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
+[subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
 
 ___
 
@@ -105,7 +118,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
+[subscriber.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L28)
 
 ___
 
@@ -115,7 +128,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
+[subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
 
 ___
 
@@ -125,7 +138,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
+[subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
 
 ___
 
@@ -135,9 +148,29 @@ ___
 
 #### Defined in
 
-[subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
+[subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
 
 ## Methods
+
+### defaultErrorHandler
+
+▸ **defaultErrorHandler**(`error`): `never`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `unknown` |
+
+#### Returns
+
+`never`
+
+#### Defined in
+
+[subscriber.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L31)
+
+___
 
 ### on
 
@@ -181,7 +214,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L177)
+[subscriber.ts:190](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L190)
 
 ___
 
@@ -231,7 +264,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:203](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L203)
+[subscriber.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L219)
 
 ___
 
@@ -265,7 +298,58 @@ subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
 
 #### Defined in
 
-[subscriber.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L221)
+[subscriber.ts:237](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L237)
+
+___
+
+### onError
+
+▸ **onError**(`listener`): [`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+Register an error handler to run if an error is thrown during processing or event handling.
+
+This is useful to handle any errors that occur and can be used to perform retries, logging or cleanup activities.
+
+The listener can be async and it will be awaited if so.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `listener` | [`ErrorListener`](../modules/types_subscription.md#errorlistener) | The listener function to invoke with the error that was thrown |
+
+#### Returns
+
+[`AlgorandSubscriber`](index.AlgorandSubscriber.md)
+
+The subscriber so `on*` calls can be chained
+
+**`Example`**
+
+```typescript
+subscriber.onError((error) => { console.error(error) })
+```
+
+**`Example`**
+
+```typescript
+const maxRetries = 3
+let retryCount = 0
+subscriber.onError(async (error) => {
+  retryCount++
+  if (retryCount > maxRetries) {
+    console.error(error)
+    return
+  }
+  console.log(`Error occurred, retrying in 2 seconds (${retryCount}/${maxRetries})`)
+  await new Promise((r) => setTimeout(r, 2_000))
+  subscriber.start()
+})
+```
+
+#### Defined in
+
+[subscriber.ts:291](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L291)
 
 ___
 
@@ -302,7 +386,7 @@ subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTrans
 
 #### Defined in
 
-[subscriber.ts:242](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L242)
+[subscriber.ts:258](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L258)
 
 ___
 
@@ -323,7 +407,7 @@ The poll result
 
 #### Defined in
 
-[subscriber.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L61)
+[subscriber.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L67)
 
 ___
 
@@ -350,7 +434,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L107)
+[subscriber.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L113)
 
 ___
 
@@ -374,4 +458,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:150](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L150)
+[subscriber.ts:163](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L163)

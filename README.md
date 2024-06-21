@@ -33,6 +33,11 @@ subscriber.on('filter1', async (transaction) => {
 })
 //...
 
+// Set up error handling
+subscriber.onError((e) => {
+  // ...
+})
+
 // Either: Start the subscriber (if in long-running process)
 subscriber.start()
 
@@ -128,6 +133,11 @@ subscriber.onBatch('dhm-asset', async (events) => {
   // ... do stuff with the events
 })
 
+subscriber.onError((e) => {
+  // eslint-disable-next-line no-console
+  console.error(e)
+})
+
 subscriber.start()
 ```
 
@@ -169,6 +179,11 @@ subscriber.on('usdc', (transfer) => {
       (transfer['asset-transfer-transaction']?.amount ?? 0) / 1_000_000
     ).toFixed(2)} in transaction ${transfer.id}`,
   )
+})
+
+subscriber.onError((e) => {
+  // eslint-disable-next-line no-console
+  console.error(e)
 })
 
 subscriber.start()

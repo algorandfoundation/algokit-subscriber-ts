@@ -356,4 +356,50 @@ describe('AlgorandSubscriber', () => {
     ])
     await subscriber.stop('TEST')
   })
+
+  test('Correctly fires onError method', async () => {
+    const { algod, testAccount } = localnet.context
+    const { txns } = await SendXTransactions(2, testAccount, algod)
+    const initialWatermark = Number(txns[0].confirmation!.confirmedRound!) - 1
+    let complete = false
+    let actualError = undefined
+    const expectedError = new Error('BOOM')
+    const { subscriber } = getSubscriber(
+      {
+        testAccount: algokit.randomAccount(),
+        initialWatermark,
+        configOverrides: {
+          maxRoundsToSync: 100,
+          syncBehaviour: 'sync-oldest',
+          frequencyInSeconds: 1000,
+          filters: [
+            {
+              name: 'account1',
+              filter: {
+                sender: algokit.getSenderAddress(testAccount),
+              },
+            },
+          ],
+        },
+      },
+      algod,
+    )
+
+    subscriber
+      .on('account1', () => {
+        throw expectedError
+      })
+      .onError((e) => {
+        actualError = e
+        complete = true
+      })
+
+    subscriber.start()
+
+    console.log('Waiting for up to 2s until subscriber has polled')
+    await waitFor(() => complete, 2000)
+
+    expect(actualError).toEqual(expectedError)
+    await subscriber.stop('TEST')
+  })
 })

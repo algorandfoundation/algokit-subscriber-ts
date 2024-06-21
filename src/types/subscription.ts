@@ -285,3 +285,5 @@ export interface SubscriberConfigFilter<T> extends NamedTransactionFilter {
 }
 
 export type TypedAsyncEventListener<T> = (event: T, eventName: string | symbol) => Promise<void> | void
+
+export type ErrorListener = (error: unknown) => Promise<void> | void
