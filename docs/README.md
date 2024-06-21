@@ -27,6 +27,11 @@ subscriber.on('filter1', async (transaction) => {
 })
 //...
 
+// Set up error handling
+subscriber.onError((e) => {
+  // ...
+})
+
 // Either: Start the subscriber (if in long-running process)
 subscriber.start()
 

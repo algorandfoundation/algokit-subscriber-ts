@@ -72,6 +72,7 @@ describe('AlgorandSubscriber', () => {
     expect(subscribedTxns[0]).toBe(txIds[0])
     expect(getWatermark()).toBeGreaterThanOrEqual(lastTxnRound)
     expect(result.currentRound).toBeGreaterThanOrEqual(lastTxnRound)
+    expect(result.startingWatermark).toBe(lastTxnRound - 1)
     expect(result.newWatermark).toBe(result.currentRound)
     expect(result.syncedRoundRange).toEqual([lastTxnRound, result.currentRound])
     expect(result.subscribedTransactions.length).toBe(1)
@@ -155,6 +156,7 @@ describe('AlgorandSubscriber', () => {
     expect(subscribedTxns[3].id).toBe(txIds2[0])
     expect(subscribedTxns[4].id).toBe(txIds2[1])
     expect(result.currentRound).toBeGreaterThanOrEqual(lastTxnRound)
+    expect(result.startingWatermark).toBe(firstTxnRound - 1)
     expect(result.newWatermark).toBe(result.currentRound)
     expect(getWatermark()).toBeGreaterThanOrEqual(result.currentRound)
     expect(result.syncedRoundRange).toEqual([firstTxnRound, result.currentRound])
@@ -189,6 +191,7 @@ describe('AlgorandSubscriber', () => {
     expect(subscribedTxns3[3].id).toBe(txIds23[0])
     expect(subscribedTxns3[4].id).toBe(txIds23[1])
     expect(result3.currentRound).toBeGreaterThanOrEqual(lastSubscribedRound3)
+    expect(result3.startingWatermark).toBe(result2.newWatermark)
     expect(result3.newWatermark).toBe(result3.currentRound)
     expect(getWatermark()).toBeGreaterThanOrEqual(result3.currentRound)
     expect(result3.syncedRoundRange).toEqual([result2.newWatermark + 1, result3.currentRound])
@@ -354,6 +357,52 @@ describe('AlgorandSubscriber', () => {
       `poll:${expectedBatchResult}`,
       `inspect:${expectedBatchResult}`,
     ])
+    await subscriber.stop('TEST')
+  })
+
+  test('Correctly fires onError method', async () => {
+    const { algod, testAccount } = localnet.context
+    const { txns } = await SendXTransactions(2, testAccount, algod)
+    const initialWatermark = Number(txns[0].confirmation!.confirmedRound!) - 1
+    let complete = false
+    let actualError = undefined
+    const expectedError = new Error('BOOM')
+    const { subscriber } = getSubscriber(
+      {
+        testAccount: algokit.randomAccount(),
+        initialWatermark,
+        configOverrides: {
+          maxRoundsToSync: 100,
+          syncBehaviour: 'sync-oldest',
+          frequencyInSeconds: 1000,
+          filters: [
+            {
+              name: 'account1',
+              filter: {
+                sender: algokit.getSenderAddress(testAccount),
+              },
+            },
+          ],
+        },
+      },
+      algod,
+    )
+
+    subscriber
+      .on('account1', () => {
+        throw expectedError
+      })
+      .onError((e) => {
+        actualError = e
+        complete = true
+      })
+
+    subscriber.start()
+
+    console.log('Waiting for up to 2s until subscriber has polled')
+    await waitFor(() => complete, 2000)
+
+    expect(actualError).toEqual(expectedError)
     await subscriber.stop('TEST')
   })
 })

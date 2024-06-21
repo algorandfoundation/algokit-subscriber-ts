@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model VotingRound {
+  // App ID of the voting round contract instance
+  id        String                @id
+  title     String
+  questions VotingRoundQuestion[]
+  votes     Vote[]
+}
+
+model VotingRoundQuestion {
+  id            String                      @id
+  votingRoundId String
+  votingRound   VotingRound                 @relation(fields: [votingRoundId], references: [id])
+  prompt        String
+  options       VotingRoundQuestionOption[]
+}
+
+model VotingRoundQuestionOption {
+  id          String              @id
+  questionId  String
+  question    VotingRoundQuestion @relation(fields: [questionId], references: [id])
+  optionIndex Int
+  prompt      String
+  VoteCast    VoteCast[]
+}
+
+model Vote {
+  // Transaction ID of the vote
+  id            String      @id
+  castedAt      String
+  // Account address of the voter
+  voterAddress  String
+  castedVotes   VoteCast[]
+  votingRound   VotingRound @relation(fields: [votingRoundId], references: [id])
+  votingRoundId String
+}
+
+model VoteCast {
+  id               String                    @id
+  voteId           String
+  vote             Vote                      @relation(fields: [voteId], references: [id])
+  questionOptionId String
+  questionOption   VotingRoundQuestionOption @relation(fields: [questionOptionId], references: [id])
+  optionIndex      Int
+  voteWeight       String
+}
+
+model Watermark {
+  id        String @id
+  watermark Int
+  updated   String
+}

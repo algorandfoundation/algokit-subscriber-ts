@@ -33,6 +33,11 @@ subscriber.on('filter1', async (transaction) => {
 })
 //...
 
+// Set up error handling
+subscriber.onError((e) => {
+  // ...
+})
+
 // Either: Start the subscriber (if in long-running process)
 subscriber.start()
 
@@ -95,8 +100,7 @@ The following code, when algod is pointed to TestNet, will find all transactions
 The watermark is stored in-memory so this particular example is not resilient to restarts. To change that you can implement proper persistence of the watermark. There is [an example that uses the file system](./examples/data-history-museum/) to demonstrate this.
 
 ```typescript
-const algod = await algokit.getAlgoClient()
-const indexer = await algokit.getAlgoIndexerClient()
+const algorand = AlgorandClient.fromEnvironment()
 let watermark = 0
 const subscriber = new AlgorandSubscriber(
   {
@@ -120,12 +124,17 @@ const subscriber = new AlgorandSubscriber(
       },
     },
   },
-  algod,
-  indexer,
+  algorand.client.algod,
+  algorand.client.indexer,
 )
 subscriber.onBatch('dhm-asset', async (events) => {
   console.log(`Received ${events.length} asset changes`)
   // ... do stuff with the events
+})
+
+subscriber.onError((e) => {
+  // eslint-disable-next-line no-console
+  console.error(e)
 })
 
 subscriber.start()
@@ -136,7 +145,7 @@ subscriber.start()
 The following code, when algod is pointed to MainNet, will find all transfers of [USDC](https://www.circle.com/en/usdc-multichain/algorand) that are greater than $1 and it will poll every 1s for new transfers.
 
 ```typescript
-const algod = await algokit.getAlgoClient()
+const algorand = AlgorandClient.fromEnvironment()
 let watermark = 0
 
 const subscriber = new AlgorandSubscriber(
@@ -160,7 +169,7 @@ const subscriber = new AlgorandSubscriber(
       },
     },
   },
-  algod,
+  algorand.client.algod,
 )
 subscriber.on('usdc', (transfer) => {
   // eslint-disable-next-line no-console
@@ -169,6 +178,11 @@ subscriber.on('usdc', (transfer) => {
       (transfer['asset-transfer-transaction']?.amount ?? 0) / 1_000_000
     ).toFixed(2)} in transaction ${transfer.id}`,
   )
+})
+
+subscriber.onError((e) => {
+  // eslint-disable-next-line no-console
+  console.error(e)
 })
 
 subscriber.start()

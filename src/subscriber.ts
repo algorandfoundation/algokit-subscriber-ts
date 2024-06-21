@@ -5,6 +5,7 @@ import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitt
 import type {
   AlgorandSubscriberConfig,
   BeforePollMetadata,
+  ErrorListener,
   SubscribedTransaction,
   TransactionSubscriptionResult,
   TypedAsyncEventListener,
@@ -26,6 +27,11 @@ export class AlgorandSubscriber {
   private startPromise: Promise<void> | undefined
   private filterNames: string[]
 
+  private readonly errorEventName = 'error'
+  private readonly defaultErrorHandler = (error: unknown) => {
+    throw error
+  }
+
   /**
    * Create a new `AlgorandSubscriber`.
    * @param config The subscriber configuration
@@ -37,7 +43,7 @@ export class AlgorandSubscriber {
     this.indexer = indexer
     this.config = config
     this.abortController = new AbortController()
-    this.eventEmitter = new AsyncEventEmitter()
+    this.eventEmitter = new AsyncEventEmitter().on(this.errorEventName, this.defaultErrorHandler)
 
     this.filterNames = this.config.filters
       .map((f) => f.name)
@@ -107,6 +113,9 @@ export class AlgorandSubscriber {
   start(inspect?: (pollResult: TransactionSubscriptionResult) => void, suppressLog?: boolean): void {
     if (this.started) return
     this.started = true
+    if (this.abortController.signal.aborted) {
+      this.abortController = new AbortController()
+    }
     this.startPromise = (async () => {
       while (!this.abortController.signal.aborted) {
         // eslint-disable-next-line no-console
@@ -115,6 +124,7 @@ export class AlgorandSubscriber {
         const durationInSeconds = (+new Date() - start) / 1000
         algokit.Config.getLogger(suppressLog).debug('Subscription poll', {
           currentRound: result.currentRound,
+          startingWatermark: result.startingWatermark,
           newWatermark: result.newWatermark,
           syncedRoundRange: result.syncedRoundRange,
           subscribedTransactionsLength: result.subscribedTransactions.length,
@@ -141,6 +151,10 @@ export class AlgorandSubscriber {
       }
       this.started = false
     })()
+    this.startPromise.catch(async (e) => {
+      this.started = false
+      await this.eventEmitter.emitAsync(this.errorEventName, e)
+    })
   }
 
   /** Stops the subscriber if previously started via `start`.
@@ -175,6 +189,9 @@ export class AlgorandSubscriber {
    * @returns The subscriber so `on*` calls can be chained
    */
   on<T = SubscribedTransaction>(filterName: string, listener: TypedAsyncEventListener<T>) {
+    if (filterName === this.errorEventName) {
+      throw new Error(`'${this.errorEventName}' is reserved, please supply a different filterName.`)
+    }
     this.eventEmitter.on(filterName, listener as AsyncEventListener)
     return this
   }
@@ -241,6 +258,40 @@ export class AlgorandSubscriber {
    */
   onPoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {
     this.eventEmitter.on('poll', listener as AsyncEventListener)
+    return this
+  }
+
+  /**
+   * Register an error handler to run if an error is thrown during processing or event handling.
+   *
+   * This is useful to handle any errors that occur and can be used to perform retries, logging or cleanup activities.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onError((error) => { console.error(error) })
+   * ```
+   * @example
+   * ```typescript
+   * const maxRetries = 3
+   * let retryCount = 0
+   * subscriber.onError(async (error) => {
+   *   retryCount++
+   *   if (retryCount > maxRetries) {
+   *     console.error(error)
+   *     return
+   *   }
+   *   console.log(`Error occurred, retrying in 2 seconds (${retryCount}/${maxRetries})`)
+   *   await new Promise((r) => setTimeout(r, 2_000))
+   *   subscriber.start()
+   *})
+   * ```
+   * @param listener The listener function to invoke with the error that was thrown
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onError(listener: ErrorListener) {
+    // Remove the default error handling, as errors are being handled.
+    this.eventEmitter.off(this.errorEventName, this.defaultErrorHandler).on(this.errorEventName, listener as AsyncEventListener)
     return this
   }
 }

@@ -23,10 +23,35 @@
 
 ### Type Aliases
 
+- [ErrorListener](types_subscription.md#errorlistener)
 - [SubscribedTransaction](types_subscription.md#subscribedtransaction)
 - [TypedAsyncEventListener](types_subscription.md#typedasynceventlistener)
 
 ## Type Aliases
+
+### ErrorListener
+
+Ƭ **ErrorListener**: (`error`: `unknown`) => `Promise`\<`void`\> \| `void`
+
+#### Type declaration
+
+▸ (`error`): `Promise`\<`void`\> \| `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `unknown` |
+
+##### Returns
+
+`Promise`\<`void`\> \| `void`
+
+#### Defined in
+
+[types/subscription.ts:291](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L291)
+
+___
 
 ### SubscribedTransaction
 
@@ -42,7 +67,7 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://develop
 
 #### Defined in
 
-[types/subscription.ts:59](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L59)
+[types/subscription.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L61)
 
 ___
 
@@ -73,4 +98,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:287](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L287)
+[types/subscription.ts:289](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L289)

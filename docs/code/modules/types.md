@@ -26,6 +26,7 @@
 - [BlockVote](types.md#blockvote)
 - [CoreTransactionSubscriptionParams](types.md#coretransactionsubscriptionparams)
 - [EmittedArc28Event](types.md#emittedarc28event)
+- [ErrorListener](types.md#errorlistener)
 - [LogicSig](types.md#logicsig)
 - [MultisigSig](types.md#multisigsig)
 - [NamedTransactionFilter](types.md#namedtransactionfilter)
@@ -158,6 +159,12 @@ ___
 ### EmittedArc28Event
 
 Re-exports [EmittedArc28Event](../interfaces/types_arc_28.EmittedArc28Event.md)
+
+___
+
+### ErrorListener
+
+Re-exports [ErrorListener](types_subscription.md#errorlistener)
 
 ___
 

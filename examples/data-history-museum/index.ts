@@ -129,12 +129,26 @@ async function saveTransactions(transactions: unknown[], fileName: string) {
   console.log(`Saved ${transactions.length} transactions to ${fileName}`)
 }
 
-// eslint-disable-next-line no-console
-process.on('uncaughtException', (e) => console.error(e))
 ;(async () => {
   const subscriber = await getDHMSubscriber()
 
   if (process.env.RUN_LOOP === 'true') {
+    // Restart on error
+    const maxRetries = 3
+    let retryCount = 0
+    subscriber.onError(async (e) => {
+      retryCount++
+      if (retryCount > maxRetries) {
+        // eslint-disable-next-line no-console
+        console.error(e)
+        return
+      }
+      // eslint-disable-next-line no-console
+      console.log(`Error occurred, retrying in 2 seconds (${retryCount}/${maxRetries})`)
+      await new Promise((r) => setTimeout(r, 2_000))
+      subscriber.start()
+    })
+
     subscriber.start()
     ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) =>
       process.on(signal, () => {
