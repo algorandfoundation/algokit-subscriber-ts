@@ -247,6 +247,56 @@ If you use `start` then you can stop the polling by calling `stop`, which can be
 )
 ```
 
+## Handling errors
+
+Because `start` isn't a blocking method, you can't simply wrap it in a try/catch.
+To handle errors, you can register error handlers/listeners using the `onError` method. This works in a similar way to the other `on*` methods.
+
+````typescript
+/**
+   * Register an error handler to run if an error is thrown during processing or event handling.
+   *
+   * This is useful to handle any errors that occur and can be used to perform retries, logging or cleanup activities.
+   *
+   * The listener can be async and it will be awaited if so.
+   * @example
+   * ```typescript
+   * subscriber.onError((error) => { console.error(error) })
+   * ```
+   * @example
+   * ```typescript
+   * const maxRetries = 3
+   * let retryCount = 0
+   * subscriber.onError(async (error) => {
+   *   retryCount++
+   *   if (retryCount > maxRetries) {
+   *     console.error(error)
+   *     return
+   *   }
+   *   console.log(`Error occurred, retrying in 2 seconds (${retryCount}/${maxRetries})`)
+   *   await new Promise((r) => setTimeout(r, 2_000))
+   *   subscriber.start()
+   *})
+   * ```
+   * @param listener The listener function to invoke with the error that was thrown
+   * @returns The subscriber so `on*` calls can be chained
+   */
+  onError(listener: ErrorListener) {}
+````
+
+The `ErrorListener` type is defined as:
+
+```typescript
+type ErrorListener = (error: unknown) => Promise<void> | void
+```
+
+This allows you to use async or sync error listeners.
+
+Multiple error listeners can be added, and each will be called one-by-one (and awaited) in the order the registrations occur.
+
+When no error listeners have been registered, a default listener is used to re-throw any exception, so they can be caught by global uncaught exception handlers.
+Once an error listener has been registered, the default listener is removed and it's the responsibility of the registered error listener to perform any error handling.
+
 ## Examples
 
 See the [main README](../README.md#examples).

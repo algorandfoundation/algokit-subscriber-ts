@@ -65,11 +65,11 @@ export class AsyncEventEmitter {
     if (wrappedListener) {
       this.listenerWrapperMap.delete(listener)
       if (this.listenerMap[eventName]?.indexOf(wrappedListener) !== -1) {
-        this.listenerMap[eventName].slice(this.listenerMap[eventName].indexOf(wrappedListener))
+        this.listenerMap[eventName].splice(this.listenerMap[eventName].indexOf(wrappedListener), 1)
       }
     } else {
       if (this.listenerMap[eventName]?.indexOf(listener) !== -1) {
-        this.listenerMap[eventName].slice(this.listenerMap[eventName].indexOf(listener))
+        this.listenerMap[eventName].splice(this.listenerMap[eventName].indexOf(listener), 1)
       }
     }
 

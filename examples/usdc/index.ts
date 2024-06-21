@@ -11,8 +11,6 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
   process.exit(1)
 }
 
-// eslint-disable-next-line no-console
-process.on('uncaughtException', (e) => console.error(e))
 ;(async () => {
   const algod = await algokit.getAlgoClient()
   let watermark = 0
@@ -48,7 +46,10 @@ process.on('uncaughtException', (e) => console.error(e))
       ).toFixed(2)} in transaction ${transfer.id}`,
     )
   })
-
+  subscriber.onError((e) => {
+    // eslint-disable-next-line no-console
+    console.error(e)
+  })
   subscriber.start()
   ;['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach((signal) =>
     process.on(signal, () => {
