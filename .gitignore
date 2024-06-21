@@ -62,5 +62,9 @@ out/
 
 watermark.txt
 examples/**/*.json
+!examples/**/*.arc32.json
 
 __pycache__
+
+*.db
+*.db-journal

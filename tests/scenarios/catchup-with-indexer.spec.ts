@@ -30,6 +30,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
+    expect(subscribed.startingWatermark).toBe(0)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([1, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
@@ -61,6 +62,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
+    expect(subscribed.startingWatermark).toBe(initialWatermark)
     expect(subscribed.newWatermark).toBe(expectedNewWatermark)
     expect(subscribed.syncedRoundRange).toEqual([initialWatermark + 1, expectedNewWatermark])
     expect(subscribed.subscribedTransactions.length).toBe(2)
@@ -83,6 +85,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     )
 
     expect(subscribed.currentRound).toBe(currentRound)
+    expect(subscribed.startingWatermark).toBe(olderTxnRound - 1)
     expect(subscribed.newWatermark).toBe(currentRound)
     expect(subscribed.syncedRoundRange).toEqual([olderTxnRound, currentRound])
     expect(subscribed.subscribedTransactions.length).toBe(2)
@@ -103,6 +106,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
+    expect(subscribed.startingWatermark).toBe(0)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([1, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(3)

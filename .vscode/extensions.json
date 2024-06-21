@@ -4,6 +4,7 @@
     "mikestead.dotenv",
     "EditorConfig.EditorConfig",
     "vitest.explorer",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "Prisma.prisma"
   ]
 }

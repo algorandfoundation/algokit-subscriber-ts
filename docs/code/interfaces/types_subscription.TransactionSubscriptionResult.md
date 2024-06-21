@@ -13,6 +13,7 @@ The result of a single subscription pull/poll.
 - [blockMetadata](types_subscription.TransactionSubscriptionResult.md#blockmetadata)
 - [currentRound](types_subscription.TransactionSubscriptionResult.md#currentround)
 - [newWatermark](types_subscription.TransactionSubscriptionResult.md#newwatermark)
+- [startingWatermark](types_subscription.TransactionSubscriptionResult.md#startingwatermark)
 - [subscribedTransactions](types_subscription.TransactionSubscriptionResult.md#subscribedtransactions)
 - [syncedRoundRange](types_subscription.TransactionSubscriptionResult.md#syncedroundrange)
 
@@ -27,7 +28,7 @@ of the subscription poll.
 
 #### Defined in
 
-[types/subscription.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L27)
+[types/subscription.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L29)
 
 ___
 
@@ -55,7 +56,19 @@ subscribed transactions to keep it reliable.
 
 #### Defined in
 
-[types/subscription.ts:17](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L17)
+[types/subscription.ts:19](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L19)
+
+___
+
+### startingWatermark
+
+• **startingWatermark**: `number`
+
+The watermark value that was retrieved at the start of the subscription poll.
+
+#### Defined in
+
+[types/subscription.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L13)
 
 ___
 
@@ -70,7 +83,7 @@ to represent the data with some additional fields.
 
 #### Defined in
 
-[types/subscription.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L23)
+[types/subscription.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L25)
 
 ___
 

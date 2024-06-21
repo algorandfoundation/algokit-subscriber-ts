@@ -30,7 +30,7 @@ Full count of transactions and inner transactions (recursively) in this block.
 
 #### Defined in
 
-[types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
+[types/subscription.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
 
 ___
 
@@ -42,7 +42,7 @@ The base64 genesis hash of the chain.
 
 #### Defined in
 
-[types/subscription.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L40)
+[types/subscription.ts:42](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L42)
 
 ___
 
@@ -54,7 +54,7 @@ The genesis ID of the chain.
 
 #### Defined in
 
-[types/subscription.ts:38](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L38)
+[types/subscription.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L40)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:32](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L32)
+[types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
 
 ___
 
@@ -76,7 +76,7 @@ Count of parent transactions in this block
 
 #### Defined in
 
-[types/subscription.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L46)
+[types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
 
 ___
 
@@ -88,7 +88,7 @@ The previous block hash.
 
 #### Defined in
 
-[types/subscription.ts:42](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L42)
+[types/subscription.ts:44](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L44)
 
 ___
 
@@ -100,7 +100,7 @@ The round of the block.
 
 #### Defined in
 
-[types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
+[types/subscription.ts:36](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L36)
 
 ___
 
@@ -112,7 +112,7 @@ The base64 seed of the block.
 
 #### Defined in
 
-[types/subscription.ts:44](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L44)
+[types/subscription.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L46)
 
 ___
 
@@ -124,4 +124,4 @@ The ISO 8601 timestamp of the block.
 
 #### Defined in
 
-[types/subscription.ts:36](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L36)
+[types/subscription.ts:38](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L38)
