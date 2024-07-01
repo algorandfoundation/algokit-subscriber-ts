@@ -34,8 +34,8 @@ export interface BlockMetadata {
   hash?: string
   /** The round of the block. */
   round: number
-  /** The ISO 8601 timestamp of the block. */
-  timestamp: string
+  /** Block creation timestamp in seconds since eposh */
+  timestamp: number
   /** The genesis ID of the chain. */
   genesisId: string
   /** The base64 genesis hash of the chain. */
@@ -48,6 +48,22 @@ export interface BlockMetadata {
   parentTransactionCount: number
   /** Full count of transactions and inner transactions (recursively) in this block. */
   fullTransactionCount: number
+  /** How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis. */
+  rewardsLevel: number
+  /** FeeSink accepts transaction fees, it can only spend to the incentive pool. */
+  feeSink: string
+  /** Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round. */
+  rewardsResidue: number
+  /** The current protocol version */
+  currentProtocol: string
+  /** number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round. */
+  rewardsCalculationRound: number
+  /** RewardsPool accepts periodic injections from the fee-sink and continually redistributes them as rewards. */
+  rewardsPool: string
+  /** number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported). */
+  transactionCounter: number
+  /** TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector commitment instead of a merkle tree, and SHA256 hash function instead of the default SHA512_256. This commitment can be used on environments where only the SHA256 function exists. */
+  transactionsRootSha256: string
 }
 
 /** The common model used to expose a transaction that is returned from a subscription.

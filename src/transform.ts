@@ -562,13 +562,21 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   return {
     round: block.rnd,
     hash: cert?.prop?.dig ? base32.encode(cert.prop.dig).replace(/=/g, '') : undefined,
-    timestamp: new Date(block.ts * 1000).toISOString(),
+    timestamp: block.ts,
     genesisId: block.gen,
     genesisHash: Buffer.from(block.gh).toString('base64'),
     previousBlockHash: block.prev ? base32.encode(block.prev).replace(/=/g, '') : undefined,
     seed: block.seed ? Buffer.from(block.seed).toString('base64') : undefined,
     parentTransactionCount: block.txns?.length ?? 0,
     fullTransactionCount: countAllTransactions(block.txns ?? []),
+    rewardsPool: algosdk.encodeAddress(block.rwd),
+    rewardsLevel: block.earn,
+    feeSink: algosdk.encodeAddress(block.fees),
+    rewardsResidue: block.frac,
+    currentProtocol: block.proto,
+    rewardsCalculationRound: block.rwcalr,
+    transactionCounter: block.tc,
+    transactionsRootSha256: block.txn256,
   }
 }
 
