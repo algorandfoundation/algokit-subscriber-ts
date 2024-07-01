@@ -27,7 +27,7 @@
 
 ### BlockInnerTransaction
 
-Ƭ **BlockInnerTransaction**: `Omit`\<[`BlockTransaction`](../interfaces/types_block.BlockTransaction.md), ``"hgi"`` \| ``"hgh"``\>
+Ƭ **BlockInnerTransaction**: `Omit`\<[`BlockTransaction`](../interfaces/types_block.BlockTransaction.md), `"hgi"` \| `"hgh"`\>
 
 Data that is returned in a raw Algorand block for a single inner transaction
 

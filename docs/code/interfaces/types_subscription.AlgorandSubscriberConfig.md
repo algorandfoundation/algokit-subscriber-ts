@@ -41,7 +41,7 @@ Any ARC-28 event definitions to process from app call logs
 
 [types/subscription.ts:135](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L135)
 
-___
+---
 
 ### filters
 
@@ -57,7 +57,7 @@ The set of filters to subscribe to / emit events for, along with optional data m
 
 [types/subscription.ts:263](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L263)
 
-___
+---
 
 ### frequencyInSeconds
 
@@ -69,7 +69,7 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 [types/subscription.ts:265](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L265)
 
-___
+---
 
 ### maxIndexerRoundsToSync
 
@@ -92,7 +92,7 @@ boundary based on the number of rounds specified here.
 
 [types/subscription.ts:155](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L155)
 
-___
+---
 
 ### maxRoundsToSync
 
@@ -114,28 +114,29 @@ your catchup speed when using `sync-oldest`.
 
 [types/subscription.ts:144](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L144)
 
-___
+---
 
 ### syncBehaviour
 
-• **syncBehaviour**: ``"skip-sync-newest"`` \| ``"sync-oldest"`` \| ``"sync-oldest-start-now"`` \| ``"catchup-with-indexer"`` \| ``"fail"``
+• **syncBehaviour**: `"skip-sync-newest"` \| `"sync-oldest"` \| `"sync-oldest-start-now"` \| `"catchup-with-indexer"` \| `"fail"`
 
 If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
 past `watermark` then how should that be handled:
- * `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
-   for real-time notification scenarios where you don't care about history and
-   are happy to lose old transactions.
- * `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
-   using algod; note: this will be slow if you are starting from 0 and requires
-   an archival node.
- * `sync-oldest-start-now`: Same as `sync-oldest`, but if the `watermark` is `0`
-   then start at the current round i.e. don't sync historical records, but once
-   subscribing starts sync everything; note: if it falls behind it requires an
-   archival node.
- * `catchup-with-indexer`: Sync to round `currentRound - maxRoundsToSync + 1`
-   using indexer (much faster than using algod for long time periods) and then
-   use algod from there.
- * `fail`: Throw an error.
+
+- `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
+  for real-time notification scenarios where you don't care about history and
+  are happy to lose old transactions.
+- `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
+  using algod; note: this will be slow if you are starting from 0 and requires
+  an archival node.
+- `sync-oldest-start-now`: Same as `sync-oldest`, but if the `watermark` is `0`
+  then start at the current round i.e. don't sync historical records, but once
+  subscribing starts sync everything; note: if it falls behind it requires an
+  archival node.
+- `catchup-with-indexer`: Sync to round `currentRound - maxRoundsToSync + 1`
+  using indexer (much faster than using algod for long time periods) and then
+  use algod from there.
+- `fail`: Throw an error.
 
 #### Inherited from
 
@@ -145,7 +146,7 @@ past `watermark` then how should that be handled:
 
 [types/subscription.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L173)
 
-___
+---
 
 ### waitForBlockWhenAtTip
 
@@ -157,7 +158,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 [types/subscription.ts:267](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L267)
 
-___
+---
 
 ### watermarkPersistence
 
@@ -168,10 +169,10 @@ its position in the chain
 
 #### Type declaration
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `get` | () => `Promise`\<`number`\> | - |
-| `set` | (`newWatermark`: `number`) => `Promise`\<`void`\> | - |
+| Name  | Type                                              | Description |
+| :---- | :------------------------------------------------ | :---------- |
+| `get` | () => `Promise`\<`number`\>                       | -           |
+| `set` | (`newWatermark`: `number`) => `Promise`\<`void`\> | -           |
 
 #### Defined in
 

@@ -27,7 +27,7 @@ The address that the balance change is for.
 
 [types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L77)
 
-___
+---
 
 ### amount
 
@@ -39,7 +39,7 @@ The amount of the balance change in smallest divisible unit or microAlgos.
 
 [types/subscription.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L81)
 
-___
+---
 
 ### assetId
 
@@ -51,7 +51,7 @@ The asset ID of the balance change, or 0 for Algos.
 
 [types/subscription.ts:79](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L79)
 
-___
+---
 
 ### roles
 
