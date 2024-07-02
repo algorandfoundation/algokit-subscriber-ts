@@ -200,7 +200,7 @@ ___
 
 • **timestamp**: `number`
 
-Block creation timestamp in seconds since eposh
+Block creation timestamp in seconds since epoch
 
 #### Defined in
 
