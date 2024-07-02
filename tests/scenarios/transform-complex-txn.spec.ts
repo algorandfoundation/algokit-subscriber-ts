@@ -273,15 +273,23 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(algodTxns.blockMetadata).toMatchInlineSnapshot(`
       [
         {
+          "currentProtocol": "https://github.com/algorandfoundation/specs/tree/abd3d4823c6f77349fc04c3af7b1e99fe4df699f",
+          "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
           "fullTransactionCount": 171,
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
           "genesisId": "mainnet-v1.0",
           "hash": "CDVL4HL5XDN7DPYAHITVHKVZSX4KNRL65XBOCSQTBNDOFMHN7JBA",
           "parentTransactionCount": 55,
           "previousBlockHash": "6ELYXRVDR7DGXCVYC7AAVWLFIUNPLXT5QTNL2NL7ZQL3O66FMFWQ",
+          "rewardsCalculationRound": 35500000,
+          "rewardsLevel": 218288,
+          "rewardsPool": "737777777777777777777777777777777777777777777777777UFEJ2CI",
+          "rewardsResidue": 6886250026n,
           "round": 35214367,
           "seed": "Tp6NntUaw17I8GGscaawpAuI0vQDMgp1TBSMAcpohtY=",
-          "timestamp": "2024-01-14T17:14:00.000Z",
+          "timestamp": 1705252440,
+          "transactionCounter": 1401537349,
+          "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
         },
       ]
     `)
