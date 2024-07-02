@@ -23,11 +23,11 @@ blockchain for the given subscription context.
 
 #### Parameters
 
-| Name           | Type                                                                                                 | Description                                                                           |
-| :------------- | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
-| `subscription` | [`TransactionSubscriptionParams`](../interfaces/types_subscription.TransactionSubscriptionParams.md) | The subscription context.                                                             |
-| `algod`        | `default`                                                                                            | An Algod client.                                                                      |
-| `indexer?`     | `default`                                                                                            | An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`. |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subscription` | [`TransactionSubscriptionParams`](../interfaces/types_subscription.TransactionSubscriptionParams.md) | The subscription context. |
+| `algod` | `default` | An Algod client. |
+| `indexer?` | `default` | An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`. |
 
 #### Returns
 
@@ -37,4 +37,4 @@ The result of this subscription pull/poll.
 
 #### Defined in
 
-[subscriptions.ts:58](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L58)
+[subscriptions.ts:58](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L58)

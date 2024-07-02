@@ -34,9 +34,9 @@ The ordered arguments extracted from the event that was emitted
 
 #### Defined in
 
-[types/arc-28.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L41)
+[types/arc-28.ts:41](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L41)
 
----
+___
 
 ### argsByName
 
@@ -46,9 +46,9 @@ The named arguments extracted from the event that was emitted (where the argumen
 
 #### Defined in
 
-[types/arc-28.ts:43](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L43)
+[types/arc-28.ts:43](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L43)
 
----
+___
 
 ### eventDefinition
 
@@ -62,9 +62,9 @@ The ARC-28 definition of the event
 
 #### Defined in
 
-[types/arc-28.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L35)
+[types/arc-28.ts:35](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L35)
 
----
+___
 
 ### eventName
 
@@ -78,9 +78,9 @@ The name of the ARC-28 event that was triggered
 
 #### Defined in
 
-[types/arc-28.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L29)
+[types/arc-28.ts:29](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L29)
 
----
+___
 
 ### eventPrefix
 
@@ -94,9 +94,9 @@ The 4-byte hex prefix for the event
 
 #### Defined in
 
-[types/arc-28.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L33)
+[types/arc-28.ts:33](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L33)
 
----
+___
 
 ### eventSignature
 
@@ -110,9 +110,9 @@ The signature of the event e.g. `EventName(type1,type2)`
 
 #### Defined in
 
-[types/arc-28.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L31)
+[types/arc-28.ts:31](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L31)
 
----
+___
 
 ### groupName
 
@@ -126,4 +126,4 @@ The name of the ARC-28 event group the event belongs to
 
 #### Defined in
 
-[types/arc-28.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L27)
+[types/arc-28.ts:27](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L27)

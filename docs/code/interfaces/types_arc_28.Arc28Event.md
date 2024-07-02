@@ -18,15 +18,15 @@ The definition of metadata for an ARC-28 event per https://github.com/algorandfo
 
 ### args
 
-• **args**: \{ `desc?`: `string` ; `name?`: `string` ; `type`: `string` }[]
+• **args**: \{ `desc?`: `string` ; `name?`: `string` ; `type`: `string`  }[]
 
 The arguments of the event, in order
 
 #### Defined in
 
-[types/arc-28.ts:14](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L14)
+[types/arc-28.ts:14](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L14)
 
----
+___
 
 ### desc
 
@@ -36,9 +36,9 @@ Optional, user-friendly description for the event
 
 #### Defined in
 
-[types/arc-28.ts:12](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L12)
+[types/arc-28.ts:12](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L12)
 
----
+___
 
 ### name
 
@@ -48,4 +48,4 @@ The name of the event
 
 #### Defined in
 
-[types/arc-28.ts:10](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L10)
+[types/arc-28.ts:10](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L10)

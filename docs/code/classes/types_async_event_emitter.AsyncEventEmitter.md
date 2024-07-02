@@ -45,9 +45,9 @@ Simple asynchronous event emitter class.
 
 #### Defined in
 
-[types/async-event-emitter.ts:12](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L12)
+[types/async-event-emitter.ts:12](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L12)
 
----
+___
 
 ### listenerWrapperMap
 
@@ -55,9 +55,9 @@ Simple asynchronous event emitter class.
 
 #### Defined in
 
-[types/async-event-emitter.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L11)
+[types/async-event-emitter.ts:11](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L11)
 
----
+___
 
 ### off
 
@@ -71,10 +71,10 @@ Alias for `removeListener`.
 
 ##### Parameters
 
-| Name        | Type                                                                               |
-| :---------- | :--------------------------------------------------------------------------------- |
-| `eventName` | `string` \| `symbol`                                                               |
-| `listener`  | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) |
+| Name | Type |
+| :------ | :------ |
+| `eventName` | `string` \| `symbol` |
+| `listener` | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) |
 
 ##### Returns
 
@@ -82,7 +82,7 @@ Alias for `removeListener`.
 
 #### Defined in
 
-[types/async-event-emitter.ts:82](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L82)
+[types/async-event-emitter.ts:82](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L82)
 
 ## Methods
 
@@ -95,10 +95,10 @@ in the order they were registered.
 
 #### Parameters
 
-| Name        | Type                 | Description           |
-| :---------- | :------------------- | :-------------------- |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `eventName` | `string` \| `symbol` | The name of the event |
-| `event`     | `unknown`            | The event payload     |
+| `event` | `unknown` | The event payload |
 
 #### Returns
 
@@ -106,9 +106,9 @@ in the order they were registered.
 
 #### Defined in
 
-[types/async-event-emitter.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L21)
+[types/async-event-emitter.ts:21](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L21)
 
----
+___
 
 ### on
 
@@ -118,10 +118,10 @@ Register an event listener for the given event.
 
 #### Parameters
 
-| Name        | Type                                                                               | Description             |
-| :---------- | :--------------------------------------------------------------------------------- | :---------------------- |
-| `eventName` | `string` \| `symbol`                                                               | The name of the event   |
-| `listener`  | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) | The listener to trigger |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventName` | `string` \| `symbol` | The name of the event |
+| `listener` | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) | The listener to trigger |
 
 #### Returns
 
@@ -131,9 +131,9 @@ The `AsyncEventEmitter` so you can chain registrations
 
 #### Defined in
 
-[types/async-event-emitter.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L33)
+[types/async-event-emitter.ts:33](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L33)
 
----
+___
 
 ### once
 
@@ -143,10 +143,10 @@ Register an event listener for the given event that is only fired once.
 
 #### Parameters
 
-| Name        | Type                                                                               | Description             |
-| :---------- | :--------------------------------------------------------------------------------- | :---------------------- |
-| `eventName` | `string` \| `symbol`                                                               | The name of the event   |
-| `listener`  | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) | The listener to trigger |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventName` | `string` \| `symbol` | The name of the event |
+| `listener` | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) | The listener to trigger |
 
 #### Returns
 
@@ -156,9 +156,9 @@ The `AsyncEventEmitter` so you can chain registrations
 
 #### Defined in
 
-[types/async-event-emitter.ts:45](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L45)
+[types/async-event-emitter.ts:45](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L45)
 
----
+___
 
 ### removeListener
 
@@ -168,10 +168,10 @@ Removes an event listener from the given event.
 
 #### Parameters
 
-| Name        | Type                                                                               | Description            |
-| :---------- | :--------------------------------------------------------------------------------- | :--------------------- |
-| `eventName` | `string` \| `symbol`                                                               | The name of the event  |
-| `listener`  | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) | The listener to remove |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventName` | `string` \| `symbol` | The name of the event |
+| `listener` | [`AsyncEventListener`](../modules/types_async_event_emitter.md#asynceventlistener) | The listener to remove |
 
 #### Returns
 
@@ -181,4 +181,4 @@ The `AsyncEventEmitter` so you can chain registrations
 
 #### Defined in
 
-[types/async-event-emitter.ts:63](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L63)
+[types/async-event-emitter.ts:63](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L63)

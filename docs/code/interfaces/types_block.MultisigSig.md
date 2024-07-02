@@ -22,15 +22,15 @@ https://github.com/algorand/go-algorand/blob/master/crypto/multisig.go#L36
 
 ### subsig
 
-• **subsig**: \{ `pk`: `Uint8Array` ; `s?`: `Uint8Array` }[]
+• **subsig**: \{ `pk`: `Uint8Array` ; `s?`: `Uint8Array`  }[]
 
 Sub-signatures
 
 #### Defined in
 
-[types/block.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L187)
+[types/block.ts:187](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L187)
 
----
+___
 
 ### thr
 
@@ -40,9 +40,9 @@ Multisig threshold
 
 #### Defined in
 
-[types/block.ts:185](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L185)
+[types/block.ts:185](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L185)
 
----
+___
 
 ### v
 
@@ -52,4 +52,4 @@ Multisig version
 
 #### Defined in
 
-[types/block.ts:183](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L183)
+[types/block.ts:183](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L183)

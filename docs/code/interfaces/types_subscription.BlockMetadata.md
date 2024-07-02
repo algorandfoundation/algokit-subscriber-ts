@@ -10,17 +10,49 @@ Metadata about a block that was retrieved from algod.
 
 ### Properties
 
+- [currentProtocol](types_subscription.BlockMetadata.md#currentprotocol)
+- [feeSink](types_subscription.BlockMetadata.md#feesink)
 - [fullTransactionCount](types_subscription.BlockMetadata.md#fulltransactioncount)
 - [genesisHash](types_subscription.BlockMetadata.md#genesishash)
 - [genesisId](types_subscription.BlockMetadata.md#genesisid)
 - [hash](types_subscription.BlockMetadata.md#hash)
 - [parentTransactionCount](types_subscription.BlockMetadata.md#parenttransactioncount)
 - [previousBlockHash](types_subscription.BlockMetadata.md#previousblockhash)
+- [rewardsCalculationRound](types_subscription.BlockMetadata.md#rewardscalculationround)
+- [rewardsLevel](types_subscription.BlockMetadata.md#rewardslevel)
+- [rewardsPool](types_subscription.BlockMetadata.md#rewardspool)
+- [rewardsResidue](types_subscription.BlockMetadata.md#rewardsresidue)
 - [round](types_subscription.BlockMetadata.md#round)
 - [seed](types_subscription.BlockMetadata.md#seed)
 - [timestamp](types_subscription.BlockMetadata.md#timestamp)
+- [transactionCounter](types_subscription.BlockMetadata.md#transactioncounter)
+- [transactionsRootSha256](types_subscription.BlockMetadata.md#transactionsrootsha256)
 
 ## Properties
+
+### currentProtocol
+
+• **currentProtocol**: `string`
+
+The current protocol version
+
+#### Defined in
+
+[types/subscription.ts:58](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L58)
+
+___
+
+### feeSink
+
+• **feeSink**: `string`
+
+FeeSink accepts transaction fees, it can only spend to the incentive pool.
+
+#### Defined in
+
+[types/subscription.ts:54](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L54)
+
+___
 
 ### fullTransactionCount
 
@@ -30,9 +62,9 @@ Full count of transactions and inner transactions (recursively) in this block.
 
 #### Defined in
 
-[types/subscription.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
+[types/subscription.ts:50](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
 
----
+___
 
 ### genesisHash
 
@@ -42,9 +74,9 @@ The base64 genesis hash of the chain.
 
 #### Defined in
 
-[types/subscription.ts:42](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L42)
+[types/subscription.ts:42](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L42)
 
----
+___
 
 ### genesisId
 
@@ -54,9 +86,9 @@ The genesis ID of the chain.
 
 #### Defined in
 
-[types/subscription.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L40)
+[types/subscription.ts:40](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L40)
 
----
+___
 
 ### hash
 
@@ -64,9 +96,9 @@ The genesis ID of the chain.
 
 #### Defined in
 
-[types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
+[types/subscription.ts:34](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
 
----
+___
 
 ### parentTransactionCount
 
@@ -76,9 +108,9 @@ Count of parent transactions in this block
 
 #### Defined in
 
-[types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
+[types/subscription.ts:48](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
 
----
+___
 
 ### previousBlockHash
 
@@ -88,9 +120,57 @@ The previous block hash.
 
 #### Defined in
 
-[types/subscription.ts:44](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L44)
+[types/subscription.ts:44](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L44)
 
----
+___
+
+### rewardsCalculationRound
+
+• **rewardsCalculationRound**: `number`
+
+number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round.
+
+#### Defined in
+
+[types/subscription.ts:60](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L60)
+
+___
+
+### rewardsLevel
+
+• **rewardsLevel**: `number`
+
+How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis.
+
+#### Defined in
+
+[types/subscription.ts:52](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L52)
+
+___
+
+### rewardsPool
+
+• **rewardsPool**: `string`
+
+RewardsPool accepts periodic injections from the fee-sink and continually redistributes them as rewards.
+
+#### Defined in
+
+[types/subscription.ts:62](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L62)
+
+___
+
+### rewardsResidue
+
+• **rewardsResidue**: `number`
+
+Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round.
+
+#### Defined in
+
+[types/subscription.ts:56](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L56)
+
+___
 
 ### round
 
@@ -100,9 +180,9 @@ The round of the block.
 
 #### Defined in
 
-[types/subscription.ts:36](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L36)
+[types/subscription.ts:36](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L36)
 
----
+___
 
 ### seed
 
@@ -112,16 +192,40 @@ The base64 seed of the block.
 
 #### Defined in
 
-[types/subscription.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L46)
+[types/subscription.ts:46](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L46)
 
----
+___
 
 ### timestamp
 
-• **timestamp**: `string`
+• **timestamp**: `number`
 
-The ISO 8601 timestamp of the block.
+Block creation timestamp in seconds since eposh
 
 #### Defined in
 
-[types/subscription.ts:38](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L38)
+[types/subscription.ts:38](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L38)
+
+___
+
+### transactionCounter
+
+• **transactionCounter**: `number`
+
+number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported).
+
+#### Defined in
+
+[types/subscription.ts:64](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L64)
+
+___
+
+### transactionsRootSha256
+
+• **transactionsRootSha256**: `string`
+
+TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector commitment instead of a merkle tree, and SHA256 hash function instead of the default SHA512_256. This commitment can be used on environments where only the SHA256 function exists.
+
+#### Defined in
+
+[types/subscription.ts:66](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L66)

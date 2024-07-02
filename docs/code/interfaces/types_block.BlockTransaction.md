@@ -37,9 +37,9 @@ Asset closing amount in decimal units
 
 #### Defined in
 
-[types/block.ts:147](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L147)
+[types/block.ts:147](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L147)
 
----
+___
 
 ### apid
 
@@ -49,9 +49,9 @@ App ID when an app is created by the transaction
 
 #### Defined in
 
-[types/block.ts:145](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L145)
+[types/block.ts:145](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L145)
 
----
+___
 
 ### ca
 
@@ -61,9 +61,9 @@ Algo closing amount in microAlgos
 
 #### Defined in
 
-[types/block.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L149)
+[types/block.ts:149](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L149)
 
----
+___
 
 ### caid
 
@@ -73,9 +73,9 @@ Asset ID when an asset is created by the transaction
 
 #### Defined in
 
-[types/block.ts:143](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L143)
+[types/block.ts:143](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L143)
 
----
+___
 
 ### dt
 
@@ -85,9 +85,9 @@ The eval deltas for the block
 
 #### Defined in
 
-[types/block.ts:141](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L141)
+[types/block.ts:141](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L141)
 
----
+___
 
 ### hgh
 
@@ -97,9 +97,9 @@ Has genesis hash
 
 #### Defined in
 
-[types/block.ts:153](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L153)
+[types/block.ts:153](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L153)
 
----
+___
 
 ### hgi
 
@@ -109,9 +109,9 @@ Has genesis id
 
 #### Defined in
 
-[types/block.ts:151](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L151)
+[types/block.ts:151](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L151)
 
----
+___
 
 ### lsig
 
@@ -121,9 +121,9 @@ Logic signature
 
 #### Defined in
 
-[types/block.ts:157](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L157)
+[types/block.ts:157](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L157)
 
----
+___
 
 ### msig
 
@@ -133,9 +133,9 @@ Transaction multisig signature
 
 #### Defined in
 
-[types/block.ts:159](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L159)
+[types/block.ts:159](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L159)
 
----
+___
 
 ### sgnr
 
@@ -145,9 +145,9 @@ The signer, if signing with a different key than the Transaction type `from` pro
 
 #### Defined in
 
-[types/block.ts:161](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L161)
+[types/block.ts:161](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L161)
 
----
+___
 
 ### sig
 
@@ -157,9 +157,9 @@ Transaction ED25519 signature
 
 #### Defined in
 
-[types/block.ts:155](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L155)
+[types/block.ts:155](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L155)
 
----
+___
 
 ### txn
 
@@ -169,4 +169,4 @@ The encoded transaction data
 
 #### Defined in
 
-[types/block.ts:139](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L139)
+[types/block.ts:139](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L139)

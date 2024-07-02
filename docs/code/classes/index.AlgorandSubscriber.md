@@ -46,11 +46,11 @@ Create a new `AlgorandSubscriber`.
 
 #### Parameters
 
-| Name       | Type                                                                                       | Description                                                                                         |
-| :--------- | :----------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `config`   | [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md) | The subscriber configuration                                                                        |
-| `algod`    | `default`                                                                                  | An algod client                                                                                     |
-| `indexer?` | `default`                                                                                  | An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `config` | [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md) | The subscriber configuration |
+| `algod` | `default` | An algod client |
+| `indexer?` | `default` | An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer` |
 
 #### Returns
 
@@ -58,7 +58,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L41)
+[subscriber.ts:41](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L41)
 
 ## Properties
 
@@ -68,9 +68,9 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
+[subscriber.ts:24](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
 
----
+___
 
 ### algod
 
@@ -78,9 +78,9 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
+[subscriber.ts:21](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
 
----
+___
 
 ### config
 
@@ -88,19 +88,19 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+[subscriber.ts:23](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
 
----
+___
 
 ### errorEventName
 
-• `Private` `Readonly` **errorEventName**: `"error"`
+• `Private` `Readonly` **errorEventName**: ``"error"``
 
 #### Defined in
 
-[subscriber.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
+[subscriber.ts:30](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
 
----
+___
 
 ### eventEmitter
 
@@ -108,9 +108,9 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
+[subscriber.ts:25](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
 
----
+___
 
 ### filterNames
 
@@ -118,9 +118,9 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L28)
+[subscriber.ts:28](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L28)
 
----
+___
 
 ### indexer
 
@@ -128,9 +128,9 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
+[subscriber.ts:22](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
 
----
+___
 
 ### startPromise
 
@@ -138,9 +138,9 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
+[subscriber.ts:27](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
 
----
+___
 
 ### started
 
@@ -148,7 +148,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
+[subscriber.ts:26](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
 
 ## Methods
 
@@ -158,8 +158,8 @@ Create a new `AlgorandSubscriber`.
 
 #### Parameters
 
-| Name    | Type      |
-| :------ | :-------- |
+| Name | Type |
+| :------ | :------ |
 | `error` | `unknown` |
 
 #### Returns
@@ -168,9 +168,9 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L31)
+[subscriber.ts:31](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L31)
 
----
+___
 
 ### on
 
@@ -182,16 +182,16 @@ The listener can be async and it will be awaited if so.
 
 #### Type parameters
 
-| Name | Type                                                                              |
-| :--- | :-------------------------------------------------------------------------------- |
-| `T`  | [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction) |
+| Name | Type |
+| :------ | :------ |
+| `T` | [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction) |
 
 #### Parameters
 
-| Name         | Type                                                                                         | Description                                               |
-| :----------- | :------------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
-| `filterName` | `string`                                                                                     | The name of the filter to subscribe to                    |
-| `listener`   | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`\> | The listener function to invoke with the subscribed event |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `filterName` | `string` | The name of the filter to subscribe to |
+| `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`\> | The listener function to invoke with the subscribed event |
 
 #### Returns
 
@@ -202,9 +202,7 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.on('my-filter', async (transaction) => {
-  console.log(transaction.id)
-})
+subscriber.on('my-filter', async (transaction) => { console.log(transaction.id) })
 ```
 
 **`Example`**
@@ -216,9 +214,9 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L191)
+[subscriber.ts:191](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L191)
 
----
+___
 
 ### onBatch
 
@@ -234,16 +232,16 @@ The listener can be async and it will be awaited if so.
 
 #### Type parameters
 
-| Name | Type                                                                              |
-| :--- | :-------------------------------------------------------------------------------- |
-| `T`  | [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction) |
+| Name | Type |
+| :------ | :------ |
+| `T` | [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction) |
 
 #### Parameters
 
-| Name         | Type                                                                                           | Description                                                |
-| :----------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
-| `filterName` | `string`                                                                                       | The name of the filter to subscribe to                     |
-| `listener`   | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`[]\> | The listener function to invoke with the subscribed events |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `filterName` | `string` | The name of the filter to subscribe to |
+| `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`[]\> | The listener function to invoke with the subscribed events |
 
 #### Returns
 
@@ -254,9 +252,7 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onBatch('my-filter', async (transactions) => {
-  console.log(transactions.length)
-})
+subscriber.onBatch('my-filter', async (transactions) => { console.log(transactions.length) })
 ```
 
 **`Example`**
@@ -268,9 +264,9 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
+[subscriber.ts:220](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
 
----
+___
 
 ### onBeforePoll
 
@@ -284,8 +280,8 @@ The listener can be async and it will be awaited if so.
 
 #### Parameters
 
-| Name       | Type                                                                                                                                                                    | Description                                                |
-| :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<[`BeforePollMetadata`](../interfaces/types_subscription.BeforePollMetadata.md)\> | The listener function to invoke with the pre-poll metadata |
 
 #### Returns
@@ -297,16 +293,14 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onBeforePoll(async (metadata) => {
-  console.log(metadata.watermark)
-})
+subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
 ```
 
 #### Defined in
 
-[subscriber.ts:238](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L238)
+[subscriber.ts:238](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L238)
 
----
+___
 
 ### onError
 
@@ -320,8 +314,8 @@ The listener can be async and it will be awaited if so.
 
 #### Parameters
 
-| Name       | Type                                                              | Description                                                    |
-| :--------- | :---------------------------------------------------------------- | :------------------------------------------------------------- |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `listener` | [`ErrorListener`](../modules/types_subscription.md#errorlistener) | The listener function to invoke with the error that was thrown |
 
 #### Returns
@@ -333,9 +327,7 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onError((error) => {
-  console.error(error)
-})
+subscriber.onError((error) => { console.error(error) })
 ```
 
 **`Example`**
@@ -357,9 +349,9 @@ subscriber.onError(async (error) => {
 
 #### Defined in
 
-[subscriber.ts:292](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L292)
+[subscriber.ts:292](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L292)
 
----
+___
 
 ### onPoll
 
@@ -376,8 +368,8 @@ The listener can be async and it will be awaited if so.
 
 #### Parameters
 
-| Name       | Type                                                                                                                                                                                          | Description                                          |
-| :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<[`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)\> | The listener function to invoke with the poll result |
 
 #### Returns
@@ -389,16 +381,14 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onPoll(async (pollResult) => {
-  console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange)
-})
+subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange) })
 ```
 
 #### Defined in
 
-[subscriber.ts:259](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L259)
+[subscriber.ts:259](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L259)
 
----
+___
 
 ### pollOnce
 
@@ -417,9 +407,9 @@ The poll result
 
 #### Defined in
 
-[subscriber.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L67)
+[subscriber.ts:67](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L67)
 
----
+___
 
 ### start
 
@@ -431,10 +421,10 @@ This is useful when running in the context of a long-running process / container
 
 #### Parameters
 
-| Name           | Type                                                                                                                           | Description                                                                                    |
-| :------------- | :----------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| `inspect?`     | (`pollResult`: [`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)) => `void` | A function that is called for each poll so the inner workings can be inspected / logged / etc. |
-| `suppressLog?` | `boolean`                                                                                                                      | -                                                                                              |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `inspect?` | (`pollResult`: [`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)) => `void` | A function that is called for each poll so the inner workings can be inspected / logged / etc. |
+| `suppressLog?` | `boolean` | - |
 
 #### Returns
 
@@ -444,9 +434,9 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L113)
+[subscriber.ts:113](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L113)
 
----
+___
 
 ### stop
 
@@ -456,8 +446,8 @@ Stops the subscriber if previously started via `start`.
 
 #### Parameters
 
-| Name     | Type      | Description                                |
-| :------- | :-------- | :----------------------------------------- |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `reason` | `unknown` | The reason the subscriber is being stopped |
 
 #### Returns
@@ -468,4 +458,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L164)
+[subscriber.ts:164](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L164)

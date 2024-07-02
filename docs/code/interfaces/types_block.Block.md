@@ -44,9 +44,9 @@ since genesis.
 
 #### Defined in
 
-[types/block.ts:87](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L87)
+[types/block.ts:87](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L87)
 
----
+___
 
 ### fees
 
@@ -56,9 +56,9 @@ The FeeSink accepts transaction fees. It can only spend to the incentive pool.
 
 #### Defined in
 
-[types/block.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L89)
+[types/block.ts:89](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L89)
 
----
+___
 
 ### frac
 
@@ -69,9 +69,9 @@ MicroAlgos for every reward unit in the next round.
 
 #### Defined in
 
-[types/block.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L93)
+[types/block.ts:93](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L93)
 
----
+___
 
 ### gen
 
@@ -81,9 +81,9 @@ Genesis ID to which this block belongs.
 
 #### Defined in
 
-[types/block.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L95)
+[types/block.ts:95](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L95)
 
----
+___
 
 ### gh
 
@@ -93,9 +93,9 @@ Genesis hash to which this block belongs.
 
 #### Defined in
 
-[types/block.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L97)
+[types/block.ts:97](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L97)
 
----
+___
 
 ### prev
 
@@ -105,9 +105,9 @@ The hash of the previous block
 
 #### Defined in
 
-[types/block.ts:99](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L99)
+[types/block.ts:99](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L99)
 
----
+___
 
 ### proto
 
@@ -117,9 +117,9 @@ UpgradeState tracks the protocol upgrade state machine; proto is the current pro
 
 #### Defined in
 
-[types/block.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L101)
+[types/block.ts:101](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L101)
 
----
+___
 
 ### rate
 
@@ -129,9 +129,9 @@ The number of new MicroAlgos added to the participation stake from rewards at th
 
 #### Defined in
 
-[types/block.ts:103](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L103)
+[types/block.ts:103](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L103)
 
----
+___
 
 ### rnd
 
@@ -141,9 +141,9 @@ Round number.
 
 #### Defined in
 
-[types/block.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L105)
+[types/block.ts:105](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L105)
 
----
+___
 
 ### rwcalr
 
@@ -153,9 +153,9 @@ The round at which the RewardsRate will be recalculated.
 
 #### Defined in
 
-[types/block.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L107)
+[types/block.ts:107](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L107)
 
----
+___
 
 ### rwd
 
@@ -166,9 +166,9 @@ FeeSink and continually redistributes them to addresses as rewards.
 
 #### Defined in
 
-[types/block.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L111)
+[types/block.ts:111](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L111)
 
----
+___
 
 ### seed
 
@@ -178,23 +178,23 @@ Sortition seed
 
 #### Defined in
 
-[types/block.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L113)
+[types/block.ts:113](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L113)
 
----
+___
 
 ### tc
 
 • **tc**: `number`
 
 TxnCounter is the number of the next transaction that will be
-committed after this block. Genesis blocks can start at either
+committed after this block.  Genesis blocks can start at either
 0 or 1000, depending on a consensus parameter (AppForbidLowResources).
 
 #### Defined in
 
-[types/block.ts:118](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L118)
+[types/block.ts:118](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L118)
 
----
+___
 
 ### ts
 
@@ -204,9 +204,9 @@ Round time (unix timestamp)
 
 #### Defined in
 
-[types/block.ts:120](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L120)
+[types/block.ts:120](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L120)
 
----
+___
 
 ### txn
 
@@ -217,9 +217,9 @@ This commitment is computed based on the PaysetCommit type specified in the bloc
 
 #### Defined in
 
-[types/block.ts:124](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L124)
+[types/block.ts:124](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L124)
 
----
+___
 
 ### txn256
 
@@ -229,9 +229,9 @@ Root of transaction vector commitment merkle tree using SHA256 hash function.
 
 #### Defined in
 
-[types/block.ts:128](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L128)
+[types/block.ts:128](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L128)
 
----
+___
 
 ### txns
 
@@ -241,4 +241,4 @@ The transactions within the block.
 
 #### Defined in
 
-[types/block.ts:130](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L130)
+[types/block.ts:130](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L130)
