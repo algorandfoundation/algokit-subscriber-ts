@@ -58,7 +58,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:41](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L41)
+[subscriber.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L41)
 
 ## Properties
 
@@ -68,7 +68,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[subscriber.ts:24](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
+[subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:21](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
+[subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:23](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+[subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:30](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
+[subscriber.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:25](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
+[subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:28](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L28)
+[subscriber.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L28)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:22](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
+[subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:27](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
+[subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:26](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
+[subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
 
 ## Methods
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[subscriber.ts:31](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L31)
+[subscriber.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L31)
 
 ___
 
@@ -214,7 +214,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:191](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L191)
+[subscriber.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L191)
 
 ___
 
@@ -264,7 +264,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[subscriber.ts:220](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
+[subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
 
 ___
 
@@ -298,7 +298,7 @@ subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
 
 #### Defined in
 
-[subscriber.ts:238](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L238)
+[subscriber.ts:238](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L238)
 
 ___
 
@@ -349,7 +349,7 @@ subscriber.onError(async (error) => {
 
 #### Defined in
 
-[subscriber.ts:292](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L292)
+[subscriber.ts:292](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L292)
 
 ___
 
@@ -386,7 +386,7 @@ subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTrans
 
 #### Defined in
 
-[subscriber.ts:259](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L259)
+[subscriber.ts:259](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L259)
 
 ___
 
@@ -407,7 +407,7 @@ The poll result
 
 #### Defined in
 
-[subscriber.ts:67](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L67)
+[subscriber.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L67)
 
 ___
 
@@ -434,7 +434,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[subscriber.ts:113](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L113)
+[subscriber.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L113)
 
 ___
 
@@ -458,4 +458,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[subscriber.ts:164](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/subscriber.ts#L164)
+[subscriber.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L164)

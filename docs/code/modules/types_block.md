@@ -33,4 +33,4 @@ Data that is returned in a raw Algorand block for a single inner transaction
 
 #### Defined in
 
-[types/block.ts:196](https://github.com/negar-abbasi/algokit-subscriber-ts/blob/main/src/types/block.ts#L196)
+[types/block.ts:196](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L196)
