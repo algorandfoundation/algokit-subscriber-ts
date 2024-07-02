@@ -562,7 +562,7 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   return {
     round: block.rnd,
     hash: cert?.prop?.dig ? base32.encode(cert.prop.dig).replace(/=/g, '') : undefined,
-    timestamp: block.ts,
+    timestamp: new Date(block.ts * 1000).toISOString(),
     genesisId: block.gen,
     genesisHash: Buffer.from(block.gh).toString('base64'),
     previousBlockHash: block.prev ? base32.encode(block.prev).replace(/=/g, '') : undefined,

@@ -287,7 +287,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "rewardsResidue": 6886250026n,
           "round": 35214367,
           "seed": "Tp6NntUaw17I8GGscaawpAuI0vQDMgp1TBSMAcpohtY=",
-          "timestamp": 1705252440,
+          "timestamp": "2024-01-14T17:14:00.000Z",
           "transactionCounter": 1401537349,
           "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
         },

@@ -198,9 +198,9 @@ ___
 
 ### timestamp
 
-• **timestamp**: `number`
+• **timestamp**: `string`
 
-Block creation timestamp in seconds since epoch
+The ISO 8601 timestamp of the block.
 
 #### Defined in
 
