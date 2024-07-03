@@ -20,8 +20,10 @@
 - [BlockData](types.md#blockdata)
 - [BlockInnerTransaction](types.md#blockinnertransaction)
 - [BlockMetadata](types.md#blockmetadata)
+- [BlockRewards](types.md#blockrewards)
 - [BlockTransaction](types.md#blocktransaction)
 - [BlockTransactionEvalDelta](types.md#blocktransactionevaldelta)
+- [BlockUpgradeState](types.md#blockupgradestate)
 - [BlockValueDelta](types.md#blockvaluedelta)
 - [BlockVote](types.md#blockvote)
 - [CoreTransactionSubscriptionParams](types.md#coretransactionsubscriptionparams)
@@ -126,6 +128,12 @@ Re-exports [BlockMetadata](../interfaces/types_subscription.BlockMetadata.md)
 
 ___
 
+### BlockRewards
+
+Re-exports [BlockRewards](../interfaces/types_subscription.BlockRewards.md)
+
+___
+
 ### BlockTransaction
 
 Re-exports [BlockTransaction](../interfaces/types_block.BlockTransaction.md)
@@ -135,6 +143,12 @@ ___
 ### BlockTransactionEvalDelta
 
 Re-exports [BlockTransactionEvalDelta](../interfaces/types_block.BlockTransactionEvalDelta.md)
+
+___
+
+### BlockUpgradeState
+
+Re-exports [BlockUpgradeState](../interfaces/types_subscription.BlockUpgradeState.md)
 
 ___
 

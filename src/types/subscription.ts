@@ -44,26 +44,49 @@ export interface BlockMetadata {
   previousBlockHash?: string
   /** The base64 seed of the block. */
   seed?: string
+
+  rewards?: BlockRewards
   /** Count of parent transactions in this block */
   parentTransactionCount: number
   /** Full count of transactions and inner transactions (recursively) in this block. */
   fullTransactionCount: number
-  /** How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis. */
-  rewardsLevel: number
-  /** FeeSink accepts transaction fees, it can only spend to the incentive pool. */
-  feeSink: string
-  /** Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round. */
-  rewardsResidue: number
-  /** The current protocol version */
-  currentProtocol: string
-  /** number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round. */
-  rewardsCalculationRound: number
-  /** RewardsPool accepts periodic injections from the fee-sink and continually redistributes them as rewards. */
-  rewardsPool: string
   /** number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported). */
   transactionCounter: number
+  /** TransactionsRoot authenticates the set of transactions appearing in the block. More specifically, it's the root of a merkle tree whose leaves are the block's Txids, in lexicographic order. For the empty block, it's 0. Note that the TxnRoot does not authenticate the signatures on the transactions, only the transactions themselves. Two blocks with the same transactions but in a different order and with different signatures will have the same TxnRoot.
+  Pattern : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$" */
+  transactionsRoot: string
   /** TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector commitment instead of a merkle tree, and SHA256 hash function instead of the default SHA512_256. This commitment can be used on environments where only the SHA256 function exists. */
   transactionsRootSha256: string
+
+  upgradeState?: BlockUpgradeState
+}
+
+export interface BlockRewards {
+  /** FeeSink is an address that accepts transaction fees, it can only spend to the incentive pool. */
+  feeSink: string
+  /** number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round. */
+  rewardsCalculationRound: number
+  /** How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis. */
+  rewardsLevel: number
+  /** RewardsPool is an address that accepts periodic injections from the fee-sink and continually redistributes them as rewards. */
+  rewardsPool: string
+  /** Number of new MicroAlgos added to the participation stake from rewards at the next round. */
+  rewardsRate: number
+  /** Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round. */
+  rewardsResidue: number
+}
+
+export interface BlockUpgradeState {
+  /** Current protocol version */
+  currentProtocol: string
+  /** The next proposed protocol version. */
+  nextProtocol?: string
+  /** Number of blocks which approved the protocol upgrade. */
+  nextProtocolApprovals?: number
+  /** Deadline round for this protocol upgrade (No votes will be consider after this round). */
+  nextProtocolVoteBefore?: number
+  /** Round on which the protocol upgrade will take effect. */
+  nextProtocolSwitchOn?: number
 }
 
 /** The common model used to expose a transaction that is returned from a subscription.

@@ -10,49 +10,22 @@ Metadata about a block that was retrieved from algod.
 
 ### Properties
 
-- [currentProtocol](types_subscription.BlockMetadata.md#currentprotocol)
-- [feeSink](types_subscription.BlockMetadata.md#feesink)
 - [fullTransactionCount](types_subscription.BlockMetadata.md#fulltransactioncount)
 - [genesisHash](types_subscription.BlockMetadata.md#genesishash)
 - [genesisId](types_subscription.BlockMetadata.md#genesisid)
 - [hash](types_subscription.BlockMetadata.md#hash)
 - [parentTransactionCount](types_subscription.BlockMetadata.md#parenttransactioncount)
 - [previousBlockHash](types_subscription.BlockMetadata.md#previousblockhash)
-- [rewardsCalculationRound](types_subscription.BlockMetadata.md#rewardscalculationround)
-- [rewardsLevel](types_subscription.BlockMetadata.md#rewardslevel)
-- [rewardsPool](types_subscription.BlockMetadata.md#rewardspool)
-- [rewardsResidue](types_subscription.BlockMetadata.md#rewardsresidue)
+- [rewards](types_subscription.BlockMetadata.md#rewards)
 - [round](types_subscription.BlockMetadata.md#round)
 - [seed](types_subscription.BlockMetadata.md#seed)
 - [timestamp](types_subscription.BlockMetadata.md#timestamp)
 - [transactionCounter](types_subscription.BlockMetadata.md#transactioncounter)
+- [transactionsRoot](types_subscription.BlockMetadata.md#transactionsroot)
 - [transactionsRootSha256](types_subscription.BlockMetadata.md#transactionsrootsha256)
+- [upgradeState](types_subscription.BlockMetadata.md#upgradestate)
 
 ## Properties
-
-### currentProtocol
-
-• **currentProtocol**: `string`
-
-The current protocol version
-
-#### Defined in
-
-[types/subscription.ts:58](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L58)
-
-___
-
-### feeSink
-
-• **feeSink**: `string`
-
-FeeSink accepts transaction fees, it can only spend to the incentive pool.
-
-#### Defined in
-
-[types/subscription.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L54)
-
-___
 
 ### fullTransactionCount
 
@@ -62,7 +35,7 @@ Full count of transactions and inner transactions (recursively) in this block.
 
 #### Defined in
 
-[types/subscription.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
+[types/subscription.ts:52](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L52)
 
 ___
 
@@ -108,7 +81,7 @@ Count of parent transactions in this block
 
 #### Defined in
 
-[types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
+[types/subscription.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
 
 ___
 
@@ -124,51 +97,13 @@ The previous block hash.
 
 ___
 
-### rewardsCalculationRound
+### rewards
 
-• **rewardsCalculationRound**: `number`
-
-number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round.
+• `Optional` **rewards**: [`BlockRewards`](types_subscription.BlockRewards.md)
 
 #### Defined in
 
-[types/subscription.ts:60](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L60)
-
-___
-
-### rewardsLevel
-
-• **rewardsLevel**: `number`
-
-How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis.
-
-#### Defined in
-
-[types/subscription.ts:52](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L52)
-
-___
-
-### rewardsPool
-
-• **rewardsPool**: `string`
-
-RewardsPool accepts periodic injections from the fee-sink and continually redistributes them as rewards.
-
-#### Defined in
-
-[types/subscription.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L62)
-
-___
-
-### rewardsResidue
-
-• **rewardsResidue**: `number`
-
-Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round.
-
-#### Defined in
-
-[types/subscription.ts:56](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L56)
+[types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
 
 ___
 
@@ -216,7 +151,20 @@ number of the next transaction that will be committed after this block.  It is 0
 
 #### Defined in
 
-[types/subscription.ts:64](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L64)
+[types/subscription.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L54)
+
+___
+
+### transactionsRoot
+
+• **transactionsRoot**: `string`
+
+TransactionsRoot authenticates the set of transactions appearing in the block. More specifically, it's the root of a merkle tree whose leaves are the block's Txids, in lexicographic order. For the empty block, it's 0. Note that the TxnRoot does not authenticate the signatures on the transactions, only the transactions themselves. Two blocks with the same transactions but in a different order and with different signatures will have the same TxnRoot.
+Pattern : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"
+
+#### Defined in
+
+[types/subscription.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L57)
 
 ___
 
@@ -228,4 +176,14 @@ TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector com
 
 #### Defined in
 
-[types/subscription.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L66)
+[types/subscription.ts:59](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L59)
+
+___
+
+### upgradeState
+
+• `Optional` **upgradeState**: [`BlockUpgradeState`](types_subscription.BlockUpgradeState.md)
+
+#### Defined in
+
+[types/subscription.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L61)

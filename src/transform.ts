@@ -569,13 +569,19 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
     seed: block.seed ? Buffer.from(block.seed).toString('base64') : undefined,
     parentTransactionCount: block.txns?.length ?? 0,
     fullTransactionCount: countAllTransactions(block.txns ?? []),
-    rewardsPool: algosdk.encodeAddress(block.rwd),
-    rewardsLevel: block.earn,
-    feeSink: algosdk.encodeAddress(block.fees),
-    rewardsResidue: block.frac,
-    currentProtocol: block.proto,
-    rewardsCalculationRound: block.rwcalr,
+    rewards: {
+      feeSink: algosdk.encodeAddress(block.fees),
+      rewardsPool: algosdk.encodeAddress(block.rwd),
+      rewardsLevel: block.earn,
+      rewardsResidue: block.frac,
+      rewardsRate: block.rate,
+      rewardsCalculationRound: block.rwcalr,
+    },
+    upgradeState: {
+      currentProtocol: block.proto,
+    },
     transactionCounter: block.tc,
+    transactionsRoot: Buffer.from(block.txn).toString('base64'),
     transactionsRootSha256: block.txn256,
   }
 }

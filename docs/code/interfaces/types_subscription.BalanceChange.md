@@ -25,7 +25,7 @@ The address that the balance change is for.
 
 #### Defined in
 
-[types/subscription.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L93)
+[types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L116)
 
 ___
 
@@ -37,7 +37,7 @@ The amount of the balance change in smallest divisible unit or microAlgos.
 
 #### Defined in
 
-[types/subscription.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L97)
+[types/subscription.ts:120](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L120)
 
 ___
 
@@ -49,7 +49,7 @@ The asset ID of the balance change, or 0 for Algos.
 
 #### Defined in
 
-[types/subscription.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L95)
+[types/subscription.ts:118](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L118)
 
 ___
 
@@ -61,4 +61,4 @@ The roles the account was playing that led to the balance change
 
 #### Defined in
 
-[types/subscription.ts:99](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L99)
+[types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)
