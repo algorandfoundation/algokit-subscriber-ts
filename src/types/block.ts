@@ -126,7 +126,25 @@ export interface Block {
    * Root of transaction vector commitment merkle tree using SHA256 hash function.
    */
   txn256: string
-  /** The transactions within the block. */
+  /**
+   * The next proposed protocol version.
+   */
+  nextproto: string
+  /**
+   * Number of blocks which approved the protocol upgrade.
+   */
+  nextyes: number
+  /**
+   * Deadline round for this protocol upgrade (No votes will be consider after this round).
+   */
+  nextbefore: number
+  /**
+   * Round on which the protocol upgrade will take effect.
+   */
+  nextswitch: number
+  /**
+   * The transactions within the block.
+   */
   txns?: BlockTransaction[]
 }
 

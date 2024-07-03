@@ -579,6 +579,9 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
     },
     upgradeState: {
       currentProtocol: block.proto,
+      nextProtocol: block.nextproto,
+      nextProtocolApprovals: block.nextyes,
+      nextProtocolSwitchOn: block.nextswitch,
     },
     transactionCounter: block.tc,
     transactionsRoot: Buffer.from(block.txn).toString('base64'),

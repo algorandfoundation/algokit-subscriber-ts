@@ -295,6 +295,9 @@ describe('Complex transaction with many nested inner transactions', () => {
           "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
           "upgradeState": {
             "currentProtocol": "https://github.com/algorandfoundation/specs/tree/abd3d4823c6f77349fc04c3af7b1e99fe4df699f",
+            "nextProtocol": "https://github.com/algorandfoundation/specs/tree/925a46433742afb0b51bb939354bd907fa88bf95",
+            "nextProtocolApprovals": 9967,
+            "nextProtocolSwitchOn": 35275315,
           },
         },
       ]
