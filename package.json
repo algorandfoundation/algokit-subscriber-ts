@@ -1,6 +1,6 @@
 {
   "name": "@algorandfoundation/algokit-subscriber",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "private": false,
   "scripts": {
     "build": "run-s build:*",

@@ -56,7 +56,7 @@ function blockMapToObject(object: Map<any, any>): BlockData {
       result[key] = blockMapToObject(value)
     } else if (value instanceof Uint8Array) {
       if (['txn256'].includes(key)) {
-        // The above keys have base64 values
+        // The above keys have non UTF-8 values
         result[key] = Buffer.from(value).toString('base64')
       } else if (['gen', 'proto', 'type', 'an', 'un', 'au'].includes(key)) {
         // The above keys have UTF-8 values
