@@ -89,7 +89,7 @@ ___
 
 • `Optional` **previousBlockHash**: `string`
 
-The previous block hash.
+The base64 previous block hash.
 
 #### Defined in
 
@@ -100,6 +100,8 @@ ___
 ### rewards
 
 • `Optional` **rewards**: [`BlockRewards`](types_subscription.BlockRewards.md)
+
+Fields relating to rewards
 
 #### Defined in
 
@@ -133,9 +135,9 @@ ___
 
 ### timestamp
 
-• **timestamp**: `string`
+• **timestamp**: `number` \| `bigint`
 
-The ISO 8601 timestamp of the block.
+Block creation timestamp in seconds since epoch
 
 #### Defined in
 
@@ -147,7 +149,7 @@ ___
 
 • **transactionCounter**: `number`
 
-number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported).
+Number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported).
 
 #### Defined in
 
@@ -183,6 +185,8 @@ ___
 ### upgradeState
 
 • `Optional` **upgradeState**: [`BlockUpgradeState`](types_subscription.BlockUpgradeState.md)
+
+Fields relating to a protocol upgrade.
 
 #### Defined in
 

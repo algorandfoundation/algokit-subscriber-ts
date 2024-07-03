@@ -34,30 +34,30 @@ export interface BlockMetadata {
   hash?: string
   /** The round of the block. */
   round: number
-  /** The ISO 8601 timestamp of the block. */
-  timestamp: string
+  /** Block creation timestamp in seconds since epoch */
+  timestamp: number | bigint
   /** The genesis ID of the chain. */
   genesisId: string
   /** The base64 genesis hash of the chain. */
   genesisHash: string
-  /** The previous block hash. */
+  /** The base64 previous block hash. */
   previousBlockHash?: string
   /** The base64 seed of the block. */
   seed?: string
-
+  /** Fields relating to rewards */
   rewards?: BlockRewards
   /** Count of parent transactions in this block */
   parentTransactionCount: number
   /** Full count of transactions and inner transactions (recursively) in this block. */
   fullTransactionCount: number
-  /** number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported). */
+  /** Number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported). */
   transactionCounter: number
   /** TransactionsRoot authenticates the set of transactions appearing in the block. More specifically, it's the root of a merkle tree whose leaves are the block's Txids, in lexicographic order. For the empty block, it's 0. Note that the TxnRoot does not authenticate the signatures on the transactions, only the transactions themselves. Two blocks with the same transactions but in a different order and with different signatures will have the same TxnRoot.
   Pattern : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$" */
   transactionsRoot: string
   /** TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector commitment instead of a merkle tree, and SHA256 hash function instead of the default SHA512_256. This commitment can be used on environments where only the SHA256 function exists. */
   transactionsRootSha256: string
-
+  /** Fields relating to a protocol upgrade. */
   upgradeState?: BlockUpgradeState
 }
 
@@ -73,7 +73,7 @@ export interface BlockRewards {
   /** Number of new MicroAlgos added to the participation stake from rewards at the next round. */
   rewardsRate: number
   /** Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round. */
-  rewardsResidue: number
+  rewardsResidue: number | bigint
 }
 
 export interface BlockUpgradeState {

@@ -79,7 +79,7 @@ ___
 
 ### rewardsResidue
 
-• **rewardsResidue**: `number`
+• **rewardsResidue**: `number` \| `bigint`
 
 Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round.
 
