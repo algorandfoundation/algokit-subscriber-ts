@@ -290,14 +290,15 @@ describe('Complex transaction with many nested inner transactions', () => {
           "round": 35214367,
           "seed": "Tp6NntUaw17I8GGscaawpAuI0vQDMgp1TBSMAcpohtY=",
           "timestamp": 1705252440,
-          "transactionCounter": 1401537349,
           "transactionsRoot": "xrzxjhAycO5dLAJ622EAMV4ffb2T1sagFWYQPR1S0IQ=",
           "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
+          "txnCounter": 1401537349,
           "upgradeState": {
             "currentProtocol": "https://github.com/algorandfoundation/specs/tree/abd3d4823c6f77349fc04c3af7b1e99fe4df699f",
             "nextProtocol": "https://github.com/algorandfoundation/specs/tree/925a46433742afb0b51bb939354bd907fa88bf95",
             "nextProtocolApprovals": 9967,
             "nextProtocolSwitchOn": 35275315,
+            "nextProtocolVoteBefore": 35125315,
           },
         },
       ]

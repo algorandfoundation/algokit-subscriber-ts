@@ -20,9 +20,9 @@ Metadata about a block that was retrieved from algod.
 - [round](types_subscription.BlockMetadata.md#round)
 - [seed](types_subscription.BlockMetadata.md#seed)
 - [timestamp](types_subscription.BlockMetadata.md#timestamp)
-- [transactionCounter](types_subscription.BlockMetadata.md#transactioncounter)
 - [transactionsRoot](types_subscription.BlockMetadata.md#transactionsroot)
 - [transactionsRootSha256](types_subscription.BlockMetadata.md#transactionsrootsha256)
+- [txnCounter](types_subscription.BlockMetadata.md#txncounter)
 - [upgradeState](types_subscription.BlockMetadata.md#upgradestate)
 
 ## Properties
@@ -35,7 +35,7 @@ Full count of transactions and inner transactions (recursively) in this block.
 
 #### Defined in
 
-[types/subscription.ts:52](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L52)
+[types/subscription.ts:53](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L53)
 
 ___
 
@@ -47,7 +47,7 @@ The base64 genesis hash of the chain.
 
 #### Defined in
 
-[types/subscription.ts:42](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L42)
+[types/subscription.ts:43](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L43)
 
 ___
 
@@ -59,7 +59,7 @@ The genesis ID of the chain.
 
 #### Defined in
 
-[types/subscription.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L40)
+[types/subscription.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L41)
 
 ___
 
@@ -67,9 +67,11 @@ ___
 
 • `Optional` **hash**: `string`
 
+The base64 block hash.
+
 #### Defined in
 
-[types/subscription.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L34)
+[types/subscription.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L35)
 
 ___
 
@@ -81,7 +83,7 @@ Count of parent transactions in this block
 
 #### Defined in
 
-[types/subscription.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L50)
+[types/subscription.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L51)
 
 ___
 
@@ -93,7 +95,7 @@ The base64 previous block hash.
 
 #### Defined in
 
-[types/subscription.ts:44](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L44)
+[types/subscription.ts:45](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L45)
 
 ___
 
@@ -105,7 +107,7 @@ Fields relating to rewards
 
 #### Defined in
 
-[types/subscription.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L48)
+[types/subscription.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L49)
 
 ___
 
@@ -117,7 +119,7 @@ The round of the block.
 
 #### Defined in
 
-[types/subscription.ts:36](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L36)
+[types/subscription.ts:37](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L37)
 
 ___
 
@@ -129,31 +131,19 @@ The base64 seed of the block.
 
 #### Defined in
 
-[types/subscription.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L46)
+[types/subscription.ts:47](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L47)
 
 ___
 
 ### timestamp
 
-• **timestamp**: `number` \| `bigint`
+• **timestamp**: `number`
 
 Block creation timestamp in seconds since epoch
 
 #### Defined in
 
-[types/subscription.ts:38](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L38)
-
-___
-
-### transactionCounter
-
-• **transactionCounter**: `number`
-
-Number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported).
-
-#### Defined in
-
-[types/subscription.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L54)
+[types/subscription.ts:39](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L39)
 
 ___
 
@@ -166,7 +156,7 @@ Pattern : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"
 
 #### Defined in
 
-[types/subscription.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L57)
+[types/subscription.ts:58](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L58)
 
 ___
 
@@ -178,7 +168,19 @@ TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector com
 
 #### Defined in
 
-[types/subscription.ts:59](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L59)
+[types/subscription.ts:60](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L60)
+
+___
+
+### txnCounter
+
+• **txnCounter**: `number`
+
+Number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported).
+
+#### Defined in
+
+[types/subscription.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L55)
 
 ___
 
@@ -190,4 +192,4 @@ Fields relating to a protocol upgrade.
 
 #### Defined in
 
-[types/subscription.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L61)
+[types/subscription.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L62)

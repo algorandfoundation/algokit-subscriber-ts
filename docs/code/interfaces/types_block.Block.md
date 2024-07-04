@@ -66,7 +66,7 @@ ___
 
 ### frac
 
-• **frac**: `number`
+• **frac**: `number` \| `bigint`
 
 The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
 MicroAlgos for every reward unit in the next round.
@@ -105,7 +105,7 @@ ___
 
 • **nextbefore**: `number`
 
-Deadline round for this protocol upgrade (No votes will be consider after this round).
+Deadline round for this protocol upgrade (No votes will be considered after this round).
 
 #### Defined in
 

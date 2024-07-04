@@ -90,7 +90,7 @@ export interface Block {
   /** The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
    * MicroAlgos for every reward unit in the next round.
    **/
-  frac: number
+  frac: number | bigint
   /** Genesis ID to which this block belongs. */
   gen: string
   /** Genesis hash to which this block belongs. */
@@ -135,7 +135,7 @@ export interface Block {
    */
   nextyes: number
   /**
-   * Deadline round for this protocol upgrade (No votes will be consider after this round).
+   * Deadline round for this protocol upgrade (No votes will be considered after this round).
    */
   nextbefore: number
   /**

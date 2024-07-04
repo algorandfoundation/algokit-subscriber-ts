@@ -31,11 +31,12 @@ export interface TransactionSubscriptionResult {
 
 /** Metadata about a block that was retrieved from algod. */
 export interface BlockMetadata {
+  /** The base64 block hash. */
   hash?: string
   /** The round of the block. */
   round: number
   /** Block creation timestamp in seconds since epoch */
-  timestamp: number | bigint
+  timestamp: number
   /** The genesis ID of the chain. */
   genesisId: string
   /** The base64 genesis hash of the chain. */
@@ -51,7 +52,7 @@ export interface BlockMetadata {
   /** Full count of transactions and inner transactions (recursively) in this block. */
   fullTransactionCount: number
   /** Number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported). */
-  transactionCounter: number
+  txnCounter: number
   /** TransactionsRoot authenticates the set of transactions appearing in the block. More specifically, it's the root of a merkle tree whose leaves are the block's Txids, in lexicographic order. For the empty block, it's 0. Note that the TxnRoot does not authenticate the signatures on the transactions, only the transactions themselves. Two blocks with the same transactions but in a different order and with different signatures will have the same TxnRoot.
   Pattern : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$" */
   transactionsRoot: string

@@ -574,7 +574,7 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       rewardsPool: algosdk.encodeAddress(block.rwd),
       rewardsLevel: block.earn,
       rewardsResidue: block.frac,
-      rewardsRate: block.rate,
+      rewardsRate: block.rate, //Q --> 0?
       rewardsCalculationRound: block.rwcalr,
     },
     upgradeState: {
@@ -582,8 +582,9 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       nextProtocol: block.nextproto,
       nextProtocolApprovals: block.nextyes,
       nextProtocolSwitchOn: block.nextswitch,
+      nextProtocolVoteBefore: block.nextbefore,
     },
-    transactionCounter: block.tc,
+    txnCounter: block.tc,
     transactionsRoot: Buffer.from(block.txn).toString('base64'),
     transactionsRootSha256: block.txn256,
   }

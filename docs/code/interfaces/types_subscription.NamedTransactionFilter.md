@@ -29,7 +29,7 @@ The filter itself.
 
 #### Defined in
 
-[types/subscription.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L220)
+[types/subscription.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L221)
 
 ___
 
@@ -41,4 +41,4 @@ The name to give the filter.
 
 #### Defined in
 
-[types/subscription.ts:218](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L218)
+[types/subscription.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L219)
