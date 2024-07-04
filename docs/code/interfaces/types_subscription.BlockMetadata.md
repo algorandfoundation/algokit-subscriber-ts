@@ -125,7 +125,7 @@ ___
 
 ### seed
 
-• `Optional` **seed**: `string`
+• **seed**: `string`
 
 The base64 seed of the block.
 

@@ -175,7 +175,7 @@ ___
 
 ### rate
 
-• **rate**: `number`
+• `Optional` **rate**: `number`
 
 The number of new MicroAlgos added to the participation stake from rewards at the next round.
 
