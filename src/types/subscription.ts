@@ -44,7 +44,7 @@ export interface BlockMetadata {
   /** The base64 previous block hash. */
   previousBlockHash?: string
   /** The base64 seed of the block. */
-  seed?: string
+  seed: string
   /** Fields relating to rewards */
   rewards?: BlockRewards
   /** Count of parent transactions in this block */

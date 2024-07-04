@@ -284,7 +284,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "rewardsCalculationRound": 35500000,
             "rewardsLevel": 218288,
             "rewardsPool": "737777777777777777777777777777777777777777777777777UFEJ2CI",
-            "rewardsRate": undefined,
+            "rewardsRate": 0,
             "rewardsResidue": 6886250026n,
           },
           "round": 35214367,

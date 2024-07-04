@@ -100,7 +100,7 @@ export interface Block {
   /** UpgradeState tracks the protocol upgrade state machine; proto is the current protocol. */
   proto: string
   /** The number of new MicroAlgos added to the participation stake from rewards at the next round. */
-  rate: number
+  rate?: number
   /** Round number. */
   rnd: number
   /** The round at which the RewardsRate will be recalculated. */

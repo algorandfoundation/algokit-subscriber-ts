@@ -561,12 +561,12 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   const { block, cert } = blockData
   return {
     round: block.rnd,
-    hash: cert?.prop?.dig ? Buffer.from(cert.prop.dig).toString('base64') : undefined,
+    ...(cert?.prop?.dig ? { hash: Buffer.from(cert.prop.dig).toString('base64') } : undefined),
     timestamp: block.ts,
     genesisId: block.gen,
     genesisHash: Buffer.from(block.gh).toString('base64'),
-    previousBlockHash: block.prev ? Buffer.from(block.prev).toString('base64') : undefined,
-    seed: block.seed ? Buffer.from(block.seed).toString('base64') : undefined,
+    ...(block.prev ? { previousBlockHash: Buffer.from(block.prev).toString('base64') } : undefined),
+    seed: Buffer.from(block.seed).toString('base64'),
     parentTransactionCount: block.txns?.length ?? 0,
     fullTransactionCount: countAllTransactions(block.txns ?? []),
     rewards: {
@@ -574,7 +574,7 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       rewardsPool: algosdk.encodeAddress(block.rwd),
       rewardsLevel: block.earn,
       rewardsResidue: block.frac,
-      rewardsRate: block.rate, //Q --> 0?
+      rewardsRate: block.rate ?? 0,
       rewardsCalculationRound: block.rwcalr,
     },
     upgradeState: {
