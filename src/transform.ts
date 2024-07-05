@@ -1,4 +1,4 @@
-import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete, StateProofTransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
 import algosdk from 'algosdk'
@@ -536,10 +536,13 @@ export function getIndexerTransactionFromAlgodTransaction(
                             'multisig-signature': {
                               version: blockTransaction.lsig.msig.v,
                               threshold: blockTransaction.lsig.msig.thr,
-                              subsignature: blockTransaction.lsig.msig.subsig.map((s) => ({
-                                'public-key': Buffer.from(s.pk).toString('base64'),
-                                ...(s.s ? { signature: Buffer.from(s.s).toString('base64') } : undefined),
-                              })),
+                              subsignature: blockTransaction.lsig.msig.subsig.map(
+                                (s) =>
+                                  ({
+                                    'public-key': Buffer.from(s.pk).toString('base64'),
+                                    ...(s.s ? { signature: Buffer.from(s.s).toString('base64') } : undefined),
+                                  }) as MultisigTransactionSubSignature,
+                              ),
                             },
                           }
                         : undefined),
