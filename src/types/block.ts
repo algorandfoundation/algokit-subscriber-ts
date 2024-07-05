@@ -129,19 +129,19 @@ export interface Block {
   /**
    * The next proposed protocol version.
    */
-  nextproto: string
+  nextproto?: string
   /**
    * Number of blocks which approved the protocol upgrade.
    */
-  nextyes: number
+  nextyes?: number
   /**
    * Deadline round for this protocol upgrade (No votes will be considered after this round).
    */
-  nextbefore: number
+  nextbefore?: number
   /**
    * Round on which the protocol upgrade will take effect.
    */
-  nextswitch: number
+  nextswitch?: number
   /**
    * The transactions within the block.
    */

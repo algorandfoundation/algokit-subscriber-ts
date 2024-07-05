@@ -103,7 +103,7 @@ ___
 
 ### nextbefore
 
-• **nextbefore**: `number`
+• `Optional` **nextbefore**: `number`
 
 Deadline round for this protocol upgrade (No votes will be considered after this round).
 
@@ -115,7 +115,7 @@ ___
 
 ### nextproto
 
-• **nextproto**: `string`
+• `Optional` **nextproto**: `string`
 
 The next proposed protocol version.
 
@@ -127,7 +127,7 @@ ___
 
 ### nextswitch
 
-• **nextswitch**: `number`
+• `Optional` **nextswitch**: `number`
 
 Round on which the protocol upgrade will take effect.
 
@@ -139,7 +139,7 @@ ___
 
 ### nextyes
 
-• **nextyes**: `number`
+• `Optional` **nextyes**: `number`
 
 Number of blocks which approved the protocol upgrade.
 
