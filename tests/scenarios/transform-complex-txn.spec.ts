@@ -132,7 +132,6 @@ describe('Complex transaction with many nested inner transactions', () => {
             "confirmed-round": 35214367,
             "fee": 0,
             "first-valid": 35214365,
-            "inner-txns": undefined,
             "intra-round-offset": 142,
             "last-valid": 35214369,
             "receiver-rewards": 0,
