@@ -96,7 +96,7 @@ export interface Block {
   /** Genesis hash to which this block belongs. */
   gh: Uint8Array
   /** The hash of the previous block */
-  prev: Uint8Array
+  prev?: Uint8Array
   /** UpgradeState tracks the protocol upgrade state machine; proto is the current protocol. */
   proto: string
   /** The number of new MicroAlgos added to the participation stake from rewards at the next round. */

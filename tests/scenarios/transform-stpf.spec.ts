@@ -42,6 +42,7 @@ describe('State proof transaction', () => {
         "first-valid": 35600002,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "id": "G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ",
+        "inner-txns": undefined,
         "intra-round-offset": 1,
         "last-valid": 35601002,
         "receiver-rewards": 0,

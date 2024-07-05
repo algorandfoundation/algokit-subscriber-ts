@@ -151,7 +151,7 @@ ___
 
 ### prev
 
-• **prev**: `Uint8Array`
+• `Optional` **prev**: `Uint8Array`
 
 The hash of the previous block
 

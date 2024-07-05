@@ -53,6 +53,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "genesis-id": "mainnet-v1.0",
         "id": "LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA",
+        "inner-txns": undefined,
         "intra-round-offset": 54,
         "keyreg-transaction": {
           "non-participation": false,
