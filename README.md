@@ -194,4 +194,4 @@ To try examples in this repository:
 
 - `npm install`
 - Copy `.env.sample` to `.env` and edit to point to the Algorand node you want to point to
-- `npm run dhm` or F5 in Visual Studio Code to get breakpoint debugging against one of the examples (or choose another)
+- `npm run dhm` or F5 in Visual Studio Code to get breakpoint debugging against one of the examples (or choose the other ones)
