@@ -303,17 +303,17 @@ export function getIndexerTransactionFromAlgodTransaction(
                     total: transaction.assetTotal,
                     ...(transaction.assetDefaultFrozen ? { 'default-frozen': transaction.assetDefaultFrozen } : undefined),
                     ...(transaction.assetMetadataHash ? { 'metadata-hash': transaction.assetMetadataHash } : undefined),
-                    ...(transaction.assetName ? { name: transaction.assetName } : undefined),
                     ...(transaction.assetName
-                      ? { 'name-b64': encoder.encode(Buffer.from(transaction.assetName).toString('base64')) }
+                      ? { name: transaction.assetName, 'name-b64': encoder.encode(Buffer.from(transaction.assetName).toString('base64')) }
                       : undefined),
-                    'unit-name': transaction.assetUnitName,
                     ...(transaction.assetUnitName
-                      ? { 'unit-name-b64': encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64')) }
+                      ? {
+                          'unit-name': transaction.assetUnitName,
+                          'unit-name-b64': encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64')),
+                        }
                       : undefined),
-                    ...(transaction.assetURL ? { url: transaction.assetURL } : undefined),
                     ...(transaction.assetURL
-                      ? { 'url-b64': encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) }
+                      ? { url: transaction.assetURL, 'url-b64': encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) }
                       : undefined),
                     ...(transaction.assetManager ? { manager: algosdk.encodeAddress(transaction.assetManager.publicKey) } : undefined),
                     ...(transaction.assetReserve ? { reserve: algosdk.encodeAddress(transaction.assetReserve.publicKey) } : undefined),
@@ -410,12 +410,12 @@ export function getIndexerTransactionFromAlgodTransaction(
         ? {
             'keyreg-transaction': {
               'non-participation': transaction.nonParticipation ?? false,
-              ...(transaction.selectionKey ? { 'selection-participation-key': transaction.selectionKey?.toString('base64') } : undefined),
-              ...(transaction.stateProofKey ? { 'state-proof-key': transaction.stateProofKey?.toString('base64') } : undefined),
+              ...(transaction.selectionKey ? { 'selection-participation-key': transaction.selectionKey.toString('base64') } : undefined),
+              ...(transaction.stateProofKey ? { 'state-proof-key': transaction.stateProofKey.toString('base64') } : undefined),
               ...(transaction.voteFirst ? { 'vote-first-valid': transaction.voteFirst } : undefined),
               ...(transaction.voteKeyDilution ? { 'vote-key-dilution': transaction.voteKeyDilution } : undefined),
               ...(transaction.voteLast ? { 'vote-last-valid': transaction.voteLast } : undefined),
-              ...(transaction.voteKey ? { 'vote-participation-key': transaction.voteKey?.toString('base64') } : undefined),
+              ...(transaction.voteKey ? { 'vote-participation-key': transaction.voteKey.toString('base64') } : undefined),
             },
           }
         : undefined),
