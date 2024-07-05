@@ -14,6 +14,8 @@
 - [BalanceChange](../interfaces/types_subscription.BalanceChange.md)
 - [BeforePollMetadata](../interfaces/types_subscription.BeforePollMetadata.md)
 - [BlockMetadata](../interfaces/types_subscription.BlockMetadata.md)
+- [BlockRewards](../interfaces/types_subscription.BlockRewards.md)
+- [BlockUpgradeState](../interfaces/types_subscription.BlockUpgradeState.md)
 - [CoreTransactionSubscriptionParams](../interfaces/types_subscription.CoreTransactionSubscriptionParams.md)
 - [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
 - [SubscriberConfigFilter](../interfaces/types_subscription.SubscriberConfigFilter.md)
@@ -49,7 +51,7 @@
 
 #### Defined in
 
-[types/subscription.ts:291](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L291)
+[types/subscription.ts:331](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L331)
 
 ___
 
@@ -67,7 +69,7 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://develop
 
 #### Defined in
 
-[types/subscription.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L61)
+[types/subscription.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L101)
 
 ___
 
@@ -98,4 +100,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:289](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L289)
+[types/subscription.ts:329](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L329)

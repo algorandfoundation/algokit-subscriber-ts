@@ -254,9 +254,11 @@ function processExtraFields(
       (groupName) => groupsToApply.find((g) => g.groupName === groupName)!.continueOnError ?? false,
     ),
     balanceChanges: extractBalanceChangesFromIndexerTransaction(transaction),
-    'inner-txns': transaction['inner-txns']
-      ? transaction['inner-txns'].map((inner) => processExtraFields(inner, arc28Events, arc28Groups))
-      : undefined,
+    ...(transaction['inner-txns']
+      ? {
+          'inner-txns': transaction['inner-txns'].map((inner) => processExtraFields(inner, arc28Events, arc28Groups)),
+        }
+      : undefined),
   }
 }
 

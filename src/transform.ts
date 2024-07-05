@@ -290,117 +290,138 @@ export function getIndexerTransactionFromAlgodTransaction(
 
     return {
       id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : txId,
-      parentTransactionId,
-      filtersMatched: filterName ? [filterName] : undefined,
-      'asset-config-transaction':
-        transaction.type === TransactionType.acfg
-          ? {
+      ...(parentTransactionId ? { parentTransactionId } : undefined),
+      ...(filterName ? { filtersMatched: [filterName] } : undefined),
+      ...(transaction.type === TransactionType.acfg
+        ? {
+            'asset-config-transaction': {
               'asset-id': transaction.assetIndex,
               params: createdAssetId
                 ? {
                     creator: algosdk.encodeAddress(transaction.from.publicKey),
                     decimals: transaction.assetDecimals,
                     total: transaction.assetTotal,
-                    'default-frozen': transaction.assetDefaultFrozen,
-                    'metadata-hash': transaction.assetMetadataHash,
-                    name: transaction.assetName,
-                    'name-b64': transaction.assetName ? encoder.encode(Buffer.from(transaction.assetName).toString('base64')) : undefined,
-                    'unit-name': transaction.assetUnitName,
-                    'unit-name-b64': transaction.assetUnitName
-                      ? encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64'))
-                      : undefined,
-                    url: transaction.assetURL,
-                    'url-b64': transaction.assetURL ? encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) : undefined,
-                    manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
-                    reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
-                    clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
-                    freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
+                    ...(transaction.assetDefaultFrozen ? { 'default-frozen': transaction.assetDefaultFrozen } : undefined),
+                    ...(transaction.assetMetadataHash ? { 'metadata-hash': transaction.assetMetadataHash } : undefined),
+                    ...(transaction.assetName
+                      ? { name: transaction.assetName, 'name-b64': encoder.encode(Buffer.from(transaction.assetName).toString('base64')) }
+                      : undefined),
+                    ...(transaction.assetUnitName
+                      ? {
+                          'unit-name': transaction.assetUnitName,
+                          'unit-name-b64': encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64')),
+                        }
+                      : undefined),
+                    ...(transaction.assetURL
+                      ? { url: transaction.assetURL, 'url-b64': encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) }
+                      : undefined),
+                    ...(transaction.assetManager ? { manager: algosdk.encodeAddress(transaction.assetManager.publicKey) } : undefined),
+                    ...(transaction.assetReserve ? { reserve: algosdk.encodeAddress(transaction.assetReserve.publicKey) } : undefined),
+                    ...(transaction.assetClawback ? { clawback: algosdk.encodeAddress(transaction.assetClawback.publicKey) } : undefined),
+                    ...(transaction.assetFreeze ? { freeze: algosdk.encodeAddress(transaction.assetFreeze.publicKey) } : undefined),
                   }
                 : 'apar' in blockTransaction.txn && blockTransaction.txn.apar
                   ? {
-                      manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
-                      reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
-                      clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
-                      freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
+                      ...(transaction.assetManager ? { manager: algosdk.encodeAddress(transaction.assetManager.publicKey) } : undefined),
+                      ...(transaction.assetReserve ? { reserve: algosdk.encodeAddress(transaction.assetReserve.publicKey) } : undefined),
+                      ...(transaction.assetClawback ? { clawback: algosdk.encodeAddress(transaction.assetClawback.publicKey) } : undefined),
+                      ...(transaction.assetFreeze ? { freeze: algosdk.encodeAddress(transaction.assetFreeze.publicKey) } : undefined),
                       // These parameters are required in the indexer type so setting to empty values
                       creator: '',
                       decimals: 0,
                       total: 0,
                     }
                   : undefined,
-            }
-          : undefined,
-      'asset-transfer-transaction':
-        transaction.type === TransactionType.axfer
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.axfer
+        ? {
+            'asset-transfer-transaction': {
               'asset-id': transaction.assetIndex,
               amount: transaction.amount ?? 0, // The amount can be undefined
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
-              sender: transaction.assetRevocationTarget ? algosdk.encodeAddress(transaction.assetRevocationTarget.publicKey) : undefined,
-              'close-amount': assetCloseAmount,
-              'close-to': transaction.closeRemainderTo ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) : undefined,
-            }
-          : undefined,
-      'asset-freeze-transaction':
-        transaction.type === TransactionType.afrz
-          ? {
+              ...(transaction.assetRevocationTarget
+                ? { sender: algosdk.encodeAddress(transaction.assetRevocationTarget.publicKey) }
+                : undefined),
+              ...(assetCloseAmount ? { 'close-amount': assetCloseAmount } : undefined),
+              ...(transaction.closeRemainderTo ? { 'close-to': algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) } : undefined),
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.afrz
+        ? {
+            'asset-freeze-transaction': {
               'asset-id': transaction.assetIndex,
               'new-freeze-status': transaction.freezeState,
               address: algosdk.encodeAddress(transaction.freezeAccount.publicKey),
-            }
-          : undefined,
-      'application-transaction':
-        transaction.type === TransactionType.appl
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.appl
+        ? {
+            'application-transaction': {
               'application-id': transaction.appIndex,
               'approval-program': decoder.decode(transaction.appApprovalProgram),
               'clear-state-program': decoder.decode(transaction.appClearProgram),
               'on-completion': algodOnCompleteToIndexerOnComplete(transaction.appOnComplete),
-              'application-args': transaction.appArgs?.map((a) => Buffer.from(a).toString('base64')),
-              'extra-program-pages': transaction.extraPages,
-              'foreign-apps': transaction.appForeignApps,
-              'foreign-assets': transaction.appForeignAssets,
-              'global-state-schema': blockTransaction.txn.apgs
+              ...(transaction.appArgs
+                ? { 'application-args': transaction.appArgs.map((a) => Buffer.from(a).toString('base64')) }
+                : undefined),
+              ...(transaction.extraPages ? { 'extra-program-pages': transaction.extraPages } : undefined),
+              ...(transaction.appForeignApps ? { 'foreign-apps': transaction.appForeignApps } : undefined),
+              ...(transaction.appForeignAssets ? { 'foreign-assets': transaction.appForeignAssets } : undefined),
+              ...(blockTransaction.txn.apgs
                 ? {
-                    'num-byte-slice': transaction.appGlobalByteSlices,
-                    'num-uint': transaction.appGlobalInts,
+                    //tobefixed
+                    'global-state-schema': {
+                      'num-byte-slice': transaction.appGlobalByteSlices,
+                      'num-uint': transaction.appGlobalInts,
+                    },
                   }
-                : undefined,
-              'local-state-schema': blockTransaction.txn.apls
+                : undefined),
+              ...(blockTransaction.txn.apls
                 ? {
-                    'num-byte-slice': transaction.appLocalByteSlices,
-                    'num-uint': transaction.appLocalInts,
+                    'local-state-schema': {
+                      'num-byte-slice': transaction.appLocalByteSlices,
+                      'num-uint': transaction.appLocalInts,
+                    },
                   }
-                : undefined,
-              accounts: transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)),
-            }
-          : undefined,
-      'payment-transaction':
-        transaction.type === TransactionType.pay
-          ? {
+                : undefined),
+              ...(transaction.appAccounts
+                ? { accounts: transaction.appAccounts.map((a) => algosdk.encodeAddress(a.publicKey)) }
+                : undefined),
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.pay
+        ? {
+            'payment-transaction': {
               amount: Number(transaction.amount ?? 0), // The amount can be undefined
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
-              'close-amount': closeAmount,
-              'close-remainder-to': transaction.closeRemainderTo
-                ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey)
-                : undefined,
-            }
-          : undefined,
-      'keyreg-transaction':
-        transaction.type === TransactionType.keyreg
-          ? {
+              ...(closeAmount ? { 'close-amount': closeAmount } : undefined),
+              ...(transaction.closeRemainderTo
+                ? { 'close-remainder-to': algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) }
+                : undefined),
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.keyreg
+        ? {
+            'keyreg-transaction': {
               'non-participation': transaction.nonParticipation ?? false,
-              'selection-participation-key': transaction.selectionKey?.toString('base64'),
-              'state-proof-key': transaction.stateProofKey?.toString('base64'),
-              'vote-first-valid': transaction.voteFirst,
-              'vote-key-dilution': transaction.voteKeyDilution,
-              'vote-last-valid': transaction.voteLast,
-              'vote-participation-key': transaction.voteKey?.toString('base64'),
-            }
-          : undefined,
-      'state-proof-transaction':
-        transaction.type === TransactionType.stpf
-          ? {
+              ...(transaction.selectionKey ? { 'selection-participation-key': transaction.selectionKey.toString('base64') } : undefined),
+              ...(transaction.stateProofKey ? { 'state-proof-key': transaction.stateProofKey.toString('base64') } : undefined),
+              ...(transaction.voteFirst ? { 'vote-first-valid': transaction.voteFirst } : undefined),
+              ...(transaction.voteKeyDilution ? { 'vote-key-dilution': transaction.voteKeyDilution } : undefined),
+              ...(transaction.voteLast ? { 'vote-last-valid': transaction.voteLast } : undefined),
+              ...(transaction.voteKey ? { 'vote-participation-key': transaction.voteKey.toString('base64') } : undefined),
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.stpf
+        ? {
+            'state-proof-transaction': {
               'state-proof': {
                 'part-proofs': {
                   'hash-factory': {
@@ -457,78 +478,94 @@ export function getIndexerTransactionFromAlgodTransaction(
                 'voters-commitment': Buffer.from(stateProofMessage!.v).toString('base64'),
               },
               'state-proof-type': Number(transaction.stateProofType ?? 0),
-            }
-          : undefined,
+            },
+          }
+        : undefined),
       'first-valid': transaction.firstRound,
       'last-valid': transaction.lastRound,
       'tx-type': transaction.type,
       fee: transaction.fee ?? 0,
       sender: algosdk.encodeAddress(transaction.from.publicKey),
-      'confirmed-round': roundNumber,
-      'round-time': roundTimestamp,
-      'intra-round-offset': roundOffset,
-      'created-asset-index': createdAssetId,
-      'genesis-hash': Buffer.from(transaction.genesisHash).toString('base64'),
-      'genesis-id': transaction.genesisID,
-      group: transaction.group ? Buffer.from(transaction.group).toString('base64') : undefined,
-      note: transaction.note ? Buffer.from(transaction.note).toString('base64') : undefined,
-      lease: transaction.lease ? Buffer.from(transaction.lease).toString('base64') : undefined,
-      'rekey-to': transaction.reKeyTo ? algosdk.encodeAddress(transaction.reKeyTo.publicKey) : undefined,
-      'closing-amount': closeAmount,
-      'created-application-index': createdAppId,
-      'auth-addr': blockTransaction.sgnr ? algosdk.encodeAddress(blockTransaction.sgnr) : undefined,
-      'inner-txns': blockTransaction.dt?.itx?.map((ibt) =>
-        getIndexerTransactionFromAlgodTransaction({
-          blockTransaction: ibt,
-          roundIndex,
-          roundOffset: getChildOffset(),
-          ...extractTransactionFromBlockTransaction(ibt, genesisHash, genesisId),
-          getChildOffset,
-          parentOffset,
-          parentTransactionId,
-          roundNumber,
-          roundTimestamp,
-          genesisHash,
-          genesisId,
-        }),
-      ),
-      signature:
-        blockTransaction.sig || blockTransaction.lsig || blockTransaction.msig
-          ? {
-              sig: blockTransaction.sig ? Buffer.from(blockTransaction.sig).toString('base64') : undefined,
-              logicsig: blockTransaction.lsig
+      ...(roundNumber ? { 'confirmed-round': roundNumber } : undefined),
+      ...(roundTimestamp ? { 'round-time': roundTimestamp } : undefined),
+      ...(roundOffset ? { 'intra-round-offset': roundOffset } : undefined),
+      ...(createdAssetId ? { 'created-asset-index': createdAssetId } : undefined),
+      ...(transaction.genesisHash ? { 'genesis-hash': Buffer.from(transaction.genesisHash).toString('base64') } : undefined),
+      ...(transaction.genesisID ? { 'genesis-id': transaction.genesisID } : undefined),
+      ...(transaction.group ? { group: Buffer.from(transaction.group).toString('base64') } : undefined),
+      ...(transaction.note ? { note: Buffer.from(transaction.note).toString('base64') } : undefined),
+      ...(transaction.lease ? { lease: Buffer.from(transaction.lease).toString('base64') } : undefined),
+      ...(transaction.reKeyTo ? { 'rekey-to': algosdk.encodeAddress(transaction.reKeyTo.publicKey) } : undefined),
+      ...(closeAmount ? { 'closing-amount': closeAmount } : undefined),
+      ...(createdAppId ? { 'created-application-index': createdAppId } : undefined),
+      ...(blockTransaction.sgnr ? { 'auth-addr': algosdk.encodeAddress(blockTransaction.sgnr) } : undefined),
+      ...(blockTransaction.dt?.itx && blockTransaction.dt?.itx?.length > 0
+        ? {
+            'inner-txns': blockTransaction.dt.itx.map((ibt) =>
+              getIndexerTransactionFromAlgodTransaction({
+                blockTransaction: ibt,
+                roundIndex,
+                roundOffset: getChildOffset(),
+                ...extractTransactionFromBlockTransaction(ibt, genesisHash, genesisId),
+                getChildOffset,
+                parentOffset,
+                parentTransactionId,
+                roundNumber,
+                roundTimestamp,
+                genesisHash,
+                genesisId,
+              }),
+            ),
+          }
+        : undefined),
+
+      ...(blockTransaction.sig || blockTransaction.lsig || blockTransaction.msig
+        ? {
+            signature: {
+              ...(blockTransaction.sig ? { sig: Buffer.from(blockTransaction.sig).toString('base64') } : undefined),
+              ...(blockTransaction.lsig
                 ? {
-                    logic: Buffer.from(blockTransaction.lsig.l).toString('base64'),
-                    args: blockTransaction.lsig.arg ? blockTransaction.lsig.arg.map((a) => Buffer.from(a).toString('base64')) : undefined,
-                    signature: blockTransaction.lsig.sig ? Buffer.from(blockTransaction.lsig.sig).toString('base64') : undefined,
-                    'multisig-signature': blockTransaction.lsig.msig
-                      ? {
-                          version: blockTransaction.lsig.msig.v,
-                          threshold: blockTransaction.lsig.msig.thr,
-                          subsignature: blockTransaction.lsig.msig.subsig.map(
-                            (s) =>
-                              ({
-                                'public-key': Buffer.from(s.pk).toString('base64'),
-                                signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
-                              }) as MultisigTransactionSubSignature,
-                          ),
-                        }
-                      : undefined,
+                    logicsig: {
+                      logic: Buffer.from(blockTransaction.lsig.l).toString('base64'),
+                      ...(blockTransaction.lsig.arg
+                        ? { args: blockTransaction.lsig.arg.map((a) => Buffer.from(a).toString('base64')) }
+                        : undefined),
+                      ...(blockTransaction.lsig.sig ? { signature: Buffer.from(blockTransaction.lsig.sig).toString('base64') } : undefined),
+                      ...(blockTransaction.lsig.msig
+                        ? {
+                            'multisig-signature': {
+                              version: blockTransaction.lsig.msig.v,
+                              threshold: blockTransaction.lsig.msig.thr,
+                              subsignature: blockTransaction.lsig.msig.subsig.map(
+                                (s) =>
+                                  ({
+                                    'public-key': Buffer.from(s.pk).toString('base64'),
+                                    ...(s.s ? { signature: Buffer.from(s.s).toString('base64') } : undefined),
+                                  }) as MultisigTransactionSubSignature,
+                              ),
+                            },
+                          }
+                        : undefined),
+                    },
                   }
-                : undefined,
-              multisig: blockTransaction.msig
+                : undefined),
+              ...(blockTransaction.msig
                 ? {
-                    version: blockTransaction.msig.v,
-                    threshold: blockTransaction.msig.thr,
-                    subsignature: blockTransaction.msig.subsig.map((s) => ({
-                      'public-key': Buffer.from(s.pk).toString('base64'),
-                      signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
-                    })),
+                    multisig: {
+                      version: blockTransaction.msig.v,
+                      threshold: blockTransaction.msig.thr,
+                      subsignature: blockTransaction.msig.subsig.map((s) => ({
+                        'public-key': Buffer.from(s.pk).toString('base64'),
+                        ...(s.s ? { signature: Buffer.from(s.s).toString('base64') } : undefined),
+                      })),
+                    },
                   }
-                : undefined,
-            }
-          : undefined,
-      logs: blockTransaction.dt?.lg ? blockTransaction.dt.lg.map((l) => Buffer.from(l).toString('base64')) : undefined,
+                : undefined),
+            },
+          }
+        : undefined),
+
+      ...(blockTransaction.dt?.lg ? { logs: blockTransaction.dt.lg.map((l) => Buffer.from(l).toString('base64')) } : undefined),
       // todo: do we need any of these?
       //"close-rewards"
       //"receiver-rewards"
@@ -561,14 +598,32 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   const { block, cert } = blockData
   return {
     round: block.rnd,
-    hash: cert?.prop?.dig ? base32.encode(cert.prop.dig).replace(/=/g, '') : undefined,
-    timestamp: new Date(block.ts * 1000).toISOString(),
+    ...(cert?.prop?.dig ? { hash: Buffer.from(cert.prop.dig).toString('base64') } : undefined),
+    timestamp: block.ts,
     genesisId: block.gen,
     genesisHash: Buffer.from(block.gh).toString('base64'),
-    previousBlockHash: block.prev ? base32.encode(block.prev).replace(/=/g, '') : undefined,
-    seed: block.seed ? Buffer.from(block.seed).toString('base64') : undefined,
+    ...(block.prev ? { previousBlockHash: Buffer.from(block.prev).toString('base64') } : undefined),
+    seed: Buffer.from(block.seed).toString('base64'),
     parentTransactionCount: block.txns?.length ?? 0,
     fullTransactionCount: countAllTransactions(block.txns ?? []),
+    rewards: {
+      feeSink: algosdk.encodeAddress(block.fees),
+      rewardsPool: algosdk.encodeAddress(block.rwd),
+      rewardsLevel: block.earn,
+      rewardsResidue: block.frac,
+      rewardsRate: block.rate ?? 0,
+      rewardsCalculationRound: block.rwcalr,
+    },
+    upgradeState: {
+      currentProtocol: block.proto,
+      ...(block.nextproto ? { nextProtocol: block.nextproto } : undefined),
+      ...(block.nextyes ? { nextProtocolApprovals: block.nextyes } : undefined),
+      ...(block.nextswitch ? { nextProtocolSwitchOn: block.nextswitch } : undefined),
+      ...(block.nextbefore ? { nextProtocolVoteBefore: block.nextbefore } : undefined),
+    },
+    txnCounter: block.tc,
+    transactionsRoot: Buffer.from(block.txn).toString('base64'),
+    transactionsRootSha256: block.txn256,
   }
 }
 

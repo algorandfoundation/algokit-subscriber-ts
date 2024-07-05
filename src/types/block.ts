@@ -90,7 +90,7 @@ export interface Block {
   /** The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
    * MicroAlgos for every reward unit in the next round.
    **/
-  frac: number
+  frac: number | bigint
   /** Genesis ID to which this block belongs. */
   gen: string
   /** Genesis hash to which this block belongs. */
@@ -100,7 +100,7 @@ export interface Block {
   /** UpgradeState tracks the protocol upgrade state machine; proto is the current protocol. */
   proto: string
   /** The number of new MicroAlgos added to the participation stake from rewards at the next round. */
-  rate: number
+  rate?: number
   /** Round number. */
   rnd: number
   /** The round at which the RewardsRate will be recalculated. */
@@ -126,7 +126,25 @@ export interface Block {
    * Root of transaction vector commitment merkle tree using SHA256 hash function.
    */
   txn256: string
-  /** The transactions within the block. */
+  /**
+   * The next proposed protocol version.
+   */
+  nextproto?: string
+  /**
+   * Number of blocks which approved the protocol upgrade.
+   */
+  nextyes?: number
+  /**
+   * Deadline round for this protocol upgrade (No votes will be considered after this round).
+   */
+  nextbefore?: number
+  /**
+   * Round on which the protocol upgrade will take effect.
+   */
+  nextswitch?: number
+  /**
+   * The transactions within the block.
+   */
   txns?: BlockTransaction[]
 }
 

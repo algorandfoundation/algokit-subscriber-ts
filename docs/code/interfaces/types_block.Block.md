@@ -19,6 +19,10 @@ https://github.com/algorand/go-algorand/blob/master/data/bookkeeping/block.go#L3
 - [frac](types_block.Block.md#frac)
 - [gen](types_block.Block.md#gen)
 - [gh](types_block.Block.md#gh)
+- [nextbefore](types_block.Block.md#nextbefore)
+- [nextproto](types_block.Block.md#nextproto)
+- [nextswitch](types_block.Block.md#nextswitch)
+- [nextyes](types_block.Block.md#nextyes)
 - [prev](types_block.Block.md#prev)
 - [proto](types_block.Block.md#proto)
 - [rate](types_block.Block.md#rate)
@@ -62,7 +66,7 @@ ___
 
 ### frac
 
-• **frac**: `number`
+• **frac**: `number` \| `bigint`
 
 The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
 MicroAlgos for every reward unit in the next round.
@@ -97,6 +101,54 @@ Genesis hash to which this block belongs.
 
 ___
 
+### nextbefore
+
+• `Optional` **nextbefore**: `number`
+
+Deadline round for this protocol upgrade (No votes will be considered after this round).
+
+#### Defined in
+
+[types/block.ts:140](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L140)
+
+___
+
+### nextproto
+
+• `Optional` **nextproto**: `string`
+
+The next proposed protocol version.
+
+#### Defined in
+
+[types/block.ts:132](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L132)
+
+___
+
+### nextswitch
+
+• `Optional` **nextswitch**: `number`
+
+Round on which the protocol upgrade will take effect.
+
+#### Defined in
+
+[types/block.ts:144](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L144)
+
+___
+
+### nextyes
+
+• `Optional` **nextyes**: `number`
+
+Number of blocks which approved the protocol upgrade.
+
+#### Defined in
+
+[types/block.ts:136](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L136)
+
+___
+
 ### prev
 
 • **prev**: `Uint8Array`
@@ -123,7 +175,7 @@ ___
 
 ### rate
 
-• **rate**: `number`
+• `Optional` **rate**: `number`
 
 The number of new MicroAlgos added to the participation stake from rewards at the next round.
 
@@ -241,4 +293,4 @@ The transactions within the block.
 
 #### Defined in
 
-[types/block.ts:130](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L130)
+[types/block.ts:148](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L148)
