@@ -109,7 +109,7 @@ Deadline round for this protocol upgrade (No votes will be considered after this
 
 #### Defined in
 
-[types/block.ts:140](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L140)
+[types/block.ts:141](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L141)
 
 ___
 
@@ -121,7 +121,7 @@ The next proposed protocol version.
 
 #### Defined in
 
-[types/block.ts:132](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L132)
+[types/block.ts:133](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L133)
 
 ___
 
@@ -133,7 +133,7 @@ Round on which the protocol upgrade will take effect.
 
 #### Defined in
 
-[types/block.ts:144](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L144)
+[types/block.ts:145](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L145)
 
 ___
 
@@ -145,7 +145,7 @@ Number of blocks which approved the protocol upgrade.
 
 #### Defined in
 
-[types/block.ts:136](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L136)
+[types/block.ts:137](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L137)
 
 ___
 
@@ -262,14 +262,15 @@ ___
 
 ### txn
 
-• **txn**: `Uint8Array`
+• `Optional` **txn**: `Uint8Array`
 
 Root of transaction merkle tree using SHA512_256 hash function.
 This commitment is computed based on the PaysetCommit type specified in the block's consensus protocol.
+This value is only set when there are transactions in the block.
 
 #### Defined in
 
-[types/block.ts:124](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L124)
+[types/block.ts:125](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L125)
 
 ___
 
@@ -281,7 +282,7 @@ Root of transaction vector commitment merkle tree using SHA256 hash function.
 
 #### Defined in
 
-[types/block.ts:128](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L128)
+[types/block.ts:129](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L129)
 
 ___
 
@@ -293,4 +294,4 @@ The transactions within the block.
 
 #### Defined in
 
-[types/block.ts:148](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L148)
+[types/block.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L149)

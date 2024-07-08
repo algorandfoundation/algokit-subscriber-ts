@@ -120,8 +120,9 @@ export interface Block {
   ts: number
   /** Root of transaction merkle tree using SHA512_256 hash function.
    * This commitment is computed based on the PaysetCommit type specified in the block's consensus protocol.
+   * This value is only set when there are transactions in the block.
    **/
-  txn: Uint8Array
+  txn?: Uint8Array
   /**
    * Root of transaction vector commitment merkle tree using SHA256 hash function.
    */
