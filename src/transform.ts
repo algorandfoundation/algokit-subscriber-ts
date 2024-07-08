@@ -601,7 +601,7 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       nextProtocolVoteBefore: block.nextbefore,
     },
     txnCounter: block.tc,
-    transactionsRoot: Buffer.from(block.txn).toString('base64'),
+    transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     transactionsRootSha256: block.txn256,
   }
 }
