@@ -278,6 +278,10 @@ describe('Complex transaction with many nested inner transactions', () => {
           "genesisId": "mainnet-v1.0",
           "hash": "EOq+HX242/G/ADonU6q5lfimxX7twuFKEwtG4rDt+kI=",
           "parentTransactionCount": 55,
+          "participationUpdates": {
+            "absentParticipationAccounts": undefined,
+            "expiredParticipationAccounts": undefined,
+          },
           "previousBlockHash": "8ReLxqOPxmuKuBfACtllRRr13n2E2r01f8wXt3vFYW0=",
           "rewards": {
             "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
@@ -289,6 +293,14 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
           "round": 35214367,
           "seed": "Tp6NntUaw17I8GGscaawpAuI0vQDMgp1TBSMAcpohtY=",
+          "stateProofTracking": [
+            {
+              "nextRound": 35214336,
+              "onlineTotalWeight": 0,
+              "type": 0,
+              "votersCommitment": undefined,
+            },
+          ],
           "timestamp": 1705252440,
           "transactionsRoot": "xrzxjhAycO5dLAJ622EAMV4ffb2T1sagFWYQPR1S0IQ=",
           "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
@@ -299,6 +311,11 @@ describe('Complex transaction with many nested inner transactions', () => {
             "nextProtocolApprovals": 9967,
             "nextProtocolSwitchOn": 35275315,
             "nextProtocolVoteBefore": 35125315,
+          },
+          "upgradeVote": {
+            "upgradeApprove": undefined,
+            "upgradeDelay": undefined,
+            "upgradePropose": undefined,
           },
         },
       ]
@@ -674,4 +691,9 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
     expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
   })
+  // it('just to test', async () => {
+  //   const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
+  //   const x = blockDataToBlockMetadata(blocks[0])
+  //   console.log(x)
+  // })
 })

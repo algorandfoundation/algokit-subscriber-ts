@@ -147,6 +147,30 @@ export interface Block {
    * The transactions within the block.
    */
   txns?: BlockTransaction[]
+  /**
+   * AbsentParticipationAccounts contains a list of online accounts that
+   * needs to be converted to offline since they are not proposing.
+   */
+  partupdabs?: Uint8Array[]
+  /**
+   * ExpiredParticipationAccounts contains a list of online accounts that needs to be
+   * converted to offline since their participation key expired.
+   */
+  partupdrmv?: Uint8Array[]
+  /**
+   *  UpgradeApprove indicates a yes vote for the current proposal
+   */
+  upgradeyes?: boolean
+  /**
+   *  UpgradeDelay indicates the time between acceptance and execution
+   */
+  upgradedelay?: number
+  /**
+   *  UpgradePropose indicates a proposed upgrade
+   */
+  upgradeprop?: string
+
+  spt?: Record<number, StateProofTracking>
 }
 
 /** Data that is returned in a raw Algorand block for a single transaction
@@ -273,6 +297,24 @@ export interface StateProofMessage {
   l: number
   P: bigint
   v: Uint8Array
+}
+
+export interface StateProofTracking {
+  /** StateProofVotersCommitment is the root of a vector commitment containing the
+   * online accounts that will help sign a state proof.  The VC root, and the state proof,
+   * happen on blocks that are a multiple of ConsensusParams.StateProofRounds.
+   * For blocks that are not a multiple of ConsensusParams.StateProofRounds, this value is zero.
+   */
+  v?: string
+  /** StateProofOnlineTotalWeight is the total number of microalgos held by the online accounts
+   * during the StateProof round (or zero, if the merkle root is zero - no commitment for StateProof voters).
+   * This is intended for computing the threshold of votes to expect from StateProofVotersCommitment.
+   */
+  t?: number
+  /**
+   * StateProofNextRound is the next round for which we will accept a StateProof transaction.
+   */
+  n?: number
 }
 
 /** The representation of all important data for a single transaction or inner transaction
