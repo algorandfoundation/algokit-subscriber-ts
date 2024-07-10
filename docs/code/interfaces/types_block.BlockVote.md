@@ -38,7 +38,7 @@ https://github.com/algorand/go-algorand/blob/master/data/committee/credential.go
 
 #### Defined in
 
-[types/block.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L54)
+[types/block.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L55)
 
 ___
 
@@ -54,7 +54,7 @@ https://github.com/algorand/go-algorand/blob/master/crypto/onetimesig.go
 
 #### Defined in
 
-[types/block.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L62)
+[types/block.ts:63](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L63)
 
 ___
 
@@ -66,4 +66,4 @@ Sender of the vote
 
 #### Defined in
 
-[types/block.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L49)
+[types/block.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L50)

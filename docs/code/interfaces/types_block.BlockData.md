@@ -23,7 +23,7 @@ The block itself.
 
 #### Defined in
 
-[types/block.ts:10](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L10)
+[types/block.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L11)
 
 ___
 
@@ -35,4 +35,4 @@ The block certification.
 
 #### Defined in
 
-[types/block.ts:12](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L12)
+[types/block.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L13)

@@ -61,7 +61,7 @@ export interface BlockMetadata {
   /** Fields relating to a protocol upgrade. */
   upgradeState?: BlockUpgradeState
   /** Tracks the status of state proofs. */
-  stateProofTracking?: StateProofTracking[]
+  stateProofTracking?: BlockStateProofTracking[]
   /** Fields relating to voting for a protocol upgrade. */
   upgradeVote?: BlockUpgradeVote
   /** Participation account data that needs to be checked/acted on by the network. */
@@ -96,7 +96,7 @@ export interface BlockUpgradeState {
   nextProtocolSwitchOn?: number
 }
 
-export interface StateProofTracking {
+export interface BlockStateProofTracking {
   /**
    * (n) Next round for which we will accept a state proof transaction.
    */
