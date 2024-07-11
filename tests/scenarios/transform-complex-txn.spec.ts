@@ -748,13 +748,12 @@ describe('Complex transaction with many nested inner transactions', () => {
   },
 ]
       `)
-    expect(localStateDelta).toMatchInlineSnapshot(
-      `[
+    expect(localStateDelta).toMatchInlineSnapshot(`[
   {
-    "address": "2",
+    "address": "R4Q3KN5RBXUQIJWSVMQUJ7FTL7YURP6DY6W724HTD4Z43IRGUCZ2ORANGE",
     "delta": [
       {
-        "key": "Mg==",
+        "key": "ZWZmb3J0",
         "value": {
           "action": 2,
           "bytes": undefined,
@@ -763,7 +762,6 @@ describe('Complex transaction with many nested inner transactions', () => {
       },
     ],
   },
-]`,
-    )
+]`)
   })
 })

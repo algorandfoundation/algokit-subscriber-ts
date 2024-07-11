@@ -563,17 +563,35 @@ export function getIndexerTransactionFromAlgodTransaction(
         : undefined,
 
       'local-state-delta': blockTransaction.dt?.ld
-        ? (Object.entries(blockTransaction.dt.ld).map(([address, delta]) => ({
-            address,
-            delta: Object.entries(delta).map(([key, value]) => ({
-              key: Buffer.from(address).toString('base64'),
-              value: {
-                action: value.at,
-                bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
-                uint: value.ui,
-              },
-            })),
-          })) as unknown as Record<string, EvalDelta>[])
+        ? (Object.entries(blockTransaction.dt.ld)
+            .map(([addressIndex, delta]) => {
+              try {
+                const addressList = [
+                  algosdk.encodeAddress(transaction.from.publicKey),
+                  ...(transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
+                ]
+                if (Number(addressIndex) >= addressList.length) {
+                  throw new Error(`Address index ${addressIndex} is out of range`)
+                }
+                return {
+                  address: addressList[Number(addressIndex)],
+                  delta: Object.entries(delta).map(([key, value]) => ({
+                    key: Buffer.from(key).toString('base64'),
+                    value: {
+                      action: value.at,
+                      bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+                      uint: value.ui,
+                    },
+                  })),
+                }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              } catch (e: any) {
+                // eslint-disable-next-line no-console
+                console.error(`Error processing local state delta: ${e.message}`)
+                throw e
+              }
+            })
+            .filter((entry) => entry !== null) as unknown as Record<string, EvalDelta>[])
         : undefined,
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
