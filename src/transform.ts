@@ -1,4 +1,4 @@
-import type { MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { EvalDelta, MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete, StateProofTransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
 import algosdk from 'algosdk'
@@ -265,6 +265,9 @@ export function getIndexerTransactionFromAlgodTransaction(
     roundTimestamp,
     genesisHash,
     genesisId,
+    closeRewards,
+    receiverRewards,
+    senderRewards,
   } = t
 
   if (!transaction.type) {
@@ -545,12 +548,33 @@ export function getIndexerTransactionFromAlgodTransaction(
           }
         : undefined),
       logs: blockTransaction.dt?.lg ? blockTransaction.dt.lg.map((l) => Buffer.from(l).toString('base64')) : undefined,
-      // todo: do we need any of these?
-      //"close-rewards"
-      //"receiver-rewards"
-      //"sender-rewards"
-      //"global-state-delta"
-      //"local-state-delta"
+      'close-rewards': closeRewards,
+      'receiver-rewards': receiverRewards,
+      'sender-rewards': senderRewards,
+      'global-state-delta': blockTransaction.dt?.gd
+        ? (Object.entries(blockTransaction.dt.gd).map(([key, value]) => ({
+            key: Buffer.from(key).toString('base64'),
+            value: {
+              action: value.at,
+              bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+              uint: value.ui,
+            },
+          })) as unknown as Record<string, EvalDelta>[])
+        : undefined,
+
+      'local-state-delta': blockTransaction.dt?.ld
+        ? (Object.entries(blockTransaction.dt.ld).map(([address, delta]) => ({
+            address,
+            delta: Object.entries(delta).map(([key, value]) => ({
+              key: Buffer.from(address).toString('base64'),
+              value: {
+                action: value.at,
+                bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+                uint: value.ui,
+              },
+            })),
+          })) as unknown as Record<string, EvalDelta>[])
+        : undefined,
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {

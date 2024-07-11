@@ -387,4 +387,10 @@ export interface TransactionInBlock {
   closeAmount?: number
   /** Any logs that were issued as a result of this transaction. */
   logs?: Uint8Array[]
+  /** Rewards in microalgos applied to the close remainder to account. */
+  closeRewards?: number
+  /** Rewards in microalgos applied to the sender account. */
+  senderRewards?: number
+  /** Rewards in microalgos applied to the receiver account. */
+  receiverRewards?: number
 }

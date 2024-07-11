@@ -212,6 +212,29 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "first-valid": 35214365,
         "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+        "global-state-delta": [
+          {
+            "key": "",
+            "value": {
+              "action": 1,
+              "bytes": "AAAAAAAAAAQAAAAAAhlUHw==",
+            },
+          },
+          {
+            "key": "AA==",
+            "value": {
+              "action": 1,
+              "bytes": "YC4Bj8ZCXdiWg6+eYEL5yV0gvi3ucnEckrGx2BQXDDIAAAAAUuN3VwAAAAAOsZeDAQAAAABS43dXAAAAAFLkB4YAAAAAAAAAAAAAAAAAAAAA/////5S/nq4AAAAAa0BhUQAAAA91+xl0AAAAAALtZZ8AAAAAAwsGTgAAAAAAAA==",
+            },
+          },
+          {
+            "key": "AQ==",
+            "value": {
+              "action": 1,
+              "bytes": "h2MAAAAAAAAABQAAAAAAAAAZAAAAAAAAAB6KqC3yOXMVr2XD4nTi43RC3Rv0AGIvri+ssClC+HVNQgAAAAAAAAAAAA==",
+            },
+          },
+        ],
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
         "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "inner-txns": [
@@ -691,9 +714,56 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
     expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
   })
-  // it('just to test', async () => {
-  //   const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
-  //   const x = blockDataToBlockMetadata(blocks[0])
-  //   console.log(x)
-  // })
+  it('Produces the correct state deltas in application transaction', async () => {
+    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+
+    const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[9])
+    const localStateDelta = transaction['local-state-delta']
+    const globalStateDelta = transaction['global-state-delta']
+    expect(globalStateDelta).toMatchInlineSnapshot(`[
+  {
+    "key": "Y3VycmVudF9taW5lcl9lZmZvcnQ=",
+    "value": {
+      "action": 2,
+      "bytes": undefined,
+      "uint": 412000,
+    },
+  },
+  {
+    "key": "dG90YWxfZWZmb3J0",
+    "value": {
+      "action": 2,
+      "bytes": undefined,
+      "uint": 2129702852933n,
+    },
+  },
+  {
+    "key": "dG90YWxfdHJhbnNhY3Rpb25z",
+    "value": {
+      "action": 2,
+      "bytes": undefined,
+      "uint": 324424783,
+    },
+  },
+]
+      `)
+    expect(localStateDelta).toMatchInlineSnapshot(
+      `[
+  {
+    "address": "2",
+    "delta": [
+      {
+        "key": "Mg==",
+        "value": {
+          "action": 2,
+          "bytes": undefined,
+          "uint": 412000,
+        },
+      },
+    ],
+  },
+]`,
+    )
+  })
 })
