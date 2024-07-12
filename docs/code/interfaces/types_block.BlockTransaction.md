@@ -39,7 +39,7 @@ Asset closing amount in decimal units
 
 [types/block.ts:190](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L190)
 
----
+___
 
 ### apid
 
@@ -51,7 +51,7 @@ App ID when an app is created by the transaction
 
 [types/block.ts:188](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L188)
 
----
+___
 
 ### ca
 
@@ -63,7 +63,7 @@ Algo closing amount in microAlgos
 
 [types/block.ts:192](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L192)
 
----
+___
 
 ### caid
 
@@ -75,7 +75,7 @@ Asset ID when an asset is created by the transaction
 
 [types/block.ts:186](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L186)
 
----
+___
 
 ### dt
 
@@ -87,7 +87,7 @@ The eval deltas for the block
 
 [types/block.ts:184](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L184)
 
----
+___
 
 ### hgh
 
@@ -99,7 +99,7 @@ Has genesis hash
 
 [types/block.ts:196](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L196)
 
----
+___
 
 ### hgi
 
@@ -111,7 +111,7 @@ Has genesis id
 
 [types/block.ts:194](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L194)
 
----
+___
 
 ### lsig
 
@@ -123,7 +123,7 @@ Logic signature
 
 [types/block.ts:200](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L200)
 
----
+___
 
 ### msig
 
@@ -135,7 +135,7 @@ Transaction multisig signature
 
 [types/block.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L202)
 
----
+___
 
 ### sgnr
 
@@ -147,7 +147,7 @@ The signer, if signing with a different key than the Transaction type `from` pro
 
 [types/block.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L204)
 
----
+___
 
 ### sig
 
@@ -159,7 +159,7 @@ Transaction ED25519 signature
 
 [types/block.ts:198](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L198)
 
----
+___
 
 ### txn
 

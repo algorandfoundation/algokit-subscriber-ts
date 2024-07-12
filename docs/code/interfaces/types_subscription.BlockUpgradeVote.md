@@ -24,7 +24,7 @@
 
 [types/subscription.ts:127](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L127)
 
----
+___
 
 ### upgradeDelay
 
@@ -36,7 +36,7 @@
 
 [types/subscription.ts:132](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L132)
 
----
+___
 
 ### upgradePropose
 

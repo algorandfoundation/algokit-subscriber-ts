@@ -31,7 +31,7 @@ The filter itself.
 
 [types/subscription.ts:281](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L281)
 
----
+___
 
 ### name
 

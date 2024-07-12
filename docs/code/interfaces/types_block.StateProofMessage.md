@@ -24,7 +24,7 @@
 
 [types/block.ts:298](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L298)
 
----
+___
 
 ### b
 
@@ -34,7 +34,7 @@
 
 [types/block.ts:295](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L295)
 
----
+___
 
 ### f
 
@@ -44,7 +44,7 @@
 
 [types/block.ts:296](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L296)
 
----
+___
 
 ### l
 
@@ -54,7 +54,7 @@
 
 [types/block.ts:297](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L297)
 
----
+___
 
 ### v
 
