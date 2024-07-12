@@ -635,15 +635,23 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
     txnCounter: block.tc,
     transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     transactionsRootSha256: block.txn256,
-    upgradeVote: {
-      upgradeApprove: block.upgradeyes,
-      upgradeDelay: block.upgradedelay,
-      upgradePropose: block.upgradeprop,
-    },
-    participationUpdates: {
-      absentParticipationAccounts: block.partupdabs?.map((addr) => algosdk.encodeAddress(addr)),
-      expiredParticipationAccounts: block.partupdrmv?.map((addr) => algosdk.encodeAddress(addr)),
-    },
+    ...(block.upgradeyes !== undefined || block.upgradedelay !== undefined || block.upgradeprop !== undefined
+      ? {
+          upgradeVote: {
+            upgradeApprove: block.upgradeyes,
+            upgradeDelay: block.upgradedelay,
+            upgradePropose: block.upgradeprop,
+          },
+        }
+      : undefined),
+    ...(block.partupdabs !== undefined || block.partupdrmv !== undefined
+      ? {
+          participationUpdates: {
+            absentParticipationAccounts: block.partupdabs?.map((addr) => algosdk.encodeAddress(addr)),
+            expiredParticipationAccounts: block.partupdrmv?.map((addr) => algosdk.encodeAddress(addr)),
+          },
+        }
+      : undefined),
     stateProofTracking: block.spt
       ? Object.entries(block.spt).map(([key, value]) => ({
           nextRound: value.n,
