@@ -148,7 +148,7 @@ function extractTransactionFromBlockTransaction(
  * @param appOnComplete The `OnApplicationComplete` value
  * @returns The equivalent `ApplicationOnComplete` value
  */
-export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationComplete): ApplicationOnComplete {
+export function algodOnCompleteToIndexerOnComplete(appOnComplete?: OnApplicationComplete): ApplicationOnComplete {
   return appOnComplete === OnApplicationComplete.NoOpOC
     ? ApplicationOnComplete.noop
     : appOnComplete === OnApplicationComplete.OptInOC
@@ -157,9 +157,11 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
         ? ApplicationOnComplete.closeout
         : appOnComplete === OnApplicationComplete.ClearStateOC
           ? ApplicationOnComplete.clear
-          : appOnComplete === OnApplicationComplete.DeleteApplicationOC
-            ? ApplicationOnComplete.delete
-            : ApplicationOnComplete.update
+          : appOnComplete === OnApplicationComplete.UpdateApplicationOC
+            ? ApplicationOnComplete.update
+            : appOnComplete === OnApplicationComplete.DeleteApplicationOC
+              ? ApplicationOnComplete.delete
+              : ApplicationOnComplete.noop
 }
 
 function concatArrays(...arrs: ArrayLike<number>[]) {
@@ -265,6 +267,9 @@ export function getIndexerTransactionFromAlgodTransaction(
     roundTimestamp,
     genesisHash,
     genesisId,
+    closeRewards,
+    receiverRewards,
+    senderRewards,
   } = t
 
   if (!transaction.type) {
@@ -292,9 +297,9 @@ export function getIndexerTransactionFromAlgodTransaction(
       id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : txId,
       parentTransactionId,
       filtersMatched: filterName ? [filterName] : undefined,
-      'asset-config-transaction':
-        transaction.type === TransactionType.acfg
-          ? {
+      ...(transaction.type === TransactionType.acfg
+        ? {
+            'asset-config-transaction': {
               'asset-id': transaction.assetIndex,
               params: createdAssetId
                 ? {
@@ -303,14 +308,18 @@ export function getIndexerTransactionFromAlgodTransaction(
                     total: transaction.assetTotal,
                     'default-frozen': transaction.assetDefaultFrozen,
                     'metadata-hash': transaction.assetMetadataHash,
-                    name: transaction.assetName,
-                    'name-b64': transaction.assetName ? encoder.encode(Buffer.from(transaction.assetName).toString('base64')) : undefined,
-                    'unit-name': transaction.assetUnitName,
-                    'unit-name-b64': transaction.assetUnitName
-                      ? encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64'))
-                      : undefined,
-                    url: transaction.assetURL,
-                    'url-b64': transaction.assetURL ? encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) : undefined,
+                    ...(transaction.assetName
+                      ? { name: transaction.assetName, 'name-b64': encoder.encode(Buffer.from(transaction.assetName).toString('base64')) }
+                      : undefined),
+                    ...(transaction.assetUnitName
+                      ? {
+                          'unit-name': transaction.assetUnitName,
+                          'unit-name-b64': encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64')),
+                        }
+                      : undefined),
+                    ...(transaction.assetURL
+                      ? { url: transaction.assetURL, 'url-b64': encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) }
+                      : undefined),
                     manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
                     reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
                     clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
@@ -328,30 +337,33 @@ export function getIndexerTransactionFromAlgodTransaction(
                       total: 0,
                     }
                   : undefined,
-            }
-          : undefined,
-      'asset-transfer-transaction':
-        transaction.type === TransactionType.axfer
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.axfer
+        ? {
+            'asset-transfer-transaction': {
               'asset-id': transaction.assetIndex,
               amount: transaction.amount ?? 0, // The amount can be undefined
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
               sender: transaction.assetRevocationTarget ? algosdk.encodeAddress(transaction.assetRevocationTarget.publicKey) : undefined,
               'close-amount': assetCloseAmount,
               'close-to': transaction.closeRemainderTo ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) : undefined,
-            }
-          : undefined,
-      'asset-freeze-transaction':
-        transaction.type === TransactionType.afrz
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.afrz
+        ? {
+            'asset-freeze-transaction': {
               'asset-id': transaction.assetIndex,
               'new-freeze-status': transaction.freezeState,
               address: algosdk.encodeAddress(transaction.freezeAccount.publicKey),
-            }
-          : undefined,
-      'application-transaction':
-        transaction.type === TransactionType.appl
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.appl
+        ? {
+            'application-transaction': {
               'application-id': transaction.appIndex,
               'approval-program': decoder.decode(transaction.appApprovalProgram),
               'clear-state-program': decoder.decode(transaction.appClearProgram),
@@ -360,35 +372,41 @@ export function getIndexerTransactionFromAlgodTransaction(
               'extra-program-pages': transaction.extraPages,
               'foreign-apps': transaction.appForeignApps,
               'foreign-assets': transaction.appForeignAssets,
-              'global-state-schema': blockTransaction.txn.apgs
+              ...(blockTransaction.txn.apgs
                 ? {
-                    'num-byte-slice': transaction.appGlobalByteSlices,
-                    'num-uint': transaction.appGlobalInts,
+                    'global-state-schema': {
+                      'num-byte-slice': transaction.appGlobalByteSlices,
+                      'num-uint': transaction.appGlobalInts,
+                    },
                   }
-                : undefined,
-              'local-state-schema': blockTransaction.txn.apls
+                : undefined),
+              ...(blockTransaction.txn.apls
                 ? {
-                    'num-byte-slice': transaction.appLocalByteSlices,
-                    'num-uint': transaction.appLocalInts,
+                    'local-state-schema': {
+                      'num-byte-slice': transaction.appLocalByteSlices,
+                      'num-uint': transaction.appLocalInts,
+                    },
                   }
-                : undefined,
+                : undefined),
               accounts: transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)),
-            }
-          : undefined,
-      'payment-transaction':
-        transaction.type === TransactionType.pay
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.pay
+        ? {
+            'payment-transaction': {
               amount: Number(transaction.amount ?? 0), // The amount can be undefined
               receiver: algosdk.encodeAddress(transaction.to.publicKey),
               'close-amount': closeAmount,
               'close-remainder-to': transaction.closeRemainderTo
                 ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey)
                 : undefined,
-            }
-          : undefined,
-      'keyreg-transaction':
-        transaction.type === TransactionType.keyreg
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.keyreg
+        ? {
+            'keyreg-transaction': {
               'non-participation': transaction.nonParticipation ?? false,
               'selection-participation-key': transaction.selectionKey?.toString('base64'),
               'state-proof-key': transaction.stateProofKey?.toString('base64'),
@@ -396,11 +414,12 @@ export function getIndexerTransactionFromAlgodTransaction(
               'vote-key-dilution': transaction.voteKeyDilution,
               'vote-last-valid': transaction.voteLast,
               'vote-participation-key': transaction.voteKey?.toString('base64'),
-            }
-          : undefined,
-      'state-proof-transaction':
-        transaction.type === TransactionType.stpf
-          ? {
+            },
+          }
+        : undefined),
+      ...(transaction.type === TransactionType.stpf
+        ? {
+            'state-proof-transaction': {
               'state-proof': {
                 'part-proofs': {
                   'hash-factory': {
@@ -457,8 +476,9 @@ export function getIndexerTransactionFromAlgodTransaction(
                 'voters-commitment': Buffer.from(stateProofMessage!.v).toString('base64'),
               },
               'state-proof-type': Number(transaction.stateProofType ?? 0),
-            }
-          : undefined,
+            },
+          }
+        : undefined),
       'first-valid': transaction.firstRound,
       'last-valid': transaction.lastRound,
       'tx-type': transaction.type,
@@ -492,9 +512,9 @@ export function getIndexerTransactionFromAlgodTransaction(
           genesisId,
         }),
       ),
-      signature:
-        blockTransaction.sig || blockTransaction.lsig || blockTransaction.msig
-          ? {
+      ...(blockTransaction.sig || blockTransaction.lsig || blockTransaction.msig
+        ? {
+            signature: {
               sig: blockTransaction.sig ? Buffer.from(blockTransaction.sig).toString('base64') : undefined,
               logicsig: blockTransaction.lsig
                 ? {
@@ -526,15 +546,43 @@ export function getIndexerTransactionFromAlgodTransaction(
                     })),
                   }
                 : undefined,
-            }
-          : undefined,
+            },
+          }
+        : undefined),
       logs: blockTransaction.dt?.lg ? blockTransaction.dt.lg.map((l) => Buffer.from(l).toString('base64')) : undefined,
-      // todo: do we need any of these?
-      //"close-rewards"
-      //"receiver-rewards"
-      //"sender-rewards"
-      //"global-state-delta"
-      //"local-state-delta"
+      'close-rewards': closeRewards,
+      'receiver-rewards': receiverRewards,
+      'sender-rewards': senderRewards,
+      'global-state-delta': blockTransaction.dt?.gd
+        ? Object.entries(blockTransaction.dt.gd).map(([key, value]) => ({
+            key: Buffer.from(key).toString('base64'),
+            value: {
+              action: value.at,
+              bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+              uint: value.ui ? Number(value.ui) : undefined,
+            },
+          }))
+        : undefined,
+
+      'local-state-delta': blockTransaction.dt?.ld
+        ? Object.entries(blockTransaction.dt.ld).map(([addressIndex, delta]) => {
+            const addresses = [
+              algosdk.encodeAddress(transaction.from.publicKey),
+              ...(transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
+            ]
+            return {
+              address: addresses[Number(addressIndex)],
+              delta: Object.entries(delta).map(([key, value]) => ({
+                key: Buffer.from(key).toString('base64'),
+                value: {
+                  action: value.at,
+                  bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+                  uint: value.ui,
+                },
+              })),
+            }
+          })
+        : undefined,
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
@@ -561,14 +609,49 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   const { block, cert } = blockData
   return {
     round: block.rnd,
-    hash: cert?.prop?.dig ? base32.encode(cert.prop.dig).replace(/=/g, '') : undefined,
-    timestamp: new Date(block.ts * 1000).toISOString(),
+    hash: cert?.prop?.dig ? Buffer.from(cert.prop.dig).toString('base64') : undefined,
+    timestamp: block.ts,
     genesisId: block.gen,
     genesisHash: Buffer.from(block.gh).toString('base64'),
-    previousBlockHash: block.prev ? base32.encode(block.prev).replace(/=/g, '') : undefined,
-    seed: block.seed ? Buffer.from(block.seed).toString('base64') : undefined,
+    previousBlockHash: block.prev ? Buffer.from(block.prev).toString('base64') : undefined,
+    seed: Buffer.from(block.seed).toString('base64'),
     parentTransactionCount: block.txns?.length ?? 0,
     fullTransactionCount: countAllTransactions(block.txns ?? []),
+    rewards: {
+      feeSink: algosdk.encodeAddress(block.fees),
+      rewardsPool: algosdk.encodeAddress(block.rwd),
+      rewardsLevel: block.earn,
+      rewardsResidue: block.frac,
+      rewardsRate: block.rate ?? 0,
+      rewardsCalculationRound: block.rwcalr,
+    },
+    upgradeState: {
+      currentProtocol: block.proto,
+      nextProtocol: block.nextproto,
+      nextProtocolApprovals: block.nextyes,
+      nextProtocolSwitchOn: block.nextswitch,
+      nextProtocolVoteBefore: block.nextbefore,
+    },
+    txnCounter: block.tc,
+    transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
+    transactionsRootSha256: block.txn256,
+    upgradeVote: {
+      upgradeApprove: block.upgradeyes,
+      upgradeDelay: block.upgradedelay,
+      upgradePropose: block.upgradeprop,
+    },
+    participationUpdates: {
+      absentParticipationAccounts: block.partupdabs?.map((addr) => algosdk.encodeAddress(addr)),
+      expiredParticipationAccounts: block.partupdrmv?.map((addr) => algosdk.encodeAddress(addr)),
+    },
+    stateProofTracking: block.spt
+      ? Object.entries(block.spt).map(([key, value]) => ({
+          nextRound: value.n,
+          onlineTotalWeight: value.t ?? 0,
+          type: Number(key),
+          votersCommitment: value.v,
+        }))
+      : undefined,
   }
 }
 

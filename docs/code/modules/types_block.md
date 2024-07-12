@@ -17,6 +17,7 @@
 - [MultisigSig](../interfaces/types_block.MultisigSig.md)
 - [StateProof](../interfaces/types_block.StateProof.md)
 - [StateProofMessage](../interfaces/types_block.StateProofMessage.md)
+- [StateProofTracking](../interfaces/types_block.StateProofTracking.md)
 - [TransactionInBlock](../interfaces/types_block.TransactionInBlock.md)
 
 ### Type Aliases
@@ -33,4 +34,4 @@ Data that is returned in a raw Algorand block for a single inner transaction
 
 #### Defined in
 
-[types/block.ts:196](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L196)
+[types/block.ts:239](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L239)

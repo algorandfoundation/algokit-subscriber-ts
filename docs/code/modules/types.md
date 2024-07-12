@@ -20,8 +20,12 @@
 - [BlockData](types.md#blockdata)
 - [BlockInnerTransaction](types.md#blockinnertransaction)
 - [BlockMetadata](types.md#blockmetadata)
+- [BlockRewards](types.md#blockrewards)
+- [BlockStateProofTracking](types.md#blockstateprooftracking)
 - [BlockTransaction](types.md#blocktransaction)
 - [BlockTransactionEvalDelta](types.md#blocktransactionevaldelta)
+- [BlockUpgradeState](types.md#blockupgradestate)
+- [BlockUpgradeVote](types.md#blockupgradevote)
 - [BlockValueDelta](types.md#blockvaluedelta)
 - [BlockVote](types.md#blockvote)
 - [CoreTransactionSubscriptionParams](types.md#coretransactionsubscriptionparams)
@@ -30,8 +34,10 @@
 - [LogicSig](types.md#logicsig)
 - [MultisigSig](types.md#multisigsig)
 - [NamedTransactionFilter](types.md#namedtransactionfilter)
+- [ParticipationUpdates](types.md#participationupdates)
 - [StateProof](types.md#stateproof)
 - [StateProofMessage](types.md#stateproofmessage)
+- [StateProofTracking](types.md#stateprooftracking)
 - [SubscribedTransaction](types.md#subscribedtransaction)
 - [SubscriberConfigFilter](types.md#subscriberconfigfilter)
 - [TransactionFilter](types.md#transactionfilter)
@@ -126,6 +132,18 @@ Re-exports [BlockMetadata](../interfaces/types_subscription.BlockMetadata.md)
 
 ___
 
+### BlockRewards
+
+Re-exports [BlockRewards](../interfaces/types_subscription.BlockRewards.md)
+
+___
+
+### BlockStateProofTracking
+
+Re-exports [BlockStateProofTracking](../interfaces/types_subscription.BlockStateProofTracking.md)
+
+___
+
 ### BlockTransaction
 
 Re-exports [BlockTransaction](../interfaces/types_block.BlockTransaction.md)
@@ -135,6 +153,18 @@ ___
 ### BlockTransactionEvalDelta
 
 Re-exports [BlockTransactionEvalDelta](../interfaces/types_block.BlockTransactionEvalDelta.md)
+
+___
+
+### BlockUpgradeState
+
+Re-exports [BlockUpgradeState](../interfaces/types_subscription.BlockUpgradeState.md)
+
+___
+
+### BlockUpgradeVote
+
+Re-exports [BlockUpgradeVote](../interfaces/types_subscription.BlockUpgradeVote.md)
 
 ___
 
@@ -186,6 +216,12 @@ Re-exports [NamedTransactionFilter](../interfaces/types_subscription.NamedTransa
 
 ___
 
+### ParticipationUpdates
+
+Re-exports [ParticipationUpdates](../interfaces/types_subscription.ParticipationUpdates.md)
+
+___
+
 ### StateProof
 
 Re-exports [StateProof](../interfaces/types_block.StateProof.md)
@@ -195,6 +231,12 @@ ___
 ### StateProofMessage
 
 Re-exports [StateProofMessage](../interfaces/types_block.StateProofMessage.md)
+
+___
+
+### StateProofTracking
+
+Re-exports [StateProofTracking](../interfaces/types_block.StateProofTracking.md)
 
 ___
 

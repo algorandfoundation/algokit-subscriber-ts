@@ -14,8 +14,13 @@
 - [BalanceChange](../interfaces/types_subscription.BalanceChange.md)
 - [BeforePollMetadata](../interfaces/types_subscription.BeforePollMetadata.md)
 - [BlockMetadata](../interfaces/types_subscription.BlockMetadata.md)
+- [BlockRewards](../interfaces/types_subscription.BlockRewards.md)
+- [BlockStateProofTracking](../interfaces/types_subscription.BlockStateProofTracking.md)
+- [BlockUpgradeState](../interfaces/types_subscription.BlockUpgradeState.md)
+- [BlockUpgradeVote](../interfaces/types_subscription.BlockUpgradeVote.md)
 - [CoreTransactionSubscriptionParams](../interfaces/types_subscription.CoreTransactionSubscriptionParams.md)
 - [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
+- [ParticipationUpdates](../interfaces/types_subscription.ParticipationUpdates.md)
 - [SubscriberConfigFilter](../interfaces/types_subscription.SubscriberConfigFilter.md)
 - [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
 - [TransactionSubscriptionParams](../interfaces/types_subscription.TransactionSubscriptionParams.md)
@@ -49,7 +54,7 @@
 
 #### Defined in
 
-[types/subscription.ts:291](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L291)
+[types/subscription.ts:391](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L391)
 
 ___
 
@@ -67,7 +72,7 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://develop
 
 #### Defined in
 
-[types/subscription.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L61)
+[types/subscription.ts:161](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L161)
 
 ___
 
@@ -98,4 +103,4 @@ ___
 
 #### Defined in
 
-[types/subscription.ts:289](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L289)
+[types/subscription.ts:389](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L389)

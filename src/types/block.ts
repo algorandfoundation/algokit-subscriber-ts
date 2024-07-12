@@ -90,17 +90,17 @@ export interface Block {
   /** The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
    * MicroAlgos for every reward unit in the next round.
    **/
-  frac: number
+  frac: number | bigint
   /** Genesis ID to which this block belongs. */
   gen: string
   /** Genesis hash to which this block belongs. */
   gh: Uint8Array
   /** The hash of the previous block */
-  prev: Uint8Array
+  prev?: Uint8Array
   /** UpgradeState tracks the protocol upgrade state machine; proto is the current protocol. */
   proto: string
   /** The number of new MicroAlgos added to the participation stake from rewards at the next round. */
-  rate: number
+  rate?: number
   /** Round number. */
   rnd: number
   /** The round at which the RewardsRate will be recalculated. */
@@ -120,14 +120,57 @@ export interface Block {
   ts: number
   /** Root of transaction merkle tree using SHA512_256 hash function.
    * This commitment is computed based on the PaysetCommit type specified in the block's consensus protocol.
+   * This value is only set when there are transactions in the block.
    **/
-  txn: Uint8Array
+  txn?: Uint8Array
   /**
    * Root of transaction vector commitment merkle tree using SHA256 hash function.
    */
   txn256: string
-  /** The transactions within the block. */
+  /**
+   * The next proposed protocol version.
+   */
+  nextproto?: string
+  /**
+   * Number of blocks which approved the protocol upgrade.
+   */
+  nextyes?: number
+  /**
+   * Deadline round for this protocol upgrade (No votes will be considered after this round).
+   */
+  nextbefore?: number
+  /**
+   * Round on which the protocol upgrade will take effect.
+   */
+  nextswitch?: number
+  /**
+   * The transactions within the block.
+   */
   txns?: BlockTransaction[]
+  /**
+   * AbsentParticipationAccounts contains a list of online accounts that
+   * needs to be converted to offline since they are not proposing.
+   */
+  partupdabs?: Uint8Array[]
+  /**
+   * ExpiredParticipationAccounts contains a list of online accounts that needs to be
+   * converted to offline since their participation key expired.
+   */
+  partupdrmv?: Uint8Array[]
+  /**
+   *  UpgradeApprove indicates a yes vote for the current proposal
+   */
+  upgradeyes?: boolean
+  /**
+   *  UpgradeDelay indicates the time between acceptance and execution
+   */
+  upgradedelay?: number
+  /**
+   *  UpgradePropose indicates a proposed upgrade
+   */
+  upgradeprop?: string
+
+  spt?: Record<number, StateProofTracking>
 }
 
 /** Data that is returned in a raw Algorand block for a single transaction
@@ -256,6 +299,24 @@ export interface StateProofMessage {
   v: Uint8Array
 }
 
+export interface StateProofTracking {
+  /** StateProofVotersCommitment is the root of a vector commitment containing the
+   * online accounts that will help sign a state proof.  The VC root, and the state proof,
+   * happen on blocks that are a multiple of ConsensusParams.StateProofRounds.
+   * For blocks that are not a multiple of ConsensusParams.StateProofRounds, this value is zero.
+   */
+  v?: string
+  /** StateProofOnlineTotalWeight is the total number of microalgos held by the online accounts
+   * during the StateProof round (or zero, if the merkle root is zero - no commitment for StateProof voters).
+   * This is intended for computing the threshold of votes to expect from StateProofVotersCommitment.
+   */
+  t?: number
+  /**
+   * StateProofNextRound is the next round for which we will accept a StateProof transaction.
+   */
+  n?: number
+}
+
 /** The representation of all important data for a single transaction or inner transaction
  * and its side effects within a committed block.
  */
@@ -326,4 +387,10 @@ export interface TransactionInBlock {
   closeAmount?: number
   /** Any logs that were issued as a result of this transaction. */
   logs?: Uint8Array[]
+  /** Rewards in microalgos applied to the close remainder to account. */
+  closeRewards?: number
+  /** Rewards in microalgos applied to the sender account. */
+  senderRewards?: number
+  /** Rewards in microalgos applied to the receiver account. */
+  receiverRewards?: number
 }

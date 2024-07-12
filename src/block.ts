@@ -55,8 +55,15 @@ function blockMapToObject(object: Map<any, any>): BlockData {
     } else if (value instanceof Map) {
       result[key] = blockMapToObject(value)
     } else if (value instanceof Uint8Array) {
-      // The following have UTF-8 values
-      result[key] = ['gen', 'proto', 'txn256', 'type', 'an', 'un', 'au'].includes(key) ? decoder.decode(value) : value
+      if (['txn256'].includes(key)) {
+        // The above keys have non UTF-8 values
+        result[key] = Buffer.from(value).toString('base64')
+      } else if (['gen', 'proto', 'nextproto', 'type', 'an', 'un', 'au'].includes(key)) {
+        // The above keys have UTF-8 values
+        result[key] = decoder.decode(value)
+      } else {
+        result[key] = value
+      }
     } else if (value instanceof Array) {
       result[key] = value.map((v) => (v instanceof Map ? blockMapToObject(v) : v))
     } else {
