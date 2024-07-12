@@ -714,7 +714,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
     expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
   })
-  it('Produces the correct state deltas in application transaction', async () => {
+  it('Produces the correct state deltas in an app call transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
@@ -735,7 +735,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     "value": {
       "action": 2,
       "bytes": undefined,
-      "uint": 2129702852933n,
+      "uint": 2129702852933,
     },
   },
   {

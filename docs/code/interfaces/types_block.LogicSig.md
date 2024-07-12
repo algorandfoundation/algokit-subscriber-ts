@@ -31,7 +31,7 @@ Arguments passed into the logic signature
 
 [types/block.ts:218](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L218)
 
-___
+---
 
 ### l
 
@@ -43,7 +43,7 @@ Logic sig code
 
 [types/block.ts:212](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L212)
 
-___
+---
 
 ### msig
 
@@ -55,7 +55,7 @@ Multisig signature for delegated operations
 
 [types/block.ts:216](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L216)
 
-___
+---
 
 ### sig
 

@@ -1,4 +1,4 @@
-import type { EvalDelta, MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete, StateProofTransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
 import algosdk from 'algosdk'
@@ -554,46 +554,34 @@ export function getIndexerTransactionFromAlgodTransaction(
       'receiver-rewards': receiverRewards,
       'sender-rewards': senderRewards,
       'global-state-delta': blockTransaction.dt?.gd
-        ? (Object.entries(blockTransaction.dt.gd).map(([key, value]) => ({
+        ? Object.entries(blockTransaction.dt.gd).map(([key, value]) => ({
             key: Buffer.from(key).toString('base64'),
             value: {
               action: value.at,
               bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
-              uint: value.ui,
+              uint: value.ui ? Number(value.ui) : undefined,
             },
-          })) as unknown as Record<string, EvalDelta>[])
+          }))
         : undefined,
 
       'local-state-delta': blockTransaction.dt?.ld
-        ? (Object.entries(blockTransaction.dt.ld)
-            .map(([addressIndex, delta]) => {
-              try {
-                const addressList = [
-                  algosdk.encodeAddress(transaction.from.publicKey),
-                  ...(transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
-                ]
-                if (Number(addressIndex) >= addressList.length) {
-                  throw new Error(`Address index ${addressIndex} is out of range`)
-                }
-                return {
-                  address: addressList[Number(addressIndex)],
-                  delta: Object.entries(delta).map(([key, value]) => ({
-                    key: Buffer.from(key).toString('base64'),
-                    value: {
-                      action: value.at,
-                      bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
-                      uint: value.ui,
-                    },
-                  })),
-                }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } catch (e: any) {
-                // eslint-disable-next-line no-console
-                console.error(`Error processing local state delta: ${e.message}`)
-                throw e
-              }
-            })
-            .filter((entry) => entry !== null) as unknown as Record<string, EvalDelta>[])
+        ? Object.entries(blockTransaction.dt.ld).map(([addressIndex, delta]) => {
+            const addresses = [
+              algosdk.encodeAddress(transaction.from.publicKey),
+              ...(transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
+            ]
+            return {
+              address: addresses[Number(addressIndex)],
+              delta: Object.entries(delta).map(([key, value]) => ({
+                key: Buffer.from(key).toString('base64'),
+                value: {
+                  action: value.at,
+                  bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+                  uint: value.ui,
+                },
+              })),
+            }
+          })
         : undefined,
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -653,8 +641,8 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       upgradePropose: block.upgradeprop,
     },
     participationUpdates: {
-      absentParticipationAccounts: block.partupdabs ? block.partupdabs.map((addr) => algosdk.encodeAddress(addr)) : undefined,
-      expiredParticipationAccounts: block.partupdrmv ? block.partupdrmv.map((addr) => algosdk.encodeAddress(addr)) : undefined,
+      absentParticipationAccounts: block.partupdabs?.map((addr) => algosdk.encodeAddress(addr)),
+      expiredParticipationAccounts: block.partupdrmv?.map((addr) => algosdk.encodeAddress(addr)),
     },
     stateProofTracking: block.spt
       ? Object.entries(block.spt).map(([key, value]) => ({

@@ -24,7 +24,7 @@ StateProofNextRound is the next round for which we will accept a StateProof tran
 
 [types/block.ts:317](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L317)
 
-___
+---
 
 ### t
 
@@ -38,14 +38,14 @@ This is intended for computing the threshold of votes to expect from StateProofV
 
 [types/block.ts:313](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L313)
 
-___
+---
 
 ### v
 
 • `Optional` **v**: `string`
 
 StateProofVotersCommitment is the root of a vector commitment containing the
-online accounts that will help sign a state proof.  The VC root, and the state proof,
+online accounts that will help sign a state proof. The VC root, and the state proof,
 happen on blocks that are a multiple of ConsensusParams.StateProofRounds.
 For blocks that are not a multiple of ConsensusParams.StateProofRounds, this value is zero.
 

@@ -40,7 +40,7 @@ Full count of transactions and inner transactions (recursively) in this block.
 
 [types/subscription.ts:53](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L53)
 
-___
+---
 
 ### genesisHash
 
@@ -52,7 +52,7 @@ The base64 genesis hash of the chain.
 
 [types/subscription.ts:43](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L43)
 
-___
+---
 
 ### genesisId
 
@@ -64,7 +64,7 @@ The genesis ID of the chain.
 
 [types/subscription.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L41)
 
-___
+---
 
 ### hash
 
@@ -76,7 +76,7 @@ The base64 block hash.
 
 [types/subscription.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L35)
 
-___
+---
 
 ### parentTransactionCount
 
@@ -88,7 +88,7 @@ Count of parent transactions in this block
 
 [types/subscription.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L51)
 
-___
+---
 
 ### participationUpdates
 
@@ -100,7 +100,7 @@ Participation account data that needs to be checked/acted on by the network.
 
 [types/subscription.ts:68](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L68)
 
-___
+---
 
 ### previousBlockHash
 
@@ -112,7 +112,7 @@ The base64 previous block hash.
 
 [types/subscription.ts:45](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L45)
 
-___
+---
 
 ### rewards
 
@@ -124,7 +124,7 @@ Fields relating to rewards
 
 [types/subscription.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L49)
 
-___
+---
 
 ### round
 
@@ -136,7 +136,7 @@ The round of the block.
 
 [types/subscription.ts:37](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L37)
 
-___
+---
 
 ### seed
 
@@ -148,7 +148,7 @@ The base64 seed of the block.
 
 [types/subscription.ts:47](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L47)
 
-___
+---
 
 ### stateProofTracking
 
@@ -160,7 +160,7 @@ Tracks the status of state proofs.
 
 [types/subscription.ts:64](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L64)
 
-___
+---
 
 ### timestamp
 
@@ -172,20 +172,20 @@ Block creation timestamp in seconds since epoch
 
 [types/subscription.ts:39](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L39)
 
-___
+---
 
 ### transactionsRoot
 
 • **transactionsRoot**: `string`
 
 TransactionsRoot authenticates the set of transactions appearing in the block. More specifically, it's the root of a merkle tree whose leaves are the block's Txids, in lexicographic order. For the empty block, it's 0. Note that the TxnRoot does not authenticate the signatures on the transactions, only the transactions themselves. Two blocks with the same transactions but in a different order and with different signatures will have the same TxnRoot.
-Pattern : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"
+Pattern : "^(?:[A-Za-z0-9+/]{4})\*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"
 
 #### Defined in
 
 [types/subscription.ts:58](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L58)
 
-___
+---
 
 ### transactionsRootSha256
 
@@ -197,19 +197,19 @@ TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector com
 
 [types/subscription.ts:60](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L60)
 
-___
+---
 
 ### txnCounter
 
 • **txnCounter**: `number`
 
-Number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported).
+Number of the next transaction that will be committed after this block. It is 0 when no transactions have ever been committed (since TxnCounter started being supported).
 
 #### Defined in
 
 [types/subscription.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L55)
 
-___
+---
 
 ### upgradeState
 
@@ -221,7 +221,7 @@ Fields relating to a protocol upgrade.
 
 [types/subscription.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L62)
 
-___
+---
 
 ### upgradeVote
 

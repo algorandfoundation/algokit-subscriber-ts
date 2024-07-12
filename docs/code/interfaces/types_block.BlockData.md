@@ -25,7 +25,7 @@ The block itself.
 
 [types/block.ts:10](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L10)
 
-___
+---
 
 ### cert
 
