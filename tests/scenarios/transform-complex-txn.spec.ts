@@ -301,10 +301,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "genesisId": "mainnet-v1.0",
           "hash": "EOq+HX242/G/ADonU6q5lfimxX7twuFKEwtG4rDt+kI=",
           "parentTransactionCount": 55,
-          "participationUpdates": {
-            "absentParticipationAccounts": undefined,
-            "expiredParticipationAccounts": undefined,
-          },
           "previousBlockHash": "8ReLxqOPxmuKuBfACtllRRr13n2E2r01f8wXt3vFYW0=",
           "rewards": {
             "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
@@ -334,11 +330,6 @@ describe('Complex transaction with many nested inner transactions', () => {
             "nextProtocolApprovals": 9967,
             "nextProtocolSwitchOn": 35275315,
             "nextProtocolVoteBefore": 35125315,
-          },
-          "upgradeVote": {
-            "upgradeApprove": undefined,
-            "upgradeDelay": undefined,
-            "upgradePropose": undefined,
           },
         },
       ]
