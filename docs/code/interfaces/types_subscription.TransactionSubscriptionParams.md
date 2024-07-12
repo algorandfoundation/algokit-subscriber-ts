@@ -40,7 +40,7 @@ Any ARC-28 event definitions to process from app call logs
 
 [types/subscription.ts:235](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L235)
 
-___
+---
 
 ### currentRound
 
@@ -53,7 +53,7 @@ If not provided, it will be resolved on demand.
 
 [types/subscription.ts:357](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L357)
 
-___
+---
 
 ### filters
 
@@ -65,19 +65,22 @@ A list of filters with corresponding names.
 **`Example`**
 
 ```typescript
- filter: [{
-  name: 'asset-transfers',
-  filter: {
-    type: TransactionType.axfer,
-    //...
-  }
- }, {
-  name: 'payments',
-  filter: {
-    type: TransactionType.pay,
-    //...
-  }
- }]
+filter: [
+  {
+    name: 'asset-transfers',
+    filter: {
+      type: TransactionType.axfer,
+      //...
+    },
+  },
+  {
+    name: 'payments',
+    filter: {
+      type: TransactionType.pay,
+      //...
+    },
+  },
+]
 ```
 
 #### Inherited from
@@ -88,7 +91,7 @@ A list of filters with corresponding names.
 
 [types/subscription.ts:233](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L233)
 
-___
+---
 
 ### maxIndexerRoundsToSync
 
@@ -111,7 +114,7 @@ boundary based on the number of rounds specified here.
 
 [types/subscription.ts:255](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L255)
 
-___
+---
 
 ### maxRoundsToSync
 
@@ -133,28 +136,29 @@ your catchup speed when using `sync-oldest`.
 
 [types/subscription.ts:244](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L244)
 
-___
+---
 
 ### syncBehaviour
 
-• **syncBehaviour**: ``"skip-sync-newest"`` \| ``"sync-oldest"`` \| ``"sync-oldest-start-now"`` \| ``"catchup-with-indexer"`` \| ``"fail"``
+• **syncBehaviour**: `"skip-sync-newest"` \| `"sync-oldest"` \| `"sync-oldest-start-now"` \| `"catchup-with-indexer"` \| `"fail"`
 
 If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
 past `watermark` then how should that be handled:
- * `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
-   for real-time notification scenarios where you don't care about history and
-   are happy to lose old transactions.
- * `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
-   using algod; note: this will be slow if you are starting from 0 and requires
-   an archival node.
- * `sync-oldest-start-now`: Same as `sync-oldest`, but if the `watermark` is `0`
-   then start at the current round i.e. don't sync historical records, but once
-   subscribing starts sync everything; note: if it falls behind it requires an
-   archival node.
- * `catchup-with-indexer`: Sync to round `currentRound - maxRoundsToSync + 1`
-   using indexer (much faster than using algod for long time periods) and then
-   use algod from there.
- * `fail`: Throw an error.
+
+- `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
+  for real-time notification scenarios where you don't care about history and
+  are happy to lose old transactions.
+- `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
+  using algod; note: this will be slow if you are starting from 0 and requires
+  an archival node.
+- `sync-oldest-start-now`: Same as `sync-oldest`, but if the `watermark` is `0`
+  then start at the current round i.e. don't sync historical records, but once
+  subscribing starts sync everything; note: if it falls behind it requires an
+  archival node.
+- `catchup-with-indexer`: Sync to round `currentRound - maxRoundsToSync + 1`
+  using indexer (much faster than using algod for long time periods) and then
+  use algod from there.
+- `fail`: Throw an error.
 
 #### Inherited from
 
@@ -164,7 +168,7 @@ past `watermark` then how should that be handled:
 
 [types/subscription.ts:273](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L273)
 
-___
+---
 
 ### watermark
 

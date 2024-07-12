@@ -22,7 +22,7 @@ https://github.com/algorand/go-algorand/blob/master/crypto/multisig.go#L36
 
 ### subsig
 
-• **subsig**: \{ `pk`: `Uint8Array` ; `s?`: `Uint8Array`  }[]
+• **subsig**: \{ `pk`: `Uint8Array` ; `s?`: `Uint8Array` }[]
 
 Sub-signatures
 
@@ -30,7 +30,7 @@ Sub-signatures
 
 [types/block.ts:230](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L230)
 
-___
+---
 
 ### thr
 
@@ -42,7 +42,7 @@ Multisig threshold
 
 [types/block.ts:228](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L228)
 
-___
+---
 
 ### v
 

@@ -25,7 +25,7 @@
 
 [types/subscription.ts:103](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L103)
 
-___
+---
 
 ### onlineTotalWeight
 
@@ -38,7 +38,7 @@ StateProof round.
 
 [types/subscription.ts:109](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L109)
 
-___
+---
 
 ### type
 
@@ -50,7 +50,7 @@ State Proof Type. Note the raw object uses map with this as key.
 
 [types/subscription.ts:114](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L114)
 
-___
+---
 
 ### votersCommitment
 
