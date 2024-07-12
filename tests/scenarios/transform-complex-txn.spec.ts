@@ -193,7 +193,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "foreign-assets": [
             1390638935,
           ],
-          "on-completion": "update",
+          "on-completion": "noop",
         },
         "balanceChanges": [
           {

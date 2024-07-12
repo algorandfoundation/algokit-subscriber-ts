@@ -148,7 +148,7 @@ function extractTransactionFromBlockTransaction(
  * @param appOnComplete The `OnApplicationComplete` value
  * @returns The equivalent `ApplicationOnComplete` value
  */
-export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationComplete): ApplicationOnComplete {
+export function algodOnCompleteToIndexerOnComplete(appOnComplete?: OnApplicationComplete): ApplicationOnComplete {
   return appOnComplete === OnApplicationComplete.NoOpOC
     ? ApplicationOnComplete.noop
     : appOnComplete === OnApplicationComplete.OptInOC
@@ -157,9 +157,11 @@ export function algodOnCompleteToIndexerOnComplete(appOnComplete: OnApplicationC
         ? ApplicationOnComplete.closeout
         : appOnComplete === OnApplicationComplete.ClearStateOC
           ? ApplicationOnComplete.clear
-          : appOnComplete === OnApplicationComplete.DeleteApplicationOC
-            ? ApplicationOnComplete.delete
-            : ApplicationOnComplete.update
+          : appOnComplete === OnApplicationComplete.UpdateApplicationOC
+            ? ApplicationOnComplete.update
+            : appOnComplete === OnApplicationComplete.DeleteApplicationOC
+              ? ApplicationOnComplete.delete
+              : ApplicationOnComplete.noop
 }
 
 function concatArrays(...arrs: ArrayLike<number>[]) {
