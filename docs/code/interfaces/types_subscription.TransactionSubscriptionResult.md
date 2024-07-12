@@ -30,7 +30,7 @@ of the subscription poll.
 
 [types/subscription.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L29)
 
----
+___
 
 ### currentRound
 
@@ -42,7 +42,7 @@ The current detected tip of the configured Algorand blockchain.
 
 [types/subscription.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L11)
 
----
+___
 
 ### newWatermark
 
@@ -58,7 +58,7 @@ subscribed transactions to keep it reliable.
 
 [types/subscription.ts:19](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L19)
 
----
+___
 
 ### startingWatermark
 
@@ -70,7 +70,7 @@ The watermark value that was retrieved at the start of the subscription poll.
 
 [types/subscription.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L13)
 
----
+___
 
 ### subscribedTransactions
 
@@ -85,7 +85,7 @@ to represent the data with some additional fields.
 
 [types/subscription.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L25)
 
----
+___
 
 ### syncedRoundRange
 

@@ -56,7 +56,7 @@ since genesis.
 
 [types/block.ts:87](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L87)
 
----
+___
 
 ### fees
 
@@ -68,7 +68,7 @@ The FeeSink accepts transaction fees. It can only spend to the incentive pool.
 
 [types/block.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L89)
 
----
+___
 
 ### frac
 
@@ -81,7 +81,7 @@ MicroAlgos for every reward unit in the next round.
 
 [types/block.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L93)
 
----
+___
 
 ### gen
 
@@ -93,7 +93,7 @@ Genesis ID to which this block belongs.
 
 [types/block.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L95)
 
----
+___
 
 ### gh
 
@@ -105,7 +105,7 @@ Genesis hash to which this block belongs.
 
 [types/block.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L97)
 
----
+___
 
 ### nextbefore
 
@@ -117,7 +117,7 @@ Deadline round for this protocol upgrade (No votes will be considered after this
 
 [types/block.ts:141](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L141)
 
----
+___
 
 ### nextproto
 
@@ -129,7 +129,7 @@ The next proposed protocol version.
 
 [types/block.ts:133](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L133)
 
----
+___
 
 ### nextswitch
 
@@ -141,7 +141,7 @@ Round on which the protocol upgrade will take effect.
 
 [types/block.ts:145](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L145)
 
----
+___
 
 ### nextyes
 
@@ -153,7 +153,7 @@ Number of blocks which approved the protocol upgrade.
 
 [types/block.ts:137](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L137)
 
----
+___
 
 ### partupdabs
 
@@ -166,7 +166,7 @@ needs to be converted to offline since they are not proposing.
 
 [types/block.ts:154](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L154)
 
----
+___
 
 ### partupdrmv
 
@@ -179,7 +179,7 @@ converted to offline since their participation key expired.
 
 [types/block.ts:159](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L159)
 
----
+___
 
 ### prev
 
@@ -191,7 +191,7 @@ The hash of the previous block
 
 [types/block.ts:99](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L99)
 
----
+___
 
 ### proto
 
@@ -203,7 +203,7 @@ UpgradeState tracks the protocol upgrade state machine; proto is the current pro
 
 [types/block.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L101)
 
----
+___
 
 ### rate
 
@@ -215,7 +215,7 @@ The number of new MicroAlgos added to the participation stake from rewards at th
 
 [types/block.ts:103](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L103)
 
----
+___
 
 ### rnd
 
@@ -227,7 +227,7 @@ Round number.
 
 [types/block.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L105)
 
----
+___
 
 ### rwcalr
 
@@ -239,7 +239,7 @@ The round at which the RewardsRate will be recalculated.
 
 [types/block.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L107)
 
----
+___
 
 ### rwd
 
@@ -252,7 +252,7 @@ FeeSink and continually redistributes them to addresses as rewards.
 
 [types/block.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L111)
 
----
+___
 
 ### seed
 
@@ -264,7 +264,7 @@ Sortition seed
 
 [types/block.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L113)
 
----
+___
 
 ### spt
 
@@ -274,21 +274,21 @@ Sortition seed
 
 [types/block.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L173)
 
----
+___
 
 ### tc
 
 • **tc**: `number`
 
 TxnCounter is the number of the next transaction that will be
-committed after this block. Genesis blocks can start at either
+committed after this block.  Genesis blocks can start at either
 0 or 1000, depending on a consensus parameter (AppForbidLowResources).
 
 #### Defined in
 
 [types/block.ts:118](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L118)
 
----
+___
 
 ### ts
 
@@ -300,7 +300,7 @@ Round time (unix timestamp)
 
 [types/block.ts:120](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L120)
 
----
+___
 
 ### txn
 
@@ -314,7 +314,7 @@ This value is only set when there are transactions in the block.
 
 [types/block.ts:125](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L125)
 
----
+___
 
 ### txn256
 
@@ -326,7 +326,7 @@ Root of transaction vector commitment merkle tree using SHA256 hash function.
 
 [types/block.ts:129](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L129)
 
----
+___
 
 ### txns
 
@@ -338,7 +338,7 @@ The transactions within the block.
 
 [types/block.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L149)
 
----
+___
 
 ### upgradedelay
 
@@ -350,7 +350,7 @@ UpgradeDelay indicates the time between acceptance and execution
 
 [types/block.ts:167](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L167)
 
----
+___
 
 ### upgradeprop
 
@@ -362,7 +362,7 @@ UpgradePropose indicates a proposed upgrade
 
 [types/block.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L171)
 
----
+___
 
 ### upgradeyes
 

@@ -44,8 +44,8 @@
 
 ##### Parameters
 
-| Name    | Type      |
-| :------ | :-------- |
+| Name | Type |
+| :------ | :------ |
 | `error` | `unknown` |
 
 ##### Returns
@@ -56,26 +56,25 @@
 
 [types/subscription.ts:391](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L391)
 
----
+___
 
 ### SubscribedTransaction
 
-Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_arc_28.EmittedArc28Event.md)[] ; `balanceChanges?`: [`BalanceChange`](../interfaces/types_subscription.BalanceChange.md)[] ; `filtersMatched?`: `string`[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string` }
+Ƭ **SubscribedTransaction**: `TransactionResult` & \{ `arc28Events?`: [`EmittedArc28Event`](../interfaces/types_arc_28.EmittedArc28Event.md)[] ; `balanceChanges?`: [`BalanceChange`](../interfaces/types_subscription.BalanceChange.md)[] ; `filtersMatched?`: `string`[] ; `inner-txns?`: [`SubscribedTransaction`](types_subscription.md#subscribedtransaction)[] ; `parentTransactionId?`: `string`  }
 
 The common model used to expose a transaction that is returned from a subscription.
 
-Substantively, based on the Indexer [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
-
-- Add the `parentTransactionId` field so inner transactions have a reference to their parent
-- Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
-- Add emitted ARC-28 events via `arc28Events`
-- Balance changes in algo or assets
+Substantively, based on the Indexer  [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
+* Add the `parentTransactionId` field so inner transactions have a reference to their parent
+* Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
+* Add emitted ARC-28 events via `arc28Events`
+* Balance changes in algo or assets
 
 #### Defined in
 
 [types/subscription.ts:161](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L161)
 
----
+___
 
 ### TypedAsyncEventListener
 
@@ -84,8 +83,8 @@ Substantively, based on the Indexer [`TransactionResult` model](https://develope
 #### Type parameters
 
 | Name |
-| :--- |
-| `T`  |
+| :------ |
+| `T` |
 
 #### Type declaration
 
@@ -93,9 +92,9 @@ Substantively, based on the Indexer [`TransactionResult` model](https://develope
 
 ##### Parameters
 
-| Name        | Type                 |
-| :---------- | :------------------- |
-| `event`     | `T`                  |
+| Name | Type |
+| :------ | :------ |
+| `event` | `T` |
 | `eventName` | `string` \| `symbol` |
 
 ##### Returns

@@ -28,7 +28,7 @@ Whether or not to silently (with warning log) continue if an error is encountere
 
 [types/arc-28.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L55)
 
----
+___
 
 ### events
 
@@ -40,7 +40,7 @@ The list of ARC-28 event definitions
 
 [types/arc-28.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L57)
 
----
+___
 
 ### groupName
 
@@ -52,7 +52,7 @@ The name to designate for this group of events.
 
 [types/arc-28.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L49)
 
----
+___
 
 ### processForAppIds
 
@@ -64,7 +64,7 @@ Optional list of app IDs that this event should apply to
 
 [types/arc-28.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L51)
 
----
+___
 
 ### processTransaction
 
@@ -78,8 +78,8 @@ Optional predicate to indicate if these ARC-28 events should be processed for th
 
 ##### Parameters
 
-| Name          | Type                |
-| :------------ | :------------------ |
+| Name | Type |
+| :------ | :------ |
 | `transaction` | `TransactionResult` |
 
 ##### Returns

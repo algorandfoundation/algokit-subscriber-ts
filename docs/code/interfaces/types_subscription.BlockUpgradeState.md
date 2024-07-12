@@ -26,7 +26,7 @@ Current protocol version
 
 [types/subscription.ts:88](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L88)
 
----
+___
 
 ### nextProtocol
 
@@ -38,7 +38,7 @@ The next proposed protocol version.
 
 [types/subscription.ts:90](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L90)
 
----
+___
 
 ### nextProtocolApprovals
 
@@ -50,7 +50,7 @@ Number of blocks which approved the protocol upgrade.
 
 [types/subscription.ts:92](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L92)
 
----
+___
 
 ### nextProtocolSwitchOn
 
@@ -62,7 +62,7 @@ Round on which the protocol upgrade will take effect.
 
 [types/subscription.ts:96](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L96)
 
----
+___
 
 ### nextProtocolVoteBefore
 

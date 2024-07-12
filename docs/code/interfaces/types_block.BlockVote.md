@@ -32,19 +32,19 @@ https://github.com/algorand/go-algorand/blob/master/data/committee/credential.go
 
 #### Type declaration
 
-| Name | Type         | Description                 |
-| :--- | :----------- | :-------------------------- |
+| Name | Type | Description |
+| :------ | :------ | :------ |
 | `pf` | `Uint8Array` | VRF proof of the credential |
 
 #### Defined in
 
 [types/block.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L54)
 
----
+___
 
 ### sig
 
-• **sig**: \{ `p`: `Uint8Array` ; `p1s`: `Uint8Array` ; `p2`: `Uint8Array` ; `p2s`: `Uint8Array` ; `ps`: `Uint8Array` ; `s`: `Uint8Array` }[]
+• **sig**: \{ `p`: `Uint8Array` ; `p1s`: `Uint8Array` ; `p2`: `Uint8Array` ; `p2s`: `Uint8Array` ; `ps`: `Uint8Array` ; `s`: `Uint8Array`  }[]
 
 One-time signature
 
@@ -56,7 +56,7 @@ https://github.com/algorand/go-algorand/blob/master/crypto/onetimesig.go
 
 [types/block.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L62)
 
----
+___
 
 ### snd
 

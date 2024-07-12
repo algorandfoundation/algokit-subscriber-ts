@@ -27,7 +27,7 @@ FeeSink is an address that accepts transaction fees, it can only spend to the in
 
 [types/subscription.ts:73](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L73)
 
----
+___
 
 ### rewardsCalculationRound
 
@@ -39,7 +39,7 @@ number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos 
 
 [types/subscription.ts:75](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L75)
 
----
+___
 
 ### rewardsLevel
 
@@ -51,7 +51,7 @@ How many rewards, in MicroAlgos, have been distributed to each RewardUnit of Mic
 
 [types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L77)
 
----
+___
 
 ### rewardsPool
 
@@ -63,7 +63,7 @@ RewardsPool is an address that accepts periodic injections from the fee-sink and
 
 [types/subscription.ts:79](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L79)
 
----
+___
 
 ### rewardsRate
 
@@ -75,7 +75,7 @@ Number of new MicroAlgos added to the participation stake from rewards at the ne
 
 [types/subscription.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L81)
 
----
+___
 
 ### rewardsResidue
 
