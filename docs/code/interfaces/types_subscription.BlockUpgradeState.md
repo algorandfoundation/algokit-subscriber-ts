@@ -24,7 +24,7 @@ Current protocol version
 
 #### Defined in
 
-[types/subscription.ts:82](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L82)
+[types/subscription.ts:88](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L88)
 
 ___
 
@@ -36,7 +36,7 @@ The next proposed protocol version.
 
 #### Defined in
 
-[types/subscription.ts:84](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L84)
+[types/subscription.ts:90](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L90)
 
 ___
 
@@ -48,7 +48,7 @@ Number of blocks which approved the protocol upgrade.
 
 #### Defined in
 
-[types/subscription.ts:86](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L86)
+[types/subscription.ts:92](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L92)
 
 ___
 
@@ -60,7 +60,7 @@ Round on which the protocol upgrade will take effect.
 
 #### Defined in
 
-[types/subscription.ts:90](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L90)
+[types/subscription.ts:96](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L96)
 
 ___
 
@@ -72,4 +72,4 @@ Deadline round for this protocol upgrade (No votes will be consider after this r
 
 #### Defined in
 
-[types/subscription.ts:88](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L88)
+[types/subscription.ts:94](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L94)

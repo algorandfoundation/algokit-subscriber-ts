@@ -27,7 +27,7 @@ DeltaAction is an enum of actions that may be performed when applying a delta to
 
 #### Defined in
 
-[types/block.ts:236](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L236)
+[types/block.ts:260](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L260)
 
 ___
 
@@ -39,7 +39,7 @@ Bytes value
 
 #### Defined in
 
-[types/block.ts:239](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L239)
+[types/block.ts:263](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L263)
 
 ___
 
@@ -51,4 +51,4 @@ Uint64 value
 
 #### Defined in
 
-[types/block.ts:242](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L242)
+[types/block.ts:266](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L266)

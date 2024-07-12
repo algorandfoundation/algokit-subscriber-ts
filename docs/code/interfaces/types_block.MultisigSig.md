@@ -28,7 +28,7 @@ Sub-signatures
 
 #### Defined in
 
-[types/block.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L206)
+[types/block.ts:230](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L230)
 
 ___
 
@@ -40,7 +40,7 @@ Multisig threshold
 
 #### Defined in
 
-[types/block.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L204)
+[types/block.ts:228](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L228)
 
 ___
 
@@ -52,4 +52,4 @@ Multisig version
 
 #### Defined in
 
-[types/block.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L202)
+[types/block.ts:226](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L226)

@@ -267,6 +267,9 @@ export function getIndexerTransactionFromAlgodTransaction(
     roundTimestamp,
     genesisHash,
     genesisId,
+    closeRewards,
+    receiverRewards,
+    senderRewards,
   } = t
 
   if (!transaction.type) {
@@ -547,12 +550,39 @@ export function getIndexerTransactionFromAlgodTransaction(
           }
         : undefined),
       logs: blockTransaction.dt?.lg ? blockTransaction.dt.lg.map((l) => Buffer.from(l).toString('base64')) : undefined,
-      // todo: do we need any of these?
-      //"close-rewards"
-      //"receiver-rewards"
-      //"sender-rewards"
-      //"global-state-delta"
-      //"local-state-delta"
+      'close-rewards': closeRewards,
+      'receiver-rewards': receiverRewards,
+      'sender-rewards': senderRewards,
+      'global-state-delta': blockTransaction.dt?.gd
+        ? Object.entries(blockTransaction.dt.gd).map(([key, value]) => ({
+            key: Buffer.from(key).toString('base64'),
+            value: {
+              action: value.at,
+              bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+              uint: value.ui ? Number(value.ui) : undefined,
+            },
+          }))
+        : undefined,
+
+      'local-state-delta': blockTransaction.dt?.ld
+        ? Object.entries(blockTransaction.dt.ld).map(([addressIndex, delta]) => {
+            const addresses = [
+              algosdk.encodeAddress(transaction.from.publicKey),
+              ...(transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
+            ]
+            return {
+              address: addresses[Number(addressIndex)],
+              delta: Object.entries(delta).map(([key, value]) => ({
+                key: Buffer.from(key).toString('base64'),
+                value: {
+                  action: value.at,
+                  bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+                  uint: value.ui,
+                },
+              })),
+            }
+          })
+        : undefined,
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
@@ -605,6 +635,23 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
     txnCounter: block.tc,
     transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     transactionsRootSha256: block.txn256,
+    upgradeVote: {
+      upgradeApprove: block.upgradeyes,
+      upgradeDelay: block.upgradedelay,
+      upgradePropose: block.upgradeprop,
+    },
+    participationUpdates: {
+      absentParticipationAccounts: block.partupdabs?.map((addr) => algosdk.encodeAddress(addr)),
+      expiredParticipationAccounts: block.partupdrmv?.map((addr) => algosdk.encodeAddress(addr)),
+    },
+    stateProofTracking: block.spt
+      ? Object.entries(block.spt).map(([key, value]) => ({
+          nextRound: value.n,
+          onlineTotalWeight: value.t ?? 0,
+          type: Number(key),
+          votersCommitment: value.v,
+        }))
+      : undefined,
   }
 }
 

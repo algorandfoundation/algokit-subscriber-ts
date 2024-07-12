@@ -60,6 +60,12 @@ export interface BlockMetadata {
   transactionsRootSha256: string
   /** Fields relating to a protocol upgrade. */
   upgradeState?: BlockUpgradeState
+  /** Tracks the status of state proofs. */
+  stateProofTracking?: BlockStateProofTracking[]
+  /** Fields relating to voting for a protocol upgrade. */
+  upgradeVote?: BlockUpgradeVote
+  /** Participation account data that needs to be checked/acted on by the network. */
+  participationUpdates?: ParticipationUpdates
 }
 
 export interface BlockRewards {
@@ -88,6 +94,60 @@ export interface BlockUpgradeState {
   nextProtocolVoteBefore?: number
   /** Round on which the protocol upgrade will take effect. */
   nextProtocolSwitchOn?: number
+}
+
+export interface BlockStateProofTracking {
+  /**
+   * (n) Next round for which we will accept a state proof transaction.
+   */
+  nextRound?: number
+
+  /**
+   * (t) The total number of microalgos held by the online accounts during the
+   * StateProof round.
+   */
+  onlineTotalWeight?: number
+
+  /**
+   * State Proof Type. Note the raw object uses map with this as key.
+   */
+  type?: number
+
+  /**
+   * (v) Root of a vector commitment containing online accounts that will help sign
+   * the proof.
+   */
+  votersCommitment?: string
+}
+
+export interface BlockUpgradeVote {
+  /**
+   * (upgradeyes) Indicates a yes vote for the current proposal.
+   */
+  upgradeApprove?: boolean
+
+  /**
+   * (upgradedelay) Indicates the time between acceptance and execution.
+   */
+  upgradeDelay?: number | bigint
+
+  /**
+   * (upgradeprop) Indicates a proposed upgrade.
+   */
+  upgradePropose?: string
+}
+
+export interface ParticipationUpdates {
+  /**
+   * (partupabs) a list of online accounts that need to be suspended.
+   */
+  absentParticipationAccounts?: string[]
+
+  /**
+   * (partupdrmv) a list of online accounts that needs to be converted to offline
+   * since their participation key expired.
+   */
+  expiredParticipationAccounts?: string[]
 }
 
 /** The common model used to expose a transaction that is returned from a subscription.

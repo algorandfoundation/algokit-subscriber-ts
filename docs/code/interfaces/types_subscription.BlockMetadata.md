@@ -15,15 +15,18 @@ Metadata about a block that was retrieved from algod.
 - [genesisId](types_subscription.BlockMetadata.md#genesisid)
 - [hash](types_subscription.BlockMetadata.md#hash)
 - [parentTransactionCount](types_subscription.BlockMetadata.md#parenttransactioncount)
+- [participationUpdates](types_subscription.BlockMetadata.md#participationupdates)
 - [previousBlockHash](types_subscription.BlockMetadata.md#previousblockhash)
 - [rewards](types_subscription.BlockMetadata.md#rewards)
 - [round](types_subscription.BlockMetadata.md#round)
 - [seed](types_subscription.BlockMetadata.md#seed)
+- [stateProofTracking](types_subscription.BlockMetadata.md#stateprooftracking)
 - [timestamp](types_subscription.BlockMetadata.md#timestamp)
 - [transactionsRoot](types_subscription.BlockMetadata.md#transactionsroot)
 - [transactionsRootSha256](types_subscription.BlockMetadata.md#transactionsrootsha256)
 - [txnCounter](types_subscription.BlockMetadata.md#txncounter)
 - [upgradeState](types_subscription.BlockMetadata.md#upgradestate)
+- [upgradeVote](types_subscription.BlockMetadata.md#upgradevote)
 
 ## Properties
 
@@ -87,6 +90,18 @@ Count of parent transactions in this block
 
 ___
 
+### participationUpdates
+
+• `Optional` **participationUpdates**: [`ParticipationUpdates`](types_subscription.ParticipationUpdates.md)
+
+Participation account data that needs to be checked/acted on by the network.
+
+#### Defined in
+
+[types/subscription.ts:68](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L68)
+
+___
+
 ### previousBlockHash
 
 • `Optional` **previousBlockHash**: `string`
@@ -132,6 +147,18 @@ The base64 seed of the block.
 #### Defined in
 
 [types/subscription.ts:47](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L47)
+
+___
+
+### stateProofTracking
+
+• `Optional` **stateProofTracking**: [`BlockStateProofTracking`](types_subscription.BlockStateProofTracking.md)[]
+
+Tracks the status of state proofs.
+
+#### Defined in
+
+[types/subscription.ts:64](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L64)
 
 ___
 
@@ -193,3 +220,15 @@ Fields relating to a protocol upgrade.
 #### Defined in
 
 [types/subscription.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L62)
+
+___
+
+### upgradeVote
+
+• `Optional` **upgradeVote**: [`BlockUpgradeVote`](types_subscription.BlockUpgradeVote.md)
+
+Fields relating to voting for a protocol upgrade.
+
+#### Defined in
+
+[types/subscription.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L66)
