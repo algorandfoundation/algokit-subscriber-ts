@@ -20,39 +20,21 @@
 
 ### P
 
-• **P**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `hsh` | \{ `t`: `number`  } |
-| `hsh.t` | `number` |
-| `pth` | `Uint8Array`[] |
-| `td` | `number` |
+• **P**: `Proof`
 
 #### Defined in
 
-[types/block.ts:272](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L272)
+[types/block.ts:278](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L278)
 
 ___
 
 ### S
 
-• **S**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `hsh` | \{ `t`: `number`  } |
-| `hsh.t` | `number` |
-| `pth` | `Uint8Array`[] |
-| `td` | `number` |
+• **S**: `Proof`
 
 #### Defined in
 
-[types/block.ts:289](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L289)
+[types/block.ts:295](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L295)
 
 ___
 
@@ -62,7 +44,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:271](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L271)
+[types/block.ts:277](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L277)
 
 ___
 
@@ -72,17 +54,17 @@ ___
 
 #### Defined in
 
-[types/block.ts:273](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L273)
+[types/block.ts:279](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L279)
 
 ___
 
 ### r
 
-• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `number` ; `prf`: \{ `hsh`: \{ `t`: `number`  } ; `pth`: `Uint8Array`[] ; `td`: `number`  } ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
+• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `number` ; `prf`: `Proof` ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
 
 #### Defined in
 
-[types/block.ts:274](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L274)
+[types/block.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L280)
 
 ___
 
@@ -92,7 +74,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:291](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L291)
+[types/block.ts:297](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L297)
 
 ___
 
@@ -102,4 +84,4 @@ ___
 
 #### Defined in
 
-[types/block.ts:290](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L290)
+[types/block.ts:296](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L296)

@@ -425,8 +425,8 @@ export function getIndexerTransactionFromAlgodTransaction(
                   'hash-factory': {
                     'hash-type': stateProof!.P.hsh.t,
                   },
-                  'tree-depth': stateProof!.P.td,
-                  path: stateProof!.P.pth.map((p) => Buffer.from(p).toString('base64')),
+                  'tree-depth': stateProof!.P.td ?? 0,
+                  path: stateProof!.P.pth?.map((p) => Buffer.from(p).toString('base64')) ?? [],
                 },
                 'positions-to-reveal': stateProof!.pr,
                 'salt-version': Number(stateProof!.v ?? 0),
@@ -435,8 +435,8 @@ export function getIndexerTransactionFromAlgodTransaction(
                   'hash-factory': {
                     'hash-type': stateProof!.S.hsh.t,
                   },
-                  'tree-depth': stateProof!.S.td,
-                  path: stateProof!.S.pth.map((p) => Buffer.from(p).toString('base64')),
+                  'tree-depth': stateProof!.S.td ?? 0,
+                  path: stateProof!.S.pth?.map((p) => Buffer.from(p).toString('base64')) ?? [],
                 },
                 'signed-weight': Number(stateProof!.w),
                 reveals: mapKeys(stateProof!.r).map((position) => {
@@ -451,8 +451,8 @@ export function getIndexerTransactionFromAlgodTransaction(
                           'hash-factory': {
                             'hash-type': r.s.s.prf.hsh.t,
                           },
-                          'tree-depth': r.s.s.prf.td,
-                          path: r.s.s.prf.pth.map((p) => Buffer.from(p).toString('base64')),
+                          'tree-depth': r.s.s.prf.td ?? 0,
+                          path: r.s.s.prf.pth?.map((p) => Buffer.from(p).toString('base64')) ?? [],
                         },
                         'verifying-key': Buffer.from(r.s.s.vkey.k).toString('base64'),
                       },
