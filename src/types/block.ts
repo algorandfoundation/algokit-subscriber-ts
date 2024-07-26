@@ -266,10 +266,16 @@ export interface BlockValueDelta {
   ui?: number
 }
 
+interface Proof {
+  hsh: { t: number }
+  pth?: Uint8Array[]
+  td?: number
+}
+
 // https://github.com/algorand/go-algorand-sdk/blob/develop/types/stateproof.go
 export interface StateProof {
   c: Uint8Array
-  P: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+  P: Proof
   pr: number[]
   r: Map<
     number,
@@ -279,14 +285,14 @@ export interface StateProof {
         l?: bigint
         s: {
           idx: number
-          prf: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+          prf: Proof
           sig: Uint8Array
           vkey: { k: Uint8Array }
         }
       }
     }
   >
-  S: { hsh: { t: number }; pth: Uint8Array[]; td: number }
+  S: Proof
   w: bigint
   v?: number
 }
