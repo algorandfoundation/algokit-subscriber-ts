@@ -705,6 +705,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
     expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
   })
+
   it('Produces the correct state deltas in an app call transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
@@ -754,5 +755,18 @@ describe('Complex transaction with many nested inner transactions', () => {
     ],
   },
 ]`)
+  })
+
+  it('Produces base64 encoded programs for an application create transaction', async () => {
+    const blocks = await getBlocksBulk({ startRound: 34632059, maxRound: 34632059 }, algod) // Contains a appl create transaction with approval and clear state programs
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+
+    expect(blockTransactions.length).toBe(14)
+
+    const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[5])
+    expect(transaction['application-transaction']!['approval-program']).toBe(
+      'CSAFAAGAgKSPxPlaEAImDwpsYXN0X21pbmVyDmhhbHZpbmdfc3VwcGx5EWxhc3RfbWluZXJfZWZmb3J0BmVmZm9ydAV0b2tlbgdoYWx2aW5nDG1pbmVkX3N1cHBseQxtaW5lcl9yZXdhcmQUY3VycmVudF9taW5lcl9lZmZvcnQFYmxvY2sMdG90YWxfZWZmb3J0EnRvdGFsX3RyYW5zYWN0aW9ucw1jdXJyZW50X21pbmVyD3N0YXJ0X3RpbWVzdGFtcAAxGCINgQYLMRkIjQgDCgMrAAAAAAAAAAADHQMsAIgAAiNDigAAJwQiZycJImcnCiJnJwsiZycFImcpgYCA0ofivC1nJwYiZycHgYCAgDJnKDIDZyoiZycMMgNnJwgiZycNgYCByKwGZ4mKAAAnBLGBA7IQgAZPcmFuZ2WyJoADT1JBsiUyCrIpMgqyKjIDsisyA7IsJLIigQiyI4A6aXBmczovL1FtVWl0eEp1UEpKcmN1QWRBaVZkRUVwdXpHbXNFTEdnQXZoTGQ1RmlYUlNoRXUjYXJjM7IngCDT/VG+LujCsXp66CbTScDfIP6rik1oAwNAHHQVYMMkNrIoIrIBgKgBSm9obiBBbGFuIFdvb2RzIDAxL0RlYy8yMDIzIFlvdSBrbm93LCBJIGNhbiBwdWxsIG1ldHJpY3Mgb3V0IG9mIHRoZSBhaXIgdG9vLCB3aGF0ZXZlciwgOCBtaWxsaW9uIHRyYW5zYWN0aW9ucyBvdmVyIHRoZSBsYXN0IHdlZWssIEkgZG9uJ3Qga25vdywgbXkgbW9tIGhhcyBmb3VyIG9yYW5nZXMusgWztDxniYgAAiNDigAAJwRkIhJBAAOI/qQxACsiZomKAwAyBjIGgQUYCYz/Jwlki/8TQQC3KGQnBGRwAExIQQB0KWQnB2QNQQAGJwdkQgACKWSM/rGBBLIQJwRkshEoZLIUi/6yEiKyAbMoZCpkFlCwJwYnBmSL/ghnKSlki/4JZylkIhJBAC0nBScFZCMIZycFZCUPQQAKKSQnBmQJZ0IAEykkJwZkCSEECmcnBycHZCEECmcoZDYyAGFBABsoZCtijP0oZCuL/SpkDUEACIv9KmQJQgABImYnCYv/ZygnDGRnKicIZGcnCCJniScOSTYaAUkVgSASRIgAAiNDigMAi/82MgArY0xIRDIHJw1kD0QnBWQlDkQxAYGgnAEORCcORwKI/vgnCicKZDEBCGcnCycLZCMIZ4v/K2IxAQiM/ov/K4v+Zov+jP0oZIv/EkEAE4v9KmQNQQAIi/0qZAlCAAEijP2L/ScIZA1BAAonDIv/ZycIi/1niTEbQfzygAS4RHs2NhoAjgH85QCABKsjcMw2GgCOAf9TAAAxG0H+ZQA=',
+    )
+    expect(transaction['application-transaction']!['clear-state-program']).toBe('CQ==')
   })
 })
