@@ -280,7 +280,6 @@ export function getIndexerTransactionFromAlgodTransaction(
   const getChildOffset = t.getChildOffset ? t.getChildOffset : () => ++childOffset
 
   const encoder = new TextEncoder()
-  const decoder = new TextDecoder()
 
   // The types in algosdk for state proofs are incorrect, so override them
   const stateProof = transaction.stateProof as unknown as StateProof | undefined
@@ -365,8 +364,14 @@ export function getIndexerTransactionFromAlgodTransaction(
         ? {
             'application-transaction': {
               'application-id': transaction.appIndex,
-              'approval-program': decoder.decode(transaction.appApprovalProgram),
-              'clear-state-program': decoder.decode(transaction.appClearProgram),
+              'approval-program':
+                transaction.appApprovalProgram && transaction.appApprovalProgram.length > 0
+                  ? Buffer.from(transaction.appApprovalProgram).toString('base64')
+                  : '',
+              'clear-state-program':
+                transaction.appClearProgram && transaction.appClearProgram.length > 0
+                  ? Buffer.from(transaction.appClearProgram).toString('base64')
+                  : '',
               'on-completion': algodOnCompleteToIndexerOnComplete(transaction.appOnComplete),
               'application-args': transaction.appArgs?.map((a) => Buffer.from(a).toString('base64')),
               'extra-program-pages': transaction.extraPages,
