@@ -363,7 +363,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       ...(transaction.type === TransactionType.appl
         ? {
             'application-transaction': {
-              'application-id': transaction.appIndex,
+              'application-id': transaction.appIndex ?? 0,
               'approval-program':
                 transaction.appApprovalProgram && transaction.appApprovalProgram.length > 0
                   ? Buffer.from(transaction.appApprovalProgram).toString('base64')
