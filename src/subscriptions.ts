@@ -32,6 +32,7 @@ import Algodv2 = algosdk.Algodv2
 import Indexer = algosdk.Indexer
 import TransactionType = algosdk.TransactionType
 import OnApplicationComplete = algosdk.OnApplicationComplete
+import { Mutex } from 'async-mutex'
 
 const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: SubscribedTransaction[], t: SubscribedTransaction) => {
   const existing = dedupedTransactions.find((e) => e.id === t.id)
@@ -46,6 +47,8 @@ const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: Subscribe
   }
   return dedupedTransactions
 }
+
+const mutex = new Mutex()
 
 /**
  * Executes a single pull/poll to subscribe to transactions on the configured Algorand
@@ -149,13 +152,20 @@ export async function getSubscribedTransactions(
             (
               await Promise.all(
                 // For each filter
-                chunkedFilters.map(async (f) =>
-                  // Retrieve all pre-filtered transactions from the indexer
-                  (await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
-                    // Re-run the pre-filter in-memory so we properly extract inner transactions
-                    .flatMap((t) => getFilteredIndexerTransactions(t, f))
-                    // Run the post-filter so we get the final list of matching transactions
-                    .filter(indexerPostFilter(f.filter, arc28Events, subscription.arc28Events ?? [])),
+                chunkedFilters.map(
+                  async (f) =>
+                    // Retrieve all pre-filtered transactions from the indexer
+                    await mutex.runExclusive(async () => {
+                      return (
+                        (
+                          await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))
+                        ).transactions
+                          // Re-run the pre-filter in-memory so we properly extract inner transactions
+                          .flatMap((t) => getFilteredIndexerTransactions(t, f))
+                          // Run the post-filter so we get the final list of matching transactions
+                          .filter(indexerPostFilter(f.filter, arc28Events, subscription.arc28Events ?? []))
+                      )
+                    }),
                 ),
               )
             )
