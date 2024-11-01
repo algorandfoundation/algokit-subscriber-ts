@@ -27,6 +27,7 @@ https://github.com/algorand/go-algorand/blob/master/data/bookkeeping/block.go#L3
 - [partupdrmv](types_block.Block.md#partupdrmv)
 - [prev](types_block.Block.md#prev)
 - [proto](types_block.Block.md#proto)
+- [prp](types_block.Block.md#prp)
 - [rate](types_block.Block.md#rate)
 - [rnd](types_block.Block.md#rnd)
 - [rwcalr](types_block.Block.md#rwcalr)
@@ -202,6 +203,18 @@ UpgradeState tracks the protocol upgrade state machine; proto is the current pro
 #### Defined in
 
 [types/block.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L101)
+
+___
+
+### prp
+
+• `Optional` **prp**: `Uint8Array`
+
+Proposer is the proposer of this block.
+
+#### Defined in
+
+[types/block.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L177)
 
 ___
 

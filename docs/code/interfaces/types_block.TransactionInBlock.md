@@ -40,7 +40,7 @@ The asset close amount if the sender asset position was closed from this transac
 
 #### Defined in
 
-[types/block.ts:391](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L391)
+[types/block.ts:395](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L395)
 
 ___
 
@@ -52,7 +52,7 @@ The block data for the transaction
 
 #### Defined in
 
-[types/block.ts:333](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L333)
+[types/block.ts:337](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L337)
 
 ___
 
@@ -64,7 +64,7 @@ The ALGO close amount if the sender account was closed from this transaction.
 
 #### Defined in
 
-[types/block.ts:393](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L393)
+[types/block.ts:397](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L397)
 
 ___
 
@@ -76,7 +76,7 @@ Rewards in microalgos applied to the close remainder to account.
 
 #### Defined in
 
-[types/block.ts:397](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L397)
+[types/block.ts:401](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L401)
 
 ___
 
@@ -88,7 +88,7 @@ The app ID if an app was created from this transaction.
 
 #### Defined in
 
-[types/block.ts:389](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L389)
+[types/block.ts:393](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L393)
 
 ___
 
@@ -100,7 +100,7 @@ The asset ID if an asset was created from this transaction.
 
 #### Defined in
 
-[types/block.ts:387](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L387)
+[types/block.ts:391](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L391)
 
 ___
 
@@ -112,7 +112,7 @@ The binary genesis hash of the network the transaction is within.
 
 #### Defined in
 
-[types/block.ts:374](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L374)
+[types/block.ts:378](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L378)
 
 ___
 
@@ -124,7 +124,7 @@ The string genesis ID of the network the transaction is within.
 
 #### Defined in
 
-[types/block.ts:376](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L376)
+[types/block.ts:380](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L380)
 
 ___
 
@@ -136,7 +136,7 @@ Any logs that were issued as a result of this transaction.
 
 #### Defined in
 
-[types/block.ts:395](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L395)
+[types/block.ts:399](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L399)
 
 ___
 
@@ -159,7 +159,7 @@ The offset within the parent transaction.
 
 #### Defined in
 
-[types/block.ts:372](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L372)
+[types/block.ts:376](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L376)
 
 ___
 
@@ -171,7 +171,7 @@ The ID of the parent transaction if this is an inner transaction.
 
 #### Defined in
 
-[types/block.ts:360](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L360)
+[types/block.ts:364](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L364)
 
 ___
 
@@ -183,7 +183,7 @@ Rewards in microalgos applied to the receiver account.
 
 #### Defined in
 
-[types/block.ts:401](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L401)
+[types/block.ts:405](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L405)
 
 ___
 
@@ -206,7 +206,7 @@ The index within the block.txns array of this transaction or if it's an inner tr
 
 #### Defined in
 
-[types/block.ts:356](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L356)
+[types/block.ts:360](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L360)
 
 ___
 
@@ -218,7 +218,7 @@ The round number of the block the transaction is within.
 
 #### Defined in
 
-[types/block.ts:378](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L378)
+[types/block.ts:382](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L382)
 
 ___
 
@@ -241,7 +241,7 @@ The offset of the transaction within the round including inner transactions.
 
 #### Defined in
 
-[types/block.ts:344](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L344)
+[types/block.ts:348](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L348)
 
 ___
 
@@ -253,7 +253,7 @@ The round unix timestamp of the block the transaction is within.
 
 #### Defined in
 
-[types/block.ts:380](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L380)
+[types/block.ts:384](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L384)
 
 ___
 
@@ -265,7 +265,7 @@ Rewards in microalgos applied to the sender account.
 
 #### Defined in
 
-[types/block.ts:399](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L399)
+[types/block.ts:403](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L403)
 
 ___
 
@@ -277,4 +277,4 @@ The transaction as an algosdk `Transaction` object.
 
 #### Defined in
 
-[types/block.ts:385](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L385)
+[types/block.ts:389](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L389)

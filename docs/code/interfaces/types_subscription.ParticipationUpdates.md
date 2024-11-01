@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[types/subscription.ts:144](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L144)
+[types/subscription.ts:146](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L146)
 
 ___
 
@@ -34,4 +34,4 @@ since their participation key expired.
 
 #### Defined in
 
-[types/subscription.ts:150](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L150)
+[types/subscription.ts:152](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L152)

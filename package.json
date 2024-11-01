@@ -72,7 +72,7 @@
     "@makerx/eslint-config": "^3.1.1",
     "@makerx/prettier-config": "^2.0.1",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/coverage-v8": "^2.1.4",
     "better-npm-audit": "^3.7.3",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cpy-cli": "^5.0.0",
@@ -90,7 +90,7 @@
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.4.3",
-    "vitest": "^1.4.0"
+    "vitest": "^2.1.4"
   },
   "dependencies": {
     "algorand-msgpack": "^1.0.1",
@@ -101,9 +101,6 @@
   "peerDependencies": {
     "@algorandfoundation/algokit-utils": "^6.1.0",
     "algosdk": "^2.7.0"
-  },
-  "overrides": {
-    "vite": "5.2.8"
   },
   "publishConfig": {
     "access": "public"

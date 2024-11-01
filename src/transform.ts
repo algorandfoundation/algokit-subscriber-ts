@@ -363,7 +363,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       ...(transaction.type === TransactionType.appl
         ? {
             'application-transaction': {
-              'application-id': transaction.appIndex,
+              'application-id': transaction.appIndex ?? 0,
               'approval-program':
                 transaction.appApprovalProgram && transaction.appApprovalProgram.length > 0
                   ? Buffer.from(transaction.appApprovalProgram).toString('base64')
@@ -640,6 +640,7 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
     txnCounter: block.tc,
     transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     transactionsRootSha256: block.txn256,
+    proposer: block.prp ? algosdk.encodeAddress(block.prp) : undefined,
     ...(block.upgradeyes !== undefined || block.upgradedelay !== undefined || block.upgradeprop !== undefined
       ? {
           upgradeVote: {
