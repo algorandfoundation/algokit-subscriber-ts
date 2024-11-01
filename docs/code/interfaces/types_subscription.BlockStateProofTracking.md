@@ -23,7 +23,7 @@
 
 #### Defined in
 
-[types/subscription.ts:103](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L103)
+[types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L105)
 
 ___
 
@@ -36,7 +36,7 @@ StateProof round.
 
 #### Defined in
 
-[types/subscription.ts:109](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L109)
+[types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L111)
 
 ___
 
@@ -48,7 +48,7 @@ State Proof Type. Note the raw object uses map with this as key.
 
 #### Defined in
 
-[types/subscription.ts:114](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L114)
+[types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L116)
 
 ___
 
@@ -61,4 +61,4 @@ the proof.
 
 #### Defined in
 
-[types/subscription.ts:120](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L120)
+[types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)

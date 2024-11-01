@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[types/block.ts:278](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L278)
+[types/block.ts:285](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L285)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:295](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L295)
+[types/block.ts:302](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L302)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:277](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L277)
+[types/block.ts:284](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L284)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:279](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L279)
+[types/block.ts:286](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L286)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L280)
+[types/block.ts:287](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L287)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:297](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L297)
+[types/block.ts:304](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L304)
 
 ___
 
@@ -84,4 +84,4 @@ ___
 
 #### Defined in
 
-[types/block.ts:296](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L296)
+[types/block.ts:303](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L303)

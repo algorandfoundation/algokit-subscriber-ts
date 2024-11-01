@@ -27,6 +27,7 @@ https://github.com/algorand/go-algorand/blob/master/data/bookkeeping/block.go#L3
 - [partupdrmv](types_block.Block.md#partupdrmv)
 - [prev](types_block.Block.md#prev)
 - [proto](types_block.Block.md#proto)
+- [prp](types_block.Block.md#prp)
 - [rate](types_block.Block.md#rate)
 - [rnd](types_block.Block.md#rnd)
 - [rwcalr](types_block.Block.md#rwcalr)
@@ -202,6 +203,21 @@ UpgradeState tracks the protocol upgrade state machine; proto is the current pro
 #### Defined in
 
 [types/block.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L101)
+
+___
+
+### prp
+
+• `Optional` **prp**: `string`
+
+Proposer is the proposer of this block. Like the Seed, agreement adds
+this after the block is assembled by the transaction pool, so that the same block can be prepared
+for multiple participating accounts in the same node. Therefore, it can not be used
+to influence block evaluation. Populated if proto.Payouts.Enabled
+
+#### Defined in
+
+[types/block.ts:180](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L180)
 
 ___
 

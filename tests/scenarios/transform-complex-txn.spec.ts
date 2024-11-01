@@ -302,6 +302,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "hash": "EOq+HX242/G/ADonU6q5lfimxX7twuFKEwtG4rDt+kI=",
           "parentTransactionCount": 55,
           "previousBlockHash": "8ReLxqOPxmuKuBfACtllRRr13n2E2r01f8wXt3vFYW0=",
+          "proposer": undefined,
           "rewards": {
             "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
             "rewardsCalculationRound": 35500000,

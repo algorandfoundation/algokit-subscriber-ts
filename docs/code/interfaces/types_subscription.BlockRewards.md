@@ -25,7 +25,7 @@ FeeSink is an address that accepts transaction fees, it can only spend to the in
 
 #### Defined in
 
-[types/subscription.ts:73](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L73)
+[types/subscription.ts:75](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L75)
 
 ___
 
@@ -37,7 +37,7 @@ number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos 
 
 #### Defined in
 
-[types/subscription.ts:75](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L75)
+[types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L77)
 
 ___
 
@@ -49,7 +49,7 @@ How many rewards, in MicroAlgos, have been distributed to each RewardUnit of Mic
 
 #### Defined in
 
-[types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L77)
+[types/subscription.ts:79](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L79)
 
 ___
 
@@ -61,7 +61,7 @@ RewardsPool is an address that accepts periodic injections from the fee-sink and
 
 #### Defined in
 
-[types/subscription.ts:79](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L79)
+[types/subscription.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L81)
 
 ___
 
@@ -73,7 +73,7 @@ Number of new MicroAlgos added to the participation stake from rewards at the ne
 
 #### Defined in
 
-[types/subscription.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L81)
+[types/subscription.ts:83](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L83)
 
 ___
 
@@ -85,4 +85,4 @@ Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits 
 
 #### Defined in
 
-[types/subscription.ts:83](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L83)
+[types/subscription.ts:85](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L85)
