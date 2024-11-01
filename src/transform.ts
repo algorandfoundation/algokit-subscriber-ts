@@ -640,6 +640,7 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
     txnCounter: block.tc,
     transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     transactionsRootSha256: block.txn256,
+    proposer: block.prp,
     ...(block.upgradeyes !== undefined || block.upgradedelay !== undefined || block.upgradeprop !== undefined
       ? {
           upgradeVote: {

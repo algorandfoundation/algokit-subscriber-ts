@@ -66,6 +66,8 @@ export interface BlockMetadata {
   upgradeVote?: BlockUpgradeVote
   /** Participation account data that needs to be checked/acted on by the network. */
   participationUpdates?: ParticipationUpdates
+  /** Address of the proposer of this block */
+  proposer?: string
 }
 
 export interface BlockRewards {
