@@ -210,14 +210,11 @@ ___
 
 • `Optional` **prp**: `Uint8Array`
 
-Proposer is the proposer of this block. Like the Seed, agreement adds
-this after the block is assembled by the transaction pool, so that the same block can be prepared
-for multiple participating accounts in the same node. Therefore, it can not be used
-to influence block evaluation. Populated if proto.Payouts.Enabled
+Proposer is the proposer of this block.
 
 #### Defined in
 
-[types/block.ts:180](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L180)
+[types/block.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L177)
 
 ___
 

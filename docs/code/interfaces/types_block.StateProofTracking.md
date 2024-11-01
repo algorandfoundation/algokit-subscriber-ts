@@ -22,7 +22,7 @@ StateProofNextRound is the next round for which we will accept a StateProof tran
 
 #### Defined in
 
-[types/block.ts:330](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L330)
+[types/block.ts:327](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L327)
 
 ___
 
@@ -36,7 +36,7 @@ This is intended for computing the threshold of votes to expect from StateProofV
 
 #### Defined in
 
-[types/block.ts:326](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L326)
+[types/block.ts:323](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L323)
 
 ___
 
@@ -51,4 +51,4 @@ For blocks that are not a multiple of ConsensusParams.StateProofRounds, this val
 
 #### Defined in
 
-[types/block.ts:321](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L321)
+[types/block.ts:318](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L318)

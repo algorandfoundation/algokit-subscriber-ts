@@ -29,7 +29,7 @@ Arguments passed into the logic signature
 
 #### Defined in
 
-[types/block.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L225)
+[types/block.ts:222](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L222)
 
 ___
 
@@ -41,7 +41,7 @@ Logic sig code
 
 #### Defined in
 
-[types/block.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L219)
+[types/block.ts:216](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L216)
 
 ___
 
@@ -53,7 +53,7 @@ Multisig signature for delegated operations
 
 #### Defined in
 
-[types/block.ts:223](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L223)
+[types/block.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L220)
 
 ___
 
@@ -65,4 +65,4 @@ ED25519 signature for delegated operations
 
 #### Defined in
 
-[types/block.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L221)
+[types/block.ts:218](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L218)
