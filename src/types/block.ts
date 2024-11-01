@@ -171,6 +171,10 @@ export interface Block {
   upgradeprop?: string
 
   spt?: Record<number, StateProofTracking>
+  /**
+   * Proposer is the proposer of this block.
+   */
+  prp?: Uint8Array
 }
 
 /** Data that is returned in a raw Algorand block for a single transaction

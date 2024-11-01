@@ -17,6 +17,7 @@ Metadata about a block that was retrieved from algod.
 - [parentTransactionCount](types_subscription.BlockMetadata.md#parenttransactioncount)
 - [participationUpdates](types_subscription.BlockMetadata.md#participationupdates)
 - [previousBlockHash](types_subscription.BlockMetadata.md#previousblockhash)
+- [proposer](types_subscription.BlockMetadata.md#proposer)
 - [rewards](types_subscription.BlockMetadata.md#rewards)
 - [round](types_subscription.BlockMetadata.md#round)
 - [seed](types_subscription.BlockMetadata.md#seed)
@@ -111,6 +112,18 @@ The base64 previous block hash.
 #### Defined in
 
 [types/subscription.ts:45](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L45)
+
+___
+
+### proposer
+
+• `Optional` **proposer**: `string`
+
+Address of the proposer of this block
+
+#### Defined in
+
+[types/subscription.ts:70](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L70)
 
 ___
 
