@@ -172,10 +172,7 @@ export interface Block {
 
   spt?: Record<number, StateProofTracking>
   /**
-   * Proposer is the proposer of this block. Like the Seed, agreement adds
-   * this after the block is assembled by the transaction pool, so that the same block can be prepared
-   * for multiple participating accounts in the same node. Therefore, it can not be used
-   * to influence block evaluation. Populated if proto.Payouts.Enabled
+   * Proposer is the proposer of this block.
    */
   prp?: Uint8Array
 }
