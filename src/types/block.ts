@@ -177,7 +177,7 @@ export interface Block {
    * for multiple participating accounts in the same node. Therefore, it can not be used
    * to influence block evaluation. Populated if proto.Payouts.Enabled
    */
-  prp?: string
+  prp?: Uint8Array
 }
 
 /** Data that is returned in a raw Algorand block for a single transaction

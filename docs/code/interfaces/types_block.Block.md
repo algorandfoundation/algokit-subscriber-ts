@@ -208,7 +208,7 @@ ___
 
 ### prp
 
-• `Optional` **prp**: `string`
+• `Optional` **prp**: `Uint8Array`
 
 Proposer is the proposer of this block. Like the Seed, agreement adds
 this after the block is assembled by the transaction pool, so that the same block can be prepared
