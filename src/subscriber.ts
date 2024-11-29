@@ -1,4 +1,4 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { Config } from '@algorandfoundation/algokit-utils'
 import algosdk from 'algosdk'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
@@ -96,7 +96,7 @@ export class AlgorandSubscriber {
       }
       await this.eventEmitter.emitAsync('poll', pollResult)
     } catch (e) {
-      algokit.Config.logger.error(`Error processing event emittance`, e)
+      Config.logger.error(`Error processing event emittance`, e)
       throw e
     }
     await this.config.watermarkPersistence.set(pollResult.newWatermark)
@@ -122,7 +122,7 @@ export class AlgorandSubscriber {
         const start = +new Date()
         const result = await this.pollOnce()
         const durationInSeconds = (+new Date() - start) / 1000
-        algokit.Config.getLogger(suppressLog).debug('Subscription poll', {
+        Config.getLogger(suppressLog).debug('Subscription poll', {
           currentRound: result.currentRound,
           startingWatermark: result.startingWatermark,
           newWatermark: result.newWatermark,
@@ -132,13 +132,13 @@ export class AlgorandSubscriber {
         inspect?.(result)
         // eslint-disable-next-line no-console
         if (result.currentRound > result.newWatermark || !this.config.waitForBlockWhenAtTip) {
-          algokit.Config.getLogger(suppressLog).info(
+          Config.getLogger(suppressLog).info(
             `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.config.frequencyInSeconds ?? 1}s`,
           )
           await sleep((this.config.frequencyInSeconds ?? 1) * 1000, this.abortController.signal)
         } else {
           // Wait until the next block is published
-          algokit.Config.getLogger(suppressLog).info(
+          Config.getLogger(suppressLog).info(
             `Subscription poll completed in ${durationInSeconds}s; waiting for round ${result.currentRound + 1}`,
           )
           const waitStart = +new Date()
@@ -146,7 +146,7 @@ export class AlgorandSubscriber {
           //  the round you are waiting for per the API description:
           //  https://developer.algorand.org/docs/rest-apis/algod/#get-v2statuswait-for-block-afterround
           await race(this.algod.statusAfterBlock(result.currentRound).do(), this.abortController.signal)
-          algokit.Config.getLogger(suppressLog).info(`Waited for ${(+new Date() - waitStart) / 1000}s until next block`)
+          Config.getLogger(suppressLog).info(`Waited for ${(+new Date() - waitStart) / 1000}s until next block`)
         }
       }
       this.started = false

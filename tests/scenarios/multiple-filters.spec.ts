@@ -10,29 +10,28 @@ describe('Subscribing using multiple filters', () => {
     vitest.clearAllMocks()
   })
 
-  test('Process multiple historic transactions using indexer and blends them in with algod transaction', async () => {
-    const { algod, indexer, testAccount, waitForIndexerTransaction, generateAccount } = localnet.context
+  test('Process multiple historic transactions using indexer and blends them in with algorand transaction', async () => {
+    const { algorand, testAccount, waitForIndexerTransaction, generateAccount } = localnet.context
     const senders = [
       await generateAccount({ initialFunds: (5).algos() }),
       await generateAccount({ initialFunds: (5).algos() }),
       await generateAccount({ initialFunds: (5).algos() }),
     ]
     // Indexer should pick these up
-    const { txIds: txIds1 } = await SendXTransactions(2, senders[0], algod)
-    const { txIds: txIds2 } = await SendXTransactions(2, senders[1], algod)
-    const { txIds: txIds3 } = await SendXTransactions(2, senders[2], algod)
-    const { lastTxnRound: postIndexerRound } = await SendXTransactions(1, testAccount, algod)
-    const { txIds: txIds11 } = await SendXTransactions(1, senders[0], algod)
-    const { txIds: txIds22 } = await SendXTransactions(1, senders[1], algod)
-    const { txIds: txIds33 } = await SendXTransactions(1, senders[2], algod)
-    const { txIds, lastTxnRound } = await SendXTransactions(1, testAccount, algod)
+    const { txIds: txIds1 } = await SendXTransactions(2, senders[0], algorand)
+    const { txIds: txIds2 } = await SendXTransactions(2, senders[1], algorand)
+    const { txIds: txIds3 } = await SendXTransactions(2, senders[2], algorand)
+    const { lastTxnRound: postIndexerRound } = await SendXTransactions(1, testAccount, algorand)
+    const { txIds: txIds11 } = await SendXTransactions(1, senders[0], algorand)
+    const { txIds: txIds22 } = await SendXTransactions(1, senders[1], algorand)
+    const { txIds: txIds33 } = await SendXTransactions(1, senders[2], algorand)
+    const { txIds, lastTxnRound } = await SendXTransactions(1, testAccount, algorand)
     await waitForIndexerTransaction(txIds[0])
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: lastTxnRound - postIndexerRound, syncBehaviour: 'catchup-with-indexer', watermark: 0, currentRound: lastTxnRound },
       senders,
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)

@@ -1,10 +1,10 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { SendAtomicTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
-import algosdk, { Account, TransactionType } from 'algosdk'
+import { Account, TransactionType } from 'algosdk'
 import { afterEach, beforeAll, beforeEach, describe, test } from 'vitest'
-import { TestingAppClient } from '../contract/client'
+import { TestingAppFactory } from '../contract/client'
 import { filterFixture } from '../filterFixture'
+import { app } from '../testing-app'
 
 describe('Subscribing using various filters', () => {
   const { localnet, systemAccount, subscribeAndVerifyFilter, extractFromGroupResult, ...hooks } = filterFixture()
@@ -18,49 +18,23 @@ describe('Subscribing using various filters', () => {
   afterEach(hooks.afterEach)
 
   const createAsset = async (creator?: Account) => {
-    const create = await algokit.sendTransaction(
-      {
-        from: creator ?? systemAccount(),
-        transaction: await createAssetTxn(creator ?? systemAccount()),
-      },
-      localnet.context.algod,
-    )
+    const create = await localnet.algorand
+      .newGroup()
+      .addTransaction(await createAssetTxn(creator ?? systemAccount()))
+      .send()
 
     return {
-      assetId: Number(create.confirmation!.assetIndex!),
+      assetId: BigInt(create.confirmations[0].assetIndex!),
       ...create,
     }
   }
 
   const createAssetTxn = async (creator: Account) => {
-    return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-      from: creator ? creator.addr : systemAccount().addr,
+    return await localnet.algorand.createTransaction.assetCreate({
+      sender: creator ? creator.addr : systemAccount().addr,
       decimals: 0,
-      total: 100,
-      defaultFrozen: false,
-      suggestedParams: await algokit.getTransactionParams(undefined, localnet.context.algod),
+      total: 100n,
     })
-  }
-
-  const app = async (config: { create: boolean }, creator?: Account) => {
-    const app = new TestingAppClient(
-      {
-        resolveBy: 'id',
-        id: 0,
-      },
-      localnet.context.algod,
-    )
-    const creation = await app.create.bare({
-      sender: creator ?? systemAccount(),
-      sendParams: {
-        skipSending: !config.create,
-      },
-    })
-
-    return {
-      app,
-      creation,
-    }
   }
 
   let algoTransfersData:
@@ -72,23 +46,31 @@ describe('Subscribing using various filters', () => {
       }
     | undefined = undefined
   const algoTransfersFixture = async () => {
-    const { algod, generateAccount } = localnet.context
+    const { generateAccount } = localnet.context
     const testAccount = await generateAccount({ initialFunds: (10).algos() })
     const account2 = await generateAccount({ initialFunds: (3).algos() })
-    const account3 = algokit.randomAccount()
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          await algokit.transferAlgos({ amount: (1).algos(), from: testAccount, to: account2, note: 'a', skipSending: true }, algod),
-          await algokit.transferAlgos({ amount: (2).algos(), from: testAccount, to: account3, note: 'b', skipSending: true }, algod),
-          await algokit.transferAlgos({ amount: (1).algos(), from: account2, to: testAccount, note: 'c', skipSending: true }, algod),
-        ].map((t) => ({
-          transaction: t.transaction,
-          signer: algosdk.encodeAddress(t.transaction.from.publicKey) === testAccount.addr ? testAccount : account2,
-        })),
-      },
-      algod,
-    )
+    const account3 = localnet.algorand.account.random().account
+    const txns = await localnet.algorand
+      .newGroup()
+      .addPayment({
+        sender: testAccount.addr,
+        receiver: account2.addr,
+        amount: (1).algos(),
+        note: 'a',
+      })
+      .addPayment({
+        sender: testAccount.addr,
+        receiver: account3.addr,
+        amount: (2).algos(),
+        note: 'b',
+      })
+      .addPayment({
+        sender: account2.addr,
+        receiver: testAccount.addr,
+        amount: (1).algos(),
+        note: 'c',
+      })
+      .send()
 
     algoTransfersData = {
       testAccount,
@@ -147,7 +129,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr,
-          minAmount: (1).algos().microAlgos + 1,
+          minAmount: (1).algos().microAlgos + 1n,
         },
         extractFromGroupResult(txns, 1),
       )
@@ -159,7 +141,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr,
-          maxAmount: (1).algos().microAlgos + 1,
+          maxAmount: (1).algos().microAlgos + 1n,
         },
         extractFromGroupResult(txns, 0),
       )
@@ -195,23 +177,34 @@ describe('Subscribing using various filters', () => {
       }
     | undefined = undefined
   const assetsFixture = async () => {
-    const { algod, generateAccount } = localnet.context
+    const { generateAccount } = localnet.context
     const testAccount = await generateAccount({ initialFunds: (10).algos() })
     const asset1 = await createAsset(testAccount)
     const asset2 = await createAsset()
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          algokit.assetOptIn({ account: testAccount, assetId: asset1.assetId, skipSending: true }, algod),
-          algokit.assetOptIn({ account: testAccount, assetId: asset2.assetId, skipSending: true }, algod),
-          await createAssetTxn(testAccount),
-          algokit.transferAsset({ assetId: asset1.assetId, amount: 1, from: testAccount, to: testAccount, skipSending: true }, algod),
-          algokit.transferAsset({ assetId: asset1.assetId, amount: 2, from: testAccount, to: testAccount, skipSending: true }, algod),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const txns = await localnet.algorand.send
+      .newGroup()
+      .addAssetOptIn({
+        sender: testAccount.addr,
+        assetId: asset1.assetId,
+      })
+      .addAssetOptIn({
+        sender: testAccount.addr,
+        assetId: asset2.assetId,
+      })
+      .addTransaction(await createAssetTxn(testAccount))
+      .addAssetTransfer({
+        assetId: asset1.assetId,
+        amount: 1n,
+        sender: testAccount.addr,
+        receiver: testAccount.addr,
+      })
+      .addAssetTransfer({
+        assetId: asset1.assetId,
+        amount: 2n,
+        sender: testAccount.addr,
+        receiver: testAccount.addr,
+      })
+      .send()
 
     assetsData = {
       asset1,
@@ -360,29 +353,28 @@ describe('Subscribing using various filters', () => {
 
   let appData:
     | {
-        app1: Awaited<ReturnType<typeof app>>
-        app2: Awaited<ReturnType<typeof app>>
+        app1: Awaited<ReturnType<TestingAppFactory['send']['create']['bare']>>
+        app2: Awaited<ReturnType<TestingAppFactory['send']['create']['bare']>>
         testAccount: Account
         txns: SendAtomicTransactionComposerResults
       }
     | undefined = undefined
   const appsFixture = async () => {
-    const { algod, generateAccount } = localnet.context
+    const { generateAccount } = localnet.context
     const testAccount = await generateAccount({ initialFunds: (10).algos() })
-    const app1 = await app({ create: true })
-    const app2 = await app({ create: true })
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          app1.app.callAbi({ value: 'test1' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app2.app.callAbi({ value: 'test2' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          (await app({ create: false }, testAccount)).creation.transaction,
-          app1.app.optIn.optIn({}, { sender: testAccount, sendParams: { skipSending: true } }),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+
+    const temp = await app({ create: false, algorand: localnet.algorand, creator: testAccount })
+    await localnet.algorand.send.newGroup().addTransaction(temp).send()
+
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount(), note: 'app1' })
+    const app2 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount(), note: 'app2' })
+    const txns = await localnet.algorand
+      .newGroup()
+      .addAppCallMethodCall(await app1.appClient.params.callAbi({ args: { value: 'test1' }, sender: testAccount.addr }))
+      .addAppCallMethodCall(await app2.appClient.params.callAbi({ args: { value: 'test2' }, sender: testAccount.addr }))
+      .addTransaction(await app({ create: false, algorand: localnet.algorand, creator: testAccount }))
+      .addAppCallMethodCall(await app1.appClient.params.optIn.optIn({ sender: testAccount.addr, args: {} }))
+      .send()
 
     appData = {
       app1,
@@ -412,7 +404,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.confirmation!.applicationIndex!),
+          appId: Number(app1.result.confirmation!.applicationIndex!),
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 3)],
       )
@@ -420,7 +412,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr,
-          appId: [Number(app1.creation.confirmation!.applicationIndex!), Number(app2.creation.confirmation!.applicationIndex!)],
+          appId: [Number(app1.result.confirmation!.applicationIndex!), Number(app2.result.confirmation!.applicationIndex!)],
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 3)],
       )

@@ -1,10 +1,9 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import algosdk, { Account, Transaction, TransactionType } from 'algosdk'
+import { Account, Transaction, TransactionType } from 'algosdk'
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { TransactionFilter } from '../../src/types'
-import { TestingAppClient } from '../contract/client'
+import { app } from '../testing-app'
 import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 
 describe('Inner transactions', () => {
@@ -23,7 +22,7 @@ describe('Inner transactions', () => {
 
   const subscribeAndVerifyFilter = async (filter: TransactionFilter, ...result: (SendTransactionResult & { id: string })[]) => {
     // Ensure there is another transaction so algod subscription can process something
-    await SendXTransactions(1, systemAccount, localnet.context.algod)
+    await SendXTransactions(1, systemAccount, localnet.algorand)
     // Wait for indexer to catch up
     await localnet.context.waitForIndexer()
     // Run the subscription twice - once that will pick up using algod and once using indexer
@@ -37,7 +36,7 @@ describe('Inner transactions', () => {
           currentRound: Number(result[result.length - 1].confirmation?.confirmedRound),
           filters: filter,
         },
-        localnet.context.algod,
+        localnet.algorand,
       ),
       GetSubscribedTransactions(
         {
@@ -47,8 +46,7 @@ describe('Inner transactions', () => {
           currentRound: Number(result[result.length - 1].confirmation?.confirmedRound) + 1,
           filters: filter,
         },
-        localnet.context.algod,
-        localnet.context.indexer,
+        localnet.algorand,
       ),
     ])
 
@@ -81,85 +79,31 @@ describe('Inner transactions', () => {
     }
   }
 
-  const createAsset = async (creator?: Account) => {
-    const create = await algokit.sendTransaction(
-      {
-        from: creator ?? systemAccount,
-        transaction: await createAssetTxn(creator ?? systemAccount),
-      },
-      localnet.context.algod,
-    )
-
-    return {
-      assetId: Number(create.confirmation!.assetIndex!),
-      ...create,
-    }
-  }
-
-  const createAssetTxn = async (creator: Account) => {
-    return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-      from: creator ? creator.addr : systemAccount.addr,
-      decimals: 0,
-      total: 100,
-      defaultFrozen: false,
-      suggestedParams: await algokit.getTransactionParams(undefined, localnet.context.algod),
-    })
-  }
-
-  const app = async (config: { create: boolean }, creator?: Account) => {
-    const app = new TestingAppClient(
-      {
-        resolveBy: 'id',
-        id: 0,
-      },
-      localnet.context.algod,
-    )
-    const creation = await app.create.bare({
-      sender: creator ?? systemAccount,
-      sendParams: {
-        skipSending: !config.create,
-      },
-    })
-
-    return {
-      app,
-      creation,
-    }
-  }
-
   test('Is processed alongside normal transaction', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          algokit.transferAlgos(
-            {
-              amount: (100_001).microAlgos(),
-              to: (await app1.app.appClient.getAppReference()).appAddress,
-              from: testAccount,
-              skipSending: true,
-            },
-            algod,
-          ),
-          algokit.transferAlgos(
-            {
-              amount: (1).microAlgos(),
-              to: testAccount,
-              from: testAccount,
-              skipSending: true,
-            },
-            algod,
-          ),
-          app1.app.issueTransferToSender(
-            { amount: 1 },
-            { sender: testAccount, sendParams: { skipSending: true, fee: (2000).microAlgos() } },
-          ),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount })
+
+    const txns = await localnet.algorand
+      .newGroup()
+      .addPayment({
+        amount: (100_001).microAlgos(),
+        receiver: app1.appClient.appAddress,
+        sender: testAccount.addr,
+      })
+      .addPayment({
+        amount: (1).microAlgos(),
+        receiver: testAccount.addr,
+        sender: testAccount.addr,
+      })
+      .addAppCallMethodCall(
+        await app1.appClient.params.issueTransferToSender({
+          args: { amount: 1 },
+          sender: testAccount.addr,
+          staticFee: (2000).microAlgos(),
+        }),
+      )
+      .send()
+
     await subscribeAndVerifyFilter(
       {
         type: TransactionType.pay,

@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Algodv2, Indexer } from 'algosdk'
+import { Account } from 'algosdk'
 import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig } from '../../src/types'
@@ -19,9 +18,8 @@ describe('AlgorandSubscriber', () => {
   })
 
   const getSubscriber = (
-    config: { testAccount: SendTransactionFrom; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: number },
-    algod: Algodv2,
-    indexer?: Indexer,
+    config: { testAccount: Account; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: number },
+    algorand: AlgorandClient,
   ) => {
     let watermark = config.initialWatermark ?? 0
     const subscribedTxns: string[] = []
@@ -33,7 +31,7 @@ describe('AlgorandSubscriber', () => {
           {
             name: 'test-txn',
             filter: {
-              sender: algokit.getSenderAddress(config.testAccount),
+              sender: config.testAccount.addr,
             },
           },
           ...(config.configOverrides?.filters ?? []),
@@ -44,8 +42,8 @@ describe('AlgorandSubscriber', () => {
           (w) => (watermark = w),
         ),
       },
-      algod,
-      indexer,
+      algorand.client.algod,
+      algorand.client.indexer,
     )
     subscriber.on('test-txn', (r) => {
       subscribedTxns.push(r.id)
@@ -58,13 +56,13 @@ describe('AlgorandSubscriber', () => {
   }
 
   test('Subscribes to transactions correctly when controlling polling', async () => {
-    const { algod, testAccount, generateAccount } = localnet.context
-    const { lastTxnRound, txIds } = await SendXTransactions(1, testAccount, algod)
+    const { algorand, testAccount, generateAccount } = localnet.context
+    const { lastTxnRound, txIds } = await SendXTransactions(1, testAccount, algorand)
     const {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,
       getWatermark,
-    } = getSubscriber({ testAccount, initialWatermark: lastTxnRound - 1 }, algod)
+    } = getSubscriber({ testAccount, initialWatermark: lastTxnRound - 1 }, algorand)
 
     // Initial catch up with indexer
     const result = await subscriber.pollOnce()
@@ -79,13 +77,13 @@ describe('AlgorandSubscriber', () => {
     expect(result.subscribedTransactions.map((t) => t.id)).toEqual(txIds)
 
     // Random transaction
-    const { lastTxnRound: lastTxnRound2 } = await SendXTransactions(1, await generateAccount({ initialFunds: (3).algos() }), algod)
+    const { lastTxnRound: lastTxnRound2 } = await SendXTransactions(1, await generateAccount({ initialFunds: (3).algos() }), algorand)
     await subscriber.pollOnce()
     expect(subscribedTxns.length).toBe(1)
     expect(getWatermark()).toBeGreaterThanOrEqual(lastTxnRound2)
 
     // Another subscribed transaction
-    const { lastTxnRound: lastTxnRound3, txIds: txIds3 } = await SendXTransactions(1, testAccount, algod)
+    const { lastTxnRound: lastTxnRound3, txIds: txIds3 } = await SendXTransactions(1, testAccount, algorand)
     await subscriber.pollOnce()
     expect(subscribedTxns.length).toBe(2)
     expect(subscribedTxns[1]).toBe(txIds3[0])
@@ -93,16 +91,16 @@ describe('AlgorandSubscriber', () => {
   })
 
   test('Subscribes to transactions with multiple filters correctly', async () => {
-    const { algod, testAccount, generateAccount } = localnet.context
+    const { algorand, testAccount, generateAccount } = localnet.context
     const randomAccount = await generateAccount({ initialFunds: (3).algos() })
     const senders = [await generateAccount({ initialFunds: (5).algos() }), await generateAccount({ initialFunds: (5).algos() })]
     const sender1TxnIds: string[] = []
     let sender1TxnIdsfromBatch: string[] = []
     const sender2Rounds: number[] = []
     let sender2RoundsfromBatch: number[] = []
-    const { lastTxnRound: firstTxnRound, txIds } = await SendXTransactions(1, testAccount, algod)
-    const { txIds: txIds1 } = await SendXTransactions(2, senders[0], algod)
-    const { lastTxnRound, txIds: txIds2, txns: txns2 } = await SendXTransactions(2, senders[1], algod)
+    const { lastTxnRound: firstTxnRound, txIds } = await SendXTransactions(1, testAccount, algorand)
+    const { txIds: txIds1 } = await SendXTransactions(2, senders[0], algorand)
+    const { lastTxnRound, txIds: txIds2, txns: txns2 } = await SendXTransactions(2, senders[1], algorand)
     const { subscriber, getWatermark } = getSubscriber(
       {
         testAccount,
@@ -113,21 +111,21 @@ describe('AlgorandSubscriber', () => {
             {
               name: 'sender1',
               filter: {
-                sender: algokit.getSenderAddress(senders[0]),
+                sender: senders[0].addr,
               },
               mapper: (txs) => Promise.resolve(txs.map((t) => t.id)),
             },
             {
               name: 'sender2',
               filter: {
-                sender: algokit.getSenderAddress(senders[1]),
+                sender: senders[1].addr,
               },
               mapper: (txs) => Promise.resolve(txs.map((t) => t['confirmed-round']!)),
             },
           ],
         },
       },
-      algod,
+      algorand,
     )
     subscriber.onBatch<string>('sender1', (r) => {
       sender1TxnIdsfromBatch = r
@@ -168,15 +166,15 @@ describe('AlgorandSubscriber', () => {
     expect(sender2RoundsfromBatch).toEqual(sender2Rounds)
 
     // Random transaction
-    const { lastTxnRound: lastTxnRound2 } = await SendXTransactions(1, randomAccount, algod)
+    const { lastTxnRound: lastTxnRound2 } = await SendXTransactions(1, randomAccount, algorand)
     const result2 = await subscriber.pollOnce()
     expect(result2.subscribedTransactions.length).toBe(0)
     expect(getWatermark()).toBeGreaterThanOrEqual(lastTxnRound2)
 
     // More subscribed transactions
-    const { txIds: txIds3 } = await SendXTransactions(1, testAccount, algod)
-    const { txIds: txIds13 } = await SendXTransactions(2, senders[0], algod)
-    const { lastTxnRound: lastSubscribedRound3, txIds: txIds23, txns: txns23 } = await SendXTransactions(2, senders[1], algod)
+    const { txIds: txIds3 } = await SendXTransactions(1, testAccount, algorand)
+    const { txIds: txIds13 } = await SendXTransactions(2, senders[0], algorand)
+    const { lastTxnRound: lastSubscribedRound3, txIds: txIds23, txns: txns23 } = await SendXTransactions(2, senders[1], algorand)
 
     const result3 = await subscriber.pollOnce()
     console.log(
@@ -206,15 +204,15 @@ describe('AlgorandSubscriber', () => {
   })
 
   test('Subscribes to transactions at regular intervals when started and can be stopped', async () => {
-    const { algod, testAccount } = localnet.context
-    const { lastTxnRound, txIds } = await SendXTransactions(1, testAccount, algod)
+    const { algorand, testAccount } = localnet.context
+    const { lastTxnRound, txIds } = await SendXTransactions(1, testAccount, algorand)
     const {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,
       getWatermark,
     } = getSubscriber(
       { testAccount, configOverrides: { maxRoundsToSync: 1, frequencyInSeconds: 0.1 }, initialWatermark: lastTxnRound - 1 },
-      algod,
+      algorand,
     )
     const roundsSynced: number[] = []
 
@@ -241,8 +239,8 @@ describe('AlgorandSubscriber', () => {
   })
 
   test('Waits until transaction appears by default when started', async () => {
-    const { algod, testAccount } = localnet.context
-    const currentRound = (await algod.status().do())['last-round'] as number
+    const { algorand, testAccount } = localnet.context
+    const currentRound = (await algorand.client.algod.status().do())['last-round'] as number
     const {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,
@@ -254,7 +252,7 @@ describe('AlgorandSubscriber', () => {
         configOverrides: { frequencyInSeconds: 10, waitForBlockWhenAtTip: true, syncBehaviour: 'sync-oldest' },
         initialWatermark: currentRound - 1,
       },
-      algod,
+      algorand,
     )
     const roundsSynced: number[] = []
 
@@ -266,7 +264,7 @@ describe('AlgorandSubscriber', () => {
 
     console.log('Issuing transaction')
     const pollCountBeforeIssuing = roundsSynced.length
-    const { lastTxnRound, txIds } = await SendXTransactions(1, testAccount, algod)
+    const { lastTxnRound, txIds } = await SendXTransactions(1, testAccount, algorand)
 
     console.log(`Waiting for up to 2s for round ${lastTxnRound} to get processed`)
     await waitFor(() => subscribedTxns.length === 1, 5000)
@@ -284,16 +282,16 @@ describe('AlgorandSubscriber', () => {
   })
 
   test('Correctly fires various on* methods', async () => {
-    const { algod, testAccount, generateAccount } = localnet.context
+    const { algorand, testAccount, generateAccount } = localnet.context
     const randomAccount = await generateAccount({ initialFunds: (3).algos() })
-    const { txns, txIds } = await SendXTransactions(2, testAccount, algod)
-    const { txIds: txIds2 } = await SendXTransactions(2, randomAccount, algod)
+    const { txns, txIds } = await SendXTransactions(2, testAccount, algorand)
+    const { txIds: txIds2 } = await SendXTransactions(2, randomAccount, algorand)
     const initialWatermark = Number(txns[0].confirmation!.confirmedRound!) - 1
     const eventsEmitted: string[] = []
     let pollComplete = false
     const { subscriber } = getSubscriber(
       {
-        testAccount: algokit.randomAccount(),
+        testAccount: localnet.algorand.account.random().account,
         initialWatermark,
         configOverrides: {
           maxRoundsToSync: 100,
@@ -303,19 +301,19 @@ describe('AlgorandSubscriber', () => {
             {
               name: 'account1',
               filter: {
-                sender: algokit.getSenderAddress(testAccount),
+                sender: testAccount.addr,
               },
             },
             {
               name: 'account2',
               filter: {
-                sender: algokit.getSenderAddress(randomAccount),
+                sender: randomAccount.addr,
               },
             },
           ],
         },
       },
-      algod,
+      algorand,
     )
     subscriber
       .onBatch('account1', (b) => {
@@ -361,15 +359,15 @@ describe('AlgorandSubscriber', () => {
   })
 
   test('Correctly fires onError method', async () => {
-    const { algod, testAccount } = localnet.context
-    const { txns } = await SendXTransactions(2, testAccount, algod)
+    const { algorand, testAccount } = localnet.context
+    const { txns } = await SendXTransactions(2, testAccount, algorand)
     const initialWatermark = Number(txns[0].confirmation!.confirmedRound!) - 1
     let complete = false
     let actualError = undefined
     const expectedError = new Error('BOOM')
     const { subscriber } = getSubscriber(
       {
-        testAccount: algokit.randomAccount(),
+        testAccount: localnet.algorand.account.random().account,
         initialWatermark,
         configOverrides: {
           maxRoundsToSync: 100,
@@ -379,13 +377,13 @@ describe('AlgorandSubscriber', () => {
             {
               name: 'account1',
               filter: {
-                sender: algokit.getSenderAddress(testAccount),
+                sender: testAccount.addr,
               },
             },
           ],
         },
       },
-      algod,
+      algorand,
     )
 
     subscriber

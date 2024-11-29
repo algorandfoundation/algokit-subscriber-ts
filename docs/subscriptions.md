@@ -340,7 +340,8 @@ If you ran the following code on a cron schedule of (say) every 5 seconds it wou
 it would drop old records and restart notifications from the new tip.
 
 ```typescript
-const algod = await algokit.getAlgoClient()
+const algorand = AlgorandClient.defaultLocalNet()
+
 // You would need to implement getLastWatermark() to retrieve from a persistence store
 const watermark = await getLastWatermark()
 const subscription = await getSubscribedTransactions(
@@ -357,7 +358,7 @@ const subscription = await getSubscribedTransactions(
     maxRoundsToSync: 100,
     onMaxRounds: 'skip-sync-newest',
   },
-  algod,
+  algorand.client.algod,
 )
 if (transactions.subscribedTransactions.length > 0) {
   // You would need to implement notifyTransactions to action the transactions
@@ -373,7 +374,7 @@ If you ran the following code on a cron schedule of (say) every 5 seconds it wou
 it would pick up where it left off and catch up using algod (note: you need to connect it to a archival node).
 
 ```typescript
-const algod = await algokit.getAlgoClient()
+const algorand = AlgorandClient.defaultLocalNet()
 // You would need to implement getLastWatermark() to retrieve from a persistence store
 const watermark = await getLastWatermark()
 const subscription = await getSubscribedTransactions(
@@ -390,7 +391,7 @@ const subscription = await getSubscribedTransactions(
     maxRoundsToSync: 100,
     onMaxRounds: 'sync-oldest-start-now',
   },
-  algod,
+  algorand.client.algod,
 )
 if (transactions.subscribedTransactions.length > 0) {
   // You would need to implement notifyTransactions to action the transactions
@@ -405,8 +406,7 @@ await saveWatermark(transactions.newWatermark)
 If you ran the following code on a cron schedule of (say) every 30 - 60 seconds it would create a cached index of all assets created by the account (in this case the Data History Museum TestNet account `ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU`). Given it uses indexer to catch up you can deploy this into a fresh environment with an empty database and it will catch up in seconds rather than days.
 
 ```typescript
-const algod = await algokit.getAlgoClient()
-const indexer = await algokit.getAlgoIndexerClient()
+const algorand = AlgorandClient.defaultLocalNet()
 // You would need to implement getLastWatermark() to retrieve from a persistence store
 const watermark = await getLastWatermark()
 const subscription = await getSubscribedTransactions(
@@ -425,8 +425,8 @@ const subscription = await getSubscribedTransactions(
     maxRoundsToSync: 1000,
     onMaxRounds: 'catchup-with-indexer',
   },
-  algod,
-  indexer,
+  algorand.client.algod,
+  algorand.client.indexer,
 )
 
 if (transactions.subscribedTransactions.length > 0) {
