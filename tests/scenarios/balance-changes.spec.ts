@@ -1,5 +1,5 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
-import algosdk, { SuggestedParams } from 'algosdk'
+import { microAlgo } from '@algorandfoundation/algokit-utils'
+import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
 import invariant from 'tiny-invariant'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { BalanceChangeRole } from '../../src/types'
@@ -20,77 +20,63 @@ describe('Subscribing to calls that effect balance changes', () => {
   beforeAll(hooks.beforeAll, 10_000)
   beforeEach(hooks.beforeEach, 10_000)
   afterEach(hooks.afterEach)
-  const acfgCreate = (params: SuggestedParams, from: string, fee: number, total?: bigint | number) => {
-    params.fee = fee
-    params.flatFee = true
-    return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-      suggestedParams: params,
-      from,
+  const acfgCreate = (sender: string, fee: AlgoAmount, total?: bigint) => {
+    return localnet.algorand.createTransaction.assetCreate({
+      sender,
       decimals: 0,
-      total: total ?? 100,
+      total: total ?? 100n,
       defaultFrozen: false,
-      clawback: from,
-      manager: from,
+      clawback: sender,
+      manager: sender,
+      staticFee: fee,
     })
   }
 
-  const acfgDestroy = (params: SuggestedParams, from: string, fee: number, assetIndex: number) => {
-    params.fee = fee
-    params.flatFee = true
-    return algosdk.makeAssetDestroyTxnWithSuggestedParamsFromObject({
-      suggestedParams: params,
-      from,
-      assetIndex,
+  const acfgDestroy = (sender: string, fee: AlgoAmount, assetId: bigint) => {
+    return localnet.algorand.createTransaction.assetDestroy({
+      sender,
+      assetId,
+      staticFee: fee,
     })
   }
 
-  const pay = (params: SuggestedParams, amount: number, from: string, to: string, fee: number, closeRemainderTo?: string) => {
-    params.fee = fee
-    params.flatFee = true
-    return algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-      suggestedParams: params,
+  const pay = (amount: AlgoAmount, sender: string, receiver: string, fee: AlgoAmount, closeRemainderTo?: string) => {
+    return localnet.algorand.createTransaction.payment({
       amount,
-      from,
-      to,
+      sender,
+      receiver,
       closeRemainderTo,
+      staticFee: fee,
     })
   }
 
   const axfer = (
-    params: SuggestedParams,
-    assetId: number | bigint,
-    amount: number | bigint,
-    from: string,
-    to: string,
-    revocationTarget?: string,
-    closeRemainderTo?: string,
+    assetId: bigint,
+    amount: bigint,
+    sender: string,
+    receiver: string,
+    fee: AlgoAmount,
+    clawbackTarget?: string,
+    closeAssetTo?: string,
   ) => {
-    return algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-      suggestedParams: params,
+    return localnet.algorand.createTransaction.assetTransfer({
       amount,
-      from,
-      to,
-      closeRemainderTo,
-      assetIndex: Number(assetId),
-      revocationTarget,
+      sender,
+      receiver,
+      closeAssetTo,
+      assetId,
+      clawbackTarget,
+      staticFee: fee,
     })
   }
 
   test('Works for asset create transactions', async () => {
     // Assets are always minted into the creator/sender account, even if a reserve address is supplied
-    const { testAccount, algod } = localnet.context
-    const params = await algokit.getTransactionParams(undefined, algod)
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          {
-            signer: testAccount,
-            transaction: acfgCreate(params, testAccount.addr, 2000, 100_000_000),
-          },
-        ],
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const txns = await localnet.algorand
+      .newGroup()
+      .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 100_000_000n))
+      .send()
     const asset = txns.confirmations![0].assetIndex!
 
     const subscription = await subscribeAndVerify(
@@ -120,32 +106,17 @@ describe('Subscribing to calls that effect balance changes', () => {
   })
 
   test('Works for asset destroy transactions', async () => {
-    const { testAccount, algod } = localnet.context
-    const params = await algokit.getTransactionParams(undefined, algod)
-    const createAssetTxns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          {
-            signer: testAccount,
-            transaction: acfgCreate(params, testAccount.addr, 2000, 100_000_000),
-          },
-        ],
-      },
-      algod,
-    )
-    const asset = createAssetTxns.confirmations![0].assetIndex!
+    const { testAccount } = localnet.context
+    const createAssetTxns = await localnet.algorand
+      .newGroup()
+      .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 100_000_000n))
+      .send()
+    const asset = BigInt(createAssetTxns.confirmations![0].assetIndex!)
 
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          {
-            signer: testAccount,
-            transaction: acfgDestroy(params, testAccount.addr, 2000, Number(asset)),
-          },
-        ],
-      },
-      algod,
-    )
+    const txns = await localnet.algorand
+      .newGroup()
+      .addTransaction(await acfgDestroy(testAccount.addr, microAlgo(2000), asset))
+      .send()
 
     const subscription = await subscribeAndVerify(
       {
@@ -170,46 +141,28 @@ describe('Subscribing to calls that effect balance changes', () => {
     expect(transaction.balanceChanges[1].address).toBe(testAccount.addr)
     expect(transaction.balanceChanges[1].amount).toBe(0n)
     expect(transaction.balanceChanges[1].roles).toEqual([BalanceChangeRole.AssetDestroyer])
-    expect(transaction.balanceChanges[1].assetId).toBe(asset)
+    expect(transaction.balanceChanges[1].assetId).toBe(Number(asset))
   })
 
   test('Works for > 53-bit totals', async () => {
-    const { testAccount, algod, generateAccount } = localnet.context
-    const params = await algokit.getTransactionParams(undefined, algod)
+    const { testAccount, generateAccount } = localnet.context
     const random = await generateAccount({ initialFunds: (1).algos() })
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          {
-            signer: testAccount,
-            transaction: acfgCreate(params, testAccount.addr, 2000, 135_640_597_783_270_612n), // this is > Number.MAX_SAFE_INTEGER
-          },
-        ],
-      },
-      algod,
-    )
-    const asset = txns.confirmations![0].assetIndex!
-    const axferTxns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          {
-            signer: random,
-            transaction: axfer(params, asset, 0, random.addr, random.addr), // Opt-in
-          },
-          {
-            signer: testAccount,
-            transaction: axfer(params, asset, 134_640_597_783_270_612n, testAccount.addr, random.addr), // this is > Number.MAX_SAFE_INTEGER
-          },
-        ],
-      },
-      algod,
-    )
+    const txns = await localnet.algorand
+      .newGroup()
+      .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 135_640_597_783_270_612n)) // this is > Number.MAX_SAFE_INTEGER
+      .send()
+    const asset = BigInt(txns.confirmations![0].assetIndex!)
+    const axferTxns = await localnet.algorand
+      .newGroup()
+      .addTransaction(await axfer(asset, 0n, random.addr, random.addr, microAlgo(2000))) // Opt-in
+      .addTransaction(await axfer(asset, 134_640_597_783_270_612n, testAccount.addr, random.addr, microAlgo(2000))) // this is > Number.MAX_SAFE_INTEGER
+      .send()
 
     const subscription = await subscribeAndVerifyFilter(
       {
         balanceChanges: [
           {
-            assetId: [Number(asset)],
+            assetId: [asset],
             address: testAccount.addr,
             role: [BalanceChangeRole.Sender],
             minAbsoluteAmount: 134_640_597_783_270_612n,
@@ -223,7 +176,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       subscription.algod.subscribedTransactions[0].balanceChanges?.map((b) => ({
         ...b,
         address: b.address === testAccount.addr ? 'testAccount' : b.address === random.addr ? 'random' : b.address,
-        assetId: b.assetId === 0 ? 0 : b.assetId === asset ? 'ASSET' : b.assetId,
+        assetId: b.assetId === 0 ? 0 : b.assetId === Number(asset) ? 'ASSET' : b.assetId,
       })),
     ).toMatchInlineSnapshot(`
       [
@@ -257,7 +210,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       subscription.indexer.subscribedTransactions[0].balanceChanges?.map((b) => ({
         ...b,
         address: b.address === testAccount.addr ? 'testAccount' : b.address === random.addr ? 'random' : b.address,
-        assetId: b.assetId === 0 ? 0 : b.assetId === asset ? 'ASSET' : b.assetId,
+        assetId: b.assetId === 0 ? 0 : b.assetId === Number(asset) ? 'ASSET' : b.assetId,
       })),
     ).toMatchInlineSnapshot(`
       [
@@ -290,32 +243,15 @@ describe('Subscribing to calls that effect balance changes', () => {
   })
 
   test('Works with balance change filter on fee algos', async () => {
-    const { testAccount, algod, generateAccount } = localnet.context
+    const { testAccount, generateAccount } = localnet.context
     const randomAccount = await generateAccount({ initialFunds: (1).algos() })
-    const params = await algokit.getTransactionParams(undefined, algod)
-    const txns = await algokit.sendGroupOfTransactions(
-      {
-        transactions: [
-          {
-            signer: randomAccount,
-            transaction: acfgCreate(params, randomAccount.addr, 3000),
-          },
-          {
-            signer: testAccount,
-            transaction: acfgCreate(params, testAccount.addr, 1000),
-          },
-          {
-            signer: testAccount,
-            transaction: acfgCreate(params, testAccount.addr, 3000),
-          },
-          {
-            signer: testAccount,
-            transaction: acfgCreate(params, testAccount.addr, 5000),
-          },
-        ],
-      },
-      algod,
-    )
+    const txns = await localnet.algorand
+      .newGroup()
+      .addTransaction(await acfgCreate(randomAccount.addr, microAlgo(3000)))
+      .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1000)))
+      .addTransaction(await acfgCreate(testAccount.addr, microAlgo(3000)))
+      .addTransaction(await acfgCreate(testAccount.addr, microAlgo(5000)))
+      .send()
 
     await subscribeAndVerifyFilter(
       {
@@ -337,7 +273,7 @@ describe('Subscribing to calls that effect balance changes', () => {
 
   test('Works with various balance change filters on algo transfer', async () => {
     try {
-      const { algod, generateAccount } = localnet.context
+      const { generateAccount } = localnet.context
       const account = await generateAccount({ initialFunds: (200_000).microAlgos() })
       const account2 = await generateAccount({ initialFunds: (200_000).microAlgos() })
       const account3 = await generateAccount({ initialFunds: (200_000).microAlgos() })
@@ -346,33 +282,20 @@ describe('Subscribing to calls that effect balance changes', () => {
         [account2.addr]: 'account2',
         [account3.addr]: 'account3',
       }
-      const params = await algokit.getTransactionParams(undefined, algod)
-      const txns = await algokit.sendGroupOfTransactions(
-        {
-          transactions: [
-            pay(params, 1000, account.addr, account2.addr, 1000), // 0: account -2000, account2 +1000
-            pay(params, 1000, account2.addr, account.addr, 1000), // 1: account +1000, account2 -2000
-            pay(params, 2000, account.addr, account2.addr, 1000), // 2: account -3000, account2 +2000
-            pay(params, 2000, account2.addr, account.addr, 1000), // 3: account +2000, account2 -3000
-            pay(params, 3000, account.addr, account2.addr, 1000), // 4: account -4000, account2 +3000
-            pay(params, 3000, account2.addr, account.addr, 1000), // 5: account +3000, account2 -4000
-            // account 197k, account2 197k, account3 200k
-            pay(params, 100_000, account.addr, account2.addr, 1000, account3.addr), // 6: account -197k, account2 +100k, account3 +96k
-            pay(params, 100_000, account2.addr, account.addr, 1000, account.addr), // 7: account +296k, account2 -297k
-            pay(params, 100_000, account3.addr, account2.addr, 2000, account.addr), // 8: account +194k, account2 +100k, account3 -296k
-            pay(params, 0, account.addr, account.addr, 0), // 9: account 0 (fee covered by previous)
-          ].map((transaction) => ({
-            signer:
-              algosdk.encodeAddress(transaction.from.publicKey) === account.addr
-                ? account
-                : algosdk.encodeAddress(transaction.from.publicKey) === account2.addr
-                  ? account2
-                  : account3,
-            transaction,
-          })),
-        },
-        algod,
-      )
+      const txns = await localnet.algorand
+        .newGroup()
+        .addTransaction(await pay(microAlgo(1000), account.addr, account2.addr, microAlgo(1000))) // 0: account -2000, account2 +1000
+        .addTransaction(await pay(microAlgo(1000), account2.addr, account.addr, microAlgo(1000))) // 1: account +1000, account2 -2000
+        .addTransaction(await pay(microAlgo(2000), account.addr, account2.addr, microAlgo(1000))) // 2: account -3000, account2 +2000
+        .addTransaction(await pay(microAlgo(2000), account2.addr, account.addr, microAlgo(1000))) // 3: account +2000, account2 -3000
+        .addTransaction(await pay(microAlgo(3000), account.addr, account2.addr, microAlgo(1000))) // 4: account -4000, account2 +3000
+        .addTransaction(await pay(microAlgo(3000), account2.addr, account.addr, microAlgo(1000))) // 5: account +3000, account2 -4000
+        // account 197k, account2 197k, account3 200k
+        .addTransaction(await pay(microAlgo(100_000), account.addr, account2.addr, microAlgo(1000), account3.addr)) // 6: account -197k, account2 +100k, account3 +96k
+        .addTransaction(await pay(microAlgo(100_000), account2.addr, account.addr, microAlgo(1000), account.addr)) // 7: account +296k, account2 -297k
+        .addTransaction(await pay(microAlgo(100_000), account3.addr, account2.addr, microAlgo(2000), account.addr)) // 8: account +194k, account2 +100k, account3 -296k
+        .addTransaction(await pay(microAlgo(0), account.addr, account.addr, microAlgo(0))) // 9: account 0 (fee covered by previous)
+        .send()
 
       await subscribeAndVerifyFilter(
         {
@@ -625,32 +548,27 @@ describe('Subscribing to calls that effect balance changes', () => {
 
   test('Works with various balance change filters on asset transfer', async () => {
     try {
-      const { algod, generateAccount, testAccount } = localnet.context
+      const { algorand, generateAccount, testAccount } = localnet.context
       const account = await generateAccount({ initialFunds: (1).algos() })
       const account2 = await generateAccount({ initialFunds: (1).algos() })
       const account3 = await generateAccount({ initialFunds: (1).algos() })
-      const params = await algokit.getTransactionParams(undefined, algod)
-      const asset1 = Number(
+
+      const asset1 = BigInt(
         (
-          await algokit.sendTransaction(
-            {
-              transaction: acfgCreate(params, testAccount.addr, 1000),
-              from: testAccount,
-            },
-            algod,
-          )
-        ).confirmation!.assetIndex!,
+          await algorand
+            .newGroup()
+            .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1000)))
+            .send()
+        ).confirmations![0].assetIndex!,
       )
-      const asset2 = Number(
+
+      const asset2 = BigInt(
         (
-          await algokit.sendTransaction(
-            {
-              transaction: acfgCreate(params, testAccount.addr, 1001),
-              from: testAccount,
-            },
-            algod,
-          )
-        ).confirmation!.assetIndex!,
+          await algorand
+            .newGroup()
+            .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1001)))
+            .send()
+        ).confirmations![0].assetIndex!,
       )
       // eslint-disable-next-line no-console
       console.log('accounts', [testAccount.addr, account.addr, account2.addr, account3.addr], 'assets', [asset1, asset2])
@@ -661,52 +579,48 @@ describe('Subscribing to calls that effect balance changes', () => {
         [account3.addr]: 'account3',
       }
       const asset = {
-        [asset1]: 'asset1',
-        [asset2]: 'asset2',
+        [asset1.toString()]: 'asset1',
+        [asset2.toString()]: 'asset2',
       }
-      await algokit.assetOptIn({ account: account, assetId: asset1 }, algod)
-      await algokit.assetOptIn({ account: account2, assetId: asset1 }, algod)
-      await algokit.assetOptIn({ account: account3, assetId: asset1 }, algod)
-      await algokit.assetOptIn({ account: account, assetId: asset2 }, algod)
-      await algokit.assetOptIn({ account: account2, assetId: asset2 }, algod)
-      await algokit.assetOptIn({ account: account3, assetId: asset2 }, algod)
-      await algokit.transferAsset({ amount: 10, from: testAccount, to: account, assetId: asset1 }, algod)
-      await algokit.transferAsset({ amount: 10, from: testAccount, to: account2, assetId: asset1 }, algod)
-      await algokit.transferAsset({ amount: 20, from: testAccount, to: account3, assetId: asset1 }, algod)
-      await algokit.transferAsset({ amount: 10, from: testAccount, to: account, assetId: asset2 }, algod)
-      await algokit.transferAsset({ amount: 23, from: testAccount, to: account2, assetId: asset2 }, algod)
+
+      await algorand.send.assetOptIn({ sender: account.addr, assetId: asset1 })
+      await algorand.send.assetOptIn({ sender: account2.addr, assetId: asset1 })
+      await algorand.send.assetOptIn({ sender: account3.addr, assetId: asset1 })
+      await algorand.send.assetOptIn({ sender: account.addr, assetId: asset2 })
+      await algorand.send.assetOptIn({ sender: account2.addr, assetId: asset2 })
+      await algorand.send.assetOptIn({ sender: account3.addr, assetId: asset2 })
+      await algorand.send.assetTransfer({ amount: 10n, sender: testAccount.addr, receiver: account.addr, assetId: asset1 })
+      await algorand.send.assetTransfer({ amount: 10n, sender: testAccount.addr, receiver: account2.addr, assetId: asset1 })
+      await algorand.send.assetTransfer({ amount: 20n, sender: testAccount.addr, receiver: account3.addr, assetId: asset1 })
+      await algorand.send.assetTransfer({ amount: 10n, sender: testAccount.addr, receiver: account.addr, assetId: asset2 })
+      await algorand.send.assetTransfer({ amount: 23n, sender: testAccount.addr, receiver: account2.addr, assetId: asset2 })
+
       // a1: account 10, account2 10, account3 0
       // a2: account 10, account2 10, account3 0
-      const txns = await algokit.sendGroupOfTransactions(
-        {
-          transactions: [
-            axfer(params, asset1, 1, account.addr, account2.addr), // 0: a1: account -1, account2 +1
-            axfer(params, asset1, 1, account2.addr, account.addr), // 1: a1: account +1, account2 -1
-            axfer(params, asset1, 2, account.addr, account2.addr), // 2: a1: account -2, account2 +2
-            axfer(params, asset1, 2, account2.addr, account.addr), // 3: a1: account +2, account2 -2
-            axfer(params, asset1, 3, testAccount.addr, account2.addr, account.addr), // 4: a1: account -3, account2 +3 (clawback)
-            axfer(params, asset1, 3, testAccount.addr, account.addr, account2.addr), // 5: a1: account +3, account2 -3 (clawback)
-            axfer(params, asset1, 7, account.addr, account2.addr, undefined, account3.addr), // 6: a1: account -10, account2 +7, account3 +3
-            (await algokit.assetOptIn({ account: account, assetId: asset1, skipSending: true }, algod)).transaction, // 7: Opt-in account to asset1 again
-            axfer(params, asset1, 7, account2.addr, account.addr, undefined, account.addr), // 8: a1: account +17, account2 -17
-            (await algokit.assetOptIn({ account: account2, assetId: asset1, skipSending: true }, algod)).transaction, // 9: Opt-in account2 to asset1 again
-            axfer(params, asset1, 3, account3.addr, account2.addr, undefined, account.addr), // 10: a1: account +20, account2 +3, account3 -23
-            axfer(params, asset2, 1, account.addr, account2.addr), // 11: a2: account -1, account2 +1
-            axfer(params, asset2, 23, account2.addr, account.addr), // 12: a2: account +23, account2 -23
-          ].map((transaction) => ({
-            signer:
-              algosdk.encodeAddress(transaction.from.publicKey) === account.addr
-                ? account
-                : algosdk.encodeAddress(transaction.from.publicKey) === account2.addr
-                  ? account2
-                  : algosdk.encodeAddress(transaction.from.publicKey) === testAccount.addr
-                    ? testAccount
-                    : account3,
-            transaction,
-          })),
-        },
-        algod,
-      )
+      const txns = await algorand
+        .newGroup()
+        .addTransaction(await axfer(asset1, 1n, account.addr, account2.addr, microAlgo(2000))) // 0: a1: account -1, account2 +1
+        .addTransaction(await axfer(asset1, 1n, account2.addr, account.addr, microAlgo(2000))) // 1: a1: account +1, account2 -1
+        .addTransaction(await axfer(asset1, 2n, account.addr, account2.addr, microAlgo(2000))) // 2: a1: account -2, account2 +2
+        .addTransaction(await axfer(asset1, 2n, account2.addr, account.addr, microAlgo(2000))) // 3: a1: account +2, account2 -2
+        .addTransaction(await axfer(asset1, 3n, testAccount.addr, account2.addr, microAlgo(2000), account.addr)) // 4: a1: account -3, account2 +3 (clawback)
+        .addTransaction(await axfer(asset1, 3n, testAccount.addr, account.addr, microAlgo(2000), account2.addr)) // 5: a1: account +3, account2 -3 (clawback)
+        .addTransaction(await axfer(asset1, 7n, account.addr, account2.addr, microAlgo(2000), undefined, account3.addr)) // 6: a1: account -10, account2 +7, account3 +3
+        .addAssetOptIn({
+          // 7: Opt-in account to asset1 again
+          sender: account.addr,
+          assetId: asset1,
+        })
+        .addTransaction(await axfer(asset1, 7n, account2.addr, account.addr, microAlgo(2000), undefined, account.addr)) // 8: a1: account +17, account2 -17
+        .addAssetOptIn({
+          // 9: Opt-in account2 to asset1 again
+          sender: account2.addr,
+          assetId: asset1,
+        })
+        .addTransaction(await axfer(asset1, 3n, account3.addr, account2.addr, microAlgo(2000), undefined, account.addr)) // 10: a1: account +20, account2 +3, account3 -23
+        .addTransaction(await axfer(asset2, 1n, account.addr, account2.addr, microAlgo(2000))) // 11: a2: account -1, account2 +1
+        .addTransaction(await axfer(asset2, 23n, account2.addr, account.addr, microAlgo(2000))) // 12: a2: account +23, account2 -23
+        .send()
 
       await subscribeAndVerifyFilter(
         {
@@ -895,7 +809,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           .map((b) => ({
             ...b,
             address: address[b.address],
-            assetId: asset[b.assetId],
+            assetId: asset[b.assetId.toString()],
           }))
           .sort((a, b) => a.address.localeCompare(b.address))
           .map((b) => `${b.address}: ${Number(b.amount)} x ${b.assetId} (${b.roles.join(', ')})`),

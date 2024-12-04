@@ -1,6 +1,6 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { Prisma, PrismaClient } from '@prisma/client'
-import algosdk, { ABIValue } from 'algosdk'
+import algosdk from 'algosdk'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
@@ -18,7 +18,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 
 const prisma = new PrismaClient()
 
-const votingRoundId = 1821334702 // Grab from https://voting.algorand.foundation/
+const votingRoundId = 1821334702n // Grab from https://voting.algorand.foundation/
 const watermarkId = `voting-${votingRoundId}`
 
 async function getXGovSubscriber() {
@@ -26,9 +26,9 @@ async function getXGovSubscriber() {
 
   // Get voting round metadata
   const appClient = algorand.client.getTypedAppClientById(VotingRoundAppClient, {
-    id: votingRoundId,
+    appId: votingRoundId,
   })
-  const votingRoundState = await appClient.getGlobalState()
+  const votingRoundState = await appClient.state.global.getAll()
   const votingRoundMetadata = (await (
     await fetch(`https://ipfs.algonode.xyz/ipfs/${votingRoundState.metadataIpfsCid!.asString()}`)
   ).json()) as VotingRoundMetadata
@@ -147,7 +147,7 @@ async function getXGovSubscriber() {
           data: poll.subscribedTransactions.flatMap((t) => {
             return answerArrayType
               .decode(Buffer.from(t!['application-transaction']!['application-args']![answerAppArgsIndex], 'base64'))
-              .map((v: ABIValue, i: number) => {
+              .map((v: algosdk.ABIValue, i: number) => {
                 if (!useWeighting) {
                   const questionIndex = i
                   const answerIndex = parseInt(v.toString())

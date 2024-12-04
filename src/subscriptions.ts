@@ -1,6 +1,5 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { Config, searchTransactions } from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-
 import algosdk from 'algosdk'
 import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import { Buffer } from 'buffer'
@@ -139,7 +138,7 @@ export async function getSubscribedTransactions(
           algodSyncFromRoundNumber = indexerSyncToRoundNumber + 1
         }
 
-        algokit.Config.logger.debug(
+        Config.logger.debug(
           `Catching up from round ${startRound} to round ${indexerSyncToRoundNumber} via indexer; this may take a few seconds`,
         )
 
@@ -151,7 +150,7 @@ export async function getSubscribedTransactions(
                 // For each filter
                 chunkedFilters.map(async (f) =>
                   // Retrieve all pre-filtered transactions from the indexer
-                  (await algokit.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
+                  (await searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
                     // Re-run the pre-filter in-memory so we properly extract inner transactions
                     .flatMap((t) => getFilteredIndexerTransactions(t, f))
                     // Run the post-filter so we get the final list of matching transactions
@@ -170,7 +169,7 @@ export async function getSubscribedTransactions(
           // Collapse duplicate transactions
           .reduce(deduplicateSubscribedTransactionsReducer, [] as SubscribedTransaction[])
 
-        algokit.Config.logger.debug(
+        Config.logger.debug(
           `Retrieved ${catchupTransactions.length} transactions from round ${startRound} to round ${
             algodSyncFromRoundNumber - 1
           } via indexer in ${(+new Date() - start) / 1000}s`,
@@ -198,15 +197,13 @@ export async function getSubscribedTransactions(
 
     blockMetadata = blocks.map((b) => blockDataToBlockMetadata(b))
 
-    algokit.Config.logger.debug(
+    Config.logger.debug(
       `Retrieved ${blockTransactions.length} transactions from algod via round(s) ${algodSyncFromRoundNumber}-${endRound} in ${
         (+new Date() - start) / 1000
       }s`,
     )
   } else {
-    algokit.Config.logger.debug(
-      `Skipping algod sync since we have more than ${subscription.maxIndexerRoundsToSync} rounds to sync from indexer.`,
-    )
+    Config.logger.debug(`Skipping algod sync since we have more than ${subscription.maxIndexerRoundsToSync} rounds to sync from indexer.`)
   }
 
   return {
@@ -434,10 +431,10 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Transact
     if (subscription.assetId) {
       if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
         result &&=
-          t['created-asset-index'] === subscription.assetId ||
-          (!!t['asset-config-transaction'] && t['asset-config-transaction']['asset-id'] === subscription.assetId) ||
-          (!!t['asset-freeze-transaction'] && t['asset-freeze-transaction']['asset-id'] === subscription.assetId) ||
-          (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction']['asset-id'] === subscription.assetId)
+          t['created-asset-index'] === Number(subscription.assetId) ||
+          (!!t['asset-config-transaction'] && t['asset-config-transaction']['asset-id'] === Number(subscription.assetId)) ||
+          (!!t['asset-freeze-transaction'] && t['asset-freeze-transaction']['asset-id'] === Number(subscription.assetId)) ||
+          (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction']['asset-id'] === Number(subscription.assetId))
       } else {
         result &&=
           (t['created-asset-index'] && subscription.assetId.map((i) => Number(i)).includes(t['created-asset-index'])) ||
@@ -584,7 +581,7 @@ function transactionFilter(
     }
     if (subscription.assetId) {
       if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
-        result &&= t.assetIndex === subscription.assetId || createdAssetId === subscription.assetId
+        result &&= t.assetIndex === Number(subscription.assetId) || createdAssetId === Number(subscription.assetId)
       } else {
         result &&=
           (!!t.assetIndex && subscription.assetId.map((i) => Number(i)).includes(t.assetIndex)) ||
@@ -661,7 +658,9 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
         (changeFilter.maxAmount === undefined || actualChange.amount <= changeFilter.maxAmount) &&
         (changeFilter.assetId === undefined ||
           (Array.isArray(changeFilter.assetId) && changeFilter.assetId.length === 0) ||
-          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId]).includes(actualChange.assetId)) &&
+          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId])
+            .map((a) => Number(a))
+            .includes(actualChange.assetId)) &&
         (changeFilter.role === undefined ||
           (Array.isArray(changeFilter.role) && changeFilter.role.length === 0) ||
           (Array.isArray(changeFilter.role) ? changeFilter.role : [changeFilter.role]).some((r) => actualChange.roles.includes(r))),

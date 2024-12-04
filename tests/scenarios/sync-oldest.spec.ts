@@ -11,15 +11,15 @@ describe('Subscribing using sync-oldest', () => {
   })
 
   test('Only processes the first chain round when starting from beginning of chain', async () => {
-    const { algod, testAccount, generateAccount } = localnet.context
+    const { algorand, testAccount, generateAccount } = localnet.context
     // Ensure that if we are at round 0 there is a different transaction that won't be synced
-    await SendXTransactions(1, await generateAccount({ initialFunds: (3).algos() }), algod)
-    const { lastTxnRound } = await SendXTransactions(1, testAccount, algod)
+    await SendXTransactions(1, await generateAccount({ initialFunds: (3).algos() }), algorand)
+    const { lastTxnRound } = await SendXTransactions(1, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'sync-oldest', watermark: 0, currentRound: lastTxnRound },
       testAccount,
-      algod,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
@@ -30,14 +30,14 @@ describe('Subscribing using sync-oldest', () => {
   })
 
   test('Only processes the first transaction after watermark when starting from an earlier round with other transactions', async () => {
-    const { algod, testAccount } = localnet.context
-    const { txns, lastTxnRound: olderTxnRound } = await SendXTransactions(2, testAccount, algod)
-    const { lastTxnRound: currentRound } = await SendXTransactions(1, testAccount, algod)
+    const { algorand, testAccount } = localnet.context
+    const { txns, lastTxnRound: olderTxnRound } = await SendXTransactions(2, testAccount, algorand)
+    const { lastTxnRound: currentRound } = await SendXTransactions(1, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'sync-oldest', watermark: olderTxnRound - 1, currentRound },
       testAccount,
-      algod,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(currentRound)
@@ -49,13 +49,13 @@ describe('Subscribing using sync-oldest', () => {
   })
 
   test('Process multiple transactions', async () => {
-    const { algod, testAccount } = localnet.context
-    const { txns, lastTxnRound, rounds } = await SendXTransactions(3, testAccount, algod)
+    const { algorand, testAccount } = localnet.context
+    const { txns, lastTxnRound, rounds } = await SendXTransactions(3, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: rounds[1] - rounds[0] + 1, syncBehaviour: 'sync-oldest', watermark: rounds[0] - 1, currentRound: lastTxnRound },
       testAccount,
-      algod,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)

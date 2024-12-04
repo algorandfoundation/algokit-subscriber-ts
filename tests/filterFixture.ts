@@ -21,7 +21,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig) {
         filters: filter,
         arc28Events,
       },
-      localnet.context.algod,
+      localnet.algorand,
     )
     return subscribed
   }
@@ -29,7 +29,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig) {
   const subscribeIndexer = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
     const start = +new Date()
     // Ensure there is another transaction so algod subscription can process something
-    await SendXTransactions(2, systemAccount, localnet.context.algod)
+    await SendXTransactions(2, systemAccount, localnet.algorand)
     // Wait for indexer to catch up
     await localnet.context.waitForIndexerTransaction(result.transaction.txID())
     const durationInSeconds = (+new Date() - start) / 1000
@@ -46,8 +46,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig) {
         filters: filter,
         arc28Events,
       },
-      localnet.context.algod,
-      localnet.context.indexer,
+      localnet.algorand,
     )
     return subscribed
   }

@@ -10,8 +10,8 @@
     "build:3-copy-readme": "cpy README.md dist",
     "test": "vitest run --coverage --passWithNoTests",
     "test:watch": "vitest watch --coverage --passWithNoTests",
-    "lint": "eslint ./src/ --ext .ts",
-    "lint:fix": "eslint ./src/ --ext .ts --fix",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "check-types": "tsc --noEmit",
     "audit": "better-npm-audit audit",
     "format": "prettier --write .",
@@ -66,11 +66,12 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "@prisma/client": "^5.15.1",
+    "@algorandfoundation/algokit-client-generator": "^4.0.2",
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
-    "@makerx/eslint-config": "^3.1.1",
+    "@eslint/js": "^9.16.0",
     "@makerx/prettier-config": "^2.0.1",
+    "@prisma/client": "^5.15.1",
     "@rollup/plugin-typescript": "^11.1.6",
     "@vitest/coverage-v8": "^2.1.4",
     "better-npm-audit": "^3.7.3",
@@ -78,7 +79,7 @@
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^7.4.1",
-    "eslint": "8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "3.2.5",
     "prisma": "^5.15.1",
@@ -90,6 +91,7 @@
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.4.3",
+    "typescript-eslint": "^8.16.0",
     "vitest": "^2.1.4"
   },
   "dependencies": {
@@ -99,8 +101,8 @@
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
-    "@algorandfoundation/algokit-utils": "^6.1.0",
-    "algosdk": "^2.7.0"
+    "@algorandfoundation/algokit-utils": "^7.0.0",
+    "algosdk": ">=2.9.0 <3.0"
   },
   "publishConfig": {
     "access": "public"

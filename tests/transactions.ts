@@ -1,6 +1,6 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
-import { SendTransactionFrom, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import algosdk, { Algodv2, Indexer, Transaction } from 'algosdk'
+import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
+import algosdk, { Account, Transaction } from 'algosdk'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {
@@ -11,18 +11,17 @@ import type {
   TransactionSubscriptionParams,
 } from '../src/types'
 
-export const SendXTransactions = async (x: number, account: SendTransactionFrom, algod: Algodv2) => {
+export const SendXTransactions = async (x: number, account: Account, algorand: AlgorandClient) => {
   const txns: SendTransactionResult[] = []
   for (let i = 0; i < x; i++) {
+    algorand.setSignerFromAccount(account)
     txns.push(
-      await algokit.transferAlgos(
-        {
-          amount: (1).algos(),
-          from: account,
-          to: account,
-        },
-        algod,
-      ),
+      await algorand.send.payment({
+        sender: account.addr,
+        receiver: account.addr,
+        amount: algo(1),
+        note: `txn-${i} at ${new Date().toISOString()}`,
+      }),
     )
   }
   const lastTxnRound = Number(txns[x - 1].confirmation?.confirmedRound)
@@ -45,18 +44,17 @@ export const GetSubscribedTransactions = (
     filters: TransactionFilter | NamedTransactionFilter[]
     arc28Events?: Arc28EventGroup[]
   },
-  algod: Algodv2,
-  indexer?: Indexer,
+  algorand: AlgorandClient,
 ) => {
   const { roundsToSync, indexerRoundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
 
   if (currentRound !== undefined) {
-    const existingStatus = algod.status
-    Object.assign(algod, {
+    const existingStatus = algorand.client.algod.status
+    Object.assign(algorand.client.algod, {
       status: vi.fn().mockImplementation(() => {
         return {
           do: async () => {
-            const status = await existingStatus.apply(algod).do()
+            const status = await existingStatus.apply(algorand.client.algod).do()
             status['last-round'] = currentRound
             return status
           },
@@ -74,8 +72,8 @@ export const GetSubscribedTransactions = (
       watermark: watermark ?? 0,
       arc28Events,
     },
-    algod,
-    indexer,
+    algorand.client.algod,
+    algorand.client.indexer,
   )
 }
 
@@ -87,20 +85,16 @@ export const GetSubscribedTransactionsFromSender = (
     watermark?: number
     currentRound?: number
   },
-  account: SendTransactionFrom | SendTransactionFrom[],
-  algod: Algodv2,
-  indexer?: Indexer,
+  account: Account | Account[],
+  algorand: AlgorandClient,
 ) => {
   return GetSubscribedTransactions(
     {
       ...subscription,
       filters:
-        account instanceof Array
-          ? account.map((a) => algokit.getSenderAddress(a)).map((a) => ({ name: a, filter: { sender: a } }))
-          : { sender: algokit.getSenderAddress(account) },
+        account instanceof Array ? account.map((a) => a.addr).map((a) => ({ name: a, filter: { sender: a } })) : { sender: account.addr },
     },
-    algod,
-    indexer,
+    algorand,
   )
 }
 

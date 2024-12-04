@@ -1,4 +1,4 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { AlgorandClient, lookupTransactionById } from '@algorandfoundation/algokit-utils'
 import algosdk from 'algosdk'
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
@@ -8,8 +8,7 @@ import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDif
 describe('Complex transaction with many nested inner transactions', () => {
   const txnId = 'QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q'
   const roundNumber = 35214367
-  const algod = algokit.getAlgoClient(algokit.getAlgoNodeConfig('mainnet', 'algod'))
-  const indexer = algokit.getAlgoIndexerClient(algokit.getAlgoNodeConfig('mainnet', 'indexer'))
+  const algorand = AlgorandClient.mainNet()
 
   it('Can have an inner transaction subscribed correctly from indexer', async () => {
     const indexerTxns = await GetSubscribedTransactions(
@@ -23,8 +22,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         syncBehaviour: 'catchup-with-indexer',
         watermark: roundNumber - 1,
       },
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(indexerTxns.subscribedTransactions.length).toBe(1)
@@ -171,7 +169,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         syncBehaviour: 'sync-oldest',
         watermark: roundNumber - 1,
       },
-      algod,
+      algorand,
     )
 
     expect(algodTxns.subscribedTransactions.length).toBe(1)
@@ -338,8 +336,8 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Can be processed correctly from algod raw block', async () => {
-    const txn = await algokit.lookupTransactionById(txnId, indexer)
-    const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algod))[0]
+    const txn = await lookupTransactionById(txnId, algorand.client.indexer)
+    const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
     const intraRoundOffset = txn.transaction['intra-round-offset']!
 
     const transformed = await getBlockTransactions(b.block)
@@ -683,7 +681,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Transforms axfer without an arcv address', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39373576, maxRound: 39373576 }, algod) // Contains an axfer opt out inner transaction without an arcv address
+    const blocks = await getBlocksBulk({ startRound: 39373576, maxRound: 39373576 }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     expect(blockTransactions.length).toBe(30)
@@ -691,7 +689,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Transforms pay without a rcv address', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39723800, maxRound: 39723800 }, algod) // Contains a pay close account inner transaction without a rcv address
+    const blocks = await getBlocksBulk({ startRound: 39723800, maxRound: 39723800 }, algorand.client.algod) // Contains a pay close account inner transaction without a rcv address
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     expect(blockTransactions.length).toBe(486)
@@ -699,7 +697,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Produces the correct txID for a non hgi transaction', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
+    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algorand.client.algod)
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
@@ -708,7 +706,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Produces the correct state deltas in an app call transaction', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algod)
+    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algorand.client.algod)
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[9])
@@ -759,7 +757,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Produces base64 encoded programs for an application create transaction', async () => {
-    const blocks = await getBlocksBulk({ startRound: 34632059, maxRound: 34632059 }, algod) // Contains a appl create transaction with approval and clear state programs
+    const blocks = await getBlocksBulk({ startRound: 34632059, maxRound: 34632059 }, algorand.client.algod) // Contains a appl create transaction with approval and clear state programs
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     expect(blockTransactions.length).toBe(14)
