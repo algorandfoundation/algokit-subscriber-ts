@@ -8,6 +8,7 @@ authors = ["Rob Moore <rob.moore@makerx.com.au>"]
 python = "^3.10"
 beaker-pyteal = "^1.1.1"
 algokit-utils = "^2.1.2"
+setuptools = "^75.6.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.6"

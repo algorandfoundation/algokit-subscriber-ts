@@ -1,4 +1,4 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
 import fs from 'fs'
@@ -23,8 +23,8 @@ interface DHMAsset {
 }
 
 async function getDHMSubscriber() {
-  const algod = await algokit.getAlgoClient()
-  const indexer = await algokit.getAlgoIndexerClient()
+  const algorand = AlgorandClient.testNet()
+
   const subscriber = new AlgorandSubscriber(
     {
       filters: [
@@ -33,7 +33,7 @@ async function getDHMSubscriber() {
           filter: {
             type: TransactionType.acfg,
             // Data History Museum creator accounts
-            sender: (await algokit.isTestNet(algod))
+            sender: (await algorand.client.isTestNet())
               ? 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU'
               : 'EHYQCYHUC6CIWZLBX5TDTLVJ4SSVE4RRTMKFDCG4Z4Q7QSQ2XWIQPMKBPU',
           },
@@ -47,8 +47,8 @@ async function getDHMSubscriber() {
         set: saveWatermark,
       },
     },
-    algod,
-    indexer,
+    algorand.client.algod,
+    algorand.client.indexer,
   )
   subscriber.onBatch('dhm-asset', async (events) => {
     // eslint-disable-next-line no-console

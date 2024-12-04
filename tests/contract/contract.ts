@@ -1,7 +1,8 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
 import { APP_DEPLOY_NOTE_DAPP, AppDeployMetadata, OnSchemaBreak, OnUpdate } from '@algorandfoundation/algokit-utils/types/app'
+import { AppManager } from '@algorandfoundation/algokit-utils/types/app-manager'
 import { AppSpec } from '@algorandfoundation/algokit-utils/types/app-spec'
-import { Arc2TransactionNote, SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
+import { TransactionComposer } from '@algorandfoundation/algokit-utils/types/composer'
+import { SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
@@ -26,14 +27,14 @@ export const getTestingAppCreateParams = async (from: SendTransactionFrom, metad
   const contract = await getTestingAppContract()
   return {
     from: from,
-    approvalProgram: algokit.replaceDeployTimeControlParams(contract.approvalProgram, metadata).replace('TMPL_VALUE', '1'),
+    approvalProgram: AppManager.replaceTealTemplateDeployTimeControlParams(contract.approvalProgram, metadata).replace('TMPL_VALUE', '1'),
     clearStateProgram: contract.clearStateProgram,
     schema: contract.stateSchema,
-    note: algokit.encodeTransactionNote({
+    note: TransactionComposer.arc2Note({
       dAppName: APP_DEPLOY_NOTE_DAPP,
       data: metadata,
       format: 'j',
-    } as Arc2TransactionNote),
+    }),
   }
 }
 

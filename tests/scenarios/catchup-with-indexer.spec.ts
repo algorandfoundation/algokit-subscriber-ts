@@ -1,32 +1,25 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { GetSubscribedTransactionsFromSender, SendXTransactions } from '../transactions'
 
 describe('Subscribing using catchup-with-indexer', () => {
-  const localnet = algorandFixture(undefined, {
-    algodConfig: algokit.getDefaultLocalNetConfig('algod'),
-    indexerConfig: algokit.getDefaultLocalNetConfig('indexer'),
-    kmdConfig: algokit.getDefaultLocalNetConfig('kmd'),
-  })
-
+  const localnet = algorandFixture()
   beforeEach(localnet.beforeEach, 10e6)
   afterEach(() => {
     vitest.clearAllMocks()
   })
 
   test('Processes start of chain to now when starting from beginning of chain', async () => {
-    const { algod, indexer, testAccount, generateAccount, waitForIndexerTransaction } = localnet.context
+    const { algorand, testAccount, generateAccount, waitForIndexerTransaction } = localnet.context
     // Ensure that if we are at round 0 there is a different transaction that won't be synced
-    await SendXTransactions(1, await generateAccount({ initialFunds: (3).algos() }), algod)
-    const { lastTxnRound, txns } = await SendXTransactions(1, testAccount, algod)
+    await SendXTransactions(1, await generateAccount({ initialFunds: (3).algos() }), algorand)
+    const { lastTxnRound, txns } = await SendXTransactions(1, testAccount, algorand)
     await waitForIndexerTransaction(txns[0].transaction.txID())
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0, currentRound: lastTxnRound },
       testAccount,
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
@@ -38,12 +31,12 @@ describe('Subscribing using catchup-with-indexer', () => {
   })
 
   test('Limits the number of synced transactions to maxIndexerRoundsToSync', async () => {
-    const { algod, indexer, testAccount, generateAccount, waitForIndexerTransaction } = localnet.context
+    const { algorand, testAccount, generateAccount, waitForIndexerTransaction } = localnet.context
     // Ensure that if we are at round 0 there is a different transaction that won't be synced
     const randomAccount = await generateAccount({ initialFunds: (3).algos() })
-    const { lastTxnRound: initialWatermark } = await SendXTransactions(1, randomAccount, algod)
-    const { txns } = await SendXTransactions(5, testAccount, algod)
-    const { lastTxnRound, txIds } = await SendXTransactions(1, randomAccount, algod)
+    const { lastTxnRound: initialWatermark } = await SendXTransactions(1, randomAccount, algorand)
+    const { txns } = await SendXTransactions(5, testAccount, algorand)
+    const { lastTxnRound, txIds } = await SendXTransactions(1, randomAccount, algorand)
     await waitForIndexerTransaction(txIds[0])
     const expectedNewWatermark = Number(txns[2].confirmation!.confirmedRound!) - 1
     const indexerRoundsToSync = expectedNewWatermark - initialWatermark
@@ -57,8 +50,7 @@ describe('Subscribing using catchup-with-indexer', () => {
         currentRound: lastTxnRound,
       },
       testAccount,
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
@@ -72,16 +64,15 @@ describe('Subscribing using catchup-with-indexer', () => {
 
   // Same behaviour as sync-oldest
   test('Processes all transactions after watermark when starting from an earlier round with other transactions', async () => {
-    const { algod, indexer, testAccount, waitForIndexerTransaction } = localnet.context
-    const { txns, lastTxnRound: olderTxnRound } = await SendXTransactions(2, testAccount, algod)
-    const { lastTxnRound: currentRound, txns: lastTxns } = await SendXTransactions(1, testAccount, algod)
+    const { algorand, testAccount, waitForIndexerTransaction } = localnet.context
+    const { txns, lastTxnRound: olderTxnRound } = await SendXTransactions(2, testAccount, algorand)
+    const { lastTxnRound: currentRound, txns: lastTxns } = await SendXTransactions(1, testAccount, algorand)
     await waitForIndexerTransaction(lastTxns[0].transaction.txID())
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: olderTxnRound - 1, currentRound },
       testAccount,
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(currentRound)
@@ -94,15 +85,14 @@ describe('Subscribing using catchup-with-indexer', () => {
   })
 
   test('Process multiple historic transactions using indexer and blends them in with algod transaction', async () => {
-    const { algod, indexer, testAccount, waitForIndexerTransaction } = localnet.context
-    const { txns, txIds, lastTxnRound } = await SendXTransactions(3, testAccount, algod)
+    const { algorand, testAccount, waitForIndexerTransaction } = localnet.context
+    const { txns, txIds, lastTxnRound } = await SendXTransactions(3, testAccount, algorand)
     await waitForIndexerTransaction(txIds[2])
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0, currentRound: lastTxnRound },
       testAccount,
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)

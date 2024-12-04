@@ -11,27 +11,27 @@ describe('Subscribing using fail', () => {
   })
 
   test('Fails if too far from the tip of the chain', async () => {
-    const { algod, testAccount } = localnet.context
-    const { lastTxnRound } = await SendXTransactions(2, testAccount, algod)
+    const { algorand, testAccount } = localnet.context
+    const { lastTxnRound } = await SendXTransactions(2, testAccount, algorand)
 
     await expect(
       async () =>
         await GetSubscribedTransactionsFromSender(
           { roundsToSync: 1, syncBehaviour: 'fail', watermark: 0, currentRound: lastTxnRound },
           testAccount,
-          algod,
+          algorand,
         ),
     ).rejects.toThrow(`Invalid round number to subscribe from 1; current round number is ${lastTxnRound}`)
   })
 
   test("Doesn't fail if not too far from the tip of the chain", async () => {
-    const { algod, testAccount } = localnet.context
-    const { txns, lastTxnRound } = await SendXTransactions(2, testAccount, algod)
+    const { algorand, testAccount } = localnet.context
+    const { txns, lastTxnRound } = await SendXTransactions(2, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'fail', watermark: lastTxnRound - 1, currentRound: lastTxnRound },
       testAccount,
-      algod,
+      algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)

@@ -1,4 +1,4 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import algosdk from 'algosdk'
 import fs from 'fs'
 import path from 'path'
@@ -12,7 +12,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 }
 
 ;(async () => {
-  const algod = await algokit.getAlgoClient()
+  const algorand = AlgorandClient.testNet()
   let watermark = 0
 
   const subscriber = new AlgorandSubscriber(
@@ -36,7 +36,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
         },
       },
     },
-    algod,
+    algorand.client.algod,
   )
   subscriber.on('usdc', (transfer) => {
     // eslint-disable-next-line no-console

@@ -1,4 +1,4 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { TransactionType } from 'algosdk'
 import { describe, expect, it } from 'vitest'
 import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
@@ -6,8 +6,7 @@ import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
 describe('State proof transaction', () => {
   const txnId = 'G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ'
   const roundNumber = 35600004
-  const algod = algokit.getAlgoClient(algokit.getAlgoNodeConfig('mainnet', 'algod'))
-  const indexer = algokit.getAlgoIndexerClient(algokit.getAlgoNodeConfig('mainnet', 'indexer'))
+  const algorand = AlgorandClient.mainNet()
 
   it('Can have a stpf transaction subscribed correctly from indexer', async () => {
     const indexerTxns = await GetSubscribedTransactions(
@@ -20,8 +19,7 @@ describe('State proof transaction', () => {
         syncBehaviour: 'catchup-with-indexer',
         watermark: roundNumber - 1,
       },
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(indexerTxns.subscribedTransactions.length).toBe(1)
@@ -2115,7 +2113,7 @@ describe('State proof transaction', () => {
         syncBehaviour: 'sync-oldest',
         watermark: roundNumber - 1,
       },
-      algod,
+      algorand,
     )
 
     expect(algodTxns.subscribedTransactions.length).toBe(1)

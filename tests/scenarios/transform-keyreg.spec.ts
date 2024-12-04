@@ -1,4 +1,4 @@
-import * as algokit from '@algorandfoundation/algokit-utils'
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { TransactionType } from 'algosdk'
 import { describe, expect, it } from 'vitest'
 import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
@@ -6,8 +6,7 @@ import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
 describe('Complex transaction with many nested inner transactions', () => {
   const txnId = 'LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA'
   const roundNumber = 34418662
-  const algod = algokit.getAlgoClient(algokit.getAlgoNodeConfig('mainnet', 'algod'))
-  const indexer = algokit.getAlgoIndexerClient(algokit.getAlgoNodeConfig('mainnet', 'indexer'))
+  const algorand = AlgorandClient.mainNet()
 
   it('Can have a keyreg transaction subscribed correctly from indexer', async () => {
     const indexerTxns = await GetSubscribedTransactions(
@@ -21,8 +20,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         syncBehaviour: 'catchup-with-indexer',
         watermark: roundNumber - 1,
       },
-      algod,
-      indexer,
+      algorand,
     )
 
     expect(indexerTxns.subscribedTransactions.length).toBe(1)
@@ -89,7 +87,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         syncBehaviour: 'sync-oldest',
         watermark: roundNumber - 1,
       },
-      algod,
+      algorand,
     )
 
     expect(algodTxns.subscribedTransactions.length).toBe(1)

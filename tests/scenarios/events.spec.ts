@@ -1,10 +1,8 @@
-import { sendGroupOfTransactions, transferAlgos } from '@algorandfoundation/algokit-utils'
-import { Account } from 'algosdk'
 import invariant from 'tiny-invariant'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { Arc28Event } from '../../src/types'
-import { TestingAppClient } from '../contract/client'
 import { filterFixture } from '../filterFixture'
+import { app } from '../testing-app'
 
 describe('Subscribing to app calls that emit events', () => {
   const {
@@ -51,37 +49,16 @@ describe('Subscribing to app calls that emit events', () => {
     ],
   }
 
-  const app = async (config: { create: boolean }, creator?: Account) => {
-    const app = new TestingAppClient(
-      {
-        resolveBy: 'id',
-        id: 0,
-      },
-      localnet.context.algod,
-    )
-    const creation = await app.create.bare({
-      sender: creator ?? systemAccount(),
-      sendParams: {
-        skipSending: !config.create,
-      },
-    })
-
-    return {
-      app,
-      creation,
-    }
-  }
-
   test('Works for simple event', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
@@ -107,14 +84,14 @@ describe('Subscribing to app calls that emit events', () => {
 
   test('Processes multiple events', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitSwappedTwice({ a: 1, b: 2 }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitSwappedTwice({ args: { a: 1, b: 2 }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
@@ -134,21 +111,21 @@ describe('Subscribing to app calls that emit events', () => {
 
   test('Respects app ID filter inclusion', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
           {
             groupName: 'group1',
             events: [swappedEvent],
-            processForAppIds: [Number(app1.creation.appId)],
+            processForAppIds: [Number(app1.result.appId)],
           },
         ],
       )
@@ -160,21 +137,21 @@ describe('Subscribing to app calls that emit events', () => {
 
   test('Respects app ID filter exclusion', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
           {
             groupName: 'group1',
             events: [swappedEvent],
-            processForAppIds: [Number(app1.creation.appId) + 1],
+            processForAppIds: [Number(app1.result.appId) + 1],
           },
         ],
       )
@@ -185,14 +162,14 @@ describe('Subscribing to app calls that emit events', () => {
 
   test('Respects app predicate filter inclusion', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
@@ -211,14 +188,14 @@ describe('Subscribing to app calls that emit events', () => {
 
   test('Respects app predicate filter exclusion', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
@@ -236,14 +213,14 @@ describe('Subscribing to app calls that emit events', () => {
 
   test('Works for complex event / multiple events in group', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitComplex({ a: 1, b: 2, array: [1, 2, 3] }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitComplex({ args: { a: 1, b: 2, array: [1, 2, 3] }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
@@ -279,14 +256,14 @@ describe('Subscribing to app calls that emit events', () => {
 
   test('Works for multiple groups', async () => {
     const { testAccount } = localnet.context
-    const app1 = await app({ create: true })
-    const txn = await app1.app.emitComplex({ a: 1, b: 2, array: [1, 2, 3] }, { sender: testAccount })
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txn = await app1.appClient.send.emitComplex({ args: { a: 1, b: 2, array: [1, 2, 3] }, sender: testAccount.addr })
 
     const subscription = (
       await subscribeAndVerify(
         {
           sender: testAccount.addr,
-          appId: Number(app1.creation.appId),
+          appId: Number(app1.result.appId),
         },
         txn,
         [
@@ -313,19 +290,18 @@ describe('Subscribing to app calls that emit events', () => {
   })
 
   test('Allows ARC-28 event subscription', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await sendGroupOfTransactions(
-      {
-        transactions: [
-          app1.app.callAbi({ value: '1' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount, sendParams: { skipSending: true } }),
-          transferAlgos({ amount: (1).microAlgos(), from: testAccount, to: testAccount.addr, skipSending: true }, algod),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txns = await localnet.algorand
+      .newGroup()
+      .addAppCallMethodCall(await app1.appClient.params.callAbi({ args: { value: '1' }, sender: testAccount.addr }))
+      .addAppCallMethodCall(await app1.appClient.params.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr }))
+      .addPayment({
+        amount: (1).microAlgos(),
+        sender: testAccount.addr,
+        receiver: testAccount.addr,
+      })
+      .send()
 
     await subscribeAndVerifyFilter(
       {
@@ -343,19 +319,14 @@ describe('Subscribing to app calls that emit events', () => {
   })
 
   test('ARC-28 event subscription validates app ID (include)', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await sendGroupOfTransactions(
-      {
-        transactions: [
-          app1.app.callAbi({ value: '1' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount, sendParams: { skipSending: true } }),
-          transferAlgos({ amount: (1).microAlgos(), from: testAccount, to: testAccount.addr, skipSending: true }, algod),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txns = await localnet.algorand
+      .newGroup()
+      .addAppCallMethodCall(await app1.appClient.params.callAbi({ args: { value: '1' }, sender: testAccount.addr }))
+      .addAppCallMethodCall(await app1.appClient.params.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr }))
+      .addPayment({ amount: (1).microAlgos(), sender: testAccount.addr, receiver: testAccount.addr })
+      .send()
 
     await subscribeAndVerifyFilter(
       {
@@ -367,26 +338,21 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processForAppIds: [Number(app1.creation.appId)],
+          processForAppIds: [Number(app1.result.appId)],
         },
       ],
     )
   })
 
   test('ARC-28 event subscription validates app ID (exclude)', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await sendGroupOfTransactions(
-      {
-        transactions: [
-          app1.app.callAbi({ value: '1' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount, sendParams: { skipSending: true } }),
-          transferAlgos({ amount: (1).microAlgos(), from: testAccount, to: testAccount.addr, skipSending: true }, algod),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txns = await localnet.algorand
+      .newGroup()
+      .addAppCallMethodCall(await app1.appClient.params.callAbi({ args: { value: '1' }, sender: testAccount.addr }))
+      .addAppCallMethodCall(await app1.appClient.params.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr }))
+      .addPayment({ amount: (1).microAlgos(), sender: testAccount.addr, receiver: testAccount.addr })
+      .send()
 
     const subscription = await subscribeAlgod(
       {
@@ -398,7 +364,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processForAppIds: [Number(app1.creation.appId) + 1],
+          processForAppIds: [Number(app1.result.appId) + 1],
         },
       ],
     )
@@ -415,7 +381,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processForAppIds: [Number(app1.creation.appId) + 1],
+          processForAppIds: [Number(app1.result.appId) + 1],
         },
       ],
     )
@@ -424,19 +390,14 @@ describe('Subscribing to app calls that emit events', () => {
   })
 
   test('ARC-28 event subscription validates predicate (include)', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await sendGroupOfTransactions(
-      {
-        transactions: [
-          app1.app.callAbi({ value: '1' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount, sendParams: { skipSending: true } }),
-          transferAlgos({ amount: (1).microAlgos(), from: testAccount, to: testAccount.addr, skipSending: true }, algod),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txns = await localnet.algorand
+      .newGroup()
+      .addAppCallMethodCall(await app1.appClient.params.callAbi({ args: { value: '1' }, sender: testAccount.addr }))
+      .addAppCallMethodCall(await app1.appClient.params.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr }))
+      .addPayment({ amount: (1).microAlgos(), sender: testAccount.addr, receiver: testAccount.addr })
+      .send()
 
     await subscribeAndVerifyFilter(
       {
@@ -455,19 +416,14 @@ describe('Subscribing to app calls that emit events', () => {
   })
 
   test('ARC-28 event subscription validates predicate (exclude)', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await sendGroupOfTransactions(
-      {
-        transactions: [
-          app1.app.callAbi({ value: '1' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount, sendParams: { skipSending: true } }),
-          transferAlgos({ amount: (1).microAlgos(), from: testAccount, to: testAccount.addr, skipSending: true }, algod),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txns = await localnet.algorand
+      .newGroup()
+      .addAppCallMethodCall(await app1.appClient.params.callAbi({ args: { value: '1' }, sender: testAccount.addr }))
+      .addAppCallMethodCall(await app1.appClient.params.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr }))
+      .addPayment({ amount: (1).microAlgos(), sender: testAccount.addr, receiver: testAccount.addr })
+      .send()
 
     const subscription = await subscribeAlgod(
       {
@@ -505,19 +461,14 @@ describe('Subscribing to app calls that emit events', () => {
   })
 
   test('ARC-28 event subscription validates group', async () => {
-    const { testAccount, algod } = localnet.context
-    const app1 = await app({ create: true })
-    const txns = await sendGroupOfTransactions(
-      {
-        transactions: [
-          app1.app.callAbi({ value: '1' }, { sender: testAccount, sendParams: { skipSending: true } }),
-          app1.app.emitSwapped({ a: 1, b: 2 }, { sender: testAccount, sendParams: { skipSending: true } }),
-          transferAlgos({ amount: (1).microAlgos(), from: testAccount, to: testAccount.addr, skipSending: true }, algod),
-        ],
-        signer: testAccount,
-      },
-      algod,
-    )
+    const { testAccount } = localnet.context
+    const app1 = await app({ create: true, algorand: localnet.algorand, creator: systemAccount() })
+    const txns = await localnet.algorand
+      .newGroup()
+      .addAppCallMethodCall(await app1.appClient.params.callAbi({ args: { value: '1' }, sender: testAccount.addr }))
+      .addAppCallMethodCall(await app1.appClient.params.emitSwapped({ args: { a: 1, b: 2 }, sender: testAccount.addr }))
+      .addPayment({ amount: (1).microAlgos(), sender: testAccount.addr, receiver: testAccount.addr })
+      .send()
 
     const subscription = await subscribeAlgod(
       {
