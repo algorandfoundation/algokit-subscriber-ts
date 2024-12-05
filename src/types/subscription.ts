@@ -161,7 +161,7 @@ export interface ParticipationUpdates {
  * * Balance changes in algo or assets
  */
 // TODO: NC - We might need to alias this type, as things like id are optional and shouldn't be in this scenario
-export type SubscribedTransaction = Omit<TransactionResult, 'getEncodingSchema' | 'toEncodingData'> & {
+export type SubscribedTransaction = Omit<TransactionResult, 'getEncodingSchema' | 'toEncodingData' | 'txType' | 'id'> & {
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */
@@ -172,6 +172,8 @@ export type SubscribedTransaction = Omit<TransactionResult, 'getEncodingSchema' 
   filtersMatched?: string[]
   /** The balance changes in the transaction. */
   balanceChanges?: BalanceChange[]
+  id: string
+  txType: TransactionType
 }
 
 /** Represents a balance change effect for a transaction. */
@@ -314,7 +316,7 @@ export interface TransactionFilter {
    * the given method signature as the first app argument. */
   methodSignature?: string | string[]
   /** Filter to app transactions that meet the given app arguments predicate. */
-  appCallArgumentsMatch?: (appCallArguments?: Uint8Array[]) => boolean
+  appCallArgumentsMatch?: (appCallArguments?: readonly Uint8Array[]) => boolean
   /** Filter to app transactions that emit the given ARC-28 events.
    * Note: the definitions for these events must be passed in to the subscription config via `arc28Events`.
    */

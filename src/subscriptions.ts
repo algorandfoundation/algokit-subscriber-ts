@@ -260,7 +260,7 @@ function hasEmittedMatchingArc28Event(
   eventGroups: Arc28EventGroup[],
   eventFilter: { groupName: string; eventName: string }[],
   appId: bigint,
-  transaction: () => TransactionResult,
+  transaction: () => SubscribedTransaction,
 ): boolean {
   const potentialEvents = allEvents
     .filter((e) => eventFilter.some((f) => f.eventName === e.eventName && f.groupName === e.groupName))
@@ -382,7 +382,7 @@ function indexerPreFilter(
   }
 }
 
-function indexerPreFilterInMemory(subscription: TransactionFilter): (t: TransactionResult) => boolean {
+function indexerPreFilterInMemory(subscription: TransactionFilter): (t: SubscribedTransaction) => boolean {
   // This is needed so we can overcome the problem that when indexer matches on an inner transaction it doesn't return that inner transaction,
   // it returns the parent so we need to re-run these filters in-memory to identify the actual transaction(s) that were matched
   return (t) => {
@@ -413,7 +413,7 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Transact
       }
     }
     if (subscription.notePrefix) {
-      result &&= t.note ? Buffer.from(t.note, 'base64').toString('utf-8').startsWith(subscription.notePrefix) : false
+      result &&= t.note ? Buffer.from(t.note).toString('utf-8').startsWith(subscription.notePrefix) : false
     }
     if (subscription.appId) {
       if (typeof subscription.appId === 'number' || typeof subscription.appId === 'bigint') {
@@ -502,16 +502,14 @@ function indexerPostFilter(
       }
     }
     if (subscription.appCallArgumentsMatch) {
-      result &&=
-        !!t.applicationTransaction &&
-        subscription.appCallArgumentsMatch(t.applicationTransaction.applicationArgs?.map((a) => Buffer.from(a, 'base64')))
+      result &&= !!t.applicationTransaction && subscription.appCallArgumentsMatch(t.applicationTransaction.applicationArgs ?? [])
     }
     if (subscription.arc28Events) {
       result &&=
         !!t.applicationTransaction &&
         !!t.logs &&
         hasEmittedMatchingArc28Event(
-          t.logs.map((l) => Buffer.from(l, 'base64')),
+          t.logs,
           arc28Events,
           arc28EventGroups,
           subscription.arc28Events,
@@ -533,7 +531,7 @@ function indexerPostFilter(
 function getMethodSelectorBase64(methodSignature: string) {
   // todo: memoize?
   const hash = sha512.sha512_256.array(methodSignature)
-  return Buffer.from(new Uint8Array(hash.slice(0, 4))).toString('base64')
+  return Buffer.from(new Uint8Array(hash.slice(0, 4)))
 }
 
 function transactionFilter(
@@ -552,10 +550,11 @@ function transactionFilter(
       }
     }
     if (subscription.receiver) {
+      const receiver = t.payment?.receiver ?? t.assetTransfer?.receiver
       if (typeof subscription.receiver === 'string') {
-        result &&= !!t.to && algosdk.encodeAddress(t.to.publicKey) === subscription.receiver
+        result &&= !!receiver && algosdk.encodeAddress(receiver.publicKey) === subscription.receiver
       } else {
-        result &&= !!t.to && subscription.receiver.includes(algosdk.encodeAddress(t.to.publicKey))
+        result &&= !!receiver && subscription.receiver.includes(algosdk.encodeAddress(receiver.publicKey))
       }
     }
     if (subscription.type) {
@@ -569,28 +568,32 @@ function transactionFilter(
       result &&= !!t.note && new TextDecoder().decode(t.note).startsWith(subscription.notePrefix)
     }
     if (subscription.appId) {
+      const appId = t.applicationCall?.appIndex
       if (typeof subscription.appId === 'number' || typeof subscription.appId === 'bigint') {
-        result &&= t.appIndex === Number(subscription.appId) || createdAppId === Number(subscription.appId)
+        result &&= appId === BigInt(subscription.appId) || createdAppId === BigInt(subscription.appId)
       } else {
         result &&=
-          (!!t.appIndex && subscription.appId.map((i) => Number(i)).includes(t.appIndex)) ||
-          (!!createdAppId && subscription.appId.map((i) => Number(i)).includes(createdAppId))
+          (!!appId && subscription.appId.map((i) => BigInt(i)).includes(appId)) ||
+          (!!createdAppId && subscription.appId.map((i) => BigInt(i)).includes(createdAppId))
       }
     }
     if (subscription.assetId) {
+      const assetId = t.assetTransfer?.assetIndex ?? t.assetConfig?.assetIndex ?? t.assetFreeze?.assetIndex
       if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
-        result &&= t.assetIndex === Number(subscription.assetId) || createdAssetId === Number(subscription.assetId)
+        result &&= assetId === BigInt(subscription.assetId) || createdAssetId === BigInt(subscription.assetId)
       } else {
         result &&=
-          (!!t.assetIndex && subscription.assetId.map((i) => Number(i)).includes(t.assetIndex)) ||
-          (!!createdAssetId && subscription.assetId.map((i) => Number(i)).includes(createdAssetId))
+          (!!assetId && subscription.assetId.map((i) => BigInt(i)).includes(assetId)) ||
+          (!!createdAssetId && subscription.assetId.map((i) => BigInt(i)).includes(createdAssetId))
       }
     }
     if (subscription.minAmount) {
-      result &&= !!t.type && [TransactionType.axfer, TransactionType.pay].includes(t.type) && (t.amount ?? 0) >= subscription.minAmount
+      const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0
+      result &&= !!t.type && amount >= subscription.minAmount
     }
     if (subscription.maxAmount) {
-      result &&= !!t.type && [TransactionType.axfer, TransactionType.pay].includes(t.type) && (t.amount ?? 0) <= subscription.maxAmount
+      const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0
+      result &&= !!t.type && amount <= subscription.maxAmount
     }
     if (subscription.assetCreate) {
       result &&= !!createdAssetId
@@ -604,17 +607,17 @@ function transactionFilter(
     }
     if (subscription.appOnComplete) {
       result &&= (typeof subscription.appOnComplete === 'string' ? [subscription.appOnComplete] : subscription.appOnComplete).includes(
-        algodOnCompleteToIndexerOnComplete(t.appOnComplete ?? OnApplicationComplete.NoOpOC /* the '0' value comes through as undefined */),
+        algodOnCompleteToIndexerOnComplete(
+          t.applicationCall?.onComplete ?? OnApplicationComplete.NoOpOC /* the '0' value comes through as undefined */,
+        ),
       )
     }
     if (subscription.methodSignature) {
+      const firstAppCallArg = t.applicationCall?.appArgs?.[0]
       if (typeof subscription.methodSignature === 'string') {
-        result &&=
-          !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(subscription.methodSignature)
+        result &&= firstAppCallArg === getMethodSelectorBase64(subscription.methodSignature)
       } else {
-        subscription.methodSignature.filter(
-          (method) => !!t.appArgs && Buffer.from(t.appArgs[0] ?? []).toString('base64') === getMethodSelectorBase64(method),
-        ).length > 0
+        subscription.methodSignature.filter((method) => firstAppCallArg === getMethodSelectorBase64(method)).length > 0
           ? (result &&= true)
           : (result &&= false)
       }
@@ -623,12 +626,17 @@ function transactionFilter(
       result &&=
         t.type === TransactionType.appl &&
         !!logs &&
-        hasEmittedMatchingArc28Event(logs, arc28Events, arc28EventGroups, subscription.arc28Events, createdAppId ?? t.appIndex ?? 0, () =>
-          getIndexerTransactionFromAlgodTransaction(txn),
+        hasEmittedMatchingArc28Event(
+          logs,
+          arc28Events,
+          arc28EventGroups,
+          subscription.arc28Events,
+          createdAppId ?? t.applicationCall?.appIndex ?? BigInt(0),
+          () => getIndexerTransactionFromAlgodTransaction(txn),
         )
     }
     if (subscription.appCallArgumentsMatch) {
-      result &&= subscription.appCallArgumentsMatch(t.appArgs)
+      result &&= subscription.appCallArgumentsMatch(t.applicationCall?.appArgs)
     }
     if (subscription.balanceChanges) {
       const balanceChanges = extractBalanceChangesFromBlockTransaction(txn.blockTransaction)
@@ -657,7 +665,7 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
         (changeFilter.assetId === undefined ||
           (Array.isArray(changeFilter.assetId) && changeFilter.assetId.length === 0) ||
           (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId])
-            .map((a) => Number(a))
+            .map((a) => BigInt(a))
             .includes(actualChange.assetId)) &&
         (changeFilter.role === undefined ||
           (Array.isArray(changeFilter.role) && changeFilter.role.length === 0) ||
@@ -690,6 +698,8 @@ function getIndexerInnerTransactions(root: TransactionResult, parent: Transactio
         parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
         intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
+        // TODO: PD - fix txType
+        txType: TransactionType.acfg,
       },
       ...getIndexerInnerTransactions(root, t, offset),
     ] satisfies SubscribedTransaction[]

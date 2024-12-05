@@ -298,65 +298,89 @@ export function getIndexerTransactionFromAlgodTransaction(
       filtersMatched: filterName ? [filterName] : undefined,
       ...(transaction.type === TransactionType.acfg
         ? {
-            'asset-config-transaction': {
-              'asset-id': transaction.assetIndex,
+            assetConfigTransaction: {
+              assetId: transaction.assetConfig!.assetIndex,
               params: createdAssetId
                 ? {
-                    creator: algosdk.encodeAddress(transaction.from.publicKey),
-                    decimals: transaction.assetDecimals,
-                    total: transaction.assetTotal,
-                    'default-frozen': transaction.assetDefaultFrozen,
-                    'metadata-hash': transaction.assetMetadataHash,
-                    ...(transaction.assetName
-                      ? { name: transaction.assetName, 'name-b64': encoder.encode(Buffer.from(transaction.assetName).toString('base64')) }
-                      : undefined),
-                    ...(transaction.assetUnitName
+                    creator: algosdk.encodeAddress(transaction.sender.publicKey),
+                    decimals: transaction.assetConfig!.decimals,
+                    total: transaction.assetConfig!.total,
+                    defaultFrozen: transaction.assetConfig!.defaultFrozen,
+                    metadataHash: transaction.assetConfig!.assetMetadataHash,
+                    ...(transaction.assetConfig!.unitName
                       ? {
-                          'unit-name': transaction.assetUnitName,
-                          'unit-name-b64': encoder.encode(Buffer.from(transaction.assetUnitName).toString('base64')),
+                          name: transaction.assetConfig!.unitName,
+                          nameB64: encoder.encode(Buffer.from(transaction.assetConfig!.unitName).toString('base64')),
                         }
                       : undefined),
-                    ...(transaction.assetURL
-                      ? { url: transaction.assetURL, 'url-b64': encoder.encode(Buffer.from(transaction.assetURL).toString('base64')) }
+                    ...(transaction.assetConfig!.assetName
+                      ? {
+                          name: transaction.assetConfig!.assetName,
+                          nameB64: encoder.encode(Buffer.from(transaction.assetConfig!.assetName).toString('base64')),
+                        }
                       : undefined),
-                    manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
-                    reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
-                    clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
-                    freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
+                    ...(transaction.assetConfig!.assetURL
+                      ? {
+                          url: transaction.assetConfig!.assetURL,
+                          urlB64: encoder.encode(Buffer.from(transaction.assetConfig!.assetURL).toString('base64')),
+                        }
+                      : undefined),
+                    manager: transaction.assetConfig!.manager
+                      ? algosdk.encodeAddress(transaction.assetConfig!.manager.publicKey)
+                      : undefined,
+                    reserve: transaction.assetConfig!.reserve
+                      ? algosdk.encodeAddress(transaction.assetConfig!.reserve.publicKey)
+                      : undefined,
+                    clawback: transaction.assetConfig!.clawback
+                      ? algosdk.encodeAddress(transaction.assetConfig!.clawback.publicKey)
+                      : undefined,
+                    freeze: transaction.assetConfig!.freeze ? algosdk.encodeAddress(transaction.assetConfig!.freeze.publicKey) : undefined,
                   }
                 : 'apar' in blockTransaction.txn && blockTransaction.txn.apar
                   ? {
-                      manager: transaction.assetManager ? algosdk.encodeAddress(transaction.assetManager.publicKey) : undefined,
-                      reserve: transaction.assetReserve ? algosdk.encodeAddress(transaction.assetReserve.publicKey) : undefined,
-                      clawback: transaction.assetClawback ? algosdk.encodeAddress(transaction.assetClawback.publicKey) : undefined,
-                      freeze: transaction.assetFreeze ? algosdk.encodeAddress(transaction.assetFreeze.publicKey) : undefined,
+                      manager: transaction.assetConfig!.manager
+                        ? algosdk.encodeAddress(transaction.assetConfig!.manager.publicKey)
+                        : undefined,
+                      reserve: transaction.assetConfig!.reserve
+                        ? algosdk.encodeAddress(transaction.assetConfig!.reserve.publicKey)
+                        : undefined,
+                      clawback: transaction.assetConfig!.clawback
+                        ? algosdk.encodeAddress(transaction.assetConfig!.clawback.publicKey)
+                        : undefined,
+                      freeze: transaction.assetConfig!.freeze
+                        ? algosdk.encodeAddress(transaction.assetConfig!.freeze.publicKey)
+                        : undefined,
                       // These parameters are required in the indexer type so setting to empty values
                       creator: '',
                       decimals: 0,
                       total: 0,
                     }
                   : undefined,
-            },
+            } satisfies SubscribedTransaction['assetConfigTransaction'],
           }
         : undefined),
       ...(transaction.type === TransactionType.axfer
         ? {
             'asset-transfer-transaction': {
-              'asset-id': transaction.assetIndex,
-              amount: transaction.amount ?? 0, // The amount can be undefined
-              receiver: algosdk.encodeAddress(transaction.to.publicKey),
-              sender: transaction.assetRevocationTarget ? algosdk.encodeAddress(transaction.assetRevocationTarget.publicKey) : undefined,
+              'asset-id': transaction.assetTransfer!.assetIndex,
+              amount: transaction.assetTransfer!.amount, // The amount can be undefined
+              receiver: algosdk.encodeAddress(transaction.assetTransfer!.receiver.publicKey),
+              sender: transaction.assetTransfer!.assetSender
+                ? algosdk.encodeAddress(transaction.assetTransfer!.assetSender.publicKey)
+                : undefined,
               'close-amount': assetCloseAmount,
-              'close-to': transaction.closeRemainderTo ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey) : undefined,
+              'close-to': transaction.assetTransfer!.closeRemainderTo
+                ? algosdk.encodeAddress(transaction.assetTransfer!.closeRemainderTo.publicKey)
+                : undefined,
             },
           }
         : undefined),
       ...(transaction.type === TransactionType.afrz
         ? {
             'asset-freeze-transaction': {
-              'asset-id': transaction.assetIndex,
-              'new-freeze-status': transaction.freezeState,
-              address: algosdk.encodeAddress(transaction.freezeAccount.publicKey),
+              'asset-id': transaction.assetFreeze!.assetIndex,
+              'new-freeze-status': transaction.assetFreeze!.frozen,
+              address: algosdk.encodeAddress(transaction.assetFreeze!.freezeAccount.publicKey),
             },
           }
         : undefined),
@@ -588,7 +612,7 @@ export function getIndexerTransactionFromAlgodTransaction(
             }
           })
         : undefined,
-    }
+    } satisfies SubscribedTransaction
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     // eslint-disable-next-line no-console
