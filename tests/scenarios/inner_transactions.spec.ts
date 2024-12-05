@@ -1,6 +1,6 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account, Transaction, TransactionType } from 'algosdk'
+import { Account, TransactionType } from 'algosdk'
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { TransactionFilter } from '../../src/types'
 import { app } from '../testing-app'
@@ -32,8 +32,8 @@ describe('Inner transactions', () => {
         {
           roundsToSync: 1,
           syncBehaviour: 'sync-oldest',
-          watermark: Number(result[result.length - 1].confirmation?.confirmedRound) - 1,
-          currentRound: Number(result[result.length - 1].confirmation?.confirmedRound),
+          watermark: (result[result.length - 1].confirmation?.confirmedRound ?? 0n) - 1n,
+          currentRound: result[result.length - 1].confirmation?.confirmedRound,
           filters: filter,
         },
         localnet.algorand,
@@ -42,8 +42,8 @@ describe('Inner transactions', () => {
         {
           roundsToSync: 1,
           syncBehaviour: 'catchup-with-indexer',
-          watermark: 0,
-          currentRound: Number(result[result.length - 1].confirmation?.confirmedRound) + 1,
+          watermark: 0n,
+          currentRound: (result[result.length - 1].confirmation?.confirmedRound ?? 0n) + 1n,
           filters: filter,
         },
         localnet.algorand,
@@ -69,11 +69,7 @@ describe('Inner transactions', () => {
           : groupResult.transactions[index].txID(),
       transaction:
         innerTransactionIndex !== undefined
-          ? Transaction.from_obj_for_encoding({
-              ...groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn,
-              gen: groupResult.confirmations![index].txn.txn.gen,
-              gh: groupResult.confirmations![index].txn.txn.gh,
-            })
+          ? groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn // TODO: NC - previously genesis hash and id were added. Do we need these here?
           : groupResult.transactions[index],
       confirmation: groupResult.confirmations?.[index],
     }
@@ -107,7 +103,7 @@ describe('Inner transactions', () => {
     await subscribeAndVerifyFilter(
       {
         type: TransactionType.pay,
-        receiver: testAccount.addr,
+        receiver: testAccount.addr.toString(),
         maxAmount: 1,
       },
       extractFromGroupResult(txns, 1),

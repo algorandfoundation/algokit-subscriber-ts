@@ -29,7 +29,12 @@ describe('Subscribing using multiple filters', () => {
     await waitForIndexerTransaction(txIds[0])
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: lastTxnRound - postIndexerRound, syncBehaviour: 'catchup-with-indexer', watermark: 0, currentRound: lastTxnRound },
+      {
+        roundsToSync: Number(lastTxnRound - postIndexerRound),
+        syncBehaviour: 'catchup-with-indexer',
+        watermark: 0n,
+        currentRound: lastTxnRound,
+      },
       senders,
       algorand,
     )

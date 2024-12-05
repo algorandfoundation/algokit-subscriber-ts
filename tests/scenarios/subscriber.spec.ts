@@ -18,10 +18,10 @@ describe('AlgorandSubscriber', () => {
   })
 
   const getSubscriber = (
-    config: { testAccount: Account; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: number },
+    config: { testAccount: Account; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: bigint },
     algorand: AlgorandClient,
   ) => {
-    let watermark = config.initialWatermark ?? 0
+    let watermark = config.initialWatermark ?? 0n
     const subscribedTxns: string[] = []
 
     const subscriber = new AlgorandSubscriber(
@@ -31,7 +31,7 @@ describe('AlgorandSubscriber', () => {
           {
             name: 'test-txn',
             filter: {
-              sender: config.testAccount.addr,
+              sender: config.testAccount.addr.toString(),
             },
           },
           ...(config.configOverrides?.filters ?? []),
@@ -46,7 +46,7 @@ describe('AlgorandSubscriber', () => {
       algorand.client.indexer,
     )
     subscriber.on('test-txn', (r) => {
-      subscribedTxns.push(r.id)
+      subscribedTxns.push(r.id!) // TODO: NC - Having to do this sucks
     })
     return {
       subscriber,
@@ -62,7 +62,7 @@ describe('AlgorandSubscriber', () => {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,
       getWatermark,
-    } = getSubscriber({ testAccount, initialWatermark: lastTxnRound - 1 }, algorand)
+    } = getSubscriber({ testAccount, initialWatermark: lastTxnRound - 1n }, algorand)
 
     // Initial catch up with indexer
     const result = await subscriber.pollOnce()
@@ -70,7 +70,7 @@ describe('AlgorandSubscriber', () => {
     expect(subscribedTxns[0]).toBe(txIds[0])
     expect(getWatermark()).toBeGreaterThanOrEqual(lastTxnRound)
     expect(result.currentRound).toBeGreaterThanOrEqual(lastTxnRound)
-    expect(result.startingWatermark).toBe(lastTxnRound - 1)
+    expect(result.startingWatermark).toBe(lastTxnRound - 1n)
     expect(result.newWatermark).toBe(result.currentRound)
     expect(result.syncedRoundRange).toEqual([lastTxnRound, result.currentRound])
     expect(result.subscribedTransactions.length).toBe(1)
@@ -104,23 +104,23 @@ describe('AlgorandSubscriber', () => {
     const { subscriber, getWatermark } = getSubscriber(
       {
         testAccount,
-        initialWatermark: firstTxnRound - 1,
+        initialWatermark: firstTxnRound - 1n,
         configOverrides: {
           maxRoundsToSync: 100,
           filters: [
             {
               name: 'sender1',
               filter: {
-                sender: senders[0].addr,
+                sender: senders[0].addr.toString(),
               },
               mapper: (txs) => Promise.resolve(txs.map((t) => t.id)),
             },
             {
               name: 'sender2',
               filter: {
-                sender: senders[1].addr,
+                sender: senders[1].addr.toString(),
               },
-              mapper: (txs) => Promise.resolve(txs.map((t) => t['confirmed-round']!)),
+              mapper: (txs) => Promise.resolve(txs.map((t) => t.confirmedRound!)),
             },
           ],
         },
@@ -154,7 +154,7 @@ describe('AlgorandSubscriber', () => {
     expect(subscribedTxns[3].id).toBe(txIds2[0])
     expect(subscribedTxns[4].id).toBe(txIds2[1])
     expect(result.currentRound).toBeGreaterThanOrEqual(lastTxnRound)
-    expect(result.startingWatermark).toBe(firstTxnRound - 1)
+    expect(result.startingWatermark).toBe(firstTxnRound - 1n)
     expect(result.newWatermark).toBe(result.currentRound)
     expect(getWatermark()).toBeGreaterThanOrEqual(result.currentRound)
     expect(result.syncedRoundRange).toEqual([firstTxnRound, result.currentRound])
@@ -192,7 +192,7 @@ describe('AlgorandSubscriber', () => {
     expect(result3.startingWatermark).toBe(result2.newWatermark)
     expect(result3.newWatermark).toBe(result3.currentRound)
     expect(getWatermark()).toBeGreaterThanOrEqual(result3.currentRound)
-    expect(result3.syncedRoundRange).toEqual([result2.newWatermark + 1, result3.currentRound])
+    expect(result3.syncedRoundRange).toEqual([result2.newWatermark + 1n, result3.currentRound])
     expect(result3.subscribedTransactions.length).toBe(5)
     expect(result3.subscribedTransactions.map((t) => t.id)).toEqual(txIds3.concat(txIds13, txIds23))
     expect(sender1TxnIds).toEqual(txIds1.concat(txIds13))
@@ -211,10 +211,10 @@ describe('AlgorandSubscriber', () => {
       subscribedTestAccountTxns: subscribedTxns,
       getWatermark,
     } = getSubscriber(
-      { testAccount, configOverrides: { maxRoundsToSync: 1, frequencyInSeconds: 0.1 }, initialWatermark: lastTxnRound - 1 },
+      { testAccount, configOverrides: { maxRoundsToSync: 1, frequencyInSeconds: 0.1 }, initialWatermark: lastTxnRound - 1n },
       algorand,
     )
-    const roundsSynced: number[] = []
+    const roundsSynced: bigint[] = []
 
     console.log('Starting subscriber')
     subscriber.start((r) => roundsSynced.push(r.currentRound))
@@ -240,7 +240,7 @@ describe('AlgorandSubscriber', () => {
 
   test('Waits until transaction appears by default when started', async () => {
     const { algorand, testAccount } = localnet.context
-    const currentRound = (await algorand.client.algod.status().do())['last-round'] as number
+    const currentRound = (await algorand.client.algod.status().do()).lastRound
     const {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,
@@ -250,11 +250,11 @@ describe('AlgorandSubscriber', () => {
         testAccount,
         // Polling for 10s means we are definitely testing the algod waiting works
         configOverrides: { frequencyInSeconds: 10, waitForBlockWhenAtTip: true, syncBehaviour: 'sync-oldest' },
-        initialWatermark: currentRound - 1,
+        initialWatermark: currentRound - 1n,
       },
       algorand,
     )
-    const roundsSynced: number[] = []
+    const roundsSynced: bigint[] = []
 
     console.log('Starting subscriber')
     subscriber.start((r) => roundsSynced.push(r.currentRound))
@@ -286,7 +286,7 @@ describe('AlgorandSubscriber', () => {
     const randomAccount = await generateAccount({ initialFunds: (3).algos() })
     const { txns, txIds } = await SendXTransactions(2, testAccount, algorand)
     const { txIds: txIds2 } = await SendXTransactions(2, randomAccount, algorand)
-    const initialWatermark = Number(txns[0].confirmation!.confirmedRound!) - 1
+    const initialWatermark = txns[0].confirmation!.confirmedRound! - 1n
     const eventsEmitted: string[] = []
     let pollComplete = false
     const { subscriber } = getSubscriber(
@@ -301,13 +301,13 @@ describe('AlgorandSubscriber', () => {
             {
               name: 'account1',
               filter: {
-                sender: testAccount.addr,
+                sender: testAccount.addr.toString(),
               },
             },
             {
               name: 'account2',
               filter: {
-                sender: randomAccount.addr,
+                sender: randomAccount.addr.toString(),
               },
             },
           ],
@@ -361,7 +361,7 @@ describe('AlgorandSubscriber', () => {
   test('Correctly fires onError method', async () => {
     const { algorand, testAccount } = localnet.context
     const { txns } = await SendXTransactions(2, testAccount, algorand)
-    const initialWatermark = Number(txns[0].confirmation!.confirmedRound!) - 1
+    const initialWatermark = txns[0].confirmation!.confirmedRound! - 1n
     let complete = false
     let actualError = undefined
     const expectedError = new Error('BOOM')
@@ -377,7 +377,7 @@ describe('AlgorandSubscriber', () => {
             {
               name: 'account1',
               filter: {
-                sender: testAccount.addr,
+                sender: testAccount.addr.toString(),
               },
             },
           ],

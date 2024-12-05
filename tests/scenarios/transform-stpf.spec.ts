@@ -5,7 +5,7 @@ import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
 
 describe('State proof transaction', () => {
   const txnId = 'G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ'
-  const roundNumber = 35600004
+  const roundNumber = 35600004n
   const algorand = AlgorandClient.mainNet()
 
   it('Can have a stpf transaction subscribed correctly from indexer', async () => {
@@ -15,9 +15,9 @@ describe('State proof transaction', () => {
           type: TransactionType.stpf,
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'catchup-with-indexer',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
@@ -2109,9 +2109,9 @@ describe('State proof transaction', () => {
           type: TransactionType.stpf,
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'sync-oldest',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
@@ -2120,7 +2120,7 @@ describe('State proof transaction', () => {
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ
     expect(txn.id).toBe(txnId)
-    expect(clearUndefineds(txn)).toMatchInlineSnapshot(`
+    expect(clearUndefineds(txn as any)).toMatchInlineSnapshot(`
       {
         "balanceChanges": [],
         "confirmed-round": 35600004,

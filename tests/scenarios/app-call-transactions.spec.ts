@@ -25,8 +25,8 @@ describe('App call transactions', () => {
           {
             roundsToSync: 1,
             syncBehaviour: 'sync-oldest',
-            watermark: Number(app1.result.confirmation?.confirmedRound) - 1,
-            currentRound: Number(app1.result.confirmation?.confirmedRound),
+            watermark: (app1.result.confirmation?.confirmedRound ?? 0n) - 1n,
+            currentRound: app1.result.confirmation?.confirmedRound ?? 0n,
             filters: { appCreate: true },
           },
           localnet.algorand,
@@ -34,7 +34,7 @@ describe('App call transactions', () => {
       ])
 
       expect(algod.subscribedTransactions.length).toBe(1)
-      expect(algod.subscribedTransactions[0]['application-transaction']?.['application-id']).toBe(0)
+      expect(algod.subscribedTransactions[0].applicationTransaction?.applicationId).toBe(0n)
     })
   })
 })

@@ -5,7 +5,7 @@ import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
 
 describe('Complex transaction with many nested inner transactions', () => {
   const txnId = 'LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA'
-  const roundNumber = 34418662
+  const roundNumber = 34418662n
   const algorand = AlgorandClient.mainNet()
 
   it('Can have a keyreg transaction subscribed correctly from indexer', async () => {
@@ -16,9 +16,9 @@ describe('Complex transaction with many nested inner transactions', () => {
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'catchup-with-indexer',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
@@ -83,9 +83,9 @@ describe('Complex transaction with many nested inner transactions', () => {
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'sync-oldest',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
@@ -94,7 +94,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA
     expect(txn.id).toBe(txnId)
-    expect(clearUndefineds(txn)).toMatchInlineSnapshot(`
+    expect(clearUndefineds(txn as any)).toMatchInlineSnapshot(`
       {
         "balanceChanges": [
           {

@@ -11,7 +11,7 @@ import Algodv2 = algosdk.Algodv2
  * @param client The algod client
  * @returns The blocks
  */
-export async function getBlocksBulk(context: { startRound: number; maxRound: number }, client: Algodv2) {
+export async function getBlocksBulk(context: { startRound: bigint; maxRound: bigint }, client: Algodv2) {
   // Grab 30 at a time in parallel to not overload the node
   const blockChunks = chunkArray(range(context.startRound, context.maxRound), 30)
   let blocks: BlockData[] = []
@@ -21,7 +21,8 @@ export async function getBlocksBulk(context: { startRound: number; maxRound: num
     blocks = blocks.concat(
       await Promise.all(
         chunk.map(async (round) => {
-          const response = await client.c.get(`/v2/blocks/${round}`, { format: 'msgpack' }, undefined, undefined, false)
+          // TODO: NC - Do we want to move to using the API directly? Can we?
+          const response = await client.c.get({ relativePath: `/v2/blocks/${round}`, query: { format: 'msgpack' } })
           const body = response.body as Uint8Array
           const decodedWithMap = msgpack.decode(body, {
             intMode: msgpack.IntMode.AS_ENCODED,

@@ -1,13 +1,14 @@
 import { AlgorandClient, lookupTransactionById } from '@algorandfoundation/algokit-utils'
-import algosdk from 'algosdk'
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
 import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
 import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
 
+// TODO: NC - Handle lookupTransactionById deprecation
+
 describe('Complex transaction with many nested inner transactions', () => {
   const txnId = 'QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q'
-  const roundNumber = 35214367
+  const roundNumber = 35214367n
   const algorand = AlgorandClient.mainNet()
 
   it('Can have an inner transaction subscribed correctly from indexer', async () => {
@@ -18,9 +19,9 @@ describe('Complex transaction with many nested inner transactions', () => {
           sender: 'AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A',
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'catchup-with-indexer',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
@@ -165,9 +166,9 @@ describe('Complex transaction with many nested inner transactions', () => {
           sender: 'AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A',
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'sync-oldest',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
@@ -176,7 +177,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
     expect(txn.id).toBe(`${txnId}/inner/5`)
-    expect(clearUndefineds(txn)).toMatchInlineSnapshot(`
+    expect(clearUndefineds(txn as any)).toMatchInlineSnapshot(`
       {
         "application-transaction": {
           "application-args": [
@@ -338,7 +339,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   it('Can be processed correctly from algod raw block', async () => {
     const txn = await lookupTransactionById(txnId, algorand.client.indexer)
     const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
-    const intraRoundOffset = txn.transaction['intra-round-offset']!
+    const intraRoundOffset = txn.transaction.intraRoundOffset!
 
     const transformed = await getBlockTransactions(b.block)
 
@@ -681,23 +682,23 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Transforms axfer without an arcv address', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39373576, maxRound: 39373576 }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
+    const blocks = await getBlocksBulk({ startRound: 39373576n, maxRound: 39373576n }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     expect(blockTransactions.length).toBe(30)
-    expect(algosdk.encodeAddress(blockTransactions[5].transaction.to.publicKey)).toBe(ALGORAND_ZERO_ADDRESS)
+    expect(blockTransactions[5].transaction.assetTransfer?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
   })
 
   it('Transforms pay without a rcv address', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39723800, maxRound: 39723800 }, algorand.client.algod) // Contains a pay close account inner transaction without a rcv address
+    const blocks = await getBlocksBulk({ startRound: 39723800n, maxRound: 39723800n }, algorand.client.algod) // Contains a pay close account inner transaction without a rcv address
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     expect(blockTransactions.length).toBe(486)
-    expect(algosdk.encodeAddress(blockTransactions[371].transaction.to.publicKey)).toBe(ALGORAND_ZERO_ADDRESS)
+    expect(blockTransactions[371].transaction.payment?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
   })
 
   it('Produces the correct txID for a non hgi transaction', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algorand.client.algod)
+    const blocks = await getBlocksBulk({ startRound: 39430981n, maxRound: 39430981n }, algorand.client.algod)
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
@@ -706,12 +707,12 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Produces the correct state deltas in an app call transaction', async () => {
-    const blocks = await getBlocksBulk({ startRound: 39430981, maxRound: 39430981 }, algorand.client.algod)
+    const blocks = await getBlocksBulk({ startRound: 39430981n, maxRound: 39430981n }, algorand.client.algod)
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[9])
-    const localStateDelta = transaction['local-state-delta']
-    const globalStateDelta = transaction['global-state-delta']
+    const localStateDelta = transaction.localStateDelta
+    const globalStateDelta = transaction.globalStateDelta
     expect(globalStateDelta).toMatchInlineSnapshot(`[
   {
     "key": "Y3VycmVudF9taW5lcl9lZmZvcnQ=",
@@ -757,15 +758,15 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Produces base64 encoded programs for an application create transaction', async () => {
-    const blocks = await getBlocksBulk({ startRound: 34632059, maxRound: 34632059 }, algorand.client.algod) // Contains a appl create transaction with approval and clear state programs
+    const blocks = await getBlocksBulk({ startRound: 34632059n, maxRound: 34632059n }, algorand.client.algod) // Contains a appl create transaction with approval and clear state programs
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
 
     expect(blockTransactions.length).toBe(14)
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[5])
-    expect(transaction['application-transaction']!['approval-program']).toBe(
+    expect(transaction.applicationTransaction!.approvalProgram).toBe(
       'CSAFAAGAgKSPxPlaEAImDwpsYXN0X21pbmVyDmhhbHZpbmdfc3VwcGx5EWxhc3RfbWluZXJfZWZmb3J0BmVmZm9ydAV0b2tlbgdoYWx2aW5nDG1pbmVkX3N1cHBseQxtaW5lcl9yZXdhcmQUY3VycmVudF9taW5lcl9lZmZvcnQFYmxvY2sMdG90YWxfZWZmb3J0EnRvdGFsX3RyYW5zYWN0aW9ucw1jdXJyZW50X21pbmVyD3N0YXJ0X3RpbWVzdGFtcAAxGCINgQYLMRkIjQgDCgMrAAAAAAAAAAADHQMsAIgAAiNDigAAJwQiZycJImcnCiJnJwsiZycFImcpgYCA0ofivC1nJwYiZycHgYCAgDJnKDIDZyoiZycMMgNnJwgiZycNgYCByKwGZ4mKAAAnBLGBA7IQgAZPcmFuZ2WyJoADT1JBsiUyCrIpMgqyKjIDsisyA7IsJLIigQiyI4A6aXBmczovL1FtVWl0eEp1UEpKcmN1QWRBaVZkRUVwdXpHbXNFTEdnQXZoTGQ1RmlYUlNoRXUjYXJjM7IngCDT/VG+LujCsXp66CbTScDfIP6rik1oAwNAHHQVYMMkNrIoIrIBgKgBSm9obiBBbGFuIFdvb2RzIDAxL0RlYy8yMDIzIFlvdSBrbm93LCBJIGNhbiBwdWxsIG1ldHJpY3Mgb3V0IG9mIHRoZSBhaXIgdG9vLCB3aGF0ZXZlciwgOCBtaWxsaW9uIHRyYW5zYWN0aW9ucyBvdmVyIHRoZSBsYXN0IHdlZWssIEkgZG9uJ3Qga25vdywgbXkgbW9tIGhhcyBmb3VyIG9yYW5nZXMusgWztDxniYgAAiNDigAAJwRkIhJBAAOI/qQxACsiZomKAwAyBjIGgQUYCYz/Jwlki/8TQQC3KGQnBGRwAExIQQB0KWQnB2QNQQAGJwdkQgACKWSM/rGBBLIQJwRkshEoZLIUi/6yEiKyAbMoZCpkFlCwJwYnBmSL/ghnKSlki/4JZylkIhJBAC0nBScFZCMIZycFZCUPQQAKKSQnBmQJZ0IAEykkJwZkCSEECmcnBycHZCEECmcoZDYyAGFBABsoZCtijP0oZCuL/SpkDUEACIv9KmQJQgABImYnCYv/ZygnDGRnKicIZGcnCCJniScOSTYaAUkVgSASRIgAAiNDigMAi/82MgArY0xIRDIHJw1kD0QnBWQlDkQxAYGgnAEORCcORwKI/vgnCicKZDEBCGcnCycLZCMIZ4v/K2IxAQiM/ov/K4v+Zov+jP0oZIv/EkEAE4v9KmQNQQAIi/0qZAlCAAEijP2L/ScIZA1BAAonDIv/ZycIi/1niTEbQfzygAS4RHs2NhoAjgH85QCABKsjcMw2GgCOAf9TAAAxG0H+ZQA=',
     )
-    expect(transaction['application-transaction']!['clear-state-program']).toBe('CQ==')
+    expect(transaction.applicationTransaction!.clearStateProgram).toBe('CQ==')
   })
 })

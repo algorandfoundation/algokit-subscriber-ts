@@ -1,5 +1,4 @@
 import algosdk from 'algosdk'
-import EncodedTransaction = algosdk.EncodedTransaction
 import Transaction = algosdk.Transaction
 
 /**
@@ -187,9 +186,9 @@ export interface BlockTransaction {
   /** The eval deltas for the block */
   dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
-  caid?: number
+  caid?: bigint
   /** App ID when an app is created by the transaction */
-  apid?: number
+  apid?: bigint
   /** Asset closing amount in decimal units */
   aca?: number | bigint
   /** Algo closing amount in microAlgos */
@@ -388,9 +387,9 @@ export interface TransactionInBlock {
   /** The transaction as an algosdk `Transaction` object. */
   transaction: Transaction
   /** The asset ID if an asset was created from this transaction. */
-  createdAssetId?: number
+  createdAssetId?: bigint
   /** The app ID if an app was created from this transaction. */
-  createdAppId?: number
+  createdAppId?: bigint
   /** The asset close amount if the sender asset position was closed from this transaction. */
   assetCloseAmount?: number | bigint
   /** The ALGO close amount if the sender account was closed from this transaction. */
@@ -403,4 +402,270 @@ export interface TransactionInBlock {
   senderRewards?: number
   /** Rewards in microalgos applied to the receiver account. */
   receiverRewards?: number
+}
+
+/**
+ * Interfaces for the encoded transaction object. Every property is labelled with its associated Transaction type property
+ */
+export interface EncodedAssetParams {
+  /**
+   * assetTotal
+   */
+  t: number | bigint
+  /**
+   * assetDefaultFrozen
+   */
+  df: boolean
+  /**
+   * assetDecimals
+   */
+  dc: number
+  /**
+   * assetManager
+   */
+  m?: Buffer
+  /**
+   * assetReserve
+   */
+  r?: Buffer
+  /**
+   * assetFreeze
+   */
+  f?: Buffer
+  /**
+   * assetClawback
+   */
+  c?: Buffer
+  /**
+   * assetName
+   */
+  an?: string
+  /**
+   * assetUnitName
+   */
+  un?: string
+  /**
+   * assetURL
+   */
+  au?: string
+  /**
+   * assetMetadataHash
+   */
+  am?: Buffer
+}
+export interface EncodedLocalStateSchema {
+  /**
+   * appLocalInts
+   */
+  nui: number
+  /**
+   * appLocalByteSlices
+   */
+  nbs: number
+}
+export interface EncodedGlobalStateSchema {
+  /**
+   * appGlobalInts
+   */
+  nui: number
+  /**
+   * appGlobalByteSlices
+   */
+  nbs: number
+}
+export interface EncodedBoxReference {
+  /**
+   * index of the app ID in the foreign apps array
+   */
+  i: number
+  /**
+   * box name
+   */
+  n: Uint8Array
+}
+/**
+ * A rough structure for the encoded transaction object. Every property is labelled with its associated Transaction type property
+ */
+export interface EncodedTransaction {
+  /**
+   * fee
+   */
+  fee?: number
+  /**
+   * firstRound
+   */
+  fv?: number
+  /**
+   * lastRound
+   */
+  lv: number
+  /**
+   * note
+   */
+  note?: Buffer
+  /**
+   * from
+   */
+  snd: Buffer
+  /**
+   * type
+   */
+  type: string
+  /**
+   * genesisID
+   */
+  gen: string
+  /**
+   * genesisHash
+   */
+  gh: Buffer
+  /**
+   * lease
+   */
+  lx?: Buffer
+  /**
+   * group
+   */
+  grp?: Buffer
+  /**
+   * amount
+   */
+  amt?: number | bigint
+  /**
+   * amount (but for asset transfers)
+   */
+  aamt?: number | bigint
+  /**
+   * closeRemainderTo
+   */
+  close?: Buffer
+  /**
+   * closeRemainderTo (but for asset transfers)
+   */
+  aclose?: Buffer
+  /**
+   * reKeyTo
+   */
+  rekey?: Buffer
+  /**
+   * to
+   */
+  rcv?: Buffer
+  /**
+   * to (but for asset transfers)
+   */
+  arcv?: Buffer
+  /**
+   * voteKey
+   */
+  votekey?: Buffer
+  /**
+   * selectionKey
+   */
+  selkey?: Buffer
+  /**
+   * stateProofKey
+   */
+  sprfkey?: Buffer
+  /**
+   * voteFirst
+   */
+  votefst?: number
+  /**
+   * voteLast
+   */
+  votelst?: number
+  /**
+   * voteKeyDilution
+   */
+  votekd?: number
+  /**
+   * nonParticipation
+   */
+  nonpart?: boolean
+  /**
+   * assetIndex
+   */
+  caid?: bigint
+  /**
+   * assetIndex (but for asset transfers)
+   */
+  xaid?: bigint
+  /**
+   * assetIndex (but for asset freezing/unfreezing)
+   */
+  faid?: bigint
+  /**
+   * freezeState
+   */
+  afrz?: boolean
+  /**
+   * freezeAccount
+   */
+  fadd?: Buffer
+  /**
+   * assetRevocationTarget
+   */
+  asnd?: Buffer
+  /**
+   * See EncodedAssetParams type
+   */
+  apar?: EncodedAssetParams
+  /**
+   * appIndex
+   */
+  apid?: number
+  /**
+   * appOnComplete
+   */
+  apan?: number
+  /**
+   * See EncodedLocalStateSchema type
+   */
+  apls?: EncodedLocalStateSchema
+  /**
+   * See EncodedGlobalStateSchema type
+   */
+  apgs?: EncodedGlobalStateSchema
+  /**
+   * appForeignApps
+   */
+  apfa?: number[]
+  /**
+   * appForeignAssets
+   */
+  apas?: number[]
+  /**
+   * appApprovalProgram
+   */
+  apap?: Buffer
+  /**
+   * appClearProgram
+   */
+  apsu?: Buffer
+  /**
+   * appArgs
+   */
+  apaa?: Buffer[]
+  /**
+   * appAccounts
+   */
+  apat?: Buffer[]
+  /**
+   * extraPages
+   */
+  apep?: number
+  /**
+   * boxes
+   */
+  apbx?: EncodedBoxReference[]
+  sptype?: number | bigint
+  /**
+   * stateProof
+   */
+  sp?: Buffer
+  /**
+   * stateProofMessage
+   */
+  spmsg?: Buffer
 }

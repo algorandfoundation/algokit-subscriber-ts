@@ -1,7 +1,6 @@
-import { Config, searchTransactions } from '@algorandfoundation/algokit-utils'
+import { Config, SearchForTransactions, searchTransactions } from '@algorandfoundation/algokit-utils'
 import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
-import type SearchForTransactions from 'algosdk/dist/types/client/v2/indexer/searchForTransactions'
 import { Buffer } from 'buffer'
 import sha512, { sha512_256 } from 'js-sha512'
 import { getBlocksBulk } from './block'
@@ -61,7 +60,7 @@ export async function getSubscribedTransactions(
 ): Promise<TransactionSubscriptionResult> {
   const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds, currentRound: _currentRound } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
-  const currentRound = _currentRound ?? ((await algod.status().do())['last-round'] as number)
+  const currentRound = _currentRound ?? (await algod.status().do()).lastRound
   let blockMetadata: BlockMetadata[] | undefined
 
   // Pre-calculate a flat list of all ARC-28 events to process
@@ -93,8 +92,8 @@ export async function getSubscribedTransactions(
     }
   }
 
-  let indexerSyncToRoundNumber = 0
-  let algodSyncFromRoundNumber = watermark + 1
+  let indexerSyncToRoundNumber = 0n
+  let algodSyncFromRoundNumber = watermark + 1n
   let startRound = algodSyncFromRoundNumber
   let endRound = currentRound
   let catchupTransactions: SubscribedTransaction[] = []
@@ -107,20 +106,20 @@ export async function getSubscribedTransactions(
       case 'fail':
         throw new Error(`Invalid round number to subscribe from ${algodSyncFromRoundNumber}; current round number is ${currentRound}`)
       case 'skip-sync-newest':
-        algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
+        algodSyncFromRoundNumber = currentRound - BigInt(maxRoundsToSync) + 1n
         startRound = algodSyncFromRoundNumber
         break
       case 'sync-oldest':
-        endRound = algodSyncFromRoundNumber + maxRoundsToSync - 1
+        endRound = algodSyncFromRoundNumber + BigInt(maxRoundsToSync) - 1n
         break
       case 'sync-oldest-start-now':
         // When watermark is 0 same behaviour as skip-sync-newest
-        if (watermark === 0) {
-          algodSyncFromRoundNumber = currentRound - maxRoundsToSync + 1
+        if (watermark === 0n) {
+          algodSyncFromRoundNumber = currentRound - BigInt(maxRoundsToSync) + 1n
           startRound = algodSyncFromRoundNumber
         } else {
           // Otherwise same behaviour as sync-oldest
-          endRound = algodSyncFromRoundNumber + maxRoundsToSync - 1
+          endRound = algodSyncFromRoundNumber + BigInt(maxRoundsToSync) - 1n
         }
         break
       case 'catchup-with-indexer':
@@ -129,13 +128,13 @@ export async function getSubscribedTransactions(
         }
 
         // If we have more than `maxIndexerRoundsToSync` rounds to sync from indexer then we skip algod sync and just sync that many rounds from indexer
-        indexerSyncToRoundNumber = currentRound - maxRoundsToSync
-        if (subscription.maxIndexerRoundsToSync && indexerSyncToRoundNumber - startRound + 1 > subscription.maxIndexerRoundsToSync) {
-          indexerSyncToRoundNumber = startRound + subscription.maxIndexerRoundsToSync - 1
+        indexerSyncToRoundNumber = currentRound - BigInt(maxRoundsToSync)
+        if (subscription.maxIndexerRoundsToSync && indexerSyncToRoundNumber - startRound + 1n > subscription.maxIndexerRoundsToSync) {
+          indexerSyncToRoundNumber = startRound + BigInt(subscription.maxIndexerRoundsToSync) - 1n
           endRound = indexerSyncToRoundNumber
           skipAlgodSync = true
         } else {
-          algodSyncFromRoundNumber = indexerSyncToRoundNumber + 1
+          algodSyncFromRoundNumber = indexerSyncToRoundNumber + 1n
         }
 
         Config.logger.debug(
@@ -165,13 +164,13 @@ export async function getSubscribedTransactions(
 
         catchupTransactions = catchupTransactions
           // Sort by transaction order
-          .sort((a, b) => a['confirmed-round']! - b['confirmed-round']! || a['intra-round-offset']! - b['intra-round-offset']!)
+          .sort((a, b) => Number(a.confirmedRound! - b.confirmedRound!) || a.intraRoundOffset! - b.intraRoundOffset!)
           // Collapse duplicate transactions
           .reduce(deduplicateSubscribedTransactionsReducer, [] as SubscribedTransaction[])
 
         Config.logger.debug(
           `Retrieved ${catchupTransactions.length} transactions from round ${startRound} to round ${
-            algodSyncFromRoundNumber - 1
+            algodSyncFromRoundNumber - 1n
           } via indexer in ${(+new Date() - start) / 1000}s`,
         )
 
@@ -218,7 +217,7 @@ export async function getSubscribedTransactions(
   }
 }
 
-function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: number, transaction: () => TransactionResult) {
+function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: bigint, transaction: () => TransactionResult) {
   return (
     (!group.processForAppIds || group.processForAppIds.includes(appId)) &&
     // Lazily evaluate transaction so it's only evaluated if needed since creating the transaction object may be expensive if from algod
@@ -232,12 +231,12 @@ function processExtraFields(
   arc28Groups: Arc28EventGroup[],
 ): SubscribedTransaction {
   const groupsToApply =
-    transaction['tx-type'] !== TransactionType.appl
+    transaction.txType !== TransactionType.appl
       ? []
       : arc28Groups.filter((g) =>
           transactionIsInArc28EventGroup(
             g,
-            transaction['created-application-index'] ?? transaction['application-transaction']?.['application-id'] ?? 0,
+            transaction.createdApplicationIndex ?? transaction.applicationTransaction?.applicationId ?? 0n,
             () => transaction,
           ),
         )
@@ -245,13 +244,13 @@ function processExtraFields(
   return {
     ...transaction,
     arc28Events: extractArc28Events(
-      transaction.id,
-      (transaction.logs ?? []).map((l) => Buffer.from(l, 'base64')),
+      transaction.id!, // TODO: NC - ??
+      transaction.logs ?? [],
       eventsToApply,
       (groupName) => groupsToApply.find((g) => g.groupName === groupName)!.continueOnError ?? false,
     ),
     balanceChanges: extractBalanceChangesFromIndexerTransaction(transaction),
-    'inner-txns': transaction['inner-txns']?.map((inner) => processExtraFields(inner, arc28Events, arc28Groups)),
+    innerTxns: transaction.innerTxns?.map((inner) => processExtraFields(inner, arc28Events, arc28Groups)),
   }
 }
 
@@ -260,7 +259,7 @@ function hasEmittedMatchingArc28Event(
   allEvents: Arc28EventToProcess[],
   eventGroups: Arc28EventGroup[],
   eventFilter: { groupName: string; eventName: string }[],
-  appId: number,
+  appId: bigint,
   transaction: () => TransactionResult,
 ): boolean {
   const potentialEvents = allEvents
@@ -330,8 +329,8 @@ function extractArc28Events(
 
 function indexerPreFilter(
   subscription: TransactionFilter,
-  minRound: number,
-  maxRound: number,
+  minRound: bigint,
+  maxRound: bigint,
 ): (s: SearchForTransactions) => SearchForTransactions {
   return (s) => {
     // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
@@ -398,19 +397,19 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Transact
     if (subscription.receiver) {
       if (typeof subscription.receiver === 'string') {
         result &&=
-          (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].receiver === subscription.receiver) ||
-          (!!t['payment-transaction'] && t['payment-transaction'].receiver === subscription.receiver)
+          (!!t.assetTransferTransaction && t.assetTransferTransaction.receiver === subscription.receiver) ||
+          (!!t.paymentTransaction && t.paymentTransaction.receiver === subscription.receiver)
       } else {
         result &&=
-          (!!t['asset-transfer-transaction'] && subscription.receiver.includes(t['asset-transfer-transaction'].receiver)) ||
-          (!!t['payment-transaction'] && subscription.receiver.includes(t['payment-transaction'].receiver))
+          (!!t.assetTransferTransaction && subscription.receiver.includes(t.assetTransferTransaction.receiver)) ||
+          (!!t.paymentTransaction && subscription.receiver.includes(t.paymentTransaction.receiver))
       }
     }
     if (subscription.type) {
       if (typeof subscription.type === 'string') {
-        result &&= t['tx-type'] === subscription.type
+        result &&= t.txType === subscription.type
       } else {
-        result &&= subscription.type.includes(t['tx-type'])
+        result &&= subscription.type.includes(t.txType)
       }
     }
     if (subscription.notePrefix) {
@@ -419,43 +418,41 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Transact
     if (subscription.appId) {
       if (typeof subscription.appId === 'number' || typeof subscription.appId === 'bigint') {
         result &&=
-          t['created-application-index'] === Number(subscription.appId) ||
-          (!!t['application-transaction'] && t['application-transaction']['application-id'] === Number(subscription.appId))
+          t.createdApplicationIndex === BigInt(subscription.appId) ||
+          (!!t.applicationTransaction && t.applicationTransaction.applicationId === BigInt(subscription.appId))
       } else {
         result &&=
-          (t['created-application-index'] && subscription.appId.map((i) => Number(i)).includes(t['created-application-index'])) ||
-          (!!t['application-transaction'] &&
-            subscription.appId.map((i) => Number(i)).includes(t['application-transaction']['application-id']))
+          (t.createdApplicationIndex && subscription.appId.map((i) => BigInt(i)).includes(t.createdApplicationIndex)) ||
+          (!!t.applicationTransaction && subscription.appId.map((i) => BigInt(i)).includes(t.applicationTransaction.applicationId))
       }
     }
     if (subscription.assetId) {
       if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
         result &&=
-          t['created-asset-index'] === Number(subscription.assetId) ||
-          (!!t['asset-config-transaction'] && t['asset-config-transaction']['asset-id'] === Number(subscription.assetId)) ||
-          (!!t['asset-freeze-transaction'] && t['asset-freeze-transaction']['asset-id'] === Number(subscription.assetId)) ||
-          (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction']['asset-id'] === Number(subscription.assetId))
+          t.createdAssetIndex === BigInt(subscription.assetId) ||
+          (!!t.assetConfigTransaction && t.assetConfigTransaction.assetId === BigInt(subscription.assetId)) ||
+          (!!t.assetFreezeTransaction && t.assetFreezeTransaction.assetId === BigInt(subscription.assetId)) ||
+          (!!t.assetTransferTransaction && t.assetTransferTransaction.assetId === BigInt(subscription.assetId))
       } else {
         result &&=
-          (t['created-asset-index'] && subscription.assetId.map((i) => Number(i)).includes(t['created-asset-index'])) ||
-          (!!t['asset-config-transaction'] &&
-            subscription.assetId.map((i) => Number(i)).includes(t['asset-config-transaction']['asset-id'])) ||
-          (!!t['asset-freeze-transaction'] &&
-            subscription.assetId.map((i) => Number(i)).includes(t['asset-freeze-transaction']['asset-id'])) ||
-          (!!t['asset-transfer-transaction'] &&
-            subscription.assetId.map((i) => Number(i)).includes(t['asset-transfer-transaction']['asset-id']))
+          (t.createdAssetIndex && subscription.assetId.map((i) => BigInt(i)).includes(t.createdAssetIndex)) ||
+          (!!t.assetConfigTransaction &&
+            t.assetConfigTransaction.assetId !== undefined &&
+            subscription.assetId.map((i) => BigInt(i)).includes(t.assetConfigTransaction.assetId)) ||
+          (!!t.assetFreezeTransaction && subscription.assetId.map((i) => BigInt(i)).includes(t.assetFreezeTransaction.assetId)) ||
+          (!!t.assetTransferTransaction && subscription.assetId.map((i) => BigInt(i)).includes(t.assetTransferTransaction.assetId))
       }
     }
 
     if (subscription.minAmount) {
       result &&=
-        (!!t['payment-transaction'] && t['payment-transaction'].amount >= subscription.minAmount) ||
-        (!!t['asset-transfer-transaction'] && t['asset-transfer-transaction'].amount >= subscription.minAmount)
+        (!!t.paymentTransaction && t.paymentTransaction.amount >= subscription.minAmount) ||
+        (!!t.assetTransferTransaction && t.assetTransferTransaction.amount >= subscription.minAmount)
     }
     if (subscription.maxAmount) {
       result &&=
-        (!!t['payment-transaction'] && BigInt(t['payment-transaction'].amount) <= subscription.maxAmount) ||
-        (!!t['asset-transfer-transaction'] && BigInt(t['asset-transfer-transaction'].amount) <= subscription.maxAmount)
+        (!!t.paymentTransaction && BigInt(t.paymentTransaction.amount) <= subscription.maxAmount) ||
+        (!!t.assetTransferTransaction && BigInt(t.assetTransferTransaction.amount) <= subscription.maxAmount)
     }
 
     return result
@@ -470,34 +467,35 @@ function indexerPostFilter(
   return (t) => {
     let result = true
     if (subscription.assetCreate) {
-      result &&= !!t['created-asset-index']
+      result &&= !!t.createdAssetIndex
     } else if (subscription.assetCreate === false) {
-      result &&= !t['created-asset-index']
+      result &&= !t.createdAssetIndex
     }
     if (subscription.appCreate) {
-      result &&= !!t['created-application-index']
+      result &&= !!t.createdApplicationIndex
     } else if (subscription.appCreate === false) {
-      result &&= !t['created-application-index']
+      result &&= !t.createdApplicationIndex
     }
     if (subscription.appOnComplete) {
       result &&=
-        !!t['application-transaction'] &&
-        (typeof subscription.appOnComplete === 'string' ? [subscription.appOnComplete] : subscription.appOnComplete).includes(
-          t['application-transaction']['on-completion'],
-        )
+        !!t.applicationTransaction &&
+        t.applicationTransaction.onCompletion !== undefined &&
+        (typeof subscription.appOnComplete === 'string' ? [subscription.appOnComplete] : subscription.appOnComplete)
+          .map((oc) => oc.toString()) // TODO: NC - Does this type need adjusting?
+          .includes(t.applicationTransaction.onCompletion)
     }
     if (subscription.methodSignature) {
       if (typeof subscription.methodSignature === 'string') {
         result &&=
-          !!t['application-transaction'] &&
-          !!t['application-transaction']['application-args'] &&
-          t['application-transaction']['application-args'][0] === getMethodSelectorBase64(subscription.methodSignature)
+          !!t.applicationTransaction &&
+          !!t.applicationTransaction.applicationArgs &&
+          t.applicationTransaction.applicationArgs[0] === getMethodSelectorBase64(subscription.methodSignature)
       } else {
         subscription.methodSignature.filter(
           (method) =>
-            !!t['application-transaction'] &&
-            !!t['application-transaction']['application-args'] &&
-            t['application-transaction']['application-args'][0] === getMethodSelectorBase64(method),
+            !!t.applicationTransaction &&
+            !!t.applicationTransaction.applicationArgs &&
+            t.applicationTransaction.applicationArgs[0] === getMethodSelectorBase64(method),
         ).length > 0
           ? (result &&= true)
           : (result &&= false)
@@ -505,19 +503,19 @@ function indexerPostFilter(
     }
     if (subscription.appCallArgumentsMatch) {
       result &&=
-        !!t['application-transaction'] &&
-        subscription.appCallArgumentsMatch(t['application-transaction']['application-args']?.map((a) => Buffer.from(a, 'base64')))
+        !!t.applicationTransaction &&
+        subscription.appCallArgumentsMatch(t.applicationTransaction.applicationArgs?.map((a) => Buffer.from(a, 'base64')))
     }
     if (subscription.arc28Events) {
       result &&=
-        !!t['application-transaction'] &&
+        !!t.applicationTransaction &&
         !!t.logs &&
         hasEmittedMatchingArc28Event(
           t.logs.map((l) => Buffer.from(l, 'base64')),
           arc28Events,
           arc28EventGroups,
           subscription.arc28Events,
-          t['created-application-index'] ?? t['application-transaction']?.['application-id'] ?? 0,
+          t.createdApplicationIndex ?? t.applicationTransaction?.applicationId ?? 0,
           () => t,
         )
     }
@@ -548,9 +546,9 @@ function transactionFilter(
     let result = true
     if (subscription.sender) {
       if (typeof subscription.sender === 'string') {
-        result &&= !!t.from && algosdk.encodeAddress(t.from.publicKey) === subscription.sender
+        result &&= !!t.sender && t.sender.toString() === subscription.sender
       } else {
-        result &&= !!t.from && subscription.sender.includes(algosdk.encodeAddress(t.from.publicKey))
+        result &&= !!t.sender && subscription.sender.includes(t.sender.publicKey.toString())
       }
     }
     if (subscription.receiver) {
@@ -684,14 +682,14 @@ function getFilteredIndexerTransactions(transaction: TransactionResult, filter: 
 
 /** Return a transaction and its inner transactions as an array of `SubscribedTransaction` objects. */
 function getIndexerInnerTransactions(root: TransactionResult, parent: TransactionResult, offset: () => number): SubscribedTransaction[] {
-  return (parent['inner-txns'] ?? []).flatMap((t) => {
+  return (parent.innerTxns ?? []).flatMap((t) => {
     const parentOffset = offset()
     return [
       {
         ...t,
         parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
-        'intra-round-offset': root['intra-round-offset']! + parentOffset + 1,
+        intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
       },
       ...getIndexerInnerTransactions(root, t, offset),
     ] satisfies SubscribedTransaction[]

@@ -17,7 +17,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     await waitForIndexerTransaction(txns[0].transaction.txID())
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0, currentRound: lastTxnRound },
+      { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0n, currentRound: lastTxnRound },
       testAccount,
       algorand,
     )
@@ -38,8 +38,8 @@ describe('Subscribing using catchup-with-indexer', () => {
     const { txns } = await SendXTransactions(5, testAccount, algorand)
     const { lastTxnRound, txIds } = await SendXTransactions(1, randomAccount, algorand)
     await waitForIndexerTransaction(txIds[0])
-    const expectedNewWatermark = Number(txns[2].confirmation!.confirmedRound!) - 1
-    const indexerRoundsToSync = expectedNewWatermark - initialWatermark
+    const expectedNewWatermark = txns[2].confirmation!.confirmedRound! - 1n
+    const indexerRoundsToSync = Number(expectedNewWatermark - initialWatermark)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       {
@@ -56,7 +56,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     expect(subscribed.currentRound).toBe(lastTxnRound)
     expect(subscribed.startingWatermark).toBe(initialWatermark)
     expect(subscribed.newWatermark).toBe(expectedNewWatermark)
-    expect(subscribed.syncedRoundRange).toEqual([initialWatermark + 1, expectedNewWatermark])
+    expect(subscribed.syncedRoundRange).toEqual([initialWatermark + 1n, expectedNewWatermark])
     expect(subscribed.subscribedTransactions.length).toBe(2)
     expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
     expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txID())
@@ -70,13 +70,13 @@ describe('Subscribing using catchup-with-indexer', () => {
     await waitForIndexerTransaction(lastTxns[0].transaction.txID())
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: olderTxnRound - 1, currentRound },
+      { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: olderTxnRound - 1n, currentRound },
       testAccount,
       algorand,
     )
 
     expect(subscribed.currentRound).toBe(currentRound)
-    expect(subscribed.startingWatermark).toBe(olderTxnRound - 1)
+    expect(subscribed.startingWatermark).toBe(olderTxnRound - 1n)
     expect(subscribed.newWatermark).toBe(currentRound)
     expect(subscribed.syncedRoundRange).toEqual([olderTxnRound, currentRound])
     expect(subscribed.subscribedTransactions.length).toBe(2)
@@ -90,7 +90,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     await waitForIndexerTransaction(txIds[2])
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0, currentRound: lastTxnRound },
+      { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0n, currentRound: lastTxnRound },
       testAccount,
       algorand,
     )

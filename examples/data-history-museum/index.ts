@@ -1,10 +1,8 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import algosdk from 'algosdk'
+import { TransactionType, indexerModels } from 'algosdk'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
-import TransactionType = algosdk.TransactionType
 
 if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
@@ -13,7 +11,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 }
 
 interface DHMAsset {
-  id: number
+  id: bigint
   name: string
   unit: string
   mediaUrl: string
@@ -59,42 +57,47 @@ async function getDHMSubscriber() {
   return subscriber
 }
 
-function getArc69Metadata(t: TransactionResult) {
+function getArc69Metadata(t: indexerModels.Transaction) {
   let metadata = {}
   try {
-    if (t.note && t.note.startsWith('ey')) metadata = JSON.parse(Buffer.from(t.note, 'base64').toString('utf-8'))
+    if (t.note) {
+      const buff = Buffer.from(t.note)
+      if (buff.toString('base64').startsWith('ey')) {
+        metadata = JSON.parse(buff.toString('utf-8'))
+      }
+    }
     // eslint-disable-next-line no-empty
   } catch (e) {}
   return metadata
 }
 
-async function saveDHMTransactions(transactions: TransactionResult[]) {
+async function saveDHMTransactions(transactions: indexerModels.Transaction[]) {
   const assets = await getSavedTransactions<DHMAsset>('dhm-assets.json')
 
   for (const t of transactions) {
-    if (t['created-asset-index']) {
+    if (t.createdAssetIndex) {
       assets.push({
-        id: t['created-asset-index'],
-        name: t['asset-config-transaction']!.params!.name!,
-        unit: t['asset-config-transaction']!.params!['unit-name']!,
-        mediaUrl: t['asset-config-transaction']!.params!.url!,
+        id: t.createdAssetIndex,
+        name: t.assetConfigTransaction!.params!.name!,
+        unit: t.assetConfigTransaction!.params!.unitName!,
+        mediaUrl: t.assetConfigTransaction!.params!.url!,
         metadata: getArc69Metadata(t),
-        created: new Date(t['round-time']! * 1000).toISOString(),
-        lastModified: new Date(t['round-time']! * 1000).toISOString(),
+        created: new Date(t.roundTime! * 1000).toISOString(),
+        lastModified: new Date(t.roundTime! * 1000).toISOString(),
       })
     } else {
-      const asset = assets.find((a) => a.id === t['asset-config-transaction']!['asset-id'])
+      const asset = assets.find((a) => a.id === t.assetConfigTransaction!.assetId)
       if (!asset) {
         // eslint-disable-next-line no-console
         console.error(t)
-        throw new Error(`Unable to find existing asset data for ${t['asset-config-transaction']!['asset-id']}`)
+        throw new Error(`Unable to find existing asset data for ${t.assetConfigTransaction!.assetId}`)
       }
-      if (!t['asset-config-transaction']!.params) {
+      if (!t.assetConfigTransaction!.params) {
         // Asset was deleted, remove it
         assets.splice(assets.indexOf(asset), 1)
       } else {
         asset!.metadata = getArc69Metadata(t)
-        asset!.lastModified = new Date(t['round-time']! * 1000).toISOString()
+        asset!.lastModified = new Date(t.roundTime! * 1000).toISOString()
       }
     }
   }
@@ -104,16 +107,16 @@ async function saveDHMTransactions(transactions: TransactionResult[]) {
 
 // Basic methods that persist using filesystem - for illustrative purposes only
 
-async function saveWatermark(watermark: number) {
+async function saveWatermark(watermark: bigint) {
   fs.writeFileSync(path.join(__dirname, 'watermark.txt'), watermark.toString(), { encoding: 'utf-8' })
 }
 
-async function getLastWatermark(): Promise<number> {
-  if (!fs.existsSync(path.join(__dirname, 'watermark.txt'))) return 0
+async function getLastWatermark(): Promise<bigint> {
+  if (!fs.existsSync(path.join(__dirname, 'watermark.txt'))) return 0n
   const existing = fs.readFileSync(path.join(__dirname, 'watermark.txt'), 'utf-8')
   // eslint-disable-next-line no-console
   console.log(`Found existing sync watermark in watermark.txt; syncing from ${existing}`)
-  return Number(existing)
+  return BigInt(existing)
 }
 
 async function getSavedTransactions<T>(fileName: string): Promise<T[]> {

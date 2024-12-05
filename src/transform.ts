@@ -498,7 +498,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       group: transaction.group ? Buffer.from(transaction.group).toString('base64') : undefined,
       note: transaction.note ? Buffer.from(transaction.note).toString('base64') : undefined,
       lease: transaction.lease ? Buffer.from(transaction.lease).toString('base64') : undefined,
-      'rekey-to': transaction.reKeyTo ? algosdk.encodeAddress(transaction.reKeyTo.publicKey) : undefined,
+      'rekey-to': transaction.rekeyTo ? algosdk.encodeAddress(transaction.rekeyTo.publicKey) : undefined,
       'closing-amount': closeAmount,
       'created-application-index': createdAppId,
       'auth-addr': blockTransaction.sgnr ? algosdk.encodeAddress(blockTransaction.sgnr) : undefined,
@@ -686,7 +686,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       address: algosdk.encodeAddress(transaction.txn.snd),
       amount: -1n * BigInt(transaction.txn.fee ?? 0),
       roles: [BalanceChangeRole.Sender],
-      assetId: 0,
+      assetId: 0n,
     })
   }
 
@@ -696,7 +696,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
         address: algosdk.encodeAddress(transaction.txn.snd),
         amount: -1n * BigInt(transaction.txn.amt ?? 0),
         roles: [BalanceChangeRole.Sender],
-        assetId: 0,
+        assetId: 0n,
       },
       ...(transaction.txn.rcv
         ? [
@@ -704,7 +704,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
               address: algosdk.encodeAddress(transaction.txn.rcv),
               amount: BigInt(transaction.txn.amt ?? 0),
               roles: [BalanceChangeRole.Receiver],
-              assetId: 0,
+              assetId: 0n,
             },
           ]
         : []),
@@ -714,13 +714,13 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
               address: algosdk.encodeAddress(transaction.txn.close),
               amount: BigInt(transaction.ca ?? 0),
               roles: [BalanceChangeRole.CloseTo],
-              assetId: 0,
+              assetId: 0n,
             },
             {
               address: algosdk.encodeAddress(transaction.txn.snd),
               amount: -1n * BigInt(transaction.ca ?? 0),
               roles: [BalanceChangeRole.Sender],
-              assetId: 0,
+              assetId: 0n,
             },
           ]
         : []),
@@ -769,7 +769,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       // Handle balance changes related to the creation of an asset.
       balanceChanges.push({
         address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: transaction.caid,
+        assetId: transaction.caid, // TODO: NC - This needs fixing
         amount: BigInt(transaction.txn.apar?.t ?? 0),
         roles: [BalanceChangeRole.AssetCreator],
       })
@@ -815,71 +815,71 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Transac
       address: transaction.sender,
       amount: -1n * BigInt(transaction.fee),
       roles: [BalanceChangeRole.Sender],
-      assetId: 0,
+      assetId: 0n,
     })
   }
 
-  if (transaction['tx-type'] === TransactionType.pay && transaction['payment-transaction']) {
-    const pay = transaction['payment-transaction']
+  if (transaction.txType === TransactionType.pay && transaction.paymentTransaction) {
+    const pay = transaction.paymentTransaction
     balanceChanges.push(
       {
         address: transaction.sender,
         amount: -1n * getSafeBigInt(pay.amount),
         roles: [BalanceChangeRole.Sender],
-        assetId: 0,
+        assetId: 0n,
       },
       {
         address: pay.receiver,
         amount: getSafeBigInt(pay.amount),
         roles: [BalanceChangeRole.Receiver],
-        assetId: 0,
+        assetId: 0n,
       },
-      ...(pay['close-amount']
+      ...(pay.closeAmount
         ? [
             {
-              address: pay['close-remainder-to']!,
-              amount: getSafeBigInt(pay['close-amount']),
+              address: pay.closeRemainderTo!,
+              amount: getSafeBigInt(pay.closeAmount),
               roles: [BalanceChangeRole.CloseTo],
-              assetId: 0,
+              assetId: 0n,
             },
             {
               address: transaction.sender,
-              amount: -1n * getSafeBigInt(pay['close-amount']),
+              amount: -1n * getSafeBigInt(pay.closeAmount),
               roles: [BalanceChangeRole.Sender],
-              assetId: 0,
+              assetId: 0n,
             },
           ]
         : []),
     )
   }
 
-  if (transaction['tx-type'] === TransactionType.axfer && transaction['asset-transfer-transaction']) {
-    const axfer = transaction['asset-transfer-transaction']
+  if (transaction.txType === TransactionType.axfer && transaction.assetTransferTransaction) {
+    const axfer = transaction.assetTransferTransaction
     balanceChanges.push(
       {
         address: axfer.sender ?? transaction.sender,
-        assetId: axfer['asset-id'],
+        assetId: axfer.assetId,
         amount: -1n * getSafeBigInt(axfer.amount),
         roles: [BalanceChangeRole.Sender],
       },
       {
         address: axfer.receiver,
-        assetId: axfer['asset-id'],
+        assetId: axfer.assetId,
         amount: getSafeBigInt(axfer.amount),
         roles: [BalanceChangeRole.Receiver],
       },
-      ...(axfer['close-amount'] && axfer['close-to']
+      ...(axfer.closeAmount && axfer.closeTo
         ? [
             {
-              address: axfer['close-to'],
-              assetId: axfer['asset-id'],
-              amount: getSafeBigInt(axfer['close-amount']),
+              address: axfer.closeTo,
+              assetId: axfer.assetId,
+              amount: getSafeBigInt(axfer.closeAmount),
               roles: [BalanceChangeRole.CloseTo],
             },
             {
               address: axfer.sender ?? transaction.sender,
-              assetId: axfer['asset-id'],
-              amount: -1n * getSafeBigInt(axfer['close-amount']),
+              assetId: axfer.assetId,
+              amount: -1n * getSafeBigInt(axfer.closeAmount),
               roles: [BalanceChangeRole.Sender],
             },
           ]
@@ -887,21 +887,21 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Transac
     )
   }
 
-  if (transaction['tx-type'] === TransactionType.acfg && transaction['asset-config-transaction']) {
-    const acfg = transaction['asset-config-transaction']
-    if (!transaction['asset-config-transaction']['asset-id'] && transaction['created-asset-index']) {
+  if (transaction.txType === TransactionType.acfg && transaction.assetConfigTransaction) {
+    const acfg = transaction.assetConfigTransaction
+    if (!transaction.assetConfigTransaction.assetId && transaction.createdAssetIndex) {
       // Handle balance changes related to the creation of an asset.
       balanceChanges.push({
         address: transaction.sender,
-        assetId: transaction['created-asset-index'],
+        assetId: transaction.createdAssetIndex,
         amount: BigInt(acfg.params?.total ?? 0),
         roles: [BalanceChangeRole.AssetCreator],
       })
-    } else if (acfg['asset-id'] && !acfg['params']) {
+    } else if (acfg.assetId && !acfg['params']) {
       // Handle balance changes related to the destruction of an asset.
       balanceChanges.push({
         address: transaction.sender,
-        assetId: acfg['asset-id'],
+        assetId: acfg.assetId,
         amount: BigInt(0),
         roles: [BalanceChangeRole.AssetDestroyer],
       })

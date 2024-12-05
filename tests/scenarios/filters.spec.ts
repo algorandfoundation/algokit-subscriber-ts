@@ -87,7 +87,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          receiver: account2.addr,
+          receiver: account2.addr.toString(),
         },
         extractFromGroupResult(txns, 0),
       )
@@ -97,7 +97,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: account2.addr,
+          sender: account2.addr.toString(),
         },
         extractFromGroupResult(txns, 2),
       )
@@ -107,7 +107,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          receiver: [account2.addr, account3.addr],
+          receiver: [account2.addr.toString(), account3.addr.toString()],
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1)],
       )
@@ -117,7 +117,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: [testAccount.addr, account2.addr],
+          sender: [testAccount.addr.toString(), account2.addr.toString()],
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 2)],
       )
@@ -128,7 +128,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           minAmount: (1).algos().microAlgos + 1n,
         },
         extractFromGroupResult(txns, 1),
@@ -140,7 +140,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           maxAmount: (1).algos().microAlgos + 1n,
         },
         extractFromGroupResult(txns, 0),
@@ -152,7 +152,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           notePrefix: 'a',
         },
         extractFromGroupResult(txns, 0),
@@ -160,7 +160,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           notePrefix: 'b',
         },
         extractFromGroupResult(txns, 1),
@@ -220,7 +220,7 @@ describe('Subscribing using various filters', () => {
       const { testAccount, asset1, txns } = assetsData!
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           assetId: asset1.assetId,
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 3), extractFromGroupResult(txns, 4)],
@@ -232,7 +232,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           assetId: [asset1.assetId, asset2.assetId],
         },
         [
@@ -249,7 +249,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           assetCreate: true,
         },
         extractFromGroupResult(txns, 2),
@@ -261,7 +261,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           type: TransactionType.axfer,
         },
         [
@@ -274,7 +274,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           type: TransactionType.acfg,
         },
         extractFromGroupResult(txns, 2),
@@ -282,7 +282,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           type: [TransactionType.acfg, TransactionType.axfer],
         },
         [
@@ -301,7 +301,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           type: TransactionType.axfer,
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           minAmount: 2,
         },
         extractFromGroupResult(txns, 4),
@@ -314,7 +314,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           type: TransactionType.axfer,
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           maxAmount: 1,
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 3)],
@@ -327,7 +327,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           type: TransactionType.axfer,
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           maxAmount: 1,
           assetId: asset1.assetId,
         },
@@ -341,7 +341,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           type: TransactionType.axfer,
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           minAmount: 1,
           maxAmount: 1,
           assetId: asset1.assetId,
@@ -391,7 +391,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           appCreate: true,
         },
         extractFromGroupResult(txns, 2),
@@ -403,7 +403,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           appId: Number(app1.result.confirmation!.applicationIndex!),
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 3)],
@@ -411,7 +411,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           appId: [Number(app1.result.confirmation!.applicationIndex!), Number(app2.result.confirmation!.applicationIndex!)],
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 3)],
@@ -423,7 +423,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           appOnComplete: ApplicationOnComplete.optin,
         },
         extractFromGroupResult(txns, 3),
@@ -431,7 +431,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop],
         },
         [
@@ -448,7 +448,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           methodSignature: 'opt_in()void',
         },
         extractFromGroupResult(txns, 3),
@@ -456,7 +456,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           methodSignature: ['opt_in()void', 'madeUpMethod()void'],
         },
         extractFromGroupResult(txns, 3),
@@ -464,7 +464,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           methodSignature: ['opt_in()void', 'call_abi(string)string'],
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 3)],
@@ -476,7 +476,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          sender: testAccount.addr,
+          sender: testAccount.addr.toString(),
           // ARC-4 string has first 2 bytes with length of the string so slice them off before comparing
           appCallArgumentsMatch: (args) => !!args && args.length > 1 && Buffer.from(args[1].slice(2)).toString('utf-8') === 'test1',
         },
@@ -490,7 +490,7 @@ describe('Subscribing using various filters', () => {
 
     await subscribeAndVerifyFilter(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         customFilter: (t) => t.id === txns.txIds[1],
       },
       extractFromGroupResult(txns, 1),
