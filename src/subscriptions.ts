@@ -11,6 +11,7 @@ import {
   extractBalanceChangesFromIndexerTransaction,
   getBlockTransactions,
   getIndexerTransactionFromAlgodTransaction,
+  getTransactionType,
 } from './transform'
 import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './types/arc-28'
 import type { TransactionInBlock } from './types/block'
@@ -217,7 +218,7 @@ export async function getSubscribedTransactions(
   }
 }
 
-function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: bigint, transaction: () => TransactionResult) {
+function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: bigint, transaction: () => SubscribedTransaction) {
   return (
     (!group.processForAppIds || group.processForAppIds.includes(appId)) &&
     // Lazily evaluate transaction so it's only evaluated if needed since creating the transaction object may be expensive if from algod
@@ -226,7 +227,7 @@ function transactionIsInArc28EventGroup(group: Arc28EventGroup, appId: bigint, t
 }
 
 function processExtraFields(
-  transaction: TransactionResult | SubscribedTransaction,
+  transaction: SubscribedTransaction,
   arc28Events: Arc28EventToProcess[],
   arc28Groups: Arc28EventGroup[],
 ): SubscribedTransaction {
@@ -463,7 +464,7 @@ function indexerPostFilter(
   subscription: TransactionFilter,
   arc28Events: Arc28EventToProcess[],
   arc28EventGroups: Arc28EventGroup[],
-): (t: TransactionResult) => boolean {
+): (t: SubscribedTransaction) => boolean {
   return (t) => {
     let result = true
     if (subscription.assetCreate) {
@@ -682,6 +683,7 @@ function getFilteredIndexerTransactions(transaction: TransactionResult, filter: 
   const getParentOffset = () => parentOffset++
 
   const transactions = [
+    // TODO: PD - fix type
     { ...transaction, filtersMatched: [filter.name] } as SubscribedTransaction,
     ...getIndexerInnerTransactions(transaction, transaction, getParentOffset),
   ]
@@ -698,8 +700,9 @@ function getIndexerInnerTransactions(root: TransactionResult, parent: Transactio
         parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
         intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
-        // TODO: PD - fix txType
-        txType: TransactionType.acfg,
+        txType: getTransactionType(t.txType ?? ''),
+        // TODO: PD - do we need innerTxns here?
+        innerTxns: getIndexerInnerTransactions(root, t, offset),
       },
       ...getIndexerInnerTransactions(root, t, offset),
     ] satisfies SubscribedTransaction[]

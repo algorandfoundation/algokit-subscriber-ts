@@ -1,4 +1,3 @@
-import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
 import algosdk from 'algosdk'
@@ -835,7 +834,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
  * @param transaction The transaction to extract balance changes from
  * @returns The set of balance changes
  */
-export function extractBalanceChangesFromIndexerTransaction(transaction: TransactionResult): BalanceChange[] {
+export function extractBalanceChangesFromIndexerTransaction(transaction: SubscribedTransaction): BalanceChange[] {
   const balanceChanges: BalanceChange[] = []
 
   const getSafeBigInt = (value: number | bigint | undefined) => {
@@ -952,4 +951,25 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Transac
     }
     return changes
   }, [] as BalanceChange[])
+}
+
+export function getTransactionType(type: string): TransactionType {
+  switch (type) {
+    case 'pay':
+      return TransactionType.pay
+    case 'keyreg':
+      return TransactionType.keyreg
+    case 'acfg':
+      return TransactionType.acfg
+    case 'axfer':
+      return TransactionType.axfer
+    case 'afrz':
+      return TransactionType.afrz
+    case 'appl':
+      return TransactionType.appl
+    case 'stpf':
+      return TransactionType.stpf
+    default:
+      throw new Error(`Unknown transaction type: ${type}`)
+  }
 }

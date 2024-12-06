@@ -1,8 +1,9 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType, indexerModels } from 'algosdk'
+import { TransactionType } from 'algosdk'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
+import { SubscribedTransaction } from '../../src/types'
 
 if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
@@ -57,7 +58,7 @@ async function getDHMSubscriber() {
   return subscriber
 }
 
-function getArc69Metadata(t: indexerModels.Transaction) {
+function getArc69Metadata(t: SubscribedTransaction) {
   let metadata = {}
   try {
     if (t.note) {
@@ -71,7 +72,7 @@ function getArc69Metadata(t: indexerModels.Transaction) {
   return metadata
 }
 
-async function saveDHMTransactions(transactions: indexerModels.Transaction[]) {
+async function saveDHMTransactions(transactions: SubscribedTransaction[]) {
   const assets = await getSavedTransactions<DHMAsset>('dhm-assets.json')
 
   for (const t of transactions) {
