@@ -1,20 +1,24 @@
-import type { MultisigTransactionSubSignature, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
-import { ApplicationOnComplete, StateProofTransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
 import algosdk from 'algosdk'
 import { Buffer } from 'buffer'
 import base32 from 'hi-base32'
 import sha512 from 'js-sha512'
-import type {
-  Block,
-  BlockData,
-  BlockInnerTransaction,
-  BlockTransaction,
-  StateProof,
-  StateProofMessage,
-  TransactionInBlock,
-} from './types/block'
-import { BalanceChange, BalanceChangeRole, BlockMetadata, SubscribedTransaction } from './types/subscription'
+import type { Block, BlockData, BlockInnerTransaction, BlockTransaction, TransactionInBlock } from './types/block'
+import {
+  BalanceChange,
+  BalanceChangeRole,
+  BlockMetadata,
+  SubscribedTransaction,
+  SubscribedTransactionApplicationCall,
+  SubscribedTransactionAssetConfig,
+  SubscribedTransactionAssetFreeze,
+  SubscribedTransactionAssetTransfer,
+  SubscribedTransactionKeyreg,
+  SubscribedTransactionPayment,
+  SubscribedTransactionStateProof,
+} from './types/subscription'
 import OnApplicationComplete = algosdk.OnApplicationComplete
 import Transaction = algosdk.Transaction
 import TransactionType = algosdk.TransactionType
@@ -125,14 +129,14 @@ function extractTransactionFromBlockTransaction(
   genesisId: string,
 ): {
   transaction: Transaction
-  createdAssetId?: number
-  createdAppId?: number
+  createdAssetId?: bigint
+  createdAppId?: bigint
   assetCloseAmount?: number | bigint
   closeAmount?: number
   logs?: Uint8Array[]
 } {
   const txn = extractAndNormaliseTransaction(blockTransaction, genesisHash, genesisId)
-  const t = Transaction.from_obj_for_encoding(txn)
+  const t = Transaction.fromEncodingData(txn)
   return {
     transaction: t,
     createdAssetId: blockTransaction.caid,
@@ -281,9 +285,6 @@ export function getIndexerTransactionFromAlgodTransaction(
 
   const encoder = new TextEncoder()
 
-  // The types in algosdk for state proofs are incorrect, so override them
-  const stateProof = transaction.stateProof as unknown as StateProof | undefined
-  const stateProofMessage = transaction.stateProofMessage as unknown as StateProofMessage | undefined
   const txId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
     transaction.type === TransactionType.stpf
       ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, genesisHash, genesisId)
@@ -353,180 +354,166 @@ export function getIndexerTransactionFromAlgodTransaction(
                       // These parameters are required in the indexer type so setting to empty values
                       creator: '',
                       decimals: 0,
-                      total: 0,
+                      total: BigInt(0),
                     }
                   : undefined,
-            } satisfies SubscribedTransaction['assetConfigTransaction'],
+            } satisfies SubscribedTransactionAssetConfig,
           }
         : undefined),
       ...(transaction.type === TransactionType.axfer
         ? {
-            'asset-transfer-transaction': {
-              'asset-id': transaction.assetTransfer!.assetIndex,
+            assetTransferTransaction: {
+              assetId: transaction.assetTransfer!.assetIndex,
               amount: transaction.assetTransfer!.amount, // The amount can be undefined
               receiver: algosdk.encodeAddress(transaction.assetTransfer!.receiver.publicKey),
               sender: transaction.assetTransfer!.assetSender
                 ? algosdk.encodeAddress(transaction.assetTransfer!.assetSender.publicKey)
                 : undefined,
-              'close-amount': assetCloseAmount,
-              'close-to': transaction.assetTransfer!.closeRemainderTo
+              closeAmount: assetCloseAmount !== undefined ? BigInt(assetCloseAmount) : undefined,
+              closeTo: transaction.assetTransfer!.closeRemainderTo
                 ? algosdk.encodeAddress(transaction.assetTransfer!.closeRemainderTo.publicKey)
                 : undefined,
-            },
+            } satisfies SubscribedTransactionAssetTransfer,
           }
         : undefined),
       ...(transaction.type === TransactionType.afrz
         ? {
-            'asset-freeze-transaction': {
-              'asset-id': transaction.assetFreeze!.assetIndex,
-              'new-freeze-status': transaction.assetFreeze!.frozen,
+            assetFreezeTransaction: {
+              assetId: transaction.assetFreeze!.assetIndex,
+              newFreezeStatus: transaction.assetFreeze!.frozen,
               address: algosdk.encodeAddress(transaction.assetFreeze!.freezeAccount.publicKey),
-            },
+            } satisfies SubscribedTransactionAssetFreeze,
           }
         : undefined),
       ...(transaction.type === TransactionType.appl
         ? {
-            'application-transaction': {
-              'application-id': transaction.appIndex ?? 0,
-              'approval-program':
-                transaction.appApprovalProgram && transaction.appApprovalProgram.length > 0
-                  ? Buffer.from(transaction.appApprovalProgram).toString('base64')
-                  : '',
-              'clear-state-program':
-                transaction.appClearProgram && transaction.appClearProgram.length > 0
-                  ? Buffer.from(transaction.appClearProgram).toString('base64')
-                  : '',
-              'on-completion': algodOnCompleteToIndexerOnComplete(transaction.appOnComplete),
-              'application-args': transaction.appArgs?.map((a) => Buffer.from(a).toString('base64')),
-              'extra-program-pages': transaction.extraPages,
-              'foreign-apps': transaction.appForeignApps,
-              'foreign-assets': transaction.appForeignAssets,
+            applicationTransaction: {
+              applicationId: transaction.applicationCall!.appIndex ?? 0,
+              approvalProgram:
+                transaction.applicationCall!.approvalProgram && transaction.applicationCall!.approvalProgram.length > 0
+                  ? transaction.applicationCall!.approvalProgram
+                  : undefined,
+              clearStateProgram:
+                transaction.applicationCall!.clearProgram && transaction.applicationCall!.clearProgram.length > 0
+                  ? transaction.applicationCall!.clearProgram
+                  : undefined,
+              onCompletion: algodOnCompleteToIndexerOnComplete(transaction.applicationCall!.onComplete),
+              applicationArgs: transaction.applicationCall!.appArgs.map((a) => a),
+              foreignApps: transaction.applicationCall!.foreignApps.map((a) => a),
+              foreignAssets: transaction.applicationCall!.foreignAssets.map((a) => a),
               ...(blockTransaction.txn.apgs
                 ? {
-                    'global-state-schema': {
-                      'num-byte-slice': transaction.appGlobalByteSlices,
-                      'num-uint': transaction.appGlobalInts,
+                    globalStateSchema: {
+                      numByteSlice: transaction.applicationCall!.numGlobalByteSlices,
+                      numUint: transaction.applicationCall!.numGlobalInts,
                     },
                   }
                 : undefined),
               ...(blockTransaction.txn.apls
                 ? {
-                    'local-state-schema': {
-                      'num-byte-slice': transaction.appLocalByteSlices,
-                      'num-uint': transaction.appLocalInts,
+                    localStateSchema: {
+                      numByteSlice: transaction.applicationCall!.numLocalByteSlices,
+                      numUint: transaction.applicationCall!.numLocalInts,
                     },
                   }
                 : undefined),
-              accounts: transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)),
-            },
+              accounts: transaction.applicationCall!.accounts?.map((a) => a),
+            } satisfies SubscribedTransactionApplicationCall,
           }
         : undefined),
       ...(transaction.type === TransactionType.pay
         ? {
-            'payment-transaction': {
-              amount: Number(transaction.amount ?? 0), // The amount can be undefined
-              receiver: algosdk.encodeAddress(transaction.to.publicKey),
-              'close-amount': closeAmount,
-              'close-remainder-to': transaction.closeRemainderTo
-                ? algosdk.encodeAddress(transaction.closeRemainderTo.publicKey)
+            paymentTransaction: {
+              amount: BigInt(transaction.payment!.amount ?? 0), // The amount can be undefined
+              receiver: algosdk.encodeAddress(transaction.payment!.receiver.publicKey),
+              // TODO: PD - confirm closeAmount
+              closeAmount: closeAmount !== undefined ? BigInt(closeAmount) : undefined,
+              closeRemainderTo: transaction.payment!.closeRemainderTo
+                ? algosdk.encodeAddress(transaction.payment!.closeRemainderTo.publicKey)
                 : undefined,
-            },
+            } satisfies SubscribedTransactionPayment,
           }
         : undefined),
       ...(transaction.type === TransactionType.keyreg
         ? {
-            'keyreg-transaction': {
-              'non-participation': transaction.nonParticipation ?? false,
-              'selection-participation-key': transaction.selectionKey?.toString('base64'),
-              'state-proof-key': transaction.stateProofKey?.toString('base64'),
-              'vote-first-valid': transaction.voteFirst,
-              'vote-key-dilution': transaction.voteKeyDilution,
-              'vote-last-valid': transaction.voteLast,
-              'vote-participation-key': transaction.voteKey?.toString('base64'),
-            },
+            keyregTransaction: {
+              nonParticipation: transaction.keyreg!.nonParticipation,
+              selectionParticipationKey: transaction.keyreg!.selectionKey,
+              stateProofKey: transaction.keyreg!.stateProofKey,
+              voteFirstValid: transaction.keyreg!.voteFirst,
+              voteKeyDilution: transaction.keyreg!.voteKeyDilution,
+              voteLastValid: transaction.keyreg!.voteLast,
+              voteParticipationKey: transaction.keyreg!.voteKey,
+            } satisfies SubscribedTransactionKeyreg,
           }
         : undefined),
       ...(transaction.type === TransactionType.stpf
         ? {
-            'state-proof-transaction': {
-              'state-proof': {
-                'part-proofs': {
-                  'hash-factory': {
-                    'hash-type': stateProof!.P.hsh.t,
-                  },
-                  'tree-depth': stateProof!.P.td ?? 0,
-                  path: stateProof!.P.pth?.map((p) => Buffer.from(p).toString('base64')) ?? [],
-                },
-                'positions-to-reveal': stateProof!.pr,
-                'salt-version': Number(stateProof!.v ?? 0),
-                'sig-commit': Buffer.from(stateProof!.c).toString('base64'),
-                'sig-proofs': {
-                  'hash-factory': {
-                    'hash-type': stateProof!.S.hsh.t,
-                  },
-                  'tree-depth': stateProof!.S.td ?? 0,
-                  path: stateProof!.S.pth?.map((p) => Buffer.from(p).toString('base64')) ?? [],
-                },
-                'signed-weight': Number(stateProof!.w),
-                reveals: mapKeys(stateProof!.r).map((position) => {
-                  const r = stateProof!.r.get(position)!
-                  return {
-                    'sig-slot': {
-                      'lower-sig-weight': Number(r.s.l ?? 0),
-                      signature: {
-                        'merkle-array-index': r.s.s.idx,
-                        'falcon-signature': Buffer.from(r.s.s.sig).toString('base64'),
-                        proof: {
-                          'hash-factory': {
-                            'hash-type': r.s.s.prf.hsh.t,
-                          },
-                          'tree-depth': r.s.s.prf.td ?? 0,
-                          path: r.s.s.prf.pth?.map((p) => Buffer.from(p).toString('base64')) ?? [],
-                        },
-                        'verifying-key': Buffer.from(r.s.s.vkey.k).toString('base64'),
-                      },
-                    },
+            stateProofTransaction: {
+              stateProof: new algosdk.indexerModels.StateProofFields({
+                partProofs: transaction.stateProof!.stateProof?.partProofs
+                  ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.partProofs)
+                  : undefined,
+                positionsToReveal: transaction.stateProof!.stateProof?.positionsToReveal.map((p) => BigInt(p)),
+                saltVersion: transaction.stateProof!.stateProof?.merkleSignatureSaltVersion,
+                sigCommit: transaction.stateProof!.stateProof?.sigCommit,
+                sigProofs: transaction.stateProof!.stateProof?.sigProofs
+                  ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.sigProofs)
+                  : undefined,
+                signedWeight: transaction.stateProof!.stateProof?.signedWeight,
+                reveals: mapKeys(transaction.stateProof!.stateProof?.reveals ?? new Map()).map((position) => {
+                  const reveal = transaction.stateProof!.stateProof?.reveals.get(position)!
+                  return new algosdk.indexerModels.StateProofReveal({
+                    sigSlot: new algosdk.indexerModels.StateProofSigSlot({
+                      lowerSigWeight: reveal.sigslot.l,
+                      signature: new algosdk.indexerModels.StateProofSignature({
+                        merkleArrayIndex: reveal.sigslot.sig.vectorCommitmentIndex,
+                        falconSignature: Buffer.from(reveal.sigslot.sig.signature),
+                        proof: algodMerkleArrayProofToIndexerMerkleArrayProof(reveal.sigslot.sig.proof),
+                        verifyingKey: reveal.sigslot.sig.verifyingKey.publicKey,
+                      }),
+                    }),
                     position: Number(position),
-                    participant: {
-                      weight: Number(r.p.w),
-                      verifier: {
-                        'key-lifetime': r.p.p.lf,
-                        commitment: Buffer.from(r.p.p.cmt).toString('base64'),
-                      },
-                    },
-                  } satisfies StateProofTransactionResult['state-proof']['reveals'][number]
+                    participant: new algosdk.indexerModels.StateProofParticipant({
+                      weight: Number(reveal.participant.weight),
+                      verifier: new algosdk.indexerModels.StateProofVerifier({
+                        keyLifetime: BigInt(reveal.participant.pk.keyLifetime),
+                        commitment: reveal.participant.pk.commitment,
+                      }),
+                    }),
+                  })
                 }),
-              },
-              message: {
-                'block-headers-commitment': Buffer.from(stateProofMessage!.b).toString('base64'),
-                'first-attested-round': stateProofMessage!.f,
-                'latest-attested-round': stateProofMessage!.l,
-                'ln-proven-weight': Number(stateProofMessage!.P),
-                'voters-commitment': Buffer.from(stateProofMessage!.v).toString('base64'),
-              },
-              'state-proof-type': Number(transaction.stateProofType ?? 0),
-            },
+              }),
+              message: new algosdk.indexerModels.IndexerStateProofMessage({
+                blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
+                firstAttestedRound: BigInt(transaction.stateProof!.message!.firstAttestedRound),
+                latestAttestedRound: BigInt(transaction.stateProof!.message!.lastAttestedRound),
+                lnProvenWeight: BigInt(transaction.stateProof!.message!.lnProvenWeight),
+                votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
+              }),
+              stateProofType: Number(transaction.stateProof!.stateProofType ?? 0),
+            } satisfies SubscribedTransactionStateProof,
           }
         : undefined),
-      'first-valid': transaction.firstRound,
-      'last-valid': transaction.lastRound,
-      'tx-type': transaction.type,
+      firstValid: transaction.firstValid,
+      lastValid: transaction.lastValid,
+      txType: transaction.type,
       fee: transaction.fee ?? 0,
-      sender: algosdk.encodeAddress(transaction.from.publicKey),
-      'confirmed-round': roundNumber,
-      'round-time': roundTimestamp,
-      'intra-round-offset': roundOffset,
-      'created-asset-index': createdAssetId,
-      'genesis-hash': Buffer.from(transaction.genesisHash).toString('base64'),
-      'genesis-id': transaction.genesisID,
-      group: transaction.group ? Buffer.from(transaction.group).toString('base64') : undefined,
-      note: transaction.note ? Buffer.from(transaction.note).toString('base64') : undefined,
-      lease: transaction.lease ? Buffer.from(transaction.lease).toString('base64') : undefined,
-      'rekey-to': transaction.rekeyTo ? algosdk.encodeAddress(transaction.rekeyTo.publicKey) : undefined,
-      'closing-amount': closeAmount,
-      'created-application-index': createdAppId,
-      'auth-addr': blockTransaction.sgnr ? algosdk.encodeAddress(blockTransaction.sgnr) : undefined,
-      'inner-txns': blockTransaction.dt?.itx?.map((ibt) =>
+      sender: algosdk.encodeAddress(transaction.sender.publicKey),
+      confirmedRound: BigInt(roundNumber),
+      roundTime: roundTimestamp,
+      intraRoundOffset: roundOffset,
+      createdAssetIndex: createdAssetId,
+      genesisHash: transaction.genesisHash,
+      genesisId: transaction.genesisID,
+      group: transaction.group,
+      note: transaction.note,
+      lease: transaction.lease,
+      rekeyTo: transaction.rekeyTo,
+      closingAmount: closeAmount !== undefined ? BigInt(closeAmount) : undefined,
+      createdApplicationIndex: createdAppId,
+      authAddr: blockTransaction.sgnr ? new algosdk.Address(blockTransaction.sgnr) : undefined,
+      innerTxns: blockTransaction.dt?.itx?.map((ibt) =>
         getIndexerTransactionFromAlgodTransaction({
           blockTransaction: ibt,
           roundIndex,
@@ -543,73 +530,81 @@ export function getIndexerTransactionFromAlgodTransaction(
       ),
       ...(blockTransaction.sig || blockTransaction.lsig || blockTransaction.msig
         ? {
-            signature: {
+            signature: new algosdk.indexerModels.TransactionSignature({
               sig: blockTransaction.sig ? Buffer.from(blockTransaction.sig).toString('base64') : undefined,
               logicsig: blockTransaction.lsig
-                ? {
+                ? new algosdk.indexerModels.TransactionSignatureLogicsig({
                     logic: Buffer.from(blockTransaction.lsig.l).toString('base64'),
-                    args: blockTransaction.lsig.arg ? blockTransaction.lsig.arg.map((a) => Buffer.from(a).toString('base64')) : undefined,
+                    args: blockTransaction.lsig.arg,
                     signature: blockTransaction.lsig.sig ? Buffer.from(blockTransaction.lsig.sig).toString('base64') : undefined,
-                    'multisig-signature': blockTransaction.lsig.msig
-                      ? {
+                    multisigSignature: blockTransaction.lsig.msig
+                      ? new algosdk.indexerModels.TransactionSignatureMultisig({
                           version: blockTransaction.lsig.msig.v,
                           threshold: blockTransaction.lsig.msig.thr,
                           subsignature: blockTransaction.lsig.msig.subsig.map(
                             (s) =>
-                              ({
-                                'public-key': Buffer.from(s.pk).toString('base64'),
+                              new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
+                                publicKey: Buffer.from(s.pk).toString('base64'),
                                 signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
-                              }) as MultisigTransactionSubSignature,
+                              }),
                           ),
-                        }
+                        })
                       : undefined,
-                  }
+                  })
                 : undefined,
               multisig: blockTransaction.msig
-                ? {
+                ? new algosdk.indexerModels.TransactionSignatureMultisig({
                     version: blockTransaction.msig.v,
                     threshold: blockTransaction.msig.thr,
-                    subsignature: blockTransaction.msig.subsig.map((s) => ({
-                      'public-key': Buffer.from(s.pk).toString('base64'),
-                      signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
-                    })),
-                  }
+                    subsignature: blockTransaction.msig.subsig.map(
+                      (s) =>
+                        new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
+                          publicKey: Buffer.from(s.pk).toString('base64'),
+                          signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
+                        }),
+                    ),
+                  })
                 : undefined,
-            },
+            }),
           }
         : undefined),
-      logs: blockTransaction.dt?.lg ? blockTransaction.dt.lg.map((l) => Buffer.from(l).toString('base64')) : undefined,
-      'close-rewards': closeRewards,
-      'receiver-rewards': receiverRewards,
-      'sender-rewards': senderRewards,
-      'global-state-delta': blockTransaction.dt?.gd
-        ? Object.entries(blockTransaction.dt.gd).map(([key, value]) => ({
-            key: Buffer.from(key).toString('base64'),
-            value: {
-              action: value.at,
-              bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
-              uint: value.ui ? Number(value.ui) : undefined,
-            },
-          }))
-        : undefined,
-
-      'local-state-delta': blockTransaction.dt?.ld
-        ? Object.entries(blockTransaction.dt.ld).map(([addressIndex, delta]) => {
-            const addresses = [
-              algosdk.encodeAddress(transaction.from.publicKey),
-              ...(transaction.appAccounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
-            ]
-            return {
-              address: addresses[Number(addressIndex)],
-              delta: Object.entries(delta).map(([key, value]) => ({
+      logs: blockTransaction.dt?.lg,
+      closeRewards: closeRewards !== undefined ? BigInt(closeRewards) : undefined,
+      receiverRewards: receiverRewards !== undefined ? BigInt(receiverRewards) : undefined,
+      senderRewards: senderRewards !== undefined ? BigInt(senderRewards) : undefined,
+      globalStateDelta: blockTransaction.dt?.gd
+        ? Object.entries(blockTransaction.dt.gd).map(
+            ([key, value]) =>
+              new algosdk.indexerModels.EvalDeltaKeyValue({
                 key: Buffer.from(key).toString('base64'),
-                value: {
+                value: new algosdk.indexerModels.EvalDelta({
                   action: value.at,
                   bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
-                  uint: value.ui,
-                },
-              })),
-            }
+                  uint: value.ui !== undefined ? BigInt(value.ui) : undefined,
+                }),
+              }),
+          )
+        : undefined,
+      localStateDelta: blockTransaction.dt?.ld
+        ? Object.entries(blockTransaction.dt.ld).map(([addressIndex, delta]) => {
+            const addresses = [
+              algosdk.encodeAddress(transaction.sender.publicKey),
+              ...(transaction.applicationCall?.accounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
+            ]
+            return new algosdk.indexerModels.AccountStateDelta({
+              address: addresses[Number(addressIndex)],
+              delta: Object.entries(delta).map(
+                ([key, value]) =>
+                  new algosdk.indexerModels.EvalDeltaKeyValue({
+                    key: Buffer.from(key).toString('base64'),
+                    value: new algosdk.indexerModels.EvalDelta({
+                      action: value.at,
+                      bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
+                      uint: value.ui !== undefined ? BigInt(value.ui) : undefined,
+                    }),
+                  }),
+              ),
+            })
           })
         : undefined,
     } satisfies SubscribedTransaction
@@ -620,6 +615,19 @@ export function getIndexerTransactionFromAlgodTransaction(
     throw e
   }
 }
+
+function algodMerkleArrayProofToIndexerMerkleArrayProof(proof: algosdk.MerkleArrayProof): algosdk.indexerModels.MerkleArrayProof {
+  return new algosdk.indexerModels.MerkleArrayProof({
+    hashFactory: proof.hashFactory
+      ? new algosdk.indexerModels.HashFactory({
+          hashType: proof.hashFactory.hashType,
+        })
+      : undefined,
+    path: proof.path,
+    treeDepth: proof.treeDepth,
+  })
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapKeys<TKey>(map: Map<TKey, any>): TKey[] {
   if (!map) return []
@@ -637,7 +645,7 @@ function mapKeys<TKey>(map: Map<TKey, any>): TKey[] {
 export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   const { block, cert } = blockData
   return {
-    round: block.rnd,
+    round: BigInt(block.rnd),
     hash: cert?.prop?.dig ? Buffer.from(cert.prop.dig).toString('base64') : undefined,
     timestamp: block.ts,
     genesisId: block.gen,
@@ -652,16 +660,16 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       rewardsLevel: block.earn,
       rewardsResidue: block.frac,
       rewardsRate: block.rate ?? 0,
-      rewardsCalculationRound: block.rwcalr,
+      rewardsCalculationRound: BigInt(block.rwcalr),
     },
     upgradeState: {
       currentProtocol: block.proto,
       nextProtocol: block.nextproto,
       nextProtocolApprovals: block.nextyes,
-      nextProtocolSwitchOn: block.nextswitch,
-      nextProtocolVoteBefore: block.nextbefore,
+      nextProtocolSwitchOn: block.nextswitch !== undefined ? BigInt(block.nextswitch) : undefined,
+      nextProtocolVoteBefore: block.nextbefore !== undefined ? BigInt(block.nextbefore) : undefined,
     },
-    txnCounter: block.tc,
+    txnCounter: BigInt(block.tc ?? 0),
     transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     transactionsRootSha256: block.txn256,
     proposer: block.prp ? algosdk.encodeAddress(block.prp) : undefined,
@@ -684,7 +692,7 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       : undefined),
     stateProofTracking: block.spt
       ? Object.entries(block.spt).map(([key, value]) => ({
-          nextRound: value.n,
+          nextRound: value.n !== undefined ? BigInt(value.n) : undefined,
           onlineTotalWeight: value.t ?? 0,
           type: Number(key),
           votersCommitment: value.v,

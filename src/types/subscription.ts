@@ -161,7 +161,21 @@ export interface ParticipationUpdates {
  * * Balance changes in algo or assets
  */
 // TODO: NC - We might need to alias this type, as things like id are optional and shouldn't be in this scenario
-export type SubscribedTransaction = Omit<TransactionResult, 'getEncodingSchema' | 'toEncodingData' | 'txType' | 'id'> & {
+export type SubscribedTransaction = Omit<
+  TransactionResult,
+  | 'getEncodingSchema'
+  | 'toEncodingData'
+  | 'txType'
+  | 'id'
+  | 'assetConfigTransaction'
+  | 'assetTransferTransaction'
+  | 'assetFreezeTransaction'
+  | 'applicationTransaction'
+  | 'paymentTransaction'
+  | 'keyregTransaction'
+  | 'stateProofTransaction'
+  | 'innerTxns'
+> & {
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */
@@ -174,7 +188,46 @@ export type SubscribedTransaction = Omit<TransactionResult, 'getEncodingSchema' 
   balanceChanges?: BalanceChange[]
   id: string
   txType: TransactionType
+  assetConfigTransaction?: SubscribedTransactionAssetConfig
+  assetTransferTransaction?: SubscribedTransactionAssetTransfer
+  assetFreezeTransaction?: SubscribedTransactionAssetFreeze
+  applicationTransaction?: SubscribedTransactionApplicationCall
+  paymentTransaction?: SubscribedTransactionPayment
+  keyregTransaction?: SubscribedTransactionKeyreg
+  stateProofTransaction?: SubscribedTransactionStateProof
 }
+
+export type SubscribedTransactionAssetConfig = Omit<
+  algosdk.indexerModels.TransactionAssetConfig,
+  'getEncodingSchema' | 'toEncodingData' | 'params'
+> & {
+  params?: SubscribedAssetParams
+}
+
+export type SubscribedAssetParams = Omit<algosdk.indexerModels.AssetParams, 'getEncodingSchema' | 'toEncodingData'>
+
+export type SubscribedTransactionAssetTransfer = Omit<
+  algosdk.indexerModels.TransactionAssetTransfer,
+  'getEncodingSchema' | 'toEncodingData'
+>
+
+export type SubscribedTransactionAssetFreeze = Omit<algosdk.indexerModels.TransactionAssetFreeze, 'getEncodingSchema' | 'toEncodingData'>
+
+export type SubscribedTransactionApplicationCall = Omit<
+  algosdk.indexerModels.TransactionApplication,
+  'getEncodingSchema' | 'toEncodingData' | 'globalStateSchema' | 'localStateSchema'
+> & {
+  globalStateSchema?: SubscribedTransactionStateSchema
+  localStateSchema?: SubscribedTransactionStateSchema
+}
+
+export type SubscribedTransactionPayment = Omit<algosdk.indexerModels.TransactionPayment, 'getEncodingSchema' | 'toEncodingData'>
+
+export type SubscribedTransactionStateSchema = Omit<algosdk.indexerModels.StateSchema, 'getEncodingSchema' | 'toEncodingData'>
+
+export type SubscribedTransactionKeyreg = Omit<algosdk.indexerModels.TransactionKeyreg, 'getEncodingSchema' | 'toEncodingData'>
+
+export type SubscribedTransactionStateProof = Omit<algosdk.indexerModels.TransactionStateProof, 'getEncodingSchema' | 'toEncodingData'> & {}
 
 /** Represents a balance change effect for a transaction. */
 export interface BalanceChange {
