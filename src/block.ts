@@ -62,6 +62,8 @@ function blockMapToObject(object: Map<any, any>): BlockData {
       } else if (['gen', 'proto', 'nextproto', 'type', 'an', 'un', 'au'].includes(key)) {
         // The above keys have UTF-8 values
         result[key] = decoder.decode(value)
+      } else if (value.length === 32 && keysHaveAddressType.includes(key)) {
+        result[key] = algosdk.encodeAddress(value)
       } else {
         result[key] = value
       }
@@ -73,3 +75,5 @@ function blockMapToObject(object: Map<any, any>): BlockData {
   }
   return result as BlockData
 }
+
+const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'apat', 'm', 'r', 'f', 'c']

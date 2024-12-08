@@ -1,4 +1,4 @@
-import algosdk from 'algosdk'
+import algosdk, { Address } from 'algosdk'
 import Transaction = algosdk.Transaction
 
 /**
@@ -186,9 +186,9 @@ export interface BlockTransaction {
   /** The eval deltas for the block */
   dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
-  caid?: bigint
+  caid?: number | bigint
   /** App ID when an app is created by the transaction */
-  apid?: bigint
+  apid?: number | bigint
   /** Asset closing amount in decimal units */
   aca?: number | bigint
   /** Algo closing amount in microAlgos */
@@ -387,9 +387,9 @@ export interface TransactionInBlock {
   /** The transaction as an algosdk `Transaction` object. */
   transaction: Transaction
   /** The asset ID if an asset was created from this transaction. */
-  createdAssetId?: bigint
+  createdAssetId?: number | bigint
   /** The app ID if an app was created from this transaction. */
-  createdAppId?: bigint
+  createdAppId?: number | bigint
   /** The asset close amount if the sender asset position was closed from this transaction. */
   assetCloseAmount?: number | bigint
   /** The ALGO close amount if the sender account was closed from this transaction. */
@@ -411,7 +411,7 @@ export interface EncodedAssetParams {
   /**
    * assetTotal
    */
-  t: number | bigint
+  t: bigint
   /**
    * assetDefaultFrozen
    */
@@ -423,19 +423,19 @@ export interface EncodedAssetParams {
   /**
    * assetManager
    */
-  m?: Buffer
+  m?: Address
   /**
    * assetReserve
    */
-  r?: Buffer
+  r?: Address
   /**
    * assetFreeze
    */
-  f?: Buffer
+  f?: Address
   /**
    * assetClawback
    */
-  c?: Buffer
+  c?: Address
   /**
    * assetName
    */
@@ -490,15 +490,15 @@ export interface EncodedTransaction {
   /**
    * fee
    */
-  fee?: number
+  fee: bigint
   /**
    * firstRound
    */
-  fv?: number
+  fv: bigint
   /**
    * lastRound
    */
-  lv: number
+  lv: bigint
   /**
    * note
    */
@@ -506,7 +506,7 @@ export interface EncodedTransaction {
   /**
    * from
    */
-  snd: Buffer
+  snd: Address
   /**
    * type
    */
@@ -514,11 +514,11 @@ export interface EncodedTransaction {
   /**
    * genesisID
    */
-  gen: string
+  gen?: string
   /**
    * genesisHash
    */
-  gh: Buffer
+  gh?: Buffer
   /**
    * lease
    */
@@ -530,31 +530,31 @@ export interface EncodedTransaction {
   /**
    * amount
    */
-  amt?: number | bigint
+  amt?: bigint
   /**
    * amount (but for asset transfers)
    */
-  aamt?: number | bigint
+  aamt?: bigint
   /**
    * closeRemainderTo
    */
-  close?: Buffer
+  close?: Address
   /**
    * closeRemainderTo (but for asset transfers)
    */
-  aclose?: Buffer
+  aclose?: Address
   /**
    * reKeyTo
    */
-  rekey?: Buffer
+  rekey?: Address
   /**
    * to
    */
-  rcv?: Buffer
+  rcv?: Address
   /**
    * to (but for asset transfers)
    */
-  arcv?: Buffer
+  arcv?: Address
   /**
    * voteKey
    */
@@ -570,15 +570,15 @@ export interface EncodedTransaction {
   /**
    * voteFirst
    */
-  votefst?: number
+  votefst?: bigint
   /**
    * voteLast
    */
-  votelst?: number
+  votelst?: bigint
   /**
    * voteKeyDilution
    */
-  votekd?: number
+  votekd?: bigint
   /**
    * nonParticipation
    */
@@ -602,11 +602,11 @@ export interface EncodedTransaction {
   /**
    * freezeAccount
    */
-  fadd?: Buffer
+  fadd?: Address
   /**
    * assetRevocationTarget
    */
-  asnd?: Buffer
+  asnd?: Address
   /**
    * See EncodedAssetParams type
    */
@@ -614,7 +614,7 @@ export interface EncodedTransaction {
   /**
    * appIndex
    */
-  apid?: number
+  apid?: bigint
   /**
    * appOnComplete
    */
@@ -630,11 +630,11 @@ export interface EncodedTransaction {
   /**
    * appForeignApps
    */
-  apfa?: number[]
+  apfa?: bigint[]
   /**
    * appForeignAssets
    */
-  apas?: number[]
+  apas?: bigint[]
   /**
    * appApprovalProgram
    */
@@ -650,7 +650,7 @@ export interface EncodedTransaction {
   /**
    * appAccounts
    */
-  apat?: Buffer[]
+  apat?: Address[]
   /**
    * extraPages
    */
@@ -659,13 +659,183 @@ export interface EncodedTransaction {
    * boxes
    */
   apbx?: EncodedBoxReference[]
-  sptype?: number | bigint
+
+  /**
+   * stateProofType
+   */
+  sptype?: number
+
   /**
    * stateProof
    */
-  sp?: Buffer
+  sp?: EncodedStateProof
+
   /**
    * stateProofMessage
    */
-  spmsg?: Buffer
+  spmsg?: EncodedStateProofMessage
+}
+
+export interface EncodedStateProof {
+  /**
+   * sigCommit
+   */
+  c: Buffer
+  /**
+   * sigWeight
+   */
+  w: bigint
+
+  /**
+   * sigProofs
+   */
+  S: EncodedMerkleArrayProof
+
+  /**
+   * partProofs
+   */
+  P: EncodedMerkleArrayProof
+
+  /**
+   * merkleSignatureSaltVersion
+   */
+  v: number
+
+  /**
+   * reveal
+   */
+  r: Map<bigint, EncodedReveal>
+
+  /**
+   * positionsToReveal
+   */
+  pr: bigint[]
+}
+
+export interface EncodedMerkleArrayProof {
+  /**
+   * path
+   */
+  pth: Buffer[]
+
+  /**
+   * hash
+   */
+  hsh: EncodedHashFactory
+
+  /**
+   * tree depth
+   */
+  td: number
+}
+
+export interface EncodedHashFactory {
+  /**
+   * hash type
+   */
+  t: number
+}
+
+export interface EncodedReveal {
+  /**
+   * sigslot
+   */
+  s: EncodedSigslotCommit
+
+  /**
+   * participant
+   */
+  p: EncodedParticipant
+}
+
+export interface EncodedSigslotCommit {
+  /**
+   * sig
+   */
+  sig: EncodedFalconSignatureStruct
+
+  /**
+   * l
+   */
+  l: bigint
+}
+
+export interface EncodedFalconSignatureStruct {
+  /**
+   * signature
+   */
+  sig: Buffer
+
+  /**
+   * vectorCommitmentIndex
+   */
+  idx: bigint
+
+  /**
+   * proof
+   */
+  prf: EncodedMerkleArrayProof
+
+  /**
+   * verifyingKey
+   */
+  vkey: EncodedFalconVerifier
+}
+
+export interface EncodedFalconVerifier {
+  /**
+   * public key
+   */
+  k: Buffer
+}
+
+export interface EncodedParticipant {
+  /**
+   * pk
+   */
+  p: EncodedMerkleSignatureVerifier
+
+  /**
+   * weight
+   */
+  w: bigint
+}
+
+export interface EncodedMerkleSignatureVerifier {
+  /**
+   * commitment
+   */
+  cmt: Buffer
+
+  /**
+   * keyLifetime
+   */
+  lf: bigint
+}
+
+export interface EncodedStateProofMessage {
+  /**
+   * blockHeadersCommitment
+   */
+  b: Buffer
+
+  /**
+   * votersCommitment
+   */
+  v: Buffer
+
+  /**
+   * lnProvenWeight
+   */
+  P: bigint
+
+  /**
+   * firstAttestedRound
+   */
+  f: bigint
+
+  /**
+   * lastAttestedRound
+   */
+  l: bigint
 }

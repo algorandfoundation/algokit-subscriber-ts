@@ -95,12 +95,12 @@ describe('Subscribing to calls that effect balance changes', () => {
     invariant(transaction.balanceChanges)
     expect(transaction.balanceChanges.length).toBe(2)
 
-    expect(transaction.balanceChanges[0].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[0].address).toBe(testAccount.addr.toString())
     expect(transaction.balanceChanges[0].amount).toBe(-2000n) // min txn fee
     expect(transaction.balanceChanges[0].roles).toEqual([BalanceChangeRole.Sender])
     expect(transaction.balanceChanges[0].assetId).toBe(0)
 
-    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr.toString())
     expect(transaction.balanceChanges[1].amount).toBe(100_000_000n)
     expect(transaction.balanceChanges[1].roles).toEqual([BalanceChangeRole.AssetCreator])
     expect(transaction.balanceChanges[1].assetId).toBe(asset)
