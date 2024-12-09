@@ -40,7 +40,7 @@ describe('Subscribing using multiple filters', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
-    expect(subscribed.startingWatermark).toBe(0)
+    expect(subscribed.startingWatermark).toBe(0n)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([1, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(9)
