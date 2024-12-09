@@ -16,9 +16,9 @@ import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './
 import type { TransactionInBlock } from './types/block'
 import {
   BlockMetadata,
+  SubscribedTransaction,
   type BalanceChange,
   type NamedTransactionFilter,
-  type SubscribedTransaction,
   type TransactionFilter,
   type TransactionSubscriptionParams,
   type TransactionSubscriptionResult,
@@ -243,7 +243,7 @@ function processExtraFields(
           ),
         )
   const eventsToApply = groupsToApply.length > 0 ? arc28Events.filter((e) => groupsToApply.some((g) => g.groupName === e.groupName)) : []
-  return {
+  return new SubscribedTransaction({
     ...transaction,
     arc28Events: extractArc28Events(
       transaction.id!, // TODO: NC - ??
@@ -253,7 +253,7 @@ function processExtraFields(
     ),
     balanceChanges: extractBalanceChangesFromIndexerTransaction(transaction),
     innerTxns: transaction.innerTxns?.map((inner) => processExtraFields(inner, arc28Events, arc28Groups)),
-  }
+  })
 }
 
 function hasEmittedMatchingArc28Event(
@@ -401,11 +401,7 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Subscrib
       }
     }
     if (subscription.type) {
-      if (typeof subscription.type === 'string') {
-        result &&= t.txType === subscription.type
-      } else {
-        result &&= subscription.type.includes(t.txType)
-      }
+      result &&= !!t.txType && subscription.type.includes(getTransactionType(t.txType))
     }
     if (subscription.notePrefix) {
       result &&= t.note ? Buffer.from(t.note).toString('utf-8').startsWith(subscription.notePrefix) : false
@@ -683,10 +679,9 @@ function getFilteredIndexerTransactions(
   const getParentOffset = () => parentOffset++
 
   const transactions = [
-    // TODO: PD - fix type
-    { ...transaction, filtersMatched: [filter.name] } as SubscribedTransaction,
+    new SubscribedTransaction({ ...transaction, filtersMatched: [filter.name] }),
     ...getIndexerInnerTransactions(transaction, transaction, getParentOffset),
-  ]
+  ] satisfies SubscribedTransaction[]
   return transactions.filter(indexerPreFilterInMemory(filter.filter))
 }
 
@@ -698,18 +693,14 @@ function getIndexerInnerTransactions(
 ): SubscribedTransaction[] {
   return (parent.innerTxns ?? []).flatMap((t) => {
     const parentOffset = offset()
-    let childOffset = 0
-    const getChildOffset = () => childOffset++
 
     return [
-      {
+      new SubscribedTransaction({
         ...t,
         parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
         intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
-        txType: getTransactionType(t.txType ?? ''),
-        innerTxns: getIndexerInnerTransactions(root, t, getChildOffset),
-      },
+      }),
       ...getIndexerInnerTransactions(root, t, offset),
     ] satisfies SubscribedTransaction[]
   })

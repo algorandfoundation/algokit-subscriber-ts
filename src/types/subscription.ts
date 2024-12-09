@@ -1,4 +1,4 @@
-import type { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
 import { Arc28EventGroup, EmittedArc28Event } from './arc-28'
 import TransactionType = algosdk.TransactionType
@@ -161,21 +161,7 @@ export interface ParticipationUpdates {
  * * Balance changes in algo or assets
  */
 // TODO: NC - We might need to alias this type, as things like id are optional and shouldn't be in this scenario
-export type SubscribedTransaction = Omit<
-  TransactionResult,
-  | 'getEncodingSchema'
-  | 'toEncodingData'
-  | 'txType'
-  | 'id'
-  | 'assetConfigTransaction'
-  | 'assetTransferTransaction'
-  | 'assetFreezeTransaction'
-  | 'applicationTransaction'
-  | 'paymentTransaction'
-  | 'keyregTransaction'
-  | 'stateProofTransaction'
-  | 'innerTxns'
-> & {
+export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */
@@ -186,48 +172,23 @@ export type SubscribedTransaction = Omit<
   filtersMatched?: string[]
   /** The balance changes in the transaction. */
   balanceChanges?: BalanceChange[]
-  id: string
-  txType: TransactionType
-  assetConfigTransaction?: SubscribedTransactionAssetConfig
-  assetTransferTransaction?: SubscribedTransactionAssetTransfer
-  assetFreezeTransaction?: SubscribedTransactionAssetFreeze
-  applicationTransaction?: SubscribedTransactionApplicationCall
-  paymentTransaction?: SubscribedTransactionPayment
-  keyregTransaction?: SubscribedTransactionKeyreg
-  stateProofTransaction?: SubscribedTransactionStateProof
+
+  constructor({
+    parentTransactionId,
+    innerTxns,
+    arc28Events,
+    filtersMatched,
+    balanceChanges,
+    ...rest
+  }: Omit<SubscribedTransaction, 'getEncodingSchema' | 'toEncodingData'>) {
+    super(rest)
+    this.parentTransactionId = parentTransactionId
+    this.innerTxns = innerTxns
+    this.arc28Events = arc28Events
+    this.filtersMatched = filtersMatched
+    this.balanceChanges = balanceChanges
+  }
 }
-
-export type SubscribedTransactionAssetConfig = Omit<
-  algosdk.indexerModels.TransactionAssetConfig,
-  'getEncodingSchema' | 'toEncodingData' | 'params'
-> & {
-  params?: SubscribedAssetParams
-}
-
-export type SubscribedAssetParams = Omit<algosdk.indexerModels.AssetParams, 'getEncodingSchema' | 'toEncodingData'>
-
-export type SubscribedTransactionAssetTransfer = Omit<
-  algosdk.indexerModels.TransactionAssetTransfer,
-  'getEncodingSchema' | 'toEncodingData'
->
-
-export type SubscribedTransactionAssetFreeze = Omit<algosdk.indexerModels.TransactionAssetFreeze, 'getEncodingSchema' | 'toEncodingData'>
-
-export type SubscribedTransactionApplicationCall = Omit<
-  algosdk.indexerModels.TransactionApplication,
-  'getEncodingSchema' | 'toEncodingData' | 'globalStateSchema' | 'localStateSchema'
-> & {
-  globalStateSchema?: SubscribedTransactionStateSchema
-  localStateSchema?: SubscribedTransactionStateSchema
-}
-
-export type SubscribedTransactionPayment = Omit<algosdk.indexerModels.TransactionPayment, 'getEncodingSchema' | 'toEncodingData'>
-
-export type SubscribedTransactionStateSchema = Omit<algosdk.indexerModels.StateSchema, 'getEncodingSchema' | 'toEncodingData'>
-
-export type SubscribedTransactionKeyreg = Omit<algosdk.indexerModels.TransactionKeyreg, 'getEncodingSchema' | 'toEncodingData'>
-
-export type SubscribedTransactionStateProof = Omit<algosdk.indexerModels.TransactionStateProof, 'getEncodingSchema' | 'toEncodingData'> & {}
 
 /** Represents a balance change effect for a transaction. */
 export interface BalanceChange {

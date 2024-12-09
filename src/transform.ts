@@ -5,19 +5,7 @@ import { Buffer } from 'buffer'
 import base32 from 'hi-base32'
 import sha512 from 'js-sha512'
 import type { Block, BlockData, BlockInnerTransaction, BlockTransaction, TransactionInBlock } from './types/block'
-import {
-  BalanceChange,
-  BalanceChangeRole,
-  BlockMetadata,
-  SubscribedTransaction,
-  SubscribedTransactionApplicationCall,
-  SubscribedTransactionAssetConfig,
-  SubscribedTransactionAssetFreeze,
-  SubscribedTransactionAssetTransfer,
-  SubscribedTransactionKeyreg,
-  SubscribedTransactionPayment,
-  SubscribedTransactionStateProof,
-} from './types/subscription'
+import { BalanceChange, BalanceChangeRole, BlockMetadata, SubscribedTransaction } from './types/subscription'
 import OnApplicationComplete = algosdk.OnApplicationComplete
 import Transaction = algosdk.Transaction
 import TransactionType = algosdk.TransactionType
@@ -299,16 +287,16 @@ export function getIndexerTransactionFromAlgodTransaction(
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
 
-    return {
+    return new SubscribedTransaction({
       id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : txId,
       parentTransactionId,
       filtersMatched: filterName ? [filterName] : undefined,
       ...(transaction.type === TransactionType.acfg
         ? {
-            assetConfigTransaction: {
+            assetConfigTransaction: new algosdk.indexerModels.TransactionAssetConfig({
               assetId: transaction.assetConfig!.assetIndex,
               params: createdAssetId
-                ? {
+                ? new algosdk.indexerModels.AssetParams({
                     creator: transaction.sender.toString(),
                     decimals: transaction.assetConfig!.decimals,
                     total: transaction.assetConfig!.total,
@@ -336,9 +324,9 @@ export function getIndexerTransactionFromAlgodTransaction(
                     reserve: transaction.assetConfig!.reserve ? transaction.assetConfig!.reserve.toString() : undefined,
                     clawback: transaction.assetConfig!.clawback ? transaction.assetConfig!.clawback.toString() : undefined,
                     freeze: transaction.assetConfig!.freeze ? transaction.assetConfig!.freeze.toString() : undefined,
-                  }
+                  })
                 : 'apar' in blockTransaction.txn && blockTransaction.txn.apar
-                  ? {
+                  ? new algosdk.indexerModels.AssetParams({
                       manager: transaction.assetConfig!.manager ? transaction.assetConfig!.manager.toString() : undefined,
                       reserve: transaction.assetConfig!.reserve ? transaction.assetConfig!.reserve.toString() : undefined,
                       clawback: transaction.assetConfig!.clawback ? transaction.assetConfig!.clawback.toString() : undefined,
@@ -347,35 +335,35 @@ export function getIndexerTransactionFromAlgodTransaction(
                       creator: '',
                       decimals: 0,
                       total: BigInt(0),
-                    }
+                    })
                   : undefined,
-            } satisfies SubscribedTransactionAssetConfig,
+            }),
           }
         : undefined),
       ...(transaction.type === TransactionType.axfer
         ? {
-            assetTransferTransaction: {
+            assetTransferTransaction: new algosdk.indexerModels.TransactionAssetTransfer({
               assetId: transaction.assetTransfer!.assetIndex,
               amount: transaction.assetTransfer!.amount, // The amount can be undefined
               receiver: transaction.assetTransfer!.receiver.toString(),
               sender: transaction.assetTransfer!.assetSender ? transaction.assetTransfer!.assetSender.toString() : undefined,
               closeAmount: assetCloseAmount !== undefined ? BigInt(assetCloseAmount) : undefined,
               closeTo: transaction.assetTransfer!.closeRemainderTo ? transaction.assetTransfer!.closeRemainderTo.toString() : undefined,
-            } satisfies SubscribedTransactionAssetTransfer,
+            }),
           }
         : undefined),
       ...(transaction.type === TransactionType.afrz
         ? {
-            assetFreezeTransaction: {
+            assetFreezeTransaction: new algosdk.indexerModels.TransactionAssetFreeze({
               assetId: transaction.assetFreeze!.assetIndex,
               newFreezeStatus: transaction.assetFreeze!.frozen,
               address: transaction.assetFreeze!.freezeAccount.toString(),
-            } satisfies SubscribedTransactionAssetFreeze,
+            }),
           }
         : undefined),
       ...(transaction.type === TransactionType.appl
         ? {
-            applicationTransaction: {
+            applicationTransaction: new algosdk.indexerModels.TransactionApplication({
               applicationId: transaction.applicationCall!.appIndex ?? 0,
               approvalProgram:
                 transaction.applicationCall!.approvalProgram && transaction.applicationCall!.approvalProgram.length > 0
@@ -391,38 +379,38 @@ export function getIndexerTransactionFromAlgodTransaction(
               foreignAssets: transaction.applicationCall!.foreignAssets.map((a) => a),
               ...(blockTransaction.txn.apgs
                 ? {
-                    globalStateSchema: {
+                    globalStateSchema: new algosdk.indexerModels.StateSchema({
                       numByteSlice: transaction.applicationCall!.numGlobalByteSlices,
                       numUint: transaction.applicationCall!.numGlobalInts,
-                    },
+                    }),
                   }
                 : undefined),
               ...(blockTransaction.txn.apls
                 ? {
-                    localStateSchema: {
+                    localStateSchema: new algosdk.indexerModels.StateSchema({
                       numByteSlice: transaction.applicationCall!.numLocalByteSlices,
                       numUint: transaction.applicationCall!.numLocalInts,
-                    },
+                    }),
                   }
                 : undefined),
               accounts: transaction.applicationCall!.accounts?.map((a) => a),
-            } satisfies SubscribedTransactionApplicationCall,
+            }),
           }
         : undefined),
       ...(transaction.type === TransactionType.pay
         ? {
-            paymentTransaction: {
+            paymentTransaction: new algosdk.indexerModels.TransactionPayment({
               amount: BigInt(transaction.payment!.amount ?? 0), // The amount can be undefined
               receiver: transaction.payment!.receiver.toString(),
               // TODO: PD - confirm closeAmount
               closeAmount: closeAmount !== undefined ? BigInt(closeAmount) : undefined,
               closeRemainderTo: transaction.payment!.closeRemainderTo?.toString(),
-            } satisfies SubscribedTransactionPayment,
+            }),
           }
         : undefined),
       ...(transaction.type === TransactionType.keyreg
         ? {
-            keyregTransaction: {
+            keyregTransaction: new algosdk.indexerModels.TransactionKeyreg({
               nonParticipation: transaction.keyreg!.nonParticipation,
               selectionParticipationKey: transaction.keyreg!.selectionKey,
               stateProofKey: transaction.keyreg!.stateProofKey,
@@ -430,12 +418,12 @@ export function getIndexerTransactionFromAlgodTransaction(
               voteKeyDilution: transaction.keyreg!.voteKeyDilution,
               voteLastValid: transaction.keyreg!.voteLast,
               voteParticipationKey: transaction.keyreg!.voteKey,
-            } satisfies SubscribedTransactionKeyreg,
+            }),
           }
         : undefined),
       ...(transaction.type === TransactionType.stpf
         ? {
-            stateProofTransaction: {
+            stateProofTransaction: new algosdk.indexerModels.TransactionStateProof({
               stateProof: new algosdk.indexerModels.StateProofFields({
                 partProofs: transaction.stateProof!.stateProof?.partProofs
                   ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.partProofs)
@@ -478,7 +466,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                 votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
               }),
               stateProofType: Number(transaction.stateProof!.stateProofType ?? 0),
-            } satisfies SubscribedTransactionStateProof,
+            }),
           }
         : undefined),
       firstValid: transaction.firstValid,
@@ -590,7 +578,7 @@ export function getIndexerTransactionFromAlgodTransaction(
             })
           })
         : undefined,
-    } satisfies SubscribedTransaction
+    })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     // eslint-disable-next-line no-console
