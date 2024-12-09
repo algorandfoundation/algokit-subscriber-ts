@@ -302,7 +302,7 @@ function extractArc28Events(
 
             const type = ABITupleType.from(`(${e.eventDefinition.args.map((a) => a.type).join(',')})`)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const value = type.decode(Buffer.from(log.slice(4))) as any[]
+            const value = type.decode(log.slice(4)) as any[]
 
             e.eventDefinition.args.forEach((a, i) => {
               args.push(value[i])
@@ -492,13 +492,16 @@ function indexerPostFilter(
         result &&=
           !!t.applicationTransaction &&
           !!t.applicationTransaction.applicationArgs &&
-          t.applicationTransaction.applicationArgs[0] === getMethodSelectorBase64(subscription.methodSignature)
+          t.applicationTransaction.applicationArgs.length > 0 &&
+          Buffer.from(t.applicationTransaction.applicationArgs[0]).toString('base64') ===
+            getMethodSelectorBase64(subscription.methodSignature)
       } else {
         subscription.methodSignature.filter(
           (method) =>
             !!t.applicationTransaction &&
             !!t.applicationTransaction.applicationArgs &&
-            t.applicationTransaction.applicationArgs[0] === getMethodSelectorBase64(method),
+            t.applicationTransaction.applicationArgs.length > 0 &&
+            Buffer.from(t.applicationTransaction.applicationArgs[0]).toString('base64') === getMethodSelectorBase64(method),
         ).length > 0
           ? (result &&= true)
           : (result &&= false)
@@ -534,7 +537,7 @@ function indexerPostFilter(
 function getMethodSelectorBase64(methodSignature: string) {
   // todo: memoize?
   const hash = sha512.sha512_256.array(methodSignature)
-  return Buffer.from(new Uint8Array(hash.slice(0, 4)))
+  return Buffer.from(new Uint8Array(hash.slice(0, 4))).toString('base64')
 }
 
 function transactionFilter(
@@ -549,15 +552,15 @@ function transactionFilter(
       if (typeof subscription.sender === 'string') {
         result &&= !!t.sender && t.sender.toString() === subscription.sender
       } else {
-        result &&= !!t.sender && subscription.sender.includes(t.sender.publicKey.toString())
+        result &&= !!t.sender && subscription.sender.includes(t.sender.toString())
       }
     }
     if (subscription.receiver) {
       const receiver = t.payment?.receiver ?? t.assetTransfer?.receiver
       if (typeof subscription.receiver === 'string') {
-        result &&= !!receiver && algosdk.encodeAddress(receiver.publicKey) === subscription.receiver
+        result &&= !!receiver && receiver.toString() === subscription.receiver
       } else {
-        result &&= !!receiver && subscription.receiver.includes(algosdk.encodeAddress(receiver.publicKey))
+        result &&= !!receiver && subscription.receiver.includes(receiver.toString())
       }
     }
     if (subscription.type) {
@@ -618,9 +621,12 @@ function transactionFilter(
     if (subscription.methodSignature) {
       const firstAppCallArg = t.applicationCall?.appArgs?.[0]
       if (typeof subscription.methodSignature === 'string') {
-        result &&= firstAppCallArg === getMethodSelectorBase64(subscription.methodSignature)
+        result &&=
+          !!firstAppCallArg && Buffer.from(firstAppCallArg).toString('base64') === getMethodSelectorBase64(subscription.methodSignature)
       } else {
-        subscription.methodSignature.filter((method) => firstAppCallArg === getMethodSelectorBase64(method)).length > 0
+        subscription.methodSignature.filter(
+          (method) => firstAppCallArg && Buffer.from(firstAppCallArg).toString('base64') === getMethodSelectorBase64(method),
+        ).length > 0
           ? (result &&= true)
           : (result &&= false)
       }

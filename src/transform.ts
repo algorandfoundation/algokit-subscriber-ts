@@ -309,7 +309,7 @@ export function getIndexerTransactionFromAlgodTransaction(
               assetId: transaction.assetConfig!.assetIndex,
               params: createdAssetId
                 ? {
-                    creator: algosdk.encodeAddress(transaction.sender.publicKey),
+                    creator: transaction.sender.toString(),
                     decimals: transaction.assetConfig!.decimals,
                     total: transaction.assetConfig!.total,
                     defaultFrozen: transaction.assetConfig!.defaultFrozen,
@@ -332,31 +332,17 @@ export function getIndexerTransactionFromAlgodTransaction(
                           urlB64: encoder.encode(Buffer.from(transaction.assetConfig!.assetURL).toString('base64')),
                         }
                       : undefined),
-                    manager: transaction.assetConfig!.manager
-                      ? algosdk.encodeAddress(transaction.assetConfig!.manager.publicKey)
-                      : undefined,
-                    reserve: transaction.assetConfig!.reserve
-                      ? algosdk.encodeAddress(transaction.assetConfig!.reserve.publicKey)
-                      : undefined,
-                    clawback: transaction.assetConfig!.clawback
-                      ? algosdk.encodeAddress(transaction.assetConfig!.clawback.publicKey)
-                      : undefined,
-                    freeze: transaction.assetConfig!.freeze ? algosdk.encodeAddress(transaction.assetConfig!.freeze.publicKey) : undefined,
+                    manager: transaction.assetConfig!.manager ? transaction.assetConfig!.manager.toString() : undefined,
+                    reserve: transaction.assetConfig!.reserve ? transaction.assetConfig!.reserve.toString() : undefined,
+                    clawback: transaction.assetConfig!.clawback ? transaction.assetConfig!.clawback.toString() : undefined,
+                    freeze: transaction.assetConfig!.freeze ? transaction.assetConfig!.freeze.toString() : undefined,
                   }
                 : 'apar' in blockTransaction.txn && blockTransaction.txn.apar
                   ? {
-                      manager: transaction.assetConfig!.manager
-                        ? algosdk.encodeAddress(transaction.assetConfig!.manager.publicKey)
-                        : undefined,
-                      reserve: transaction.assetConfig!.reserve
-                        ? algosdk.encodeAddress(transaction.assetConfig!.reserve.publicKey)
-                        : undefined,
-                      clawback: transaction.assetConfig!.clawback
-                        ? algosdk.encodeAddress(transaction.assetConfig!.clawback.publicKey)
-                        : undefined,
-                      freeze: transaction.assetConfig!.freeze
-                        ? algosdk.encodeAddress(transaction.assetConfig!.freeze.publicKey)
-                        : undefined,
+                      manager: transaction.assetConfig!.manager ? transaction.assetConfig!.manager.toString() : undefined,
+                      reserve: transaction.assetConfig!.reserve ? transaction.assetConfig!.reserve.toString() : undefined,
+                      clawback: transaction.assetConfig!.clawback ? transaction.assetConfig!.clawback.toString() : undefined,
+                      freeze: transaction.assetConfig!.freeze ? transaction.assetConfig!.freeze.toString() : undefined,
                       // These parameters are required in the indexer type so setting to empty values
                       creator: '',
                       decimals: 0,
@@ -371,14 +357,10 @@ export function getIndexerTransactionFromAlgodTransaction(
             assetTransferTransaction: {
               assetId: transaction.assetTransfer!.assetIndex,
               amount: transaction.assetTransfer!.amount, // The amount can be undefined
-              receiver: algosdk.encodeAddress(transaction.assetTransfer!.receiver.publicKey),
-              sender: transaction.assetTransfer!.assetSender
-                ? algosdk.encodeAddress(transaction.assetTransfer!.assetSender.publicKey)
-                : undefined,
+              receiver: transaction.assetTransfer!.receiver.toString(),
+              sender: transaction.assetTransfer!.assetSender ? transaction.assetTransfer!.assetSender.toString() : undefined,
               closeAmount: assetCloseAmount !== undefined ? BigInt(assetCloseAmount) : undefined,
-              closeTo: transaction.assetTransfer!.closeRemainderTo
-                ? algosdk.encodeAddress(transaction.assetTransfer!.closeRemainderTo.publicKey)
-                : undefined,
+              closeTo: transaction.assetTransfer!.closeRemainderTo ? transaction.assetTransfer!.closeRemainderTo.toString() : undefined,
             } satisfies SubscribedTransactionAssetTransfer,
           }
         : undefined),
@@ -387,7 +369,7 @@ export function getIndexerTransactionFromAlgodTransaction(
             assetFreezeTransaction: {
               assetId: transaction.assetFreeze!.assetIndex,
               newFreezeStatus: transaction.assetFreeze!.frozen,
-              address: algosdk.encodeAddress(transaction.assetFreeze!.freezeAccount.publicKey),
+              address: transaction.assetFreeze!.freezeAccount.toString(),
             } satisfies SubscribedTransactionAssetFreeze,
           }
         : undefined),
@@ -431,12 +413,10 @@ export function getIndexerTransactionFromAlgodTransaction(
         ? {
             paymentTransaction: {
               amount: BigInt(transaction.payment!.amount ?? 0), // The amount can be undefined
-              receiver: algosdk.encodeAddress(transaction.payment!.receiver.publicKey),
+              receiver: transaction.payment!.receiver.toString(),
               // TODO: PD - confirm closeAmount
               closeAmount: closeAmount !== undefined ? BigInt(closeAmount) : undefined,
-              closeRemainderTo: transaction.payment!.closeRemainderTo
-                ? algosdk.encodeAddress(transaction.payment!.closeRemainderTo.publicKey)
-                : undefined,
+              closeRemainderTo: transaction.payment!.closeRemainderTo?.toString(),
             } satisfies SubscribedTransactionPayment,
           }
         : undefined),
@@ -505,7 +485,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       lastValid: transaction.lastValid,
       txType: transaction.type,
       fee: transaction.fee ?? 0,
-      sender: algosdk.encodeAddress(transaction.sender.publicKey),
+      sender: transaction.sender.toString(),
       confirmedRound: BigInt(roundNumber),
       roundTime: roundTimestamp,
       intraRoundOffset: roundOffset,
@@ -593,10 +573,7 @@ export function getIndexerTransactionFromAlgodTransaction(
         : undefined,
       localStateDelta: blockTransaction.dt?.ld
         ? Object.entries(blockTransaction.dt.ld).map(([addressIndex, delta]) => {
-            const addresses = [
-              algosdk.encodeAddress(transaction.sender.publicKey),
-              ...(transaction.applicationCall?.accounts?.map((a) => algosdk.encodeAddress(a.publicKey)) || []),
-            ]
+            const addresses = [transaction.sender.toString(), ...(transaction.applicationCall?.accounts?.map((a) => a.toString()) || [])]
             return new algosdk.indexerModels.AccountStateDelta({
               address: addresses[Number(addressIndex)],
               delta: Object.entries(delta).map(

@@ -1,6 +1,6 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import algosdk, { Account, Address, Transaction } from 'algosdk'
+import { Account, Address, Transaction } from 'algosdk'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {
@@ -129,10 +129,10 @@ export function getTransactionForDiff(transaction: Transaction) {
   const t = {
     ...transaction,
     name: undefined,
-    appAccounts: transaction.applicationCall?.accounts?.map((a) => algosdk.encodeAddress(a.publicKey)),
-    from: algosdk.encodeAddress(transaction.sender.publicKey),
+    appAccounts: transaction.applicationCall?.accounts?.map((a) => a.toString()),
+    from: transaction.sender.toString(),
     to: getReceiver(transaction)?.toString(), // TODO: NC - Change to sender/receiver?
-    reKeyTo: transaction.rekeyTo ? algosdk.encodeAddress(transaction.rekeyTo.publicKey) : undefined,
+    reKeyTo: transaction.rekeyTo ? transaction.rekeyTo.toString() : undefined,
     appArgs: transaction.applicationCall?.appArgs?.map((a) => Buffer.from(a).toString('base64')),
     genesisHash: transaction.genesisHash ? Buffer.from(transaction.genesisHash).toString('base64') : '',
     group: transaction.group ? Buffer.from(transaction.group).toString('base64') : undefined,
