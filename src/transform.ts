@@ -128,10 +128,10 @@ function extractTransactionFromBlockTransaction(
   genesisId: string,
 ): {
   transaction: Transaction
-  createdAssetId?: number | bigint
-  createdAppId?: number | bigint
-  assetCloseAmount?: number | bigint
-  closeAmount?: number
+  createdAssetId?: bigint
+  createdAppId?: bigint
+  assetCloseAmount?: bigint
+  closeAmount?: bigint
   logs?: Uint8Array[]
 } {
   const txn = extractAndNormaliseTransaction(blockTransaction, genesisHash, genesisId)

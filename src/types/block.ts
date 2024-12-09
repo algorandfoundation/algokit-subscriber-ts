@@ -186,13 +186,13 @@ export interface BlockTransaction {
   /** The eval deltas for the block */
   dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
-  caid?: number | bigint
+  caid?: bigint
   /** App ID when an app is created by the transaction */
-  apid?: number | bigint
+  apid?: bigint
   /** Asset closing amount in decimal units */
-  aca?: number | bigint
+  aca?: bigint
   /** Algo closing amount in microAlgos */
-  ca?: number
+  ca?: bigint
   /** Has genesis id */
   hgi?: boolean
   /** Has genesis hash */
@@ -387,21 +387,21 @@ export interface TransactionInBlock {
   /** The transaction as an algosdk `Transaction` object. */
   transaction: Transaction
   /** The asset ID if an asset was created from this transaction. */
-  createdAssetId?: number | bigint
+  createdAssetId?: bigint
   /** The app ID if an app was created from this transaction. */
-  createdAppId?: number | bigint
+  createdAppId?: bigint
   /** The asset close amount if the sender asset position was closed from this transaction. */
-  assetCloseAmount?: number | bigint
+  assetCloseAmount?: bigint
   /** The ALGO close amount if the sender account was closed from this transaction. */
-  closeAmount?: number
+  closeAmount?: bigint
   /** Any logs that were issued as a result of this transaction. */
   logs?: Uint8Array[]
   /** Rewards in microalgos applied to the close remainder to account. */
-  closeRewards?: number
+  closeRewards?: bigint
   /** Rewards in microalgos applied to the sender account. */
-  senderRewards?: number
+  senderRewards?: bigint
   /** Rewards in microalgos applied to the receiver account. */
-  receiverRewards?: number
+  receiverRewards?: bigint
 }
 
 /**
