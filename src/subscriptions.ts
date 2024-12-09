@@ -1,5 +1,4 @@
 import { Config, SearchForTransactions, searchTransactions } from '@algorandfoundation/algokit-utils'
-import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
 import { Buffer } from 'buffer'
 import sha512, { sha512_256 } from 'js-sha512'
@@ -630,7 +629,7 @@ function transactionFilter(
           arc28Events,
           arc28EventGroups,
           subscription.arc28Events,
-          BigInt(createdAppId ?? t.applicationCall?.appIndex ?? 0),
+          createdAppId ?? t.applicationCall?.appIndex ?? 0n,
           () => getIndexerTransactionFromAlgodTransaction(txn),
         )
     }
@@ -676,7 +675,10 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
 /** Process an indexer transaction and return that transaction or any of it's inner transactions
  * that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through.
  */
-function getFilteredIndexerTransactions(transaction: TransactionResult, filter: NamedTransactionFilter): SubscribedTransaction[] {
+function getFilteredIndexerTransactions(
+  transaction: algosdk.indexerModels.Transaction,
+  filter: NamedTransactionFilter,
+): SubscribedTransaction[] {
   let parentOffset = 0
   const getParentOffset = () => parentOffset++
 
@@ -689,9 +691,16 @@ function getFilteredIndexerTransactions(transaction: TransactionResult, filter: 
 }
 
 /** Return a transaction and its inner transactions as an array of `SubscribedTransaction` objects. */
-function getIndexerInnerTransactions(root: TransactionResult, parent: TransactionResult, offset: () => number): SubscribedTransaction[] {
+function getIndexerInnerTransactions(
+  root: algosdk.indexerModels.Transaction,
+  parent: algosdk.indexerModels.Transaction,
+  offset: () => number,
+): SubscribedTransaction[] {
   return (parent.innerTxns ?? []).flatMap((t) => {
     const parentOffset = offset()
+    let childOffset = 0
+    const getChildOffset = () => childOffset++
+
     return [
       {
         ...t,
@@ -699,7 +708,7 @@ function getIndexerInnerTransactions(root: TransactionResult, parent: Transactio
         id: `${root.id}/inner/${parentOffset + 1}`,
         intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
         txType: getTransactionType(t.txType ?? ''),
-        innerTxns: undefined,
+        innerTxns: getIndexerInnerTransactions(root, t, getChildOffset),
       },
       ...getIndexerInnerTransactions(root, t, offset),
     ] satisfies SubscribedTransaction[]

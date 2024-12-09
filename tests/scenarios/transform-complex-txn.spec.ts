@@ -30,7 +30,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const txn = indexerTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
     expect(txn.id).toBe(`${txnId}/inner/5`)
-    expect(txn).toMatchInlineSnapshot(`
+    expect(clearUndefineds(txn as any)).toMatchInlineSnapshot(`
       {
         "application-transaction": {
           "accounts": [],
