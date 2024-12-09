@@ -128,8 +128,8 @@ function extractTransactionFromBlockTransaction(
   genesisId: string,
 ): {
   transaction: Transaction
-  createdAssetId?: bigint
-  createdAppId?: bigint
+  createdAssetId?: number | bigint
+  createdAppId?: number | bigint
   assetCloseAmount?: number | bigint
   closeAmount?: number
   logs?: Uint8Array[]
@@ -509,7 +509,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       confirmedRound: BigInt(roundNumber),
       roundTime: roundTimestamp,
       intraRoundOffset: roundOffset,
-      createdAssetIndex: createdAssetId,
+      createdAssetIndex: createdAssetId !== undefined ? BigInt(createdAssetId) : undefined,
       genesisHash: transaction.genesisHash,
       genesisId: transaction.genesisID,
       group: transaction.group,
@@ -517,7 +517,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       lease: transaction.lease,
       rekeyTo: transaction.rekeyTo,
       closingAmount: closeAmount !== undefined ? BigInt(closeAmount) : undefined,
-      createdApplicationIndex: createdAppId,
+      createdApplicationIndex: createdAppId !== undefined ? BigInt(createdAppId) : undefined,
       authAddr: blockTransaction.sgnr ? new algosdk.Address(blockTransaction.sgnr) : undefined,
       innerTxns: blockTransaction.dt?.itx?.map((ibt) =>
         getIndexerTransactionFromAlgodTransaction({

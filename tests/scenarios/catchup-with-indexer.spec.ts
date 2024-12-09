@@ -23,9 +23,9 @@ describe('Subscribing using catchup-with-indexer', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
-    expect(subscribed.startingWatermark).toBe(0)
+    expect(subscribed.startingWatermark).toBe(0n)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
-    expect(subscribed.syncedRoundRange).toEqual([1, lastTxnRound])
+    expect(subscribed.syncedRoundRange).toEqual([1n, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
     expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
   })
@@ -96,9 +96,9 @@ describe('Subscribing using catchup-with-indexer', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
-    expect(subscribed.startingWatermark).toBe(0)
+    expect(subscribed.startingWatermark).toBe(0n)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
-    expect(subscribed.syncedRoundRange).toEqual([1, lastTxnRound])
+    expect(subscribed.syncedRoundRange).toEqual([1n, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(3)
     expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
     expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txID())

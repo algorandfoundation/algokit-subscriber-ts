@@ -575,7 +575,7 @@ function transactionFilter(
       } else {
         result &&=
           (!!appId && subscription.appId.map((i) => BigInt(i)).includes(appId)) ||
-          (!!createdAppId && subscription.appId.map((i) => BigInt(i)).includes(createdAppId))
+          (!!createdAppId && subscription.appId.map((i) => i).includes(createdAppId))
       }
     }
     if (subscription.assetId) {
@@ -585,7 +585,7 @@ function transactionFilter(
       } else {
         result &&=
           (!!assetId && subscription.assetId.map((i) => BigInt(i)).includes(assetId)) ||
-          (!!createdAssetId && subscription.assetId.map((i) => BigInt(i)).includes(createdAssetId))
+          (!!createdAssetId && subscription.assetId.map((i) => i).includes(createdAssetId))
       }
     }
     if (subscription.minAmount) {
@@ -632,7 +632,7 @@ function transactionFilter(
           arc28Events,
           arc28EventGroups,
           subscription.arc28Events,
-          createdAppId ?? t.applicationCall?.appIndex ?? BigInt(0),
+          BigInt(createdAppId ?? t.applicationCall?.appIndex ?? 0),
           () => getIndexerTransactionFromAlgodTransaction(txn),
         )
     }
@@ -665,9 +665,7 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
         (changeFilter.maxAmount === undefined || actualChange.amount <= changeFilter.maxAmount) &&
         (changeFilter.assetId === undefined ||
           (Array.isArray(changeFilter.assetId) && changeFilter.assetId.length === 0) ||
-          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId])
-            .map((a) => BigInt(a))
-            .includes(actualChange.assetId)) &&
+          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId]).includes(actualChange.assetId)) &&
         (changeFilter.role === undefined ||
           (Array.isArray(changeFilter.role) && changeFilter.role.length === 0) ||
           (Array.isArray(changeFilter.role) ? changeFilter.role : [changeFilter.role]).some((r) => actualChange.roles.includes(r))),
