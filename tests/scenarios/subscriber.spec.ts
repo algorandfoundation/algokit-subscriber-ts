@@ -162,7 +162,7 @@ describe('AlgorandSubscriber', () => {
     expect(result.subscribedTransactions.map((t) => t.id)).toEqual(txIds.concat(txIds1, txIds2))
     expect(sender1TxnIds).toEqual(txIds1)
     expect(sender1TxnIdsfromBatch).toEqual(sender1TxnIds)
-    expect(sender2Rounds).toEqual(txns2.map((t) => Number(t.confirmation!.confirmedRound!)))
+    expect(sender2Rounds).toEqual(txns2.map((t) => t.confirmation!.confirmedRound!))
     expect(sender2RoundsfromBatch).toEqual(sender2Rounds)
 
     // Random transaction
@@ -198,9 +198,9 @@ describe('AlgorandSubscriber', () => {
     expect(sender1TxnIds).toEqual(txIds1.concat(txIds13))
     expect(sender1TxnIdsfromBatch).toEqual(txIds13)
     expect(sender2Rounds).toEqual(
-      txns2.map((t) => Number(t.confirmation!.confirmedRound!)).concat(txns23.map((t) => Number(t.confirmation!.confirmedRound!))),
+      txns2.map((t) => t.confirmation!.confirmedRound!).concat(txns23.map((t) => t.confirmation!.confirmedRound!)),
     )
-    expect(sender2RoundsfromBatch).toEqual(txns23.map((t) => Number(t.confirmation!.confirmedRound!)))
+    expect(sender2RoundsfromBatch).toEqual(txns23.map((t) => t.confirmation!.confirmedRound!))
   })
 
   test('Subscribes to transactions at regular intervals when started and can be stopped', async () => {

@@ -10,7 +10,8 @@ export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
 }
 
 export function range(start: bigint, end: bigint) {
-  return [...Array(end - start + 1n).keys()].map((i) => BigInt(i) + start)
+  const arrayLength = Number(end - start + 1n)
+  return [...Array(arrayLength).keys()].map((i) => BigInt(i) + start)
 }
 
 // https://github.com/whatwg/dom/issues/946#issuecomment-845924476

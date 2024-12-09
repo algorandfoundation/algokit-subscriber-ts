@@ -350,18 +350,11 @@ function indexerPreFilter(
     if (subscription.notePrefix) {
       filter = filter.notePrefix(Buffer.from(subscription.notePrefix).toString('base64'))
     }
-    if (
-      subscription.appId &&
-      (typeof subscription.appId === 'number' || (typeof subscription.appId === 'bigint' && subscription.appId <= Number.MAX_SAFE_INTEGER))
-    ) {
-      filter = filter.applicationID(Number(subscription.appId))
+    if (subscription.appId && typeof subscription.appId === 'bigint' && subscription.appId <= Number.MAX_SAFE_INTEGER) {
+      filter = filter.applicationID(subscription.appId)
     }
-    if (
-      subscription.assetId &&
-      (typeof subscription.assetId === 'number' ||
-        (typeof subscription.assetId === 'bigint' && subscription.assetId <= Number.MAX_SAFE_INTEGER))
-    ) {
-      filter = filter.assetID(Number(subscription.assetId))
+    if (subscription.assetId && typeof subscription.assetId === 'bigint' && subscription.assetId <= Number.MAX_SAFE_INTEGER) {
+      filter = filter.assetID(subscription.assetId)
     }
 
     // Indexer only supports minAmount and maxAmount for non-payments if an asset ID is provided so check
@@ -419,31 +412,31 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Subscrib
       result &&= t.note ? Buffer.from(t.note).toString('utf-8').startsWith(subscription.notePrefix) : false
     }
     if (subscription.appId) {
-      if (typeof subscription.appId === 'number' || typeof subscription.appId === 'bigint') {
+      if (typeof subscription.appId === 'bigint') {
         result &&=
-          t.createdApplicationIndex === BigInt(subscription.appId) ||
-          (!!t.applicationTransaction && t.applicationTransaction.applicationId === BigInt(subscription.appId))
+          t.createdApplicationIndex === subscription.appId ||
+          (!!t.applicationTransaction && t.applicationTransaction.applicationId === subscription.appId)
       } else {
         result &&=
-          (t.createdApplicationIndex && subscription.appId.map((i) => BigInt(i)).includes(t.createdApplicationIndex)) ||
-          (!!t.applicationTransaction && subscription.appId.map((i) => BigInt(i)).includes(t.applicationTransaction.applicationId))
+          (t.createdApplicationIndex && subscription.appId.includes(t.createdApplicationIndex)) ||
+          (!!t.applicationTransaction && subscription.appId.includes(t.applicationTransaction.applicationId))
       }
     }
     if (subscription.assetId) {
-      if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
+      if (typeof subscription.assetId === 'bigint') {
         result &&=
-          t.createdAssetIndex === BigInt(subscription.assetId) ||
-          (!!t.assetConfigTransaction && t.assetConfigTransaction.assetId === BigInt(subscription.assetId)) ||
-          (!!t.assetFreezeTransaction && t.assetFreezeTransaction.assetId === BigInt(subscription.assetId)) ||
-          (!!t.assetTransferTransaction && t.assetTransferTransaction.assetId === BigInt(subscription.assetId))
+          t.createdAssetIndex === subscription.assetId ||
+          (!!t.assetConfigTransaction && t.assetConfigTransaction.assetId === subscription.assetId) ||
+          (!!t.assetFreezeTransaction && t.assetFreezeTransaction.assetId === subscription.assetId) ||
+          (!!t.assetTransferTransaction && t.assetTransferTransaction.assetId === subscription.assetId)
       } else {
         result &&=
-          (t.createdAssetIndex && subscription.assetId.map((i) => BigInt(i)).includes(t.createdAssetIndex)) ||
+          (t.createdAssetIndex && subscription.assetId.includes(t.createdAssetIndex)) ||
           (!!t.assetConfigTransaction &&
             t.assetConfigTransaction.assetId !== undefined &&
-            subscription.assetId.map((i) => BigInt(i)).includes(t.assetConfigTransaction.assetId)) ||
-          (!!t.assetFreezeTransaction && subscription.assetId.map((i) => BigInt(i)).includes(t.assetFreezeTransaction.assetId)) ||
-          (!!t.assetTransferTransaction && subscription.assetId.map((i) => BigInt(i)).includes(t.assetTransferTransaction.assetId))
+            subscription.assetId.includes(t.assetConfigTransaction.assetId)) ||
+          (!!t.assetFreezeTransaction && subscription.assetId.includes(t.assetFreezeTransaction.assetId)) ||
+          (!!t.assetTransferTransaction && subscription.assetId.includes(t.assetTransferTransaction.assetId))
       }
     }
 
@@ -454,8 +447,8 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Subscrib
     }
     if (subscription.maxAmount) {
       result &&=
-        (!!t.paymentTransaction && BigInt(t.paymentTransaction.amount) <= subscription.maxAmount) ||
-        (!!t.assetTransferTransaction && BigInt(t.assetTransferTransaction.amount) <= subscription.maxAmount)
+        (!!t.paymentTransaction && t.paymentTransaction.amount <= subscription.maxAmount) ||
+        (!!t.assetTransferTransaction && t.assetTransferTransaction.amount <= subscription.maxAmount)
     }
 
     return result
@@ -706,8 +699,7 @@ function getIndexerInnerTransactions(root: TransactionResult, parent: Transactio
         id: `${root.id}/inner/${parentOffset + 1}`,
         intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
         txType: getTransactionType(t.txType ?? ''),
-        // TODO: PD - do we need innerTxns here?
-        innerTxns: getIndexerInnerTransactions(root, t, offset),
+        innerTxns: undefined,
       },
       ...getIndexerInnerTransactions(root, t, offset),
     ] satisfies SubscribedTransaction[]
