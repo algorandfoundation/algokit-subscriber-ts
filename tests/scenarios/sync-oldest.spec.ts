@@ -23,9 +23,9 @@ describe('Subscribing using sync-oldest', () => {
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
-    expect(subscribed.startingWatermark).toBe(0)
-    expect(subscribed.newWatermark).toBe(1)
-    expect(subscribed.syncedRoundRange).toEqual([1, 1])
+    expect(subscribed.startingWatermark).toBe(0n)
+    expect(subscribed.newWatermark).toBe(1n)
+    expect(subscribed.syncedRoundRange).toEqual([1n, 1n])
     expect(subscribed.subscribedTransactions.length).toBe(0)
   })
 

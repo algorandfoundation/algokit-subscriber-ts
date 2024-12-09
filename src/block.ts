@@ -68,7 +68,17 @@ function blockMapToObject(object: Map<any, any>): BlockData {
         result[key] = value
       }
     } else if (value instanceof Array) {
-      result[key] = value.map((v) => (v instanceof Map ? blockMapToObject(v) : v))
+      // TODO: PD - do we need to extend this?
+      result[key] = value.map((v) => {
+        if (v instanceof Map) {
+          return blockMapToObject(v)
+        }
+        // apat is an array of addresses
+        if (v instanceof Uint8Array && v.length === 32 && key === 'apat') {
+          return algosdk.encodeAddress(v)
+        }
+        return v
+      })
     } else {
       result[key] = value
     }
@@ -76,4 +86,4 @@ function blockMapToObject(object: Map<any, any>): BlockData {
   return result as BlockData
 }
 
-const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'apat', 'm', 'r', 'f', 'c']
+const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c']

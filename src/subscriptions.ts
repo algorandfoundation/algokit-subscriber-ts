@@ -550,9 +550,9 @@ function transactionFilter(
     let result = true
     if (subscription.sender) {
       if (typeof subscription.sender === 'string') {
-        result &&= !!t.sender && t.sender.toString() === subscription.sender
+        result &&= t.sender.toString() === subscription.sender
       } else {
-        result &&= !!t.sender && subscription.sender.includes(t.sender.toString())
+        result &&= subscription.sender.includes(t.sender.toString())
       }
     }
     if (subscription.receiver) {
@@ -575,22 +575,19 @@ function transactionFilter(
     }
     if (subscription.appId) {
       const appId = t.applicationCall?.appIndex
-      if (typeof subscription.appId === 'number' || typeof subscription.appId === 'bigint') {
-        result &&= appId === BigInt(subscription.appId) || createdAppId === BigInt(subscription.appId)
+      if (typeof subscription.appId === 'bigint') {
+        result &&= appId === subscription.appId || createdAppId === subscription.appId
       } else {
-        result &&=
-          (!!appId && subscription.appId.map((i) => BigInt(i)).includes(appId)) ||
-          (!!createdAppId && subscription.appId.map((i) => i).includes(createdAppId))
+        result &&= (!!appId && subscription.appId.includes(appId)) || (!!createdAppId && subscription.appId.includes(createdAppId))
       }
     }
     if (subscription.assetId) {
       const assetId = t.assetTransfer?.assetIndex ?? t.assetConfig?.assetIndex ?? t.assetFreeze?.assetIndex
-      if (typeof subscription.assetId === 'number' || typeof subscription.assetId === 'bigint') {
-        result &&= assetId === BigInt(subscription.assetId) || createdAssetId === BigInt(subscription.assetId)
+      if (typeof subscription.assetId === 'bigint') {
+        result &&= assetId === subscription.assetId || createdAssetId === subscription.assetId
       } else {
         result &&=
-          (!!assetId && subscription.assetId.map((i) => BigInt(i)).includes(assetId)) ||
-          (!!createdAssetId && subscription.assetId.map((i) => i).includes(createdAssetId))
+          (!!assetId && subscription.assetId.includes(assetId)) || (!!createdAssetId && subscription.assetId.includes(createdAssetId))
       }
     }
     if (subscription.minAmount) {
