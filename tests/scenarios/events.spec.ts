@@ -58,7 +58,7 @@ describe('Subscribing to app calls that emit events', () => {
       await subscribeAndVerify(
         {
           sender: testAccount.addr.toString(),
-          appId: Number(app1.result.appId),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -91,7 +91,7 @@ describe('Subscribing to app calls that emit events', () => {
       await subscribeAndVerify(
         {
           sender: testAccount.addr.toString(),
-          appId: Number(app1.result.appId),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -169,7 +169,7 @@ describe('Subscribing to app calls that emit events', () => {
       await subscribeAndVerify(
         {
           sender: testAccount.addr.toString(),
-          appId: Number(app1.result.appId),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -195,7 +195,7 @@ describe('Subscribing to app calls that emit events', () => {
       await subscribeAndVerify(
         {
           sender: testAccount.addr.toString(),
-          appId: Number(app1.result.appId),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -220,7 +220,7 @@ describe('Subscribing to app calls that emit events', () => {
       await subscribeAndVerify(
         {
           sender: testAccount.addr.toString(),
-          appId: Number(app1.result.appId),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -263,7 +263,7 @@ describe('Subscribing to app calls that emit events', () => {
       await subscribeAndVerify(
         {
           sender: testAccount.addr.toString(),
-          appId: Number(app1.result.appId),
+          appId: app1.result.appId,
         },
         txn,
         [

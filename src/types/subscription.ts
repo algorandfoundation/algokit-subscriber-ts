@@ -350,13 +350,13 @@ export interface TransactionFilter {
   /** Filter to transactions with a note having the given prefix. */
   notePrefix?: string
   /** Filter to transactions against the app with the given ID(s). */
-  appId?: number | number[] | bigint | bigint[]
+  appId?: bigint | bigint[]
   /** Filter to transactions that are creating an app. */
   appCreate?: boolean
   /** Filter to transactions that have given on complete(s). */
   appOnComplete?: ApplicationOnComplete | ApplicationOnComplete[]
   /** Filter to transactions against the asset with the given ID(s). */
-  assetId?: number | number[] | bigint | bigint[]
+  assetId?: bigint | bigint[]
   /** Filter to transactions that are creating an asset. */
   assetCreate?: boolean
   /** Filter to transactions where the amount being transferred is greater
@@ -377,7 +377,7 @@ export interface TransactionFilter {
   /** Filter to transactions that result in balance changes that match one or more of the given set of balance changes. */
   balanceChanges?: {
     /** Match transactions with balance changes for one of the given asset ID(s), with Algo being `0` */
-    assetId?: number | number[] | bigint | bigint[]
+    assetId?: bigint | bigint[] // TODO: PD - maybe remove number here
     /** Match transactions with balance changes for an account with one of the given role(s) */
     role?: BalanceChangeRole | BalanceChangeRole[]
     /** Match transactions with balance changes affecting one of the given account(s) */

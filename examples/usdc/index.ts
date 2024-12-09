@@ -22,8 +22,8 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
           name: 'usdc',
           filter: {
             type: TransactionType.axfer,
-            assetId: 31566704, // MainNet: USDC
-            minAmount: 1_000_000, // $1
+            assetId: 31566704n, // MainNet: USDC
+            minAmount: 1_000_000n, // $1
           },
         },
       ],

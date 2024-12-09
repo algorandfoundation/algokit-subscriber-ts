@@ -15,7 +15,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
-          appId: 1390675395,
+          appId: 1390675395n,
           sender: 'AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A',
         },
         roundsToSync: 1,
@@ -162,7 +162,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
-          appId: 1390675395,
+          appId: 1390675395n,
           sender: 'AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A',
         },
         roundsToSync: 1,

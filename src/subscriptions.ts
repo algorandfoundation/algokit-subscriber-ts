@@ -64,6 +64,8 @@ export async function getSubscribedTransactions(
   const currentRound = _currentRound ?? (await algod.status().do()).lastRound
   let blockMetadata: BlockMetadata[] | undefined
 
+  // TODO: normalise number | bigint to bigint
+
   // Pre-calculate a flat list of all ARC-28 events to process
   const arc28Events = (subscription.arc28Events ?? []).flatMap((g) =>
     g.events.map((e) => {
@@ -665,7 +667,9 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
         (changeFilter.maxAmount === undefined || actualChange.amount <= changeFilter.maxAmount) &&
         (changeFilter.assetId === undefined ||
           (Array.isArray(changeFilter.assetId) && changeFilter.assetId.length === 0) ||
-          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId]).includes(actualChange.assetId)) &&
+          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId])
+            .map((a) => BigInt(a))
+            .includes(BigInt(actualChange.assetId))) &&
         (changeFilter.role === undefined ||
           (Array.isArray(changeFilter.role) && changeFilter.role.length === 0) ||
           (Array.isArray(changeFilter.role) ? changeFilter.role : [changeFilter.role]).some((r) => actualChange.roles.includes(r))),

@@ -404,7 +404,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr.toString(),
-          appId: Number(app1.result.confirmation!.applicationIndex!),
+          appId: app1.result.confirmation!.applicationIndex!,
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 3)],
       )
@@ -412,7 +412,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr.toString(),
-          appId: [Number(app1.result.confirmation!.applicationIndex!), Number(app2.result.confirmation!.applicationIndex!)],
+          appId: [app1.result.confirmation!.applicationIndex!, app2.result.confirmation!.applicationIndex!],
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 3)],
       )
