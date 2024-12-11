@@ -46,7 +46,7 @@ function blockMapToObject(object: Map<any, any>): BlockData {
   const result: { [key: string]: any } = {}
   const decoder = new TextDecoder()
   for (const [key, value] of object) {
-    if (key === 'r' && value instanceof Map) {
+    if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'number')) {
       // State proof transactions have a property `r` with a map with numeric keys that must stay intact
       const rMap = new Map()
       for (const [k, v] of value) {

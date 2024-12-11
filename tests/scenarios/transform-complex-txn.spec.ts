@@ -769,4 +769,14 @@ describe('Complex transaction with many nested inner transactions', () => {
     )
     expect(transaction.applicationTransaction!.clearStateProgram).toBe('CQ==')
   })
+
+  // TODO: PD - complete this test
+  it('foo', async () => {
+    const blocks = await getBlocksBulk({ startRound: 45172924n, maxRound: 45172924n }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const txn = blockTransactions[4]
+
+    const transaction = getIndexerTransactionFromAlgodTransaction(txn)
+    const a = 3
+  })
 })
