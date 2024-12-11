@@ -168,6 +168,43 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
+// TODO: PD - this logic isn't quite right
+const valueToMap = (value: any): any => {
+  if (value instanceof Uint8Array) {
+    return value
+  }
+  if (value instanceof Address) {
+    return value
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => valueToMap(v))
+  }
+  if (typeof value === 'object' && value != null) {
+    return new Map(Object.entries(value))
+  }
+  return value
+}
+
+const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
+  return new Map(
+    Object.entries(object).map(([key, value]) => {
+      if (value instanceof Uint8Array) {
+        return [key, value]
+      }
+      if (value instanceof Address) {
+        return [key, value]
+      }
+      if (Array.isArray(value)) {
+        return [key, value.map((v) => valueToMap(v))]
+      }
+      if (typeof value === 'object' && value != null) {
+        return [key, objectToMap(value)]
+      }
+      return [key, value]
+    }),
+  )
+}
+
 function extractAndNormaliseTransaction(
   blockTransaction: BlockTransaction | BlockInnerTransaction,
   genesisHash: Buffer,
@@ -175,10 +212,12 @@ function extractAndNormaliseTransaction(
 ) {
   const txn = {
     ...blockTransaction.txn,
-    apar: blockTransaction.txn.apar ? new Map(Object.entries(blockTransaction.txn.apar)) : undefined,
-    apls: blockTransaction.txn.apls ? new Map(Object.entries(blockTransaction.txn.apls)) : undefined,
-    apgs: blockTransaction.txn.apgs ? new Map(Object.entries(blockTransaction.txn.apgs)) : undefined,
-    apbx: blockTransaction.txn.apbx ? blockTransaction.txn.apbx.map((b) => new Map(Object.entries(b))) : undefined,
+    // apar: blockTransaction.txn.apar ? new Map(Object.entries(blockTransaction.txn.apar)) : undefined,
+    // apls: blockTransaction.txn.apls ? new Map(Object.entries(blockTransaction.txn.apls)) : undefined,
+    // apgs: blockTransaction.txn.apgs ? new Map(Object.entries(blockTransaction.txn.apgs)) : undefined,
+    // apbx: blockTransaction.txn.apbx ? blockTransaction.txn.apbx.map((b) => new Map(Object.entries(b))) : undefined,
+    // sp: blockTransaction.txn.sp ? new Map(Object.entries(blockTransaction.txn.sp)) : undefined,
+    // spmsg: blockTransaction.txn.spmsg ? new Map(Object.entries(blockTransaction.txn.spmsg)) : undefined,
   }
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
@@ -197,17 +236,21 @@ function extractAndNormaliseTransaction(
   }
 
   if (txn.type === TransactionType.axfer && !txn.arcv) {
-    // from_obj_for_encoding expects arcv to be set, which may not be defined when performing an opt out.
+    // fromEncodingData expects arcv to be set, which may not be defined when performing an opt out.
     txn.arcv = Address.fromString(ALGORAND_ZERO_ADDRESS)
   }
 
   if (txn.type === TransactionType.pay && !txn.rcv) {
-    // from_obj_for_encoding expects rcv to be set, which may not be defined when closing an account.
+    // fromEncodingData expects rcv to be set, which may not be defined when closing an account.
     txn.rcv = Address.fromString(ALGORAND_ZERO_ADDRESS)
   }
 
-  // Convert txn object to Map
-  return new Map(Object.entries(txn))
+  if (txn.type === TransactionType.stpf && txn.sp!.v == null) {
+    // fromEncodingData expects v to be set
+    txn.sp!.v = 0
+  }
+
+  return objectToMap(txn)
 }
 
 function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesisHash: Buffer, genesisId: string): string {
@@ -250,6 +293,7 @@ export function getIndexerTransactionFromAlgodTransaction(
   t: TransactionInBlock & { getChildOffset?: () => number },
   filterName?: string,
 ): SubscribedTransaction {
+  // TODO: PD - consider renaming this method
   const {
     transaction,
     createdAssetId,

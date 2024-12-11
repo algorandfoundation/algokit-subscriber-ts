@@ -699,7 +699,7 @@ export interface EncodedStateProof {
   /**
    * merkleSignatureSaltVersion
    */
-  v: number
+  v?: number
 
   /**
    * reveal
