@@ -68,7 +68,6 @@ function blockMapToObject(object: Map<any, any>): BlockData {
         result[key] = value
       }
     } else if (value instanceof Array) {
-      // TODO: PD - do we need to extend this?
       result[key] = value.map((v) => {
         if (v instanceof Map) {
           return blockMapToObject(v)

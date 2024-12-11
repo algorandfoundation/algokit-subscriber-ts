@@ -122,7 +122,7 @@ function extractTransactionFromBlockTransaction(
   closeAmount?: bigint
   logs?: Uint8Array[]
 } {
-  const txn = extractAndNormaliseTransaction(blockTransaction, genesisHash, genesisId)
+  const txn = extractTransactionAndConvertToMap(blockTransaction, genesisHash, genesisId)
   const t = Transaction.fromEncodingData(txn)
   return {
     transaction: t,
@@ -168,23 +168,6 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
-// TODO: PD - this logic isn't quite right
-const valueToMap = (value: any): any => {
-  if (value instanceof Uint8Array) {
-    return value
-  }
-  if (value instanceof Address) {
-    return value
-  }
-  if (Array.isArray(value)) {
-    return value.map((v) => valueToMap(v))
-  }
-  if (typeof value === 'object' && value != null) {
-    return new Map(Object.entries(value))
-  }
-  return value
-}
-
 const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
   return new Map(
     Object.entries(object).map(([key, value]) => {
@@ -195,7 +178,21 @@ const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
         return [key, value]
       }
       if (Array.isArray(value)) {
-        return [key, value.map((v) => valueToMap(v))]
+        return [
+          key,
+          value.map((v) => {
+            if (v instanceof Uint8Array) {
+              return v
+            }
+            if (v instanceof Address) {
+              return v
+            }
+            if (typeof v === 'object' && v != null) {
+              return new Map(Object.entries(v))
+            }
+            return v
+          }),
+        ]
       }
       if (typeof value === 'object' && value != null) {
         return [key, objectToMap(value)]
@@ -205,19 +202,14 @@ const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
   )
 }
 
-function extractAndNormaliseTransaction(
+function extractTransactionAndConvertToMap(
   blockTransaction: BlockTransaction | BlockInnerTransaction,
   genesisHash: Buffer,
   genesisId: string,
 ) {
   const txn = {
     ...blockTransaction.txn,
-    // apar: blockTransaction.txn.apar ? new Map(Object.entries(blockTransaction.txn.apar)) : undefined,
-    // apls: blockTransaction.txn.apls ? new Map(Object.entries(blockTransaction.txn.apls)) : undefined,
-    // apgs: blockTransaction.txn.apgs ? new Map(Object.entries(blockTransaction.txn.apgs)) : undefined,
-    // apbx: blockTransaction.txn.apbx ? blockTransaction.txn.apbx.map((b) => new Map(Object.entries(b))) : undefined,
-    // sp: blockTransaction.txn.sp ? new Map(Object.entries(blockTransaction.txn.sp)) : undefined,
-    // spmsg: blockTransaction.txn.spmsg ? new Map(Object.entries(blockTransaction.txn.spmsg)) : undefined,
+    sp: blockTransaction.txn.sp ? { ...blockTransaction.txn.sp } : undefined,
   }
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
@@ -237,12 +229,12 @@ function extractAndNormaliseTransaction(
 
   if (txn.type === TransactionType.axfer && !txn.arcv) {
     // fromEncodingData expects arcv to be set, which may not be defined when performing an opt out.
-    txn.arcv = Address.fromString(ALGORAND_ZERO_ADDRESS)
+    txn.arcv = ALGORAND_ZERO_ADDRESS
   }
 
   if (txn.type === TransactionType.pay && !txn.rcv) {
     // fromEncodingData expects rcv to be set, which may not be defined when closing an account.
-    txn.rcv = Address.fromString(ALGORAND_ZERO_ADDRESS)
+    txn.rcv = ALGORAND_ZERO_ADDRESS
   }
 
   if (txn.type === TransactionType.stpf && txn.sp!.v == null) {
@@ -251,6 +243,34 @@ function extractAndNormaliseTransaction(
   }
 
   return objectToMap(txn)
+}
+
+function extractAndNormaliseTransaction(
+  blockTransaction: BlockTransaction | BlockInnerTransaction,
+  genesisHash: Buffer,
+  genesisId: string,
+) {
+  const txn = {
+    ...blockTransaction.txn,
+    snd: algosdk.Address.fromString(blockTransaction.txn.snd).publicKey,
+  }
+
+  // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
+  // Remove nulls (mainly where an appl txn contains a null app arg)
+  removeNulls(txn)
+
+  // Add genesisId (gen) as the transaction was processed with it, and is required to generate the correct txID.
+  if ('hgi' in blockTransaction && blockTransaction.hgi === true) {
+    txn.gen = genesisId
+  }
+
+  // Add genesisHash (gh) as the transaction was processed with it, and is required to generate the correct txID.
+  // gh is mandatory on MainNet and TestNet (see https://forum.algorand.org/t/calculating-transaction-id/3119/7), so set gh unless hgh is explicitly false.
+  if (!('hgh' in blockTransaction) || blockTransaction.hgh !== false) {
+    txn.gh = genesisHash
+  }
+
+  return txn
 }
 
 function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesisHash: Buffer, genesisId: string): string {
@@ -293,7 +313,6 @@ export function getIndexerTransactionFromAlgodTransaction(
   t: TransactionInBlock & { getChildOffset?: () => number },
   filterName?: string,
 ): SubscribedTransaction {
-  // TODO: PD - consider renaming this method
   const {
     transaction,
     createdAssetId,
@@ -323,10 +342,10 @@ export function getIndexerTransactionFromAlgodTransaction(
 
   const encoder = new TextEncoder()
 
-  const txId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
+  const txId =
     transaction.type === TransactionType.stpf
       ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, genesisHash, genesisId)
-      : transaction.txID()
+      : transaction.txID() // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
 
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
@@ -730,7 +749,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
 
   if ((transaction.txn.fee ?? 0) > 0) {
     balanceChanges.push({
-      address: transaction.txn.snd.toString(),
+      address: transaction.txn.snd,
       amount: -1n * BigInt(transaction.txn.fee ?? 0),
       roles: [BalanceChangeRole.Sender],
       assetId: 0n,
@@ -740,7 +759,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
   if (transaction.txn.type === TransactionType.pay) {
     balanceChanges.push(
       {
-        address: transaction.txn.snd.toString(),
+        address: transaction.txn.snd,
         amount: -1n * BigInt(transaction.txn.amt ?? 0),
         roles: [BalanceChangeRole.Sender],
         assetId: 0n,
@@ -748,7 +767,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.txn.rcv
         ? [
             {
-              address: transaction.txn.rcv.toString(),
+              address: transaction.txn.rcv,
               amount: BigInt(transaction.txn.amt ?? 0),
               roles: [BalanceChangeRole.Receiver],
               assetId: 0n,
@@ -758,13 +777,13 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.ca && transaction.txn.close
         ? [
             {
-              address: transaction.txn.close.toString(),
+              address: transaction.txn.close,
               amount: BigInt(transaction.ca ?? 0),
               roles: [BalanceChangeRole.CloseTo],
               assetId: 0n,
             },
             {
-              address: transaction.txn.snd.toString(),
+              address: transaction.txn.snd,
               amount: -1n * BigInt(transaction.ca ?? 0),
               roles: [BalanceChangeRole.Sender],
               assetId: 0n,
@@ -777,7 +796,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
   if (transaction.txn.type === TransactionType.axfer && transaction.txn.xaid) {
     balanceChanges.push(
       {
-        address: transaction.txn.snd.toString(),
+        address: transaction.txn.snd,
         assetId: transaction.txn.xaid,
         amount: -1n * BigInt(transaction.txn.aamt ?? 0),
         roles: [BalanceChangeRole.Sender],
@@ -785,7 +804,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.txn.arcv
         ? [
             {
-              address: transaction.txn.arcv.toString(),
+              address: transaction.txn.arcv,
               assetId: transaction.txn.xaid,
               amount: BigInt(transaction.txn.aamt ?? 0),
               roles: [BalanceChangeRole.Receiver],
@@ -795,7 +814,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.aca && transaction.txn.aclose
         ? [
             {
-              address: transaction.txn.aclose.toString(),
+              address: transaction.txn.aclose,
               assetId: transaction.txn.xaid,
               amount: BigInt(transaction.aca ?? 0),
               roles: [BalanceChangeRole.CloseTo],
@@ -815,7 +834,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     if (!transaction.txn.caid && transaction.caid) {
       // Handle balance changes related to the creation of an asset.
       balanceChanges.push({
-        address: transaction.txn.snd.toString(),
+        address: transaction.txn.snd,
         assetId: transaction.caid,
         amount: BigInt(transaction.txn.apar?.t ?? 0),
         roles: [BalanceChangeRole.AssetCreator],
@@ -823,7 +842,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     } else if (transaction.txn.caid && !transaction.txn.apar) {
       // Handle balance changes related to the destruction of an asset.
       balanceChanges.push({
-        address: transaction.txn.snd.toString(),
+        address: transaction.txn.snd,
         assetId: transaction.txn.caid,
         amount: BigInt(0),
         roles: [BalanceChangeRole.AssetDestroyer],

@@ -506,7 +506,7 @@ export interface EncodedTransaction {
   /**
    * from
    */
-  snd: Address
+  snd: string
   /**
    * type
    */
@@ -538,23 +538,23 @@ export interface EncodedTransaction {
   /**
    * closeRemainderTo
    */
-  close?: Address
+  close?: string
   /**
    * closeRemainderTo (but for asset transfers)
    */
-  aclose?: Address
+  aclose?: string
   /**
    * reKeyTo
    */
-  rekey?: Address
+  rekey?: string
   /**
    * to
    */
-  rcv?: Address
+  rcv?: string
   /**
    * to (but for asset transfers)
    */
-  arcv?: Address
+  arcv?: string
   /**
    * voteKey
    */
