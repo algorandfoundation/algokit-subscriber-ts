@@ -770,13 +770,30 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(transaction.applicationTransaction!.clearStateProgram).toBe('CQ==')
   })
 
-  // TODO: PD - complete this test
-  it('foo', async () => {
+  it('Produces the correct state deltas in an application call transaction with r key', async () => {
     const blocks = await getBlocksBulk({ startRound: 45172924n, maxRound: 45172924n }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
     const txn = blockTransactions[4]
 
     const transaction = getIndexerTransactionFromAlgodTransaction(txn)
-    const a = 3
+    const globalStateDelta = transaction.globalStateDelta
+    expect(globalStateDelta).toMatchInlineSnapshot(`[
+  EvalDeltaKeyValue {
+    "key": "cg==",
+    "value": EvalDelta {
+      "action": 2,
+      "bytes": undefined,
+      "uint": 6311n,
+    },
+  },
+  EvalDeltaKeyValue {
+    "key": "cmk=",
+    "value": EvalDelta {
+      "action": 1,
+      "bytes": "gfOn0O9iF4/OGJ6kRsOFfbp/zhAedEwoZL/escO+M+QAAAAAQ/9CAQAAAAACsUi5AwAkCj8UAphDyseTKWeF7KZFZuNK8zA9rbqocWk+NJ5CpMtNsCSq7S8AAAAAAAAAJxAAAABi6BgWCgAAAAAAAAAA",
+      "uint": undefined,
+    },
+  },
+]`)
   })
 })
