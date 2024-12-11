@@ -1,4 +1,4 @@
-import algosdk, { Address } from 'algosdk'
+import algosdk from 'algosdk'
 import Transaction = algosdk.Transaction
 
 /**
@@ -423,19 +423,19 @@ export interface EncodedAssetParams {
   /**
    * assetManager
    */
-  m?: Address
+  m?: Buffer
   /**
    * assetReserve
    */
-  r?: Address
+  r?: Buffer
   /**
    * assetFreeze
    */
-  f?: Address
+  f?: Buffer
   /**
    * assetClawback
    */
-  c?: Address
+  c?: Buffer
   /**
    * assetName
    */
@@ -506,7 +506,7 @@ export interface EncodedTransaction {
   /**
    * from
    */
-  snd: string
+  snd: Buffer
   /**
    * type
    */
@@ -538,23 +538,23 @@ export interface EncodedTransaction {
   /**
    * closeRemainderTo
    */
-  close?: string
+  close?: Buffer
   /**
    * closeRemainderTo (but for asset transfers)
    */
-  aclose?: string
+  aclose?: Buffer
   /**
    * reKeyTo
    */
-  rekey?: string
+  rekey?: Buffer
   /**
    * to
    */
-  rcv?: string
+  rcv?: Buffer
   /**
    * to (but for asset transfers)
    */
-  arcv?: string
+  arcv?: Buffer
   /**
    * voteKey
    */
@@ -602,11 +602,11 @@ export interface EncodedTransaction {
   /**
    * freezeAccount
    */
-  fadd?: Address
+  fadd?: Buffer
   /**
    * assetRevocationTarget
    */
-  asnd?: Address
+  asnd?: Buffer
   /**
    * See EncodedAssetParams type
    */
@@ -650,7 +650,7 @@ export interface EncodedTransaction {
   /**
    * appAccounts
    */
-  apat?: Address[]
+  apat?: Buffer[]
   /**
    * extraPages
    */

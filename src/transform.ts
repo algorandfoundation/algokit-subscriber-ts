@@ -1,6 +1,6 @@
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
-import algosdk, { Address } from 'algosdk'
+import algosdk from 'algosdk'
 import { Buffer } from 'buffer'
 import base32 from 'hi-base32'
 import sha512 from 'js-sha512'
@@ -168,13 +168,15 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
+const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c']
+
 const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
   return new Map(
     Object.entries(object).map(([key, value]) => {
       if (value instanceof Uint8Array) {
-        return [key, value]
-      }
-      if (value instanceof Address) {
+        if (keysHaveAddressType.includes(key) && value.length === 32) {
+          return [key, new algosdk.Address(value)]
+        }
         return [key, value]
       }
       if (Array.isArray(value)) {
@@ -182,9 +184,9 @@ const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
           key,
           value.map((v) => {
             if (v instanceof Uint8Array) {
-              return v
-            }
-            if (v instanceof Address) {
+              if (key === 'apat' && v.length === 32) {
+                return new algosdk.Address(v)
+              }
               return v
             }
             if (typeof v === 'object' && v != null) {
@@ -229,12 +231,12 @@ function extractTransactionAndConvertToMap(
 
   if (txn.type === TransactionType.axfer && !txn.arcv) {
     // fromEncodingData expects arcv to be set, which may not be defined when performing an opt out.
-    txn.arcv = ALGORAND_ZERO_ADDRESS
+    txn.arcv = Buffer.from(ALGORAND_ZERO_ADDRESS_BYTES)
   }
 
   if (txn.type === TransactionType.pay && !txn.rcv) {
     // fromEncodingData expects rcv to be set, which may not be defined when closing an account.
-    txn.rcv = ALGORAND_ZERO_ADDRESS
+    txn.rcv = Buffer.from(ALGORAND_ZERO_ADDRESS_BYTES)
   }
 
   if (txn.type === TransactionType.stpf && txn.sp!.v == null) {
@@ -252,7 +254,6 @@ function extractAndNormaliseTransaction(
 ) {
   const txn = {
     ...blockTransaction.txn,
-    snd: algosdk.Address.fromString(blockTransaction.txn.snd).publicKey,
   }
 
   // https://github.com/algorand/js-algorand-sdk/blob/develop/examples/block_fetcher/index.ts
@@ -749,7 +750,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
 
   if ((transaction.txn.fee ?? 0) > 0) {
     balanceChanges.push({
-      address: transaction.txn.snd,
+      address: algosdk.encodeAddress(transaction.txn.snd),
       amount: -1n * BigInt(transaction.txn.fee ?? 0),
       roles: [BalanceChangeRole.Sender],
       assetId: 0n,
@@ -759,7 +760,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
   if (transaction.txn.type === TransactionType.pay) {
     balanceChanges.push(
       {
-        address: transaction.txn.snd,
+        address: algosdk.encodeAddress(transaction.txn.snd),
         amount: -1n * BigInt(transaction.txn.amt ?? 0),
         roles: [BalanceChangeRole.Sender],
         assetId: 0n,
@@ -767,7 +768,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.txn.rcv
         ? [
             {
-              address: transaction.txn.rcv,
+              address: algosdk.encodeAddress(transaction.txn.rcv),
               amount: BigInt(transaction.txn.amt ?? 0),
               roles: [BalanceChangeRole.Receiver],
               assetId: 0n,
@@ -777,13 +778,13 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.ca && transaction.txn.close
         ? [
             {
-              address: transaction.txn.close,
+              address: algosdk.encodeAddress(transaction.txn.close),
               amount: BigInt(transaction.ca ?? 0),
               roles: [BalanceChangeRole.CloseTo],
               assetId: 0n,
             },
             {
-              address: transaction.txn.snd,
+              address: algosdk.encodeAddress(transaction.txn.snd),
               amount: -1n * BigInt(transaction.ca ?? 0),
               roles: [BalanceChangeRole.Sender],
               assetId: 0n,
@@ -796,7 +797,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
   if (transaction.txn.type === TransactionType.axfer && transaction.txn.xaid) {
     balanceChanges.push(
       {
-        address: transaction.txn.snd,
+        address: algosdk.encodeAddress(transaction.txn.snd),
         assetId: transaction.txn.xaid,
         amount: -1n * BigInt(transaction.txn.aamt ?? 0),
         roles: [BalanceChangeRole.Sender],
@@ -804,7 +805,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.txn.arcv
         ? [
             {
-              address: transaction.txn.arcv,
+              address: algosdk.encodeAddress(transaction.txn.arcv),
               assetId: transaction.txn.xaid,
               amount: BigInt(transaction.txn.aamt ?? 0),
               roles: [BalanceChangeRole.Receiver],
@@ -814,13 +815,13 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       ...(transaction.aca && transaction.txn.aclose
         ? [
             {
-              address: transaction.txn.aclose,
+              address: algosdk.encodeAddress(transaction.txn.aclose),
               assetId: transaction.txn.xaid,
               amount: BigInt(transaction.aca ?? 0),
               roles: [BalanceChangeRole.CloseTo],
             },
             {
-              address: (transaction.txn.asnd ?? transaction.txn.snd).toString(),
+              address: algosdk.encodeAddress(transaction.txn.asnd ?? transaction.txn.snd),
               assetId: transaction.txn.xaid,
               amount: -1n * BigInt(transaction.aca ?? 0),
               roles: [BalanceChangeRole.Sender],
@@ -834,7 +835,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     if (!transaction.txn.caid && transaction.caid) {
       // Handle balance changes related to the creation of an asset.
       balanceChanges.push({
-        address: transaction.txn.snd,
+        address: algosdk.encodeAddress(transaction.txn.snd),
         assetId: transaction.caid,
         amount: BigInt(transaction.txn.apar?.t ?? 0),
         roles: [BalanceChangeRole.AssetCreator],
@@ -842,7 +843,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     } else if (transaction.txn.caid && !transaction.txn.apar) {
       // Handle balance changes related to the destruction of an asset.
       balanceChanges.push({
-        address: transaction.txn.snd,
+        address: algosdk.encodeAddress(transaction.txn.snd),
         assetId: transaction.txn.caid,
         amount: BigInt(0),
         roles: [BalanceChangeRole.AssetDestroyer],
