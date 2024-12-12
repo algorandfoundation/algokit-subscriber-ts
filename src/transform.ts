@@ -173,6 +173,14 @@ const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', '
 const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
   return new Map(
     Object.entries(object).map(([key, value]) => {
+      if (key === 'r' && value instanceof Map) {
+        // State proof transactions have a property `r` with a map with numeric keys that must stay intact
+        const rMap = new Map()
+        for (const [k, v] of value) {
+          rMap.set(k, objectToMap(v))
+        }
+        return [key, rMap]
+      }
       if (value instanceof Uint8Array) {
         if (keysHaveAddressType.includes(key) && value.length === 32) {
           return [key, new algosdk.Address(value)]
