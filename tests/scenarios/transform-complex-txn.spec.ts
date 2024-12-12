@@ -2,6 +2,7 @@ import { AlgorandClient, lookupTransactionById } from '@algorandfoundation/algok
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
 import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
+import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
 
 // TODO: NC - Handle lookupTransactionById deprecation
@@ -30,54 +31,54 @@ describe('Complex transaction with many nested inner transactions', () => {
     const txn = indexerTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
     expect(txn.id).toBe(`${txnId}/inner/5`)
-    expect(clearUndefineds(txn as any)).toMatchInlineSnapshot(`
+    expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
-        "application-transaction": {
+        "applicationTransaction": {
           "accounts": [],
-          "application-args": [
+          "applicationArgs": [
             "AA==",
             "Aw==",
             "AAAAAAAAAAA=",
             "BAAAAAAABgTFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           ],
-          "application-id": 1390675395,
-          "foreign-apps": [],
-          "foreign-assets": [
-            1390638935,
+          "applicationId": 1390675395n,
+          "foreignApps": [],
+          "foreignAssets": [
+            1390638935n,
           ],
-          "global-state-schema": {
-            "num-byte-slice": 0,
-            "num-uint": 0,
+          "globalStateSchema": {
+            "numByteSlice": 0,
+            "numUint": 0,
           },
-          "local-state-schema": {
-            "num-byte-slice": 0,
-            "num-uint": 0,
+          "localStateSchema": {
+            "numByteSlice": 0,
+            "numUint": 0,
           },
-          "on-completion": "noop",
+          "onCompletion": "noop",
         },
-        "arc28Events": undefined,
         "balanceChanges": [
           {
             "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
             "amount": -2000n,
-            "assetId": 0,
+            "assetId": 0n,
             "roles": [
               "Sender",
             ],
           },
         ],
-        "close-rewards": 0,
-        "closing-amount": 0,
-        "confirmed-round": 35214367,
-        "fee": 2000,
-        "first-valid": 35214365,
-        "global-state-delta": [
+        "closeRewards": 0n,
+        "closingAmount": 0n,
+        "confirmedRound": 35214367n,
+        "fee": 2000n,
+        "firstValid": 35214365n,
+        "genesisHash": "",
+        "globalStateDelta": [
           {
             "key": "",
             "value": {
               "action": 1,
               "bytes": "AAAAAAAAAAQAAAAAAhlUHw==",
-              "uint": 0,
+              "uint": 0n,
             },
           },
           {
@@ -85,7 +86,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "YC4Bj8ZCXdiWg6+eYEL5yV0gvi3ucnEckrGx2BQXDDIAAAAAUuN3VwAAAAAOsZeDAQAAAABS43dXAAAAAFLkB4YAAAAAAAAAAAAAAAAAAAAA/////5S/nq4AAAAAa0BhUQAAAA91+xl0AAAAAALtZZ8AAAAAAwsGTgAAAAAAAA==",
-              "uint": 0,
+              "uint": 0n,
             },
           },
           {
@@ -93,26 +94,25 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "h2MAAAAAAAAABQAAAAAAAAAZAAAAAAAAAB6KqC3yOXMVr2XD4nTi43RC3Rv0AGIvri+ssClC+HVNQgAAAAAAAAAAAA==",
-              "uint": 0,
+              "uint": 0n,
             },
           },
         ],
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
         "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
-        "inner-txns": [
+        "innerTxns": [
           {
-            "arc28Events": undefined,
-            "asset-transfer-transaction": {
-              "amount": 536012365,
-              "asset-id": 1390638935,
-              "close-amount": 0,
+            "assetTransferTransaction": {
+              "amount": 536012365n,
+              "assetId": 1390638935n,
+              "closeAmount": 0n,
               "receiver": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
             },
             "balanceChanges": [
               {
                 "address": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
                 "amount": -536012365n,
-                "assetId": 1390638935,
+                "assetId": 1390638935n,
                 "roles": [
                   "Sender",
                 ],
@@ -120,40 +120,39 @@ describe('Complex transaction with many nested inner transactions', () => {
               {
                 "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
                 "amount": 536012365n,
-                "assetId": 1390638935,
+                "assetId": 1390638935n,
                 "roles": [
                   "Receiver",
                 ],
               },
             ],
-            "close-rewards": 0,
-            "closing-amount": 0,
-            "confirmed-round": 35214367,
-            "fee": 0,
-            "first-valid": 35214365,
-            "inner-txns": undefined,
-            "intra-round-offset": 142,
-            "last-valid": 35214369,
-            "receiver-rewards": 0,
-            "round-time": 1705252440,
+            "closeRewards": 0n,
+            "closingAmount": 0n,
+            "confirmedRound": 35214367n,
+            "fee": 0n,
+            "firstValid": 35214365n,
+            "intraRoundOffset": 142,
+            "lastValid": 35214369n,
+            "receiverRewards": 0n,
+            "roundTime": 1705252440,
             "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
-            "sender-rewards": 0,
-            "tx-type": "axfer",
+            "senderRewards": 0n,
+            "txType": "axfer",
           },
         ],
-        "intra-round-offset": 147,
-        "last-valid": 35214369,
+        "intraRoundOffset": 147,
+        "lastValid": 35214369n,
         "logs": [
           "R2hHHwQAAAAAAAYExQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
           "AAAAAAAAYaAAAAAAH/LmTQAAAAAAAAAA",
           "PNZU+gAEIaZlfCPaQTne/tLHvhC5yf/+JYJqpN1uNQLOFg2mAAAAAAAAAAAAAAAAAAYExQAAAAAf8uZNAAAAAAAAAAAAAAAPdfsZdAAAAAAC7WWf",
         ],
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "receiver-rewards": 0,
-        "round-time": 1705252440,
+        "receiverRewards": 0n,
+        "roundTime": 1705252440,
         "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
-        "sender-rewards": 0,
-        "tx-type": "appl",
+        "senderRewards": 0n,
+        "txType": "appl",
       }
     `)
   })
@@ -341,7 +340,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
     const intraRoundOffset = txn.transaction.intraRoundOffset!
 
-    const transformed = await getBlockTransactions(b.block)
+    const transformed = getBlockTransactions(b.block)
 
     const receivedTxn = transformed[intraRoundOffset]
     expect(receivedTxn.transaction.txID()).toBe(txnId)
