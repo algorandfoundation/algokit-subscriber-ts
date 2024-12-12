@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
 import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
-import { GetSubscribedTransactions, clearUndefineds, getTransactionInBlockForDiff } from '../transactions'
+import { GetSubscribedTransactions, getTransactionInBlockForDiff } from '../transactions'
 
 // TODO: NC - Handle lookupTransactionById deprecation
 
@@ -176,41 +176,43 @@ describe('Complex transaction with many nested inner transactions', () => {
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
     expect(txn.id).toBe(`${txnId}/inner/5`)
-    expect(clearUndefineds(txn as any)).toMatchInlineSnapshot(`
+    expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
-        "application-transaction": {
-          "application-args": [
+        "applicationTransaction": {
+          "accounts": [],
+          "applicationArgs": [
             "AA==",
             "Aw==",
             "AAAAAAAAAAA=",
             "BAAAAAAABgTFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           ],
-          "application-id": 1390675395,
-          "approval-program": "",
-          "clear-state-program": "",
-          "foreign-assets": [
-            1390638935,
+          "applicationId": 1390675395n,
+          "approvalProgram": "",
+          "clearStateProgram": "",
+          "foreignApps": [],
+          "foreignAssets": [
+            1390638935n,
           ],
-          "on-completion": "noop",
+          "onCompletion": "noop",
         },
         "balanceChanges": [
           {
             "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
             "amount": -2000n,
-            "assetId": 0,
+            "assetId": 0n,
             "roles": [
               "Sender",
             ],
           },
         ],
-        "confirmed-round": 35214367,
-        "fee": 2000,
+        "confirmedRound": 35214367n,
+        "fee": 2000n,
         "filtersMatched": [
           "default",
         ],
-        "first-valid": 35214365,
-        "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-        "global-state-delta": [
+        "firstValid": 35214365n,
+        "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+        "globalStateDelta": [
           {
             "key": "",
             "value": {
@@ -235,18 +237,19 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
         "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
-        "inner-txns": [
+        "innerTxns": [
           {
-            "asset-transfer-transaction": {
-              "amount": 536012365,
-              "asset-id": 1390638935,
+            "applicationTransaction": {},
+            "assetTransferTransaction": {
+              "amount": 536012365n,
+              "assetId": 1390638935n,
               "receiver": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
             },
             "balanceChanges": [
               {
                 "address": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
                 "amount": -536012365n,
-                "assetId": 1390638935,
+                "assetId": 1390638935n,
                 "roles": [
                   "Sender",
                 ],
@@ -254,30 +257,28 @@ describe('Complex transaction with many nested inner transactions', () => {
               {
                 "address": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
                 "amount": 536012365n,
-                "assetId": 1390638935,
+                "assetId": 1390638935n,
                 "roles": [
                   "Receiver",
                 ],
               },
             ],
-            "confirmed-round": 35214367,
-            "fee": 0,
-            "first-valid": 35214365,
-            "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+            "confirmedRound": 35214367n,
+            "fee": 0n,
+            "firstValid": 35214365n,
+            "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
             "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
-            "intra-round-offset": 148,
-            "last-valid": 35214369,
-            "lease": "",
+            "intraRoundOffset": 148,
+            "lastValid": 35214369n,
             "note": "",
             "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-            "round-time": 1705252440,
+            "roundTime": 1705252440,
             "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
-            "tx-type": "axfer",
+            "txType": "axfer",
           },
         ],
-        "intra-round-offset": 147,
-        "last-valid": 35214369,
-        "lease": "",
+        "intraRoundOffset": 147,
+        "lastValid": 35214369n,
         "logs": [
           "R2hHHwQAAAAAAAYExQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
           "AAAAAAAAYaAAAAAAH/LmTQAAAAAAAAAA",
@@ -285,9 +286,9 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "note": "",
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "round-time": 1705252440,
+        "roundTime": 1705252440,
         "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
-        "tx-type": "appl",
+        "txType": "appl",
       }
     `)
 
@@ -303,17 +304,17 @@ describe('Complex transaction with many nested inner transactions', () => {
           "proposer": undefined,
           "rewards": {
             "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
-            "rewardsCalculationRound": 35500000,
+            "rewardsCalculationRound": 35500000n,
             "rewardsLevel": 218288,
             "rewardsPool": "737777777777777777777777777777777777777777777777777UFEJ2CI",
             "rewardsRate": 0,
             "rewardsResidue": 6886250026n,
           },
-          "round": 35214367,
+          "round": 35214367n,
           "seed": "Tp6NntUaw17I8GGscaawpAuI0vQDMgp1TBSMAcpohtY=",
           "stateProofTracking": [
             {
-              "nextRound": 35214336,
+              "nextRound": 35214336n,
               "onlineTotalWeight": 0,
               "type": 0,
               "votersCommitment": undefined,
@@ -322,13 +323,13 @@ describe('Complex transaction with many nested inner transactions', () => {
           "timestamp": 1705252440,
           "transactionsRoot": "xrzxjhAycO5dLAJ622EAMV4ffb2T1sagFWYQPR1S0IQ=",
           "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
-          "txnCounter": 1401537349,
+          "txnCounter": 1401537349n,
           "upgradeState": {
             "currentProtocol": "https://github.com/algorandfoundation/specs/tree/abd3d4823c6f77349fc04c3af7b1e99fe4df699f",
             "nextProtocol": "https://github.com/algorandfoundation/specs/tree/925a46433742afb0b51bb939354bd907fa88bf95",
             "nextProtocolApprovals": 9967,
-            "nextProtocolSwitchOn": 35275315,
-            "nextProtocolVoteBefore": 35125315,
+            "nextProtocolSwitchOn": 35275315n,
+            "nextProtocolVoteBefore": 35125315n,
           },
         },
       ]

@@ -429,14 +429,8 @@ export function getIndexerTransactionFromAlgodTransaction(
         ? {
             applicationTransaction: new algosdk.indexerModels.TransactionApplication({
               applicationId: transaction.applicationCall!.appIndex ?? 0,
-              approvalProgram:
-                transaction.applicationCall!.approvalProgram && transaction.applicationCall!.approvalProgram.length > 0
-                  ? transaction.applicationCall!.approvalProgram
-                  : undefined,
-              clearStateProgram:
-                transaction.applicationCall!.clearProgram && transaction.applicationCall!.clearProgram.length > 0
-                  ? transaction.applicationCall!.clearProgram
-                  : undefined,
+              approvalProgram: transaction.applicationCall!.approvalProgram,
+              clearStateProgram: transaction.applicationCall!.clearProgram,
               onCompletion: algodOnCompleteToIndexerOnComplete(transaction.applicationCall!.onComplete),
               applicationArgs: transaction.applicationCall!.appArgs.map((a) => a),
               foreignApps: transaction.applicationCall!.foreignApps.map((a) => a),
@@ -457,7 +451,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                     }),
                   }
                 : undefined),
-              accounts: transaction.applicationCall!.accounts?.map((a) => a),
+              accounts: transaction.applicationCall!.accounts.map((a) => a),
             }),
           }
         : undefined),
