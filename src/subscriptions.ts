@@ -580,11 +580,11 @@ function transactionFilter(
     }
     if (subscription.minAmount) {
       const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0
-      result &&= !!t.type && amount >= subscription.minAmount
+      result &&= [TransactionType.axfer, TransactionType.pay].includes(t.type) && amount >= subscription.minAmount
     }
     if (subscription.maxAmount) {
       const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0
-      result &&= !!t.type && amount <= subscription.maxAmount
+      result &&= [TransactionType.axfer, TransactionType.pay].includes(t.type) && amount <= subscription.maxAmount
     }
     if (subscription.assetCreate) {
       result &&= !!createdAssetId
@@ -658,9 +658,7 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
         (changeFilter.maxAmount === undefined || actualChange.amount <= changeFilter.maxAmount) &&
         (changeFilter.assetId === undefined ||
           (Array.isArray(changeFilter.assetId) && changeFilter.assetId.length === 0) ||
-          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId])
-            .map((a) => BigInt(a))
-            .includes(BigInt(actualChange.assetId))) &&
+          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId]).includes(BigInt(actualChange.assetId))) &&
         (changeFilter.role === undefined ||
           (Array.isArray(changeFilter.role) && changeFilter.role.length === 0) ||
           (Array.isArray(changeFilter.role) ? changeFilter.role : [changeFilter.role]).some((r) => actualChange.roles.includes(r))),
