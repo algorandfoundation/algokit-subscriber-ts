@@ -1,6 +1,6 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account, Address, Transaction } from 'algosdk'
+import { Account, Transaction } from 'algosdk'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {
@@ -114,30 +114,40 @@ export function getTransactionInBlockForDiff(transaction: TransactionInBlock) {
   }
 }
 
-function getReceiver(transaction: Transaction): Address | undefined {
-  if (transaction.payment?.receiver) {
-    return transaction.payment.receiver
-  }
-  if (transaction.assetTransfer?.receiver) {
-    return transaction.assetTransfer.receiver
-  }
-
-  return undefined
-}
-
 export function getTransactionForDiff(transaction: Transaction) {
   const t = {
     ...transaction,
-    name: undefined,
-    appAccounts: transaction.applicationCall?.accounts?.map((a) => a.toString()),
-    from: transaction.sender.toString(),
-    to: getReceiver(transaction)?.toString(), // TODO: NC - Change to sender/receiver?
-    reKeyTo: transaction.rekeyTo ? transaction.rekeyTo.toString() : undefined,
-    appArgs: transaction.applicationCall?.appArgs?.map((a) => Buffer.from(a).toString('base64')),
+    applicationCall: transaction.applicationCall
+      ? {
+          ...transaction.applicationCall,
+          accounts: transaction.applicationCall?.accounts?.map((a) => a.toString()),
+          appArgs: transaction.applicationCall?.appArgs?.map((a) => Buffer.from(a).toString('base64')),
+          approvalProgram: transaction.applicationCall?.approvalProgram
+            ? Buffer.from(transaction.applicationCall.approvalProgram).toString('base64')
+            : undefined,
+          clearProgram: transaction.applicationCall?.clearProgram
+            ? Buffer.from(transaction.applicationCall.clearProgram).toString('base64')
+            : undefined,
+        }
+      : undefined,
+    payment: transaction.payment
+      ? {
+          ...transaction.payment,
+          receiver: transaction.payment?.receiver?.toString(),
+        }
+      : undefined,
+    assetTransfer: transaction.assetTransfer
+      ? {
+          ...transaction.assetTransfer,
+          receiver: transaction.assetTransfer?.receiver?.toString(),
+        }
+      : undefined,
     genesisHash: transaction.genesisHash ? Buffer.from(transaction.genesisHash).toString('base64') : '',
     group: transaction.group ? Buffer.from(transaction.group).toString('base64') : undefined,
     lease: transaction.lease && transaction.lease.length ? Buffer.from(transaction.lease).toString('base64') : undefined,
     note: transaction.note && transaction.note.length ? Buffer.from(transaction.note).toString('base64') : undefined,
+    sender: transaction.sender.toString(),
+    rekeyTo: transaction.rekeyTo ? transaction.rekeyTo.toString() : undefined,
   }
 
   return clearUndefineds(t as any)
