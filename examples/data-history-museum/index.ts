@@ -128,7 +128,7 @@ async function getSavedTransactions<T>(fileName: string): Promise<T[]> {
 }
 
 async function saveTransactions(transactions: unknown[], fileName: string) {
-  fs.writeFileSync(path.join(__dirname, fileName), JSON.stringify(transactions, undefined, 2), { encoding: 'utf-8' })
+  fs.writeFileSync(path.join(__dirname, fileName), asJson(transactions), { encoding: 'utf-8' })
   // eslint-disable-next-line no-console
   console.log(`Saved ${transactions.length} transactions to ${fileName}`)
 }
@@ -168,3 +168,5 @@ async function saveTransactions(transactions: unknown[], fileName: string) {
   // eslint-disable-next-line no-console
   console.error(e)
 })
+
+export const asJson = (value: unknown) => JSON.stringify(value, (_, v) => (typeof v === 'bigint' ? v.toString() : v), 2)
