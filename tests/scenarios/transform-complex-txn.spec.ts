@@ -71,7 +71,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "confirmedRound": 35214367n,
         "fee": 2000n,
         "firstValid": 35214365n,
-        "genesisHash": "",
         "globalStateDelta": [
           {
             "key": "",
@@ -239,7 +238,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "innerTxns": [
           {
-            "applicationTransaction": {},
             "assetTransferTransaction": {
               "amount": 536012365n,
               "assetId": 1390638935n,

@@ -1,5 +1,5 @@
+import { Address } from 'algosdk'
 import type { SubscribedTransaction } from '../src/types'
-import { clearUndefineds } from './transactions'
 
 function getReceiver(transaction: SubscribedTransaction): string | undefined {
   if (transaction.paymentTransaction?.receiver) {
@@ -12,49 +12,34 @@ function getReceiver(transaction: SubscribedTransaction): string | undefined {
   return undefined
 }
 
-export function getSubscribedTransactionForDiff(transaction: SubscribedTransaction): any {
-  const t = {
-    ...transaction,
-    applicationTransaction: transaction.applicationTransaction
-      ? {
-          ...transaction.applicationTransaction,
-          accounts: transaction.applicationTransaction?.accounts?.map((a) => a.toString()),
-          applicationArgs: transaction.applicationTransaction?.applicationArgs?.map((a) => Buffer.from(a).toString('base64')),
-          approvalProgram: transaction.applicationTransaction?.approvalProgram
-            ? Buffer.from(transaction.applicationTransaction.approvalProgram).toString('base64')
-            : undefined,
-          clearStateProgram: transaction.applicationTransaction?.clearStateProgram
-            ? Buffer.from(transaction.applicationTransaction.clearStateProgram).toString('base64')
-            : undefined,
+const foo = (obj: any): any => {
+  if (obj instanceof Address) {
+    return obj.toString()
+  }
+  if (obj instanceof Uint8Array) {
+    return Buffer.from(obj).toString('base64')
+  }
+  if (obj instanceof Array) {
+    return obj.map((v) => foo(v))
+  }
+  if (typeof obj === 'object') {
+    return Object.entries(obj).reduce(
+      (acc, [key, value]) => {
+        if (value == null) {
+          return acc
         }
-      : undefined,
-    reKeyTo: transaction.rekeyTo ? transaction.rekeyTo.toString() : undefined,
-    genesisHash: transaction.genesisHash ? Buffer.from(transaction.genesisHash).toString('base64') : '',
-    group: transaction.group ? Buffer.from(transaction.group).toString('base64') : undefined,
-    lease: transaction.lease ? Buffer.from(transaction.lease).toString('base64') : undefined,
-    note: transaction.note ? Buffer.from(transaction.note).toString('base64') : undefined,
-    logs: transaction.logs?.map((l) => Buffer.from(l).toString('base64')),
-    innerTxns: transaction.innerTxns?.map((i) => getSubscribedTransactionForDiff(i)),
-    keyregTransaction: transaction.keyregTransaction
-      ? {
-          ...transaction.keyregTransaction,
-          selectionParticipationKey: transaction.keyregTransaction.selectionParticipationKey
-            ? Buffer.from(transaction.keyregTransaction.selectionParticipationKey).toString('base64')
-            : undefined,
-          stateProofKey: transaction.keyregTransaction.stateProofKey
-            ? Buffer.from(transaction.keyregTransaction.stateProofKey).toString('base64')
-            : undefined,
-          voteParticipationKey: transaction.keyregTransaction.voteParticipationKey
-            ? Buffer.from(transaction.keyregTransaction.voteParticipationKey).toString('base64')
-            : undefined,
+        return {
+          ...acc,
+          [key]: foo(value),
         }
-      : undefined,
-    signature: transaction.signature
-      ? {
-          sig: transaction.signature.sig ? Buffer.from(transaction.signature.sig).toString('base64') : undefined,
-        }
-      : undefined,
+      },
+      {} as Record<string, any>,
+    )
   }
 
-  return structuredClone(clearUndefineds(t as any))
+  return obj
+}
+
+export function getSubscribedTransactionForDiff(transaction: SubscribedTransaction): any {
+  return foo(transaction)
 }

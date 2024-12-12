@@ -1,6 +1,7 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { TransactionType } from 'algosdk'
 import { describe, expect, it } from 'vitest'
+import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
 
 describe('State proof transaction', () => {
@@ -26,7 +27,7 @@ describe('State proof transaction', () => {
     const txn = indexerTxns.subscribedTransactions[0]
     // https://allo.info/tx/G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ
     expect(txn.id).toBe(txnId)
-    expect(txn).toMatchInlineSnapshot(`
+    expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "arc28Events": undefined,
         "balanceChanges": [],
