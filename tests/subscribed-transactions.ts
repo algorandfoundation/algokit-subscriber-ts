@@ -1,19 +1,9 @@
 import { Address } from 'algosdk'
 import type { SubscribedTransaction } from '../src/types'
 
-function getReceiver(transaction: SubscribedTransaction): string | undefined {
-  if (transaction.paymentTransaction?.receiver) {
-    return transaction.paymentTransaction.receiver
-  }
-  if (transaction.assetTransferTransaction?.receiver) {
-    return transaction.assetTransferTransaction.receiver
-  }
-
-  return undefined
-}
-
-// TODO: PD - review this again
-const foo = (obj: any): any => {
+// Standardise objects to make them easier to compare
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const standardiseObject = (obj: any): any => {
   if (obj instanceof Address) {
     return obj.toString()
   }
@@ -21,7 +11,7 @@ const foo = (obj: any): any => {
     return Buffer.from(obj).toString('base64')
   }
   if (obj instanceof Array) {
-    return obj.map((v) => foo(v))
+    return obj.map((v) => standardiseObject(v))
   }
   if (typeof obj === 'object') {
     return Object.entries(obj).reduce(
@@ -31,7 +21,7 @@ const foo = (obj: any): any => {
         }
         return {
           ...acc,
-          [key]: foo(value),
+          [key]: standardiseObject(value),
         }
       },
       {} as Record<string, any>,
@@ -42,5 +32,5 @@ const foo = (obj: any): any => {
 }
 
 export function getSubscribedTransactionForDiff(transaction: SubscribedTransaction): any {
-  return foo(transaction)
+  return standardiseObject(transaction)
 }

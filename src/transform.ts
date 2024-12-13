@@ -171,6 +171,7 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
 // TODO: PD - review this again
 const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c']
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
   return new Map(
     Object.entries(object).map(([key, value]) => {
@@ -502,28 +503,29 @@ export function getIndexerTransactionFromAlgodTransaction(
                   ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.sigProofs)
                   : undefined,
                 signedWeight: transaction.stateProof!.stateProof?.signedWeight,
-                reveals: mapKeys(transaction.stateProof!.stateProof?.reveals ?? new Map()).map((position) => {
-                  const reveal = transaction.stateProof!.stateProof?.reveals.get(position)!
-                  return new algosdk.indexerModels.StateProofReveal({
-                    sigSlot: new algosdk.indexerModels.StateProofSigSlot({
-                      lowerSigWeight: reveal.sigslot.l,
-                      signature: new algosdk.indexerModels.StateProofSignature({
-                        merkleArrayIndex: reveal.sigslot.sig.vectorCommitmentIndex,
-                        falconSignature: Buffer.from(reveal.sigslot.sig.signature),
-                        proof: algodMerkleArrayProofToIndexerMerkleArrayProof(reveal.sigslot.sig.proof),
-                        verifyingKey: reveal.sigslot.sig.verifyingKey.publicKey,
-                      }),
-                    }),
-                    position: Number(position),
-                    participant: new algosdk.indexerModels.StateProofParticipant({
-                      weight: Number(reveal.participant.weight),
-                      verifier: new algosdk.indexerModels.StateProofVerifier({
-                        keyLifetime: BigInt(reveal.participant.pk.keyLifetime),
-                        commitment: reveal.participant.pk.commitment,
-                      }),
-                    }),
-                  })
-                }),
+                reveals: transaction.stateProof!.stateProof?.reveals
+                  ? Array.from(transaction.stateProof!.stateProof?.reveals.entries()).map(([position, reveal]) => {
+                      return new algosdk.indexerModels.StateProofReveal({
+                        sigSlot: new algosdk.indexerModels.StateProofSigSlot({
+                          lowerSigWeight: reveal.sigslot.l,
+                          signature: new algosdk.indexerModels.StateProofSignature({
+                            merkleArrayIndex: reveal.sigslot.sig.vectorCommitmentIndex,
+                            falconSignature: Buffer.from(reveal.sigslot.sig.signature),
+                            proof: algodMerkleArrayProofToIndexerMerkleArrayProof(reveal.sigslot.sig.proof),
+                            verifyingKey: reveal.sigslot.sig.verifyingKey.publicKey,
+                          }),
+                        }),
+                        position: position,
+                        participant: new algosdk.indexerModels.StateProofParticipant({
+                          weight: Number(reveal.participant.weight),
+                          verifier: new algosdk.indexerModels.StateProofVerifier({
+                            keyLifetime: BigInt(reveal.participant.pk.keyLifetime),
+                            commitment: reveal.participant.pk.commitment,
+                          }),
+                        }),
+                      })
+                    })
+                  : undefined,
               }),
               message: new algosdk.indexerModels.IndexerStateProofMessage({
                 blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
@@ -664,15 +666,6 @@ function algodMerkleArrayProofToIndexerMerkleArrayProof(proof: algosdk.MerkleArr
     path: proof.path,
     treeDepth: proof.treeDepth,
   })
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapKeys<TKey>(map: Map<TKey, any>): TKey[] {
-  if (!map) return []
-
-  const keys: TKey[] = []
-  map.forEach((_, key) => keys.push(key))
-  return keys
 }
 
 /**
