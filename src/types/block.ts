@@ -101,7 +101,7 @@ export interface Block {
   /** The number of new MicroAlgos added to the participation stake from rewards at the next round. */
   rate?: number
   /** Round number. */
-  rnd: number
+  rnd: bigint
   /** The round at which the RewardsRate will be recalculated. */
   rwcalr: number
   /** The RewardsPool accepts periodic injections from the
@@ -378,7 +378,7 @@ export interface TransactionInBlock {
   /** The string genesis ID of the network the transaction is within. */
   genesisId: string
   /** The round number of the block the transaction is within. */
-  roundNumber: number
+  roundNumber: bigint
   /** The round unix timestamp of the block the transaction is within. */
   roundTimestamp: number
 

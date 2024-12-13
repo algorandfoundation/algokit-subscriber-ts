@@ -338,7 +338,7 @@ export interface TransactionFilter {
   /** Filter to transactions that result in balance changes that match one or more of the given set of balance changes. */
   balanceChanges?: {
     /** Match transactions with balance changes for one of the given asset ID(s), with Algo being `0` */
-    assetId?: bigint | bigint[] // TODO: PD - maybe remove number here
+    assetId?: bigint | bigint[]
     /** Match transactions with balance changes for an account with one of the given role(s) */
     role?: BalanceChangeRole | BalanceChangeRole[]
     /** Match transactions with balance changes affecting one of the given account(s) */

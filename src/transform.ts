@@ -168,6 +168,7 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
+// TODO: PD - review this again
 const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c']
 
 const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
@@ -351,10 +352,10 @@ export function getIndexerTransactionFromAlgodTransaction(
 
   const encoder = new TextEncoder()
 
-  const txId =
+  const txId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
     transaction.type === TransactionType.stpf
       ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, genesisHash, genesisId)
-      : transaction.txID() // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
+      : transaction.txID()
 
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
@@ -609,9 +610,9 @@ export function getIndexerTransactionFromAlgodTransaction(
           }
         : undefined),
       logs: blockTransaction.dt?.lg,
-      closeRewards: closeRewards !== undefined ? BigInt(closeRewards) : undefined,
-      receiverRewards: receiverRewards !== undefined ? BigInt(receiverRewards) : undefined,
-      senderRewards: senderRewards !== undefined ? BigInt(senderRewards) : undefined,
+      closeRewards: closeRewards,
+      receiverRewards: receiverRewards,
+      senderRewards: senderRewards,
       globalStateDelta: blockTransaction.dt?.gd
         ? Object.entries(blockTransaction.dt.gd).map(
             ([key, value]) =>
@@ -682,7 +683,7 @@ function mapKeys<TKey>(map: Map<TKey, any>): TKey[] {
 export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   const { block, cert } = blockData
   return {
-    round: BigInt(block.rnd),
+    round: block.rnd,
     hash: cert?.prop?.dig ? Buffer.from(cert.prop.dig).toString('base64') : undefined,
     timestamp: block.ts,
     genesisId: block.gen,

@@ -12,6 +12,7 @@ function getReceiver(transaction: SubscribedTransaction): string | undefined {
   return undefined
 }
 
+// TODO: PD - review this again
 const foo = (obj: any): any => {
   if (obj instanceof Address) {
     return obj.toString()
