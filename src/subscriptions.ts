@@ -63,8 +63,6 @@ export async function getSubscribedTransactions(
   const currentRound = _currentRound ?? (await algod.status().do()).lastRound
   let blockMetadata: BlockMetadata[] | undefined
 
-  // TODO: normalise number | bigint to bigint
-
   // Pre-calculate a flat list of all ARC-28 events to process
   const arc28Events = (subscription.arc28Events ?? []).flatMap((g) =>
     g.events.map((e) => {

@@ -1,11 +1,9 @@
-import { AlgorandClient, lookupTransactionById } from '@algorandfoundation/algokit-utils'
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
 import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions, getTransactionInBlockForDiff } from '../transactions'
-
-// TODO: NC - Handle lookupTransactionById deprecation
 
 describe('Complex transaction with many nested inner transactions', () => {
   const txnId = 'QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q'
@@ -335,7 +333,7 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Can be processed correctly from algod raw block', async () => {
-    const txn = await lookupTransactionById(txnId, algorand.client.indexer)
+    const txn = await algorand.client.indexer.lookupTransactionByID(txnId).do()
     const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
     const intraRoundOffset = txn.transaction.intraRoundOffset!
 
@@ -504,7 +502,6 @@ describe('Complex transaction with many nested inner transactions', () => {
       }
     `)
 
-    // TODO: PD - tag field
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4/
     expect(getTransactionInBlockForDiff(transformed[intraRoundOffset + 4])).toMatchInlineSnapshot(`
       {
