@@ -470,8 +470,7 @@ export function getIndexerTransactionFromAlgodTransaction(
             paymentTransaction: new algosdk.indexerModels.TransactionPayment({
               amount: BigInt(transaction.payment!.amount ?? 0), // The amount can be undefined
               receiver: transaction.payment!.receiver.toString(),
-              // TODO: PD - confirm closeAmount
-              closeAmount: closeAmount !== undefined ? BigInt(closeAmount) : undefined,
+              closeAmount: closeAmount,
               closeRemainderTo: transaction.payment!.closeRemainderTo?.toString(),
             }),
           }
@@ -553,7 +552,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       note: transaction.note,
       lease: transaction.lease,
       rekeyTo: transaction.rekeyTo,
-      closingAmount: closeAmount !== undefined ? BigInt(closeAmount) : undefined,
+      closingAmount: closeAmount,
       createdApplicationIndex: createdAppId !== undefined ? BigInt(createdAppId) : undefined,
       authAddr: blockTransaction.sgnr ? new algosdk.Address(blockTransaction.sgnr) : undefined,
       innerTxns: blockTransaction.dt?.itx?.map((ibt) =>

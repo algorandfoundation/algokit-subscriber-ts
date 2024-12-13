@@ -195,7 +195,7 @@ export interface BalanceChange {
   /** The address that the balance change is for. */
   address: string
   /** The asset ID of the balance change, or 0 for Algos. */
-  assetId: number | bigint
+  assetId: bigint
   /** The amount of the balance change in smallest divisible unit or microAlgos. */
   amount: bigint
   /** The roles the account was playing that led to the balance change */
