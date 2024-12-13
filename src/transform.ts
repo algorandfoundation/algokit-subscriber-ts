@@ -676,7 +676,7 @@ function algodMerkleArrayProofToIndexerMerkleArrayProof(proof: algosdk.MerkleArr
 export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   const { block, cert } = blockData
   return {
-    round: block.rnd,
+    round: BigInt(block.rnd),
     hash: cert?.prop?.dig ? Buffer.from(cert.prop.dig).toString('base64') : undefined,
     timestamp: block.ts,
     genesisId: block.gen,
