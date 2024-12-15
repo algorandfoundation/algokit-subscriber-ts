@@ -168,23 +168,16 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
-// TODO: PD - review this again
-const keysHaveAddressType = ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c']
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
   return new Map(
     Object.entries(object).map(([key, value]) => {
-      if (key === 'r' && value instanceof Map) {
-        // State proof transactions have a property `r` with a map with numeric keys that must stay intact
-        const rMap = new Map()
-        for (const [k, v] of value) {
-          rMap.set(k, objectToMap(v))
-        }
-        return [key, rMap]
+      if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'number')) {
+        return [key, value]
       }
       if (value instanceof Uint8Array) {
-        if (keysHaveAddressType.includes(key) && value.length === 32) {
+        if (['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c'].includes(key) && value.length === 32) {
+          // fromEncodingData expects Address type
           return [key, new algosdk.Address(value)]
         }
         return [key, value]

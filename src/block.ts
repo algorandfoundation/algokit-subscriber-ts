@@ -48,11 +48,7 @@ function blockMapToObject(object: Map<any, any>): BlockData {
   for (const [key, value] of object) {
     if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'number')) {
       // State proof transactions have a property `r` with a map with numeric keys that must stay intact
-      const rMap = new Map()
-      for (const [k, v] of value) {
-        rMap.set(k, v instanceof Map ? blockMapToObject(v) : v)
-      }
-      result[key] = rMap
+      result[key] = value
     } else if (value instanceof Map) {
       result[key] = blockMapToObject(value)
     } else if (value instanceof Uint8Array) {
