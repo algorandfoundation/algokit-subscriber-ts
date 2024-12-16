@@ -160,7 +160,6 @@ export interface ParticipationUpdates {
  * * Add emitted ARC-28 events via `arc28Events`
  * * Balance changes in algo or assets
  */
-// TODO: NC - We might need to alias this type, as things like id are optional and shouldn't be in this scenario
 export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string

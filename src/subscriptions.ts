@@ -244,7 +244,7 @@ function processExtraFields(
   return new SubscribedTransaction({
     ...transaction,
     arc28Events: extractArc28Events(
-      transaction.id!, // TODO: NC - ??
+      transaction.id!,
       transaction.logs ?? [],
       eventsToApply,
       (groupName) => groupsToApply.find((g) => g.groupName === groupName)!.continueOnError ?? false,
@@ -696,6 +696,9 @@ function getIndexerInnerTransactions(
         parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
         intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
+        // TODO: PD - we may need to map the innerTxns
+        innerTxns: t.innerTxns,
+        // innerTxns: t.innerTxns.map(innerTxn => new SubscribedTransaction(.applicationTransaction?.accounts.))
       }),
       ...getIndexerInnerTransactions(root, t, offset),
     ] satisfies SubscribedTransaction[]

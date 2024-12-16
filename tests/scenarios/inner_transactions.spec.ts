@@ -69,7 +69,7 @@ describe('Inner transactions', () => {
           : groupResult.transactions[index].txID(),
       transaction:
         innerTransactionIndex !== undefined
-          ? groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn // TODO: NC - previously genesis hash and id were added. Do we need these here?
+          ? groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn
           : groupResult.transactions[index],
       confirmation: groupResult.confirmations?.[index],
     }
