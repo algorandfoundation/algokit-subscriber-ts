@@ -73,7 +73,7 @@
     "@makerx/prettier-config": "^2.0.1",
     "@prisma/client": "^5.15.1",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@vitest/coverage-v8": "^2.1.4",
+    "@vitest/coverage-v8": "^2.1.8",
     "better-npm-audit": "^3.7.3",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cpy-cli": "^5.0.0",
