@@ -470,7 +470,7 @@ function indexerPostFilter(
         !!t.applicationTransaction &&
         t.applicationTransaction.onCompletion !== undefined &&
         (typeof subscription.appOnComplete === 'string' ? [subscription.appOnComplete] : subscription.appOnComplete)
-          .map((oc) => oc.toString()) // TODO: NC - Does this type need adjusting?
+          .map((oc) => oc.toString())
           .includes(t.applicationTransaction.onCompletion)
     }
     if (subscription.methodSignature) {
@@ -689,18 +689,16 @@ function getIndexerInnerTransactions(
 ): SubscribedTransaction[] {
   return (parent.innerTxns ?? []).flatMap((t) => {
     const parentOffset = offset()
-
+    const innerTxns = getIndexerInnerTransactions(root, t, offset)
     return [
       new SubscribedTransaction({
         ...t,
         parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
         intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
-        // TODO: PD - we may need to map the innerTxns
-        innerTxns: t.innerTxns,
-        // innerTxns: t.innerTxns.map(innerTxn => new SubscribedTransaction(.applicationTransaction?.accounts.))
+        innerTxns: innerTxns,
       }),
-      ...getIndexerInnerTransactions(root, t, offset),
+      ...innerTxns,
     ] satisfies SubscribedTransaction[]
   })
 }
