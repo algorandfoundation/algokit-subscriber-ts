@@ -33,7 +33,7 @@ Equivocation votes
 
 #### Defined in
 
-[types/block.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L40)
+[src/types/block.ts:39](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L39)
 
 ___
 
@@ -45,7 +45,7 @@ Period represents the current period of the source.
 
 #### Defined in
 
-[types/block.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L25)
+[src/types/block.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L24)
 
 ___
 
@@ -65,7 +65,7 @@ The proposal
 
 #### Defined in
 
-[types/block.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L29)
+[src/types/block.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L28)
 
 ___
 
@@ -77,7 +77,7 @@ Round number
 
 #### Defined in
 
-[types/block.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L23)
+[src/types/block.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L22)
 
 ___
 
@@ -89,7 +89,7 @@ Step represents the current period of the source.
 
 #### Defined in
 
-[types/block.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L27)
+[src/types/block.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L26)
 
 ___
 
@@ -101,4 +101,4 @@ Votes
 
 #### Defined in
 
-[types/block.ts:38](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L38)
+[src/types/block.ts:37](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L37)

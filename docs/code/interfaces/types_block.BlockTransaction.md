@@ -31,49 +31,49 @@ https://github.com/algorand/go-algorand/blob/master/data/transactions/signedtxn.
 
 ### aca
 
-• `Optional` **aca**: `number` \| `bigint`
+• `Optional` **aca**: `bigint`
 
 Asset closing amount in decimal units
 
 #### Defined in
 
-[types/block.ts:194](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L194)
+[src/types/block.ts:193](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L193)
 
 ___
 
 ### apid
 
-• `Optional` **apid**: `number`
+• `Optional` **apid**: `bigint`
 
 App ID when an app is created by the transaction
 
 #### Defined in
 
-[types/block.ts:192](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L192)
+[src/types/block.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L191)
 
 ___
 
 ### ca
 
-• `Optional` **ca**: `number`
+• `Optional` **ca**: `bigint`
 
 Algo closing amount in microAlgos
 
 #### Defined in
 
-[types/block.ts:196](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L196)
+[src/types/block.ts:195](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L195)
 
 ___
 
 ### caid
 
-• `Optional` **caid**: `number`
+• `Optional` **caid**: `bigint`
 
 Asset ID when an asset is created by the transaction
 
 #### Defined in
 
-[types/block.ts:190](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L190)
+[src/types/block.ts:189](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L189)
 
 ___
 
@@ -85,7 +85,7 @@ The eval deltas for the block
 
 #### Defined in
 
-[types/block.ts:188](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L188)
+[src/types/block.ts:187](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L187)
 
 ___
 
@@ -97,7 +97,7 @@ Has genesis hash
 
 #### Defined in
 
-[types/block.ts:200](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L200)
+[src/types/block.ts:199](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L199)
 
 ___
 
@@ -109,7 +109,7 @@ Has genesis id
 
 #### Defined in
 
-[types/block.ts:198](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L198)
+[src/types/block.ts:197](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L197)
 
 ___
 
@@ -121,7 +121,7 @@ Logic signature
 
 #### Defined in
 
-[types/block.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L204)
+[src/types/block.ts:203](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L203)
 
 ___
 
@@ -133,7 +133,7 @@ Transaction multisig signature
 
 #### Defined in
 
-[types/block.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L206)
+[src/types/block.ts:205](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L205)
 
 ___
 
@@ -145,7 +145,7 @@ The signer, if signing with a different key than the Transaction type `from` pro
 
 #### Defined in
 
-[types/block.ts:208](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L208)
+[src/types/block.ts:207](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L207)
 
 ___
 
@@ -157,16 +157,16 @@ Transaction ED25519 signature
 
 #### Defined in
 
-[types/block.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L202)
+[src/types/block.ts:201](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L201)
 
 ___
 
 ### txn
 
-• **txn**: `EncodedTransaction`
+• **txn**: [`EncodedTransaction`](types_block.EncodedTransaction.md)
 
 The encoded transaction data
 
 #### Defined in
 
-[types/block.ts:186](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L186)
+[src/types/block.ts:185](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L185)

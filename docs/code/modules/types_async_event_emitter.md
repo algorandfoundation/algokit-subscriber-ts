@@ -37,4 +37,4 @@ An asynchronous event listener
 
 #### Defined in
 
-[types/async-event-emitter.ts:4](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L4)
+[src/types/async-event-emitter.ts:4](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L4)
