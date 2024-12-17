@@ -126,8 +126,8 @@ function extractTransactionFromBlockTransaction(
   const t = Transaction.fromEncodingData(txn)
   return {
     transaction: t,
-    createdAssetId: blockTransaction.caid,
-    createdAppId: blockTransaction.apid,
+    createdAssetId: blockTransaction.caid ? BigInt(blockTransaction.caid) : undefined,
+    createdAppId: blockTransaction.apid ? BigInt(blockTransaction.apid) : undefined,
     assetCloseAmount: blockTransaction.aca ? BigInt(blockTransaction.aca) : undefined,
     closeAmount: blockTransaction.ca ? BigInt(blockTransaction.ca) : undefined,
     logs: blockTransaction.dt?.lg,
@@ -824,7 +824,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       // Handle balance changes related to the creation of an asset.
       balanceChanges.push({
         address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: transaction.caid,
+        assetId: BigInt(transaction.caid),
         amount: BigInt(transaction.txn.apar?.t ?? 0),
         roles: [BalanceChangeRole.AssetCreator],
       })

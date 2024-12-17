@@ -186,9 +186,9 @@ export interface BlockTransaction {
   /** The eval deltas for the block */
   dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
-  caid?: bigint
+  caid?: number
   /** App ID when an app is created by the transaction */
-  apid?: bigint
+  apid?: number
   /** Asset closing amount in decimal units */
   aca?: number
   /** Algo closing amount in microAlgos */
