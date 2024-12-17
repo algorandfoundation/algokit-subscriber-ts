@@ -112,7 +112,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       .newGroup()
       .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 100_000_000n))
       .send()
-    const asset = BigInt(createAssetTxns.confirmations![0].assetIndex!)
+    const asset = createAssetTxns.confirmations![0].assetIndex!
 
     const txns = await localnet.algorand
       .newGroup()
@@ -152,7 +152,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       .newGroup()
       .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 135_640_597_783_270_612n)) // this is > Number.MAX_SAFE_INTEGER
       .send()
-    const asset = BigInt(txns.confirmations![0].assetIndex!)
+    const asset = txns.confirmations![0].assetIndex!
     const axferTxns = await localnet.algorand
       .newGroup()
       .addTransaction(await axfer(asset, 0n, random.addr, random.addr, microAlgo(2000))) // Opt-in
@@ -554,23 +554,20 @@ describe('Subscribing to calls that effect balance changes', () => {
       const account2 = await generateAccount({ initialFunds: (1).algos() })
       const account3 = await generateAccount({ initialFunds: (1).algos() })
 
-      const asset1 = BigInt(
-        (
-          await algorand
-            .newGroup()
-            .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1000)))
-            .send()
-        ).confirmations![0].assetIndex!,
-      )
+      const asset1 = (
+        await algorand
+          .newGroup()
+          .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1000)))
+          .send()
+      ).confirmations![0].assetIndex!
 
-      const asset2 = BigInt(
-        (
-          await algorand
-            .newGroup()
-            .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1001)))
-            .send()
-        ).confirmations![0].assetIndex!,
-      )
+      const asset2 = (
+        await algorand
+          .newGroup()
+          .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1001)))
+          .send()
+      ).confirmations![0].assetIndex!
+
       // eslint-disable-next-line no-console
       console.log('accounts', [testAccount.addr, account.addr, account2.addr, account3.addr.toString()], 'assets', [asset1, asset2])
       const address = {

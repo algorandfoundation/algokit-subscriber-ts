@@ -92,8 +92,7 @@ async function getXGovSubscriber() {
       maxRoundsToSync: 100,
       syncBehaviour: 'catchup-with-indexer',
       watermarkPersistence: {
-        get: async () =>
-          BigInt((await prisma.watermark.findUnique({ where: { id: watermarkId }, select: { watermark: true } }))?.watermark ?? 0),
+        get: async () => (await prisma.watermark.findUnique({ where: { id: watermarkId }, select: { watermark: true } }))?.watermark ?? 0n,
         set: async (_watermark) => {
           /* Happens in onPoll() */
         },
@@ -108,7 +107,7 @@ async function getXGovSubscriber() {
         // Optimistic locking of watermark from current poll
         const expectedStartingWatermark =
           (await p.watermark.findUnique({ where: { id: watermarkId }, select: { watermark: true } }))?.watermark ?? 0
-        if (BigInt(expectedStartingWatermark) !== poll.startingWatermark) {
+        if (expectedStartingWatermark !== poll.startingWatermark) {
           throw new Error(`Watermark mismatch; expected ${expectedStartingWatermark} but got ${poll.startingWatermark}`)
         }
 

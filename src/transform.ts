@@ -128,8 +128,8 @@ function extractTransactionFromBlockTransaction(
     transaction: t,
     createdAssetId: blockTransaction.caid,
     createdAppId: blockTransaction.apid,
-    assetCloseAmount: blockTransaction.aca,
-    closeAmount: blockTransaction.ca,
+    assetCloseAmount: blockTransaction.aca ? BigInt(blockTransaction.aca) : undefined,
+    closeAmount: blockTransaction.ca ? BigInt(blockTransaction.ca) : undefined,
     logs: blockTransaction.dt?.lg,
   } satisfies Partial<TransactionInBlock>
 }
@@ -401,7 +401,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                       // These parameters are required in the indexer type so setting to empty values
                       creator: '',
                       decimals: 0,
-                      total: BigInt(0),
+                      total: 0,
                     })
                   : undefined,
             }),
@@ -414,7 +414,7 @@ export function getIndexerTransactionFromAlgodTransaction(
               amount: transaction.assetTransfer!.amount, // The amount can be undefined
               receiver: transaction.assetTransfer!.receiver.toString(),
               sender: transaction.assetTransfer!.assetSender ? transaction.assetTransfer!.assetSender.toString() : undefined,
-              closeAmount: assetCloseAmount !== undefined ? BigInt(assetCloseAmount) : undefined,
+              closeAmount: assetCloseAmount,
               closeTo: transaction.assetTransfer!.closeRemainderTo ? transaction.assetTransfer!.closeRemainderTo.toString() : undefined,
             }),
           }
@@ -461,7 +461,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       ...(transaction.type === TransactionType.pay
         ? {
             paymentTransaction: new algosdk.indexerModels.TransactionPayment({
-              amount: BigInt(transaction.payment!.amount ?? 0), // The amount can be undefined
+              amount: transaction.payment!.amount,
               receiver: transaction.payment!.receiver.toString(),
               closeAmount: closeAmount,
               closeRemainderTo: transaction.payment!.closeRemainderTo?.toString(),
@@ -511,7 +511,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                         participant: new algosdk.indexerModels.StateProofParticipant({
                           weight: Number(reveal.participant.weight),
                           verifier: new algosdk.indexerModels.StateProofVerifier({
-                            keyLifetime: BigInt(reveal.participant.pk.keyLifetime),
+                            keyLifetime: reveal.participant.pk.keyLifetime,
                             commitment: reveal.participant.pk.commitment,
                           }),
                         }),
@@ -521,9 +521,9 @@ export function getIndexerTransactionFromAlgodTransaction(
               }),
               message: new algosdk.indexerModels.IndexerStateProofMessage({
                 blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
-                firstAttestedRound: BigInt(transaction.stateProof!.message!.firstAttestedRound),
-                latestAttestedRound: BigInt(transaction.stateProof!.message!.lastAttestedRound),
-                lnProvenWeight: BigInt(transaction.stateProof!.message!.lnProvenWeight),
+                firstAttestedRound: transaction.stateProof!.message!.firstAttestedRound,
+                latestAttestedRound: transaction.stateProof!.message!.lastAttestedRound,
+                lnProvenWeight: transaction.stateProof!.message!.lnProvenWeight,
                 votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
               }),
               stateProofType: Number(transaction.stateProof!.stateProofType ?? 0),
@@ -538,7 +538,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       confirmedRound: BigInt(roundNumber),
       roundTime: roundTimestamp,
       intraRoundOffset: roundOffset,
-      createdAssetIndex: createdAssetId !== undefined ? BigInt(createdAssetId) : undefined,
+      createdAssetIndex: createdAssetId !== undefined ? createdAssetId : undefined,
       genesisHash: transaction.genesisHash,
       genesisId: transaction.genesisID,
       group: transaction.group,
@@ -546,7 +546,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       lease: transaction.lease,
       rekeyTo: transaction.rekeyTo,
       closingAmount: closeAmount,
-      createdApplicationIndex: createdAppId !== undefined ? BigInt(createdAppId) : undefined,
+      createdApplicationIndex: createdAppId !== undefined ? createdAppId : undefined,
       authAddr: blockTransaction.sgnr ? new algosdk.Address(blockTransaction.sgnr) : undefined,
       innerTxns: blockTransaction.dt?.itx?.map((ibt) =>
         getIndexerTransactionFromAlgodTransaction({
@@ -786,7 +786,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     balanceChanges.push(
       {
         address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: transaction.txn.xaid,
+        assetId: BigInt(transaction.txn.xaid),
         amount: -1n * BigInt(transaction.txn.aamt ?? 0),
         roles: [BalanceChangeRole.Sender],
       },
@@ -794,7 +794,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
         ? [
             {
               address: algosdk.encodeAddress(transaction.txn.arcv),
-              assetId: transaction.txn.xaid,
+              assetId: BigInt(transaction.txn.xaid),
               amount: BigInt(transaction.txn.aamt ?? 0),
               roles: [BalanceChangeRole.Receiver],
             },
@@ -804,13 +804,13 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
         ? [
             {
               address: algosdk.encodeAddress(transaction.txn.aclose),
-              assetId: transaction.txn.xaid,
+              assetId: BigInt(transaction.txn.xaid),
               amount: BigInt(transaction.aca ?? 0),
               roles: [BalanceChangeRole.CloseTo],
             },
             {
               address: algosdk.encodeAddress(transaction.txn.asnd ?? transaction.txn.snd),
-              assetId: transaction.txn.xaid,
+              assetId: BigInt(transaction.txn.xaid),
               amount: -1n * BigInt(transaction.aca ?? 0),
               roles: [BalanceChangeRole.Sender],
             },
@@ -832,8 +832,8 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       // Handle balance changes related to the destruction of an asset.
       balanceChanges.push({
         address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: transaction.txn.caid,
-        amount: BigInt(0),
+        assetId: BigInt(transaction.txn.caid),
+        amount: 0n,
         roles: [BalanceChangeRole.AssetDestroyer],
       })
     }
@@ -861,14 +861,10 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
 export function extractBalanceChangesFromIndexerTransaction(transaction: SubscribedTransaction): BalanceChange[] {
   const balanceChanges: BalanceChange[] = []
 
-  const getSafeBigInt = (value: number | bigint | undefined) => {
-    return BigInt(typeof value === 'bigint' ? value : Number.isNaN(value) ? 0 : value ?? 0)
-  }
-
   if (transaction.fee > 0) {
     balanceChanges.push({
       address: transaction.sender,
-      amount: -1n * BigInt(transaction.fee),
+      amount: -1n * transaction.fee,
       roles: [BalanceChangeRole.Sender],
       assetId: 0n,
     })
@@ -879,13 +875,13 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Subscri
     balanceChanges.push(
       {
         address: transaction.sender,
-        amount: -1n * getSafeBigInt(pay.amount),
+        amount: -1n * pay.amount,
         roles: [BalanceChangeRole.Sender],
         assetId: 0n,
       },
       {
         address: pay.receiver,
-        amount: getSafeBigInt(pay.amount),
+        amount: pay.amount,
         roles: [BalanceChangeRole.Receiver],
         assetId: 0n,
       },
@@ -893,13 +889,13 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Subscri
         ? [
             {
               address: pay.closeRemainderTo!,
-              amount: getSafeBigInt(pay.closeAmount),
+              amount: pay.closeAmount,
               roles: [BalanceChangeRole.CloseTo],
               assetId: 0n,
             },
             {
               address: transaction.sender,
-              amount: -1n * getSafeBigInt(pay.closeAmount),
+              amount: -1n * pay.closeAmount,
               roles: [BalanceChangeRole.Sender],
               assetId: 0n,
             },
@@ -914,13 +910,13 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Subscri
       {
         address: axfer.sender ?? transaction.sender,
         assetId: axfer.assetId,
-        amount: -1n * getSafeBigInt(axfer.amount),
+        amount: -1n * axfer.amount,
         roles: [BalanceChangeRole.Sender],
       },
       {
         address: axfer.receiver,
         assetId: axfer.assetId,
-        amount: getSafeBigInt(axfer.amount),
+        amount: axfer.amount,
         roles: [BalanceChangeRole.Receiver],
       },
       ...(axfer.closeAmount && axfer.closeTo
@@ -928,13 +924,13 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Subscri
             {
               address: axfer.closeTo,
               assetId: axfer.assetId,
-              amount: getSafeBigInt(axfer.closeAmount),
+              amount: axfer.closeAmount,
               roles: [BalanceChangeRole.CloseTo],
             },
             {
               address: axfer.sender ?? transaction.sender,
               assetId: axfer.assetId,
-              amount: -1n * getSafeBigInt(axfer.closeAmount),
+              amount: -1n * axfer.closeAmount,
               roles: [BalanceChangeRole.Sender],
             },
           ]
@@ -949,7 +945,7 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Subscri
       balanceChanges.push({
         address: transaction.sender,
         assetId: transaction.createdAssetIndex,
-        amount: BigInt(acfg.params?.total ?? 0),
+        amount: acfg.params?.total ?? 0n,
         roles: [BalanceChangeRole.AssetCreator],
       })
     } else if (acfg.assetId && !acfg['params']) {
@@ -957,7 +953,7 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Subscri
       balanceChanges.push({
         address: transaction.sender,
         assetId: acfg.assetId,
-        amount: BigInt(0),
+        amount: 0n,
         roles: [BalanceChangeRole.AssetDestroyer],
       })
     }

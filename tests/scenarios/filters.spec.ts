@@ -24,7 +24,7 @@ describe('Subscribing using various filters', () => {
       .send()
 
     return {
-      assetId: BigInt(create.confirmations[0].assetIndex!),
+      assetId: create.confirmations[0].assetIndex!,
       ...create,
     }
   }

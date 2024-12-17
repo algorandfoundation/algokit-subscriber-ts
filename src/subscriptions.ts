@@ -347,10 +347,10 @@ function indexerPreFilter(
     if (subscription.notePrefix) {
       filter = filter.notePrefix(Buffer.from(subscription.notePrefix).toString('base64'))
     }
-    if (subscription.appId && typeof subscription.appId === 'bigint' && subscription.appId <= Number.MAX_SAFE_INTEGER) {
+    if (subscription.appId && typeof subscription.appId === 'bigint') {
       filter = filter.applicationID(subscription.appId)
     }
-    if (subscription.assetId && typeof subscription.assetId === 'bigint' && subscription.assetId <= Number.MAX_SAFE_INTEGER) {
+    if (subscription.assetId && typeof subscription.assetId === 'bigint') {
       filter = filter.assetID(subscription.assetId)
     }
 
@@ -656,7 +656,7 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
         (changeFilter.maxAmount === undefined || actualChange.amount <= changeFilter.maxAmount) &&
         (changeFilter.assetId === undefined ||
           (Array.isArray(changeFilter.assetId) && changeFilter.assetId.length === 0) ||
-          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId]).includes(BigInt(actualChange.assetId))) &&
+          (Array.isArray(changeFilter.assetId) ? changeFilter.assetId : [changeFilter.assetId]).includes(actualChange.assetId)) &&
         (changeFilter.role === undefined ||
           (Array.isArray(changeFilter.role) && changeFilter.role.length === 0) ||
           (Array.isArray(changeFilter.role) ? changeFilter.role : [changeFilter.role]).some((r) => actualChange.roles.includes(r))),

@@ -42,7 +42,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
     // eslint-disable-next-line no-console
     console.log(
       `${transfer.sender} sent ${transfer.assetTransferTransaction?.receiver} USDC$${Number(
-        BigInt(transfer.assetTransferTransaction?.amount ?? 0) / 1_000_000n,
+        (transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000n,
       ).toFixed(2)} in transaction ${transfer.id}`,
     )
   })

@@ -190,9 +190,9 @@ export interface BlockTransaction {
   /** App ID when an app is created by the transaction */
   apid?: bigint
   /** Asset closing amount in decimal units */
-  aca?: bigint
+  aca?: number
   /** Algo closing amount in microAlgos */
-  ca?: bigint
+  ca?: number
   /** Has genesis id */
   hgi?: boolean
   /** Has genesis hash */
@@ -411,7 +411,7 @@ export interface EncodedAssetParams {
   /**
    * assetTotal
    */
-  t: bigint
+  t: number
   /**
    * assetDefaultFrozen
    */
@@ -490,180 +490,222 @@ export interface EncodedTransaction {
   /**
    * fee
    */
-  fee: bigint
+  fee?: number
+
   /**
    * firstRound
    */
-  fv: bigint
+  fv?: number
+
   /**
    * lastRound
    */
-  lv: bigint
+  lv: number
+
   /**
    * note
    */
   note?: Buffer
+
   /**
    * from
    */
   snd: Buffer
+
   /**
    * type
    */
   type: string
+
   /**
    * genesisID
    */
-  gen?: string
+  gen: string
+
   /**
    * genesisHash
    */
-  gh?: Buffer
+  gh: Buffer
+
   /**
    * lease
    */
   lx?: Buffer
+
   /**
    * group
    */
   grp?: Buffer
+
   /**
    * amount
    */
-  amt?: bigint
+  amt?: number | bigint
+
   /**
    * amount (but for asset transfers)
    */
-  aamt?: bigint
+  aamt?: number | bigint
+
   /**
    * closeRemainderTo
    */
   close?: Buffer
+
   /**
    * closeRemainderTo (but for asset transfers)
    */
   aclose?: Buffer
+
   /**
    * reKeyTo
    */
   rekey?: Buffer
+
   /**
    * to
    */
   rcv?: Buffer
+
   /**
    * to (but for asset transfers)
    */
   arcv?: Buffer
+
   /**
    * voteKey
    */
   votekey?: Buffer
+
   /**
    * selectionKey
    */
   selkey?: Buffer
+
   /**
    * stateProofKey
    */
   sprfkey?: Buffer
+
   /**
    * voteFirst
    */
-  votefst?: bigint
+  votefst?: number
+
   /**
    * voteLast
    */
-  votelst?: bigint
+  votelst?: number
+
   /**
    * voteKeyDilution
    */
-  votekd?: bigint
+  votekd?: number
+
   /**
    * nonParticipation
    */
   nonpart?: boolean
+
   /**
    * assetIndex
    */
-  caid?: bigint
+  caid?: number
+
   /**
    * assetIndex (but for asset transfers)
    */
-  xaid?: bigint
+  xaid?: number
+
   /**
    * assetIndex (but for asset freezing/unfreezing)
    */
-  faid?: bigint
+  faid?: number
+
   /**
    * freezeState
    */
   afrz?: boolean
+
   /**
    * freezeAccount
    */
   fadd?: Buffer
+
   /**
    * assetRevocationTarget
    */
   asnd?: Buffer
+
   /**
    * See EncodedAssetParams type
    */
   apar?: EncodedAssetParams
+
   /**
    * appIndex
    */
-  apid?: bigint
+  apid?: number
+
   /**
    * appOnComplete
    */
   apan?: number
+
   /**
    * See EncodedLocalStateSchema type
    */
   apls?: EncodedLocalStateSchema
+
   /**
    * See EncodedGlobalStateSchema type
    */
   apgs?: EncodedGlobalStateSchema
+
   /**
    * appForeignApps
    */
-  apfa?: bigint[]
+  apfa?: number[]
+
   /**
    * appForeignAssets
    */
-  apas?: bigint[]
+  apas?: number[]
+
   /**
    * appApprovalProgram
    */
   apap?: Buffer
+
   /**
    * appClearProgram
    */
   apsu?: Buffer
+
   /**
    * appArgs
    */
   apaa?: Buffer[]
+
   /**
    * appAccounts
    */
   apat?: Buffer[]
+
   /**
    * extraPages
    */
   apep?: number
+
   /**
    * boxes
    */
   apbx?: EncodedBoxReference[]
 
-  /**
+  /*
    * stateProofType
    */
-  sptype?: number
+  sptype?: number | bigint
 
   /**
    * stateProof
