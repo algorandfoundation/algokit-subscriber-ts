@@ -134,7 +134,7 @@ ___
 
 ### t
 
-• **t**: `bigint`
+• **t**: `number`
 
 assetTotal
 

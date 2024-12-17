@@ -61,13 +61,13 @@ A rough structure for the encoded transaction object. Every property is labelled
 
 ### aamt
 
-• `Optional` **aamt**: `bigint`
+• `Optional` **aamt**: `number` \| `bigint`
 
 amount (but for asset transfers)
 
 #### Defined in
 
-[src/types/block.ts:537](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L537)
+[src/types/block.ts:548](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L548)
 
 ___
 
@@ -79,7 +79,7 @@ closeRemainderTo (but for asset transfers)
 
 #### Defined in
 
-[src/types/block.ts:545](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L545)
+[src/types/block.ts:558](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L558)
 
 ___
 
@@ -91,19 +91,19 @@ freezeState
 
 #### Defined in
 
-[src/types/block.ts:601](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L601)
+[src/types/block.ts:628](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L628)
 
 ___
 
 ### amt
 
-• `Optional` **amt**: `bigint`
+• `Optional` **amt**: `number` \| `bigint`
 
 amount
 
 #### Defined in
 
-[src/types/block.ts:533](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L533)
+[src/types/block.ts:543](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L543)
 
 ___
 
@@ -115,7 +115,7 @@ appArgs
 
 #### Defined in
 
-[src/types/block.ts:649](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L649)
+[src/types/block.ts:688](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L688)
 
 ___
 
@@ -127,7 +127,7 @@ appOnComplete
 
 #### Defined in
 
-[src/types/block.ts:621](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L621)
+[src/types/block.ts:653](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L653)
 
 ___
 
@@ -139,7 +139,7 @@ appApprovalProgram
 
 #### Defined in
 
-[src/types/block.ts:641](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L641)
+[src/types/block.ts:678](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L678)
 
 ___
 
@@ -151,19 +151,19 @@ See EncodedAssetParams type
 
 #### Defined in
 
-[src/types/block.ts:613](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L613)
+[src/types/block.ts:643](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L643)
 
 ___
 
 ### apas
 
-• `Optional` **apas**: `bigint`[]
+• `Optional` **apas**: `number`[]
 
 appForeignAssets
 
 #### Defined in
 
-[src/types/block.ts:637](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L637)
+[src/types/block.ts:673](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L673)
 
 ___
 
@@ -175,7 +175,7 @@ appAccounts
 
 #### Defined in
 
-[src/types/block.ts:653](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L653)
+[src/types/block.ts:693](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L693)
 
 ___
 
@@ -187,7 +187,7 @@ boxes
 
 #### Defined in
 
-[src/types/block.ts:661](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L661)
+[src/types/block.ts:703](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L703)
 
 ___
 
@@ -199,19 +199,19 @@ extraPages
 
 #### Defined in
 
-[src/types/block.ts:657](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L657)
+[src/types/block.ts:698](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L698)
 
 ___
 
 ### apfa
 
-• `Optional` **apfa**: `bigint`[]
+• `Optional` **apfa**: `number`[]
 
 appForeignApps
 
 #### Defined in
 
-[src/types/block.ts:633](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L633)
+[src/types/block.ts:668](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L668)
 
 ___
 
@@ -223,19 +223,19 @@ See EncodedGlobalStateSchema type
 
 #### Defined in
 
-[src/types/block.ts:629](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L629)
+[src/types/block.ts:663](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L663)
 
 ___
 
 ### apid
 
-• `Optional` **apid**: `bigint`
+• `Optional` **apid**: `number`
 
 appIndex
 
 #### Defined in
 
-[src/types/block.ts:617](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L617)
+[src/types/block.ts:648](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L648)
 
 ___
 
@@ -247,7 +247,7 @@ See EncodedLocalStateSchema type
 
 #### Defined in
 
-[src/types/block.ts:625](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L625)
+[src/types/block.ts:658](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L658)
 
 ___
 
@@ -259,7 +259,7 @@ appClearProgram
 
 #### Defined in
 
-[src/types/block.ts:645](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L645)
+[src/types/block.ts:683](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L683)
 
 ___
 
@@ -271,7 +271,7 @@ to (but for asset transfers)
 
 #### Defined in
 
-[src/types/block.ts:557](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L557)
+[src/types/block.ts:573](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L573)
 
 ___
 
@@ -283,19 +283,19 @@ assetRevocationTarget
 
 #### Defined in
 
-[src/types/block.ts:609](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L609)
+[src/types/block.ts:638](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L638)
 
 ___
 
 ### caid
 
-• `Optional` **caid**: `bigint`
+• `Optional` **caid**: `number`
 
 assetIndex
 
 #### Defined in
 
-[src/types/block.ts:589](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L589)
+[src/types/block.ts:613](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L613)
 
 ___
 
@@ -307,7 +307,7 @@ closeRemainderTo
 
 #### Defined in
 
-[src/types/block.ts:541](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L541)
+[src/types/block.ts:553](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L553)
 
 ___
 
@@ -319,25 +319,25 @@ freezeAccount
 
 #### Defined in
 
-[src/types/block.ts:605](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L605)
+[src/types/block.ts:633](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L633)
 
 ___
 
 ### faid
 
-• `Optional` **faid**: `bigint`
+• `Optional` **faid**: `number`
 
 assetIndex (but for asset freezing/unfreezing)
 
 #### Defined in
 
-[src/types/block.ts:597](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L597)
+[src/types/block.ts:623](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L623)
 
 ___
 
 ### fee
 
-• **fee**: `bigint`
+• `Optional` **fee**: `number`
 
 fee
 
@@ -349,37 +349,37 @@ ___
 
 ### fv
 
-• **fv**: `bigint`
+• `Optional` **fv**: `number`
 
 firstRound
 
 #### Defined in
 
-[src/types/block.ts:497](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L497)
+[src/types/block.ts:498](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L498)
 
 ___
 
 ### gen
 
-• `Optional` **gen**: `string`
+• **gen**: `string`
 
 genesisID
 
 #### Defined in
 
-[src/types/block.ts:517](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L517)
+[src/types/block.ts:523](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L523)
 
 ___
 
 ### gh
 
-• `Optional` **gh**: `Buffer`
+• **gh**: `Buffer`
 
 genesisHash
 
 #### Defined in
 
-[src/types/block.ts:521](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L521)
+[src/types/block.ts:528](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L528)
 
 ___
 
@@ -391,19 +391,19 @@ group
 
 #### Defined in
 
-[src/types/block.ts:529](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L529)
+[src/types/block.ts:538](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L538)
 
 ___
 
 ### lv
 
-• **lv**: `bigint`
+• **lv**: `number`
 
 lastRound
 
 #### Defined in
 
-[src/types/block.ts:501](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L501)
+[src/types/block.ts:503](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L503)
 
 ___
 
@@ -415,7 +415,7 @@ lease
 
 #### Defined in
 
-[src/types/block.ts:525](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L525)
+[src/types/block.ts:533](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L533)
 
 ___
 
@@ -427,7 +427,7 @@ nonParticipation
 
 #### Defined in
 
-[src/types/block.ts:585](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L585)
+[src/types/block.ts:608](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L608)
 
 ___
 
@@ -439,7 +439,7 @@ note
 
 #### Defined in
 
-[src/types/block.ts:505](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L505)
+[src/types/block.ts:508](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L508)
 
 ___
 
@@ -451,7 +451,7 @@ to
 
 #### Defined in
 
-[src/types/block.ts:553](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L553)
+[src/types/block.ts:568](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L568)
 
 ___
 
@@ -463,7 +463,7 @@ reKeyTo
 
 #### Defined in
 
-[src/types/block.ts:549](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L549)
+[src/types/block.ts:563](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L563)
 
 ___
 
@@ -475,7 +475,7 @@ selectionKey
 
 #### Defined in
 
-[src/types/block.ts:565](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L565)
+[src/types/block.ts:583](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L583)
 
 ___
 
@@ -487,7 +487,7 @@ from
 
 #### Defined in
 
-[src/types/block.ts:509](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L509)
+[src/types/block.ts:513](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L513)
 
 ___
 
@@ -499,7 +499,7 @@ stateProof
 
 #### Defined in
 
-[src/types/block.ts:671](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L671)
+[src/types/block.ts:713](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L713)
 
 ___
 
@@ -511,7 +511,7 @@ stateProofMessage
 
 #### Defined in
 
-[src/types/block.ts:676](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L676)
+[src/types/block.ts:718](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L718)
 
 ___
 
@@ -523,19 +523,17 @@ stateProofKey
 
 #### Defined in
 
-[src/types/block.ts:569](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L569)
+[src/types/block.ts:588](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L588)
 
 ___
 
 ### sptype
 
-• `Optional` **sptype**: `number`
-
-stateProofType
+• `Optional` **sptype**: `number` \| `bigint`
 
 #### Defined in
 
-[src/types/block.ts:666](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L666)
+[src/types/block.ts:708](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L708)
 
 ___
 
@@ -547,31 +545,31 @@ type
 
 #### Defined in
 
-[src/types/block.ts:513](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L513)
+[src/types/block.ts:518](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L518)
 
 ___
 
 ### votefst
 
-• `Optional` **votefst**: `bigint`
+• `Optional` **votefst**: `number`
 
 voteFirst
 
 #### Defined in
 
-[src/types/block.ts:573](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L573)
+[src/types/block.ts:593](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L593)
 
 ___
 
 ### votekd
 
-• `Optional` **votekd**: `bigint`
+• `Optional` **votekd**: `number`
 
 voteKeyDilution
 
 #### Defined in
 
-[src/types/block.ts:581](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L581)
+[src/types/block.ts:603](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L603)
 
 ___
 
@@ -583,28 +581,28 @@ voteKey
 
 #### Defined in
 
-[src/types/block.ts:561](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L561)
+[src/types/block.ts:578](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L578)
 
 ___
 
 ### votelst
 
-• `Optional` **votelst**: `bigint`
+• `Optional` **votelst**: `number`
 
 voteLast
 
 #### Defined in
 
-[src/types/block.ts:577](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L577)
+[src/types/block.ts:598](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L598)
 
 ___
 
 ### xaid
 
-• `Optional` **xaid**: `bigint`
+• `Optional` **xaid**: `number`
 
 assetIndex (but for asset transfers)
 
 #### Defined in
 
-[src/types/block.ts:593](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L593)
+[src/types/block.ts:618](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L618)

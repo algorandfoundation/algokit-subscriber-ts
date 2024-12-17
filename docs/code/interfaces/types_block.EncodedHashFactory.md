@@ -20,4 +20,4 @@ hash type
 
 #### Defined in
 
-[src/types/block.ts:736](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L736)
+[src/types/block.ts:778](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L778)
