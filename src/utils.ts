@@ -9,8 +9,9 @@ export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   return chunkedArray
 }
 
-export function range(start: number, end: number) {
-  return [...Array(end - start + 1).keys()].map((i) => i + start)
+export function range(start: bigint, end: bigint) {
+  const arrayLength = Number(end - start + 1n)
+  return [...Array(arrayLength).keys()].map((i) => BigInt(i) + start)
 }
 
 // https://github.com/whatwg/dom/issues/946#issuecomment-845924476

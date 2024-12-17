@@ -17,22 +17,22 @@ Metadata about an impending subscription poll.
 
 ### currentRound
 
-• **currentRound**: `number`
+• **currentRound**: `bigint`
 
 The current round of algod
 
 #### Defined in
 
-[types/subscription.ts:209](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L209)
+[src/types/subscription.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L225)
 
 ___
 
 ### watermark
 
-• **watermark**: `number`
+• **watermark**: `bigint`
 
 The current watermark of the subscriber
 
 #### Defined in
 
-[types/subscription.ts:207](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L207)
+[src/types/subscription.ts:223](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L223)

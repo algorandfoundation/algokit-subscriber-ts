@@ -30,6 +30,21 @@
 - [BlockVote](types.md#blockvote)
 - [CoreTransactionSubscriptionParams](types.md#coretransactionsubscriptionparams)
 - [EmittedArc28Event](types.md#emittedarc28event)
+- [EncodedAssetParams](types.md#encodedassetparams)
+- [EncodedBoxReference](types.md#encodedboxreference)
+- [EncodedFalconSignatureStruct](types.md#encodedfalconsignaturestruct)
+- [EncodedFalconVerifier](types.md#encodedfalconverifier)
+- [EncodedGlobalStateSchema](types.md#encodedglobalstateschema)
+- [EncodedHashFactory](types.md#encodedhashfactory)
+- [EncodedLocalStateSchema](types.md#encodedlocalstateschema)
+- [EncodedMerkleArrayProof](types.md#encodedmerklearrayproof)
+- [EncodedMerkleSignatureVerifier](types.md#encodedmerklesignatureverifier)
+- [EncodedParticipant](types.md#encodedparticipant)
+- [EncodedReveal](types.md#encodedreveal)
+- [EncodedSigslotCommit](types.md#encodedsigslotcommit)
+- [EncodedStateProof](types.md#encodedstateproof)
+- [EncodedStateProofMessage](types.md#encodedstateproofmessage)
+- [EncodedTransaction](types.md#encodedtransaction)
 - [ErrorListener](types.md#errorlistener)
 - [LogicSig](types.md#logicsig)
 - [MultisigSig](types.md#multisigsig)
@@ -192,6 +207,96 @@ Re-exports [EmittedArc28Event](../interfaces/types_arc_28.EmittedArc28Event.md)
 
 ___
 
+### EncodedAssetParams
+
+Re-exports [EncodedAssetParams](../interfaces/types_block.EncodedAssetParams.md)
+
+___
+
+### EncodedBoxReference
+
+Re-exports [EncodedBoxReference](../interfaces/types_block.EncodedBoxReference.md)
+
+___
+
+### EncodedFalconSignatureStruct
+
+Re-exports [EncodedFalconSignatureStruct](../interfaces/types_block.EncodedFalconSignatureStruct.md)
+
+___
+
+### EncodedFalconVerifier
+
+Re-exports [EncodedFalconVerifier](../interfaces/types_block.EncodedFalconVerifier.md)
+
+___
+
+### EncodedGlobalStateSchema
+
+Re-exports [EncodedGlobalStateSchema](../interfaces/types_block.EncodedGlobalStateSchema.md)
+
+___
+
+### EncodedHashFactory
+
+Re-exports [EncodedHashFactory](../interfaces/types_block.EncodedHashFactory.md)
+
+___
+
+### EncodedLocalStateSchema
+
+Re-exports [EncodedLocalStateSchema](../interfaces/types_block.EncodedLocalStateSchema.md)
+
+___
+
+### EncodedMerkleArrayProof
+
+Re-exports [EncodedMerkleArrayProof](../interfaces/types_block.EncodedMerkleArrayProof.md)
+
+___
+
+### EncodedMerkleSignatureVerifier
+
+Re-exports [EncodedMerkleSignatureVerifier](../interfaces/types_block.EncodedMerkleSignatureVerifier.md)
+
+___
+
+### EncodedParticipant
+
+Re-exports [EncodedParticipant](../interfaces/types_block.EncodedParticipant.md)
+
+___
+
+### EncodedReveal
+
+Re-exports [EncodedReveal](../interfaces/types_block.EncodedReveal.md)
+
+___
+
+### EncodedSigslotCommit
+
+Re-exports [EncodedSigslotCommit](../interfaces/types_block.EncodedSigslotCommit.md)
+
+___
+
+### EncodedStateProof
+
+Re-exports [EncodedStateProof](../interfaces/types_block.EncodedStateProof.md)
+
+___
+
+### EncodedStateProofMessage
+
+Re-exports [EncodedStateProofMessage](../interfaces/types_block.EncodedStateProofMessage.md)
+
+___
+
+### EncodedTransaction
+
+Re-exports [EncodedTransaction](../interfaces/types_block.EncodedTransaction.md)
+
+___
+
 ### ErrorListener
 
 Re-exports [ErrorListener](types_subscription.md#errorlistener)
@@ -242,7 +347,7 @@ ___
 
 ### SubscribedTransaction
 
-Re-exports [SubscribedTransaction](types_subscription.md#subscribedtransaction)
+Re-exports [SubscribedTransaction](../classes/types_subscription.SubscribedTransaction.md)
 
 ___
 

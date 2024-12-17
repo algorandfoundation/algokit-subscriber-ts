@@ -73,7 +73,7 @@
     "@makerx/prettier-config": "^2.0.1",
     "@prisma/client": "^5.15.1",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@vitest/coverage-v8": "^2.1.4",
+    "@vitest/coverage-v8": "^2.1.8",
     "better-npm-audit": "^3.7.3",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cpy-cli": "^5.0.0",
@@ -92,7 +92,7 @@
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.4.3",
     "typescript-eslint": "^8.16.0",
-    "vitest": "^2.1.4"
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "algorand-msgpack": "^1.0.1",
@@ -101,8 +101,8 @@
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
-    "@algorandfoundation/algokit-utils": "^7.0.0",
-    "algosdk": ">=2.9.0 <3.0"
+    "@algorandfoundation/algokit-utils": "^8.0.0",
+    "algosdk": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"

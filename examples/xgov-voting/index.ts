@@ -92,7 +92,7 @@ async function getXGovSubscriber() {
       maxRoundsToSync: 100,
       syncBehaviour: 'catchup-with-indexer',
       watermarkPersistence: {
-        get: async () => (await prisma.watermark.findUnique({ where: { id: watermarkId }, select: { watermark: true } }))?.watermark ?? 0,
+        get: async () => (await prisma.watermark.findUnique({ where: { id: watermarkId }, select: { watermark: true } }))?.watermark ?? 0n,
         set: async (_watermark) => {
           /* Happens in onPoll() */
         },
@@ -136,17 +136,17 @@ async function getXGovSubscriber() {
 
         const votes = await p.vote.createMany({
           data: poll.subscribedTransactions.map((t) => ({
-            id: t.id,
+            id: t.id!,
             voterAddress: t.sender,
             votingRoundId: votingRoundId.toString(),
-            castedAt: new Date(t['round-time']! * 1000).toISOString(),
+            castedAt: new Date(t.roundTime! * 1000).toISOString(),
           })),
         })
 
         const casts = await p.voteCast.createMany({
           data: poll.subscribedTransactions.flatMap((t) => {
             return answerArrayType
-              .decode(Buffer.from(t!['application-transaction']!['application-args']![answerAppArgsIndex], 'base64'))
+              .decode(t!.applicationTransaction!.applicationArgs![answerAppArgsIndex])
               .map((v: algosdk.ABIValue, i: number) => {
                 if (!useWeighting) {
                   const questionIndex = i
@@ -158,7 +158,7 @@ async function getXGovSubscriber() {
                     id: `${t.id}-${answerIndexMetadata[questionOptionIndex].optionId}`,
                     questionOptionId: answerIndexMetadata[questionOptionIndex].optionId,
                     optionIndex: answerIndexMetadata[questionOptionIndex].optionIndex,
-                    voteId: t.id,
+                    voteId: t.id!,
                     voteWeight: '1',
                   }
                 }
@@ -166,7 +166,7 @@ async function getXGovSubscriber() {
                   id: `${t.id}-${answerIndexMetadata[i].optionId}`,
                   questionOptionId: answerIndexMetadata[i].optionId,
                   optionIndex: answerIndexMetadata[i].optionIndex,
-                  voteId: t.id,
+                  voteId: t.id!,
                   voteWeight: v.toString(),
                 }
               })
@@ -194,7 +194,7 @@ async function getXGovSubscriber() {
 
   // eslint-disable-next-line no-console
   subscriber.on('xgov-vote', (event) => {
-    const votes = answerArrayType.decode(Buffer.from(event!['application-transaction']!['application-args']![answerAppArgsIndex], 'base64'))
+    const votes = answerArrayType.decode(event!.applicationTransaction!.applicationArgs![answerAppArgsIndex])
     // eslint-disable-next-line no-console
     console.log(`${event.sender} voted with txn ${event.id} with votes:`, votes)
   })

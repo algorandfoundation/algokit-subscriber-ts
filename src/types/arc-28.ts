@@ -1,5 +1,5 @@
-import type { TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
+import { SubscribedTransaction } from './subscription'
 import ABIValue = algosdk.ABIValue
 
 /**
@@ -48,9 +48,9 @@ export interface Arc28EventGroup {
   /** The name to designate for this group of events. */
   groupName: string
   /** Optional list of app IDs that this event should apply to */
-  processForAppIds?: number[]
+  processForAppIds?: bigint[]
   /** Optional predicate to indicate if these ARC-28 events should be processed for the given transaction */
-  processTransaction?: (transaction: TransactionResult) => boolean
+  processTransaction?: (transaction: SubscribedTransaction) => boolean
   /** Whether or not to silently (with warning log) continue if an error is encountered processing the ARC-28 event data; default = false */
   continueOnError?: boolean
   /** The list of ARC-28 event definitions */

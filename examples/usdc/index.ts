@@ -13,7 +13,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 
 ;(async () => {
   const algorand = AlgorandClient.testNet()
-  let watermark = 0
+  let watermark = 0n
 
   const subscriber = new AlgorandSubscriber(
     {
@@ -22,8 +22,8 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
           name: 'usdc',
           filter: {
             type: TransactionType.axfer,
-            assetId: 31566704, // MainNet: USDC
-            minAmount: 1_000_000, // $1
+            assetId: 31566704n, // MainNet: USDC
+            minAmount: 1_000_000n, // $1
           },
         },
       ],
@@ -41,8 +41,8 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
   subscriber.on('usdc', (transfer) => {
     // eslint-disable-next-line no-console
     console.log(
-      `${transfer.sender} sent ${transfer['asset-transfer-transaction']?.receiver} USDC$${Number(
-        BigInt(transfer['asset-transfer-transaction']?.amount ?? 0) / 1_000_000n,
+      `${transfer.sender} sent ${transfer.assetTransferTransaction?.receiver} USDC$${Number(
+        (transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000n,
       ).toFixed(2)} in transaction ${transfer.id}`,
     )
   })

@@ -1,5 +1,4 @@
 import algosdk from 'algosdk'
-import EncodedTransaction = algosdk.EncodedTransaction
 import Transaction = algosdk.Transaction
 
 /**
@@ -191,7 +190,7 @@ export interface BlockTransaction {
   /** App ID when an app is created by the transaction */
   apid?: number
   /** Asset closing amount in decimal units */
-  aca?: number | bigint
+  aca?: number
   /** Algo closing amount in microAlgos */
   ca?: number
   /** Has genesis id */
@@ -388,19 +387,497 @@ export interface TransactionInBlock {
   /** The transaction as an algosdk `Transaction` object. */
   transaction: Transaction
   /** The asset ID if an asset was created from this transaction. */
-  createdAssetId?: number
+  createdAssetId?: bigint
   /** The app ID if an app was created from this transaction. */
-  createdAppId?: number
+  createdAppId?: bigint
   /** The asset close amount if the sender asset position was closed from this transaction. */
-  assetCloseAmount?: number | bigint
+  assetCloseAmount?: bigint
   /** The ALGO close amount if the sender account was closed from this transaction. */
-  closeAmount?: number
+  closeAmount?: bigint
   /** Any logs that were issued as a result of this transaction. */
   logs?: Uint8Array[]
   /** Rewards in microalgos applied to the close remainder to account. */
-  closeRewards?: number
+  closeRewards?: bigint
   /** Rewards in microalgos applied to the sender account. */
-  senderRewards?: number
+  senderRewards?: bigint
   /** Rewards in microalgos applied to the receiver account. */
-  receiverRewards?: number
+  receiverRewards?: bigint
+}
+
+/**
+ * Interfaces for the encoded transaction object. Every property is labelled with its associated Transaction type property
+ */
+export interface EncodedAssetParams {
+  /**
+   * assetTotal
+   */
+  t: number
+  /**
+   * assetDefaultFrozen
+   */
+  df: boolean
+  /**
+   * assetDecimals
+   */
+  dc: number
+  /**
+   * assetManager
+   */
+  m?: Buffer
+  /**
+   * assetReserve
+   */
+  r?: Buffer
+  /**
+   * assetFreeze
+   */
+  f?: Buffer
+  /**
+   * assetClawback
+   */
+  c?: Buffer
+  /**
+   * assetName
+   */
+  an?: string
+  /**
+   * assetUnitName
+   */
+  un?: string
+  /**
+   * assetURL
+   */
+  au?: string
+  /**
+   * assetMetadataHash
+   */
+  am?: Buffer
+}
+export interface EncodedLocalStateSchema {
+  /**
+   * appLocalInts
+   */
+  nui: number
+  /**
+   * appLocalByteSlices
+   */
+  nbs: number
+}
+export interface EncodedGlobalStateSchema {
+  /**
+   * appGlobalInts
+   */
+  nui: number
+  /**
+   * appGlobalByteSlices
+   */
+  nbs: number
+}
+export interface EncodedBoxReference {
+  /**
+   * index of the app ID in the foreign apps array
+   */
+  i: number
+  /**
+   * box name
+   */
+  n: Uint8Array
+}
+/**
+ * A rough structure for the encoded transaction object. Every property is labelled with its associated Transaction type property
+ */
+export interface EncodedTransaction {
+  /**
+   * fee
+   */
+  fee?: number
+
+  /**
+   * firstRound
+   */
+  fv?: number
+
+  /**
+   * lastRound
+   */
+  lv: number
+
+  /**
+   * note
+   */
+  note?: Buffer
+
+  /**
+   * from
+   */
+  snd: Buffer
+
+  /**
+   * type
+   */
+  type: string
+
+  /**
+   * genesisID
+   */
+  gen: string
+
+  /**
+   * genesisHash
+   */
+  gh: Buffer
+
+  /**
+   * lease
+   */
+  lx?: Buffer
+
+  /**
+   * group
+   */
+  grp?: Buffer
+
+  /**
+   * amount
+   */
+  amt?: number | bigint
+
+  /**
+   * amount (but for asset transfers)
+   */
+  aamt?: number | bigint
+
+  /**
+   * closeRemainderTo
+   */
+  close?: Buffer
+
+  /**
+   * closeRemainderTo (but for asset transfers)
+   */
+  aclose?: Buffer
+
+  /**
+   * reKeyTo
+   */
+  rekey?: Buffer
+
+  /**
+   * to
+   */
+  rcv?: Buffer
+
+  /**
+   * to (but for asset transfers)
+   */
+  arcv?: Buffer
+
+  /**
+   * voteKey
+   */
+  votekey?: Buffer
+
+  /**
+   * selectionKey
+   */
+  selkey?: Buffer
+
+  /**
+   * stateProofKey
+   */
+  sprfkey?: Buffer
+
+  /**
+   * voteFirst
+   */
+  votefst?: number
+
+  /**
+   * voteLast
+   */
+  votelst?: number
+
+  /**
+   * voteKeyDilution
+   */
+  votekd?: number
+
+  /**
+   * nonParticipation
+   */
+  nonpart?: boolean
+
+  /**
+   * assetIndex
+   */
+  caid?: number
+
+  /**
+   * assetIndex (but for asset transfers)
+   */
+  xaid?: number
+
+  /**
+   * assetIndex (but for asset freezing/unfreezing)
+   */
+  faid?: number
+
+  /**
+   * freezeState
+   */
+  afrz?: boolean
+
+  /**
+   * freezeAccount
+   */
+  fadd?: Buffer
+
+  /**
+   * assetRevocationTarget
+   */
+  asnd?: Buffer
+
+  /**
+   * See EncodedAssetParams type
+   */
+  apar?: EncodedAssetParams
+
+  /**
+   * appIndex
+   */
+  apid?: number
+
+  /**
+   * appOnComplete
+   */
+  apan?: number
+
+  /**
+   * See EncodedLocalStateSchema type
+   */
+  apls?: EncodedLocalStateSchema
+
+  /**
+   * See EncodedGlobalStateSchema type
+   */
+  apgs?: EncodedGlobalStateSchema
+
+  /**
+   * appForeignApps
+   */
+  apfa?: number[]
+
+  /**
+   * appForeignAssets
+   */
+  apas?: number[]
+
+  /**
+   * appApprovalProgram
+   */
+  apap?: Buffer
+
+  /**
+   * appClearProgram
+   */
+  apsu?: Buffer
+
+  /**
+   * appArgs
+   */
+  apaa?: Buffer[]
+
+  /**
+   * appAccounts
+   */
+  apat?: Buffer[]
+
+  /**
+   * extraPages
+   */
+  apep?: number
+
+  /**
+   * boxes
+   */
+  apbx?: EncodedBoxReference[]
+
+  /*
+   * stateProofType
+   */
+  sptype?: number | bigint
+
+  /**
+   * stateProof
+   */
+  sp?: EncodedStateProof
+
+  /**
+   * stateProofMessage
+   */
+  spmsg?: EncodedStateProofMessage
+}
+
+export interface EncodedStateProof {
+  /**
+   * sigCommit
+   */
+  c: Buffer
+  /**
+   * sigWeight
+   */
+  w: bigint
+
+  /**
+   * sigProofs
+   */
+  S: EncodedMerkleArrayProof
+
+  /**
+   * partProofs
+   */
+  P: EncodedMerkleArrayProof
+
+  /**
+   * merkleSignatureSaltVersion
+   */
+  v?: number
+
+  /**
+   * reveal
+   */
+  r: Map<bigint, EncodedReveal>
+
+  /**
+   * positionsToReveal
+   */
+  pr: bigint[]
+}
+
+export interface EncodedMerkleArrayProof {
+  /**
+   * path
+   */
+  pth: Buffer[]
+
+  /**
+   * hash
+   */
+  hsh: EncodedHashFactory
+
+  /**
+   * tree depth
+   */
+  td: number
+}
+
+export interface EncodedHashFactory {
+  /**
+   * hash type
+   */
+  t: number
+}
+
+export interface EncodedReveal {
+  /**
+   * sigslot
+   */
+  s: EncodedSigslotCommit
+
+  /**
+   * participant
+   */
+  p: EncodedParticipant
+}
+
+export interface EncodedSigslotCommit {
+  /**
+   * sig
+   */
+  sig: EncodedFalconSignatureStruct
+
+  /**
+   * l
+   */
+  l: bigint
+}
+
+export interface EncodedFalconSignatureStruct {
+  /**
+   * signature
+   */
+  sig: Buffer
+
+  /**
+   * vectorCommitmentIndex
+   */
+  idx: bigint
+
+  /**
+   * proof
+   */
+  prf: EncodedMerkleArrayProof
+
+  /**
+   * verifyingKey
+   */
+  vkey: EncodedFalconVerifier
+}
+
+export interface EncodedFalconVerifier {
+  /**
+   * public key
+   */
+  k: Buffer
+}
+
+export interface EncodedParticipant {
+  /**
+   * pk
+   */
+  p: EncodedMerkleSignatureVerifier
+
+  /**
+   * weight
+   */
+  w: bigint
+}
+
+export interface EncodedMerkleSignatureVerifier {
+  /**
+   * commitment
+   */
+  cmt: Buffer
+
+  /**
+   * keyLifetime
+   */
+  lf: bigint
+}
+
+export interface EncodedStateProofMessage {
+  /**
+   * blockHeadersCommitment
+   */
+  b: Buffer
+
+  /**
+   * votersCommitment
+   */
+  v: Buffer
+
+  /**
+   * lnProvenWeight
+   */
+  P: bigint
+
+  /**
+   * firstAttestedRound
+   */
+  f: bigint
+
+  /**
+   * lastAttestedRound
+   */
+  l: bigint
 }

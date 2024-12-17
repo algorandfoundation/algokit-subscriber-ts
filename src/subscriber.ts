@@ -67,7 +67,7 @@ export class AlgorandSubscriber {
   async pollOnce(): Promise<TransactionSubscriptionResult> {
     const watermark = await this.config.watermarkPersistence.get()
 
-    const currentRound = (await this.algod.status().do())['last-round'] as number
+    const currentRound = (await this.algod.status().do()).lastRound
     await this.eventEmitter.emitAsync('before:poll', {
       watermark,
       currentRound,
@@ -139,7 +139,7 @@ export class AlgorandSubscriber {
         } else {
           // Wait until the next block is published
           Config.getLogger(suppressLog).info(
-            `Subscription poll completed in ${durationInSeconds}s; waiting for round ${result.currentRound + 1}`,
+            `Subscription poll completed in ${durationInSeconds}s; waiting for round ${result.currentRound + 1n}`,
           )
           const waitStart = +new Date()
           // Despite what the `statusAfterBlock` method description suggests, you need to wait for the round before

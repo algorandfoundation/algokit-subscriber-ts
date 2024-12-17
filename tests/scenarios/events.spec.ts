@@ -57,8 +57,8 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -90,8 +90,8 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -117,15 +117,15 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
           {
             groupName: 'group1',
             events: [swappedEvent],
-            processForAppIds: [Number(app1.result.appId)],
+            processForAppIds: [app1.result.appId],
           },
         ],
       )
@@ -143,15 +143,15 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
           {
             groupName: 'group1',
             events: [swappedEvent],
-            processForAppIds: [Number(app1.result.appId) + 1],
+            processForAppIds: [app1.result.appId + 1n],
           },
         ],
       )
@@ -168,8 +168,8 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -194,8 +194,8 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -219,8 +219,8 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -262,8 +262,8 @@ describe('Subscribing to app calls that emit events', () => {
     const subscription = (
       await subscribeAndVerify(
         {
-          sender: testAccount.addr,
-          appId: Number(app1.result.appId),
+          sender: testAccount.addr.toString(),
+          appId: app1.result.appId,
         },
         txn,
         [
@@ -305,7 +305,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     await subscribeAndVerifyFilter(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group1' }],
       },
       extractFromGroupResult(txns, 1),
@@ -330,7 +330,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     await subscribeAndVerifyFilter(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group1' }],
       },
       extractFromGroupResult(txns, 1),
@@ -338,7 +338,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processForAppIds: [Number(app1.result.appId)],
+          processForAppIds: [app1.result.appId],
         },
       ],
     )
@@ -356,7 +356,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     const subscription = await subscribeAlgod(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group1' }],
       },
       extractFromGroupResult(txns, 0),
@@ -364,7 +364,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processForAppIds: [Number(app1.result.appId) + 1],
+          processForAppIds: [app1.result.appId + 1n],
         },
       ],
     )
@@ -373,7 +373,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     const subscription2 = await subscribeIndexer(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group1' }],
       },
       extractFromGroupResult(txns, 0),
@@ -381,7 +381,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processForAppIds: [Number(app1.result.appId) + 1],
+          processForAppIds: [app1.result.appId + 1n],
         },
       ],
     )
@@ -401,7 +401,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     await subscribeAndVerifyFilter(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group1' }],
       },
       extractFromGroupResult(txns, 1),
@@ -427,7 +427,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     const subscription = await subscribeAlgod(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group1' }],
       },
       extractFromGroupResult(txns, 0),
@@ -444,7 +444,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     const subscription2 = await subscribeIndexer(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group1' }],
       },
       extractFromGroupResult(txns, 0),
@@ -472,7 +472,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     const subscription = await subscribeAlgod(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group2' }],
       },
       extractFromGroupResult(txns, 0),
@@ -489,7 +489,7 @@ describe('Subscribing to app calls that emit events', () => {
 
     const subscription2 = await subscribeIndexer(
       {
-        sender: testAccount.addr,
+        sender: testAccount.addr.toString(),
         arc28Events: [{ eventName: 'Swapped', groupName: 'group2' }],
       },
       extractFromGroupResult(txns, 0),

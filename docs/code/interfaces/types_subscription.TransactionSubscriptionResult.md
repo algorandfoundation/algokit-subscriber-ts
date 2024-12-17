@@ -28,25 +28,25 @@ of the subscription poll.
 
 #### Defined in
 
-[types/subscription.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L29)
+[src/types/subscription.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L29)
 
 ___
 
 ### currentRound
 
-• **currentRound**: `number`
+• **currentRound**: `bigint`
 
 The current detected tip of the configured Algorand blockchain.
 
 #### Defined in
 
-[types/subscription.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L11)
+[src/types/subscription.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L11)
 
 ___
 
 ### newWatermark
 
-• **newWatermark**: `number`
+• **newWatermark**: `bigint`
 
 The new watermark value to persist for the next call to
 `getSubscribedTransactions` to continue the sync.
@@ -56,25 +56,25 @@ subscribed transactions to keep it reliable.
 
 #### Defined in
 
-[types/subscription.ts:19](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L19)
+[src/types/subscription.ts:19](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L19)
 
 ___
 
 ### startingWatermark
 
-• **startingWatermark**: `number`
+• **startingWatermark**: `bigint`
 
 The watermark value that was retrieved at the start of the subscription poll.
 
 #### Defined in
 
-[types/subscription.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L13)
+[src/types/subscription.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L13)
 
 ___
 
 ### subscribedTransactions
 
-• **subscribedTransactions**: [`SubscribedTransaction`](../modules/types_subscription.md#subscribedtransaction)[]
+• **subscribedTransactions**: [`SubscribedTransaction`](../classes/types_subscription.SubscribedTransaction.md)[]
 
 Any transactions that matched the given filter within
 the synced round range. This substantively uses the [indexer transaction
@@ -83,16 +83,16 @@ to represent the data with some additional fields.
 
 #### Defined in
 
-[types/subscription.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L25)
+[src/types/subscription.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L25)
 
 ___
 
 ### syncedRoundRange
 
-• **syncedRoundRange**: [startRound: number, endRound: number]
+• **syncedRoundRange**: [startRound: bigint, endRound: bigint]
 
 The round range that was synced from/to
 
 #### Defined in
 
-[types/subscription.ts:9](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L9)
+[src/types/subscription.ts:9](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L9)
