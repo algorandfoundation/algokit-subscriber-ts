@@ -55,6 +55,6 @@ model VoteCast {
 
 model Watermark {
   id        String @id
-  watermark Int
+  watermark BigInt
   updated   String
 }

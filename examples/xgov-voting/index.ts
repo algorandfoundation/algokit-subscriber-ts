@@ -116,11 +116,11 @@ async function getXGovSubscriber() {
           return await p.watermark.upsert({
             create: {
               id: watermarkId,
-              watermark: Number(poll.newWatermark),
+              watermark: poll.newWatermark,
               updated: new Date().toISOString(),
             },
             update: {
-              watermark: Number(poll.newWatermark),
+              watermark: poll.newWatermark,
               updated: new Date().toISOString(),
             },
             where: {
