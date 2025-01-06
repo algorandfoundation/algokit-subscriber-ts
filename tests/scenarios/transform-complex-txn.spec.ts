@@ -130,7 +130,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "firstValid": 35214365n,
             "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
             "innerTxns": [],
-            "intraRoundOffset": 148,
+            "intraRoundOffset": 142,
             "lastValid": 35214369n,
             "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
             "receiverRewards": 0n,
@@ -140,7 +140,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "txType": "axfer",
           },
         ],
-        "intraRoundOffset": 147,
+        "intraRoundOffset": 142,
         "lastValid": 35214369n,
         "logs": [
           "R2hHHwQAAAAAAAYExQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",

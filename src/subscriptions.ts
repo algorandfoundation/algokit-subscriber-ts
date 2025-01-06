@@ -695,7 +695,7 @@ function getIndexerInnerTransactions(
         ...t,
         parentTransactionId: root.id,
         id: `${root.id}/inner/${parentOffset + 1}`,
-        intraRoundOffset: root.intraRoundOffset! + parentOffset + 1,
+        intraRoundOffset: root.intraRoundOffset!,
         innerTxns: innerTxns,
       }),
       ...innerTxns,
