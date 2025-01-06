@@ -79,7 +79,7 @@ function getBlockInnerTransactions(
     {
       blockTransaction,
       roundIndex,
-      roundNumber: block.rnd,
+      roundNumber: BigInt(block.rnd),
       roundTimestamp: block.ts,
       genesisId: block.gen,
       genesisHash: Buffer.from(block.gh),
@@ -176,7 +176,10 @@ const convertEncodedTransactionDataToMap = (object: Record<string, any>): Map<st
         return [key, value]
       }
       if (value instanceof Uint8Array) {
-        if (['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c'].includes(key) && value.length === 32) {
+        if (
+          ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c', 'prp'].includes(key) &&
+          value.length === 32
+        ) {
           // fromEncodingData expects Address type
           return [key, new algosdk.Address(value)]
         }
