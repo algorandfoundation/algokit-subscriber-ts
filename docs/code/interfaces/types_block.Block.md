@@ -232,7 +232,7 @@ ___
 
 ### rnd
 
-• **rnd**: `number`
+• **rnd**: `number` \| `bigint`
 
 Round number.
 

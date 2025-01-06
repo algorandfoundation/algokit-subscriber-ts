@@ -212,7 +212,7 @@ ___
 
 ### roundNumber
 
-• **roundNumber**: `number`
+• **roundNumber**: `bigint`
 
 The round number of the block the transaction is within.
 

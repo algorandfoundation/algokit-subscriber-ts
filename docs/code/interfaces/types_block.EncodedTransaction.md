@@ -349,7 +349,7 @@ ___
 
 ### fv
 
-• `Optional` **fv**: `number`
+• `Optional` **fv**: `number` \| `bigint`
 
 firstRound
 
@@ -397,7 +397,7 @@ ___
 
 ### lv
 
-• **lv**: `number`
+• **lv**: `number` \| `bigint`
 
 lastRound
 
