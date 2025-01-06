@@ -169,7 +169,7 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
+const convertEncodedTransactionDataToMap = (object: Record<string, any>): Map<string, unknown> => {
   return new Map(
     Object.entries(object).map(([key, value]) => {
       if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'number')) {
@@ -200,7 +200,7 @@ const objectToMap = (object: Record<string, any>): Map<string, unknown> => {
         ]
       }
       if (typeof value === 'object' && value != null) {
-        return [key, objectToMap(value)]
+        return [key, convertEncodedTransactionDataToMap(value)]
       }
       return [key, value]
     }),
@@ -214,6 +214,7 @@ function extractTransactionAndConvertToMap(
 ) {
   const txn = {
     ...blockTransaction.txn,
+    // The field sp needs to be set, otherwise getTxIdFromBlockTransaction will fail
     sp: blockTransaction.txn.sp ? { ...blockTransaction.txn.sp } : undefined,
   }
 
@@ -247,7 +248,7 @@ function extractTransactionAndConvertToMap(
     txn.sp!.v = 0
   }
 
-  return objectToMap(txn)
+  return convertEncodedTransactionDataToMap(txn)
 }
 
 function extractAndNormaliseTransaction(
