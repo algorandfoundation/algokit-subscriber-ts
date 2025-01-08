@@ -32,35 +32,35 @@ function removeNulls(obj: any) {
  * @returns An array of processed transactions from the block
  */
 export function getBlockTransactions(block: Block): TransactionInBlock[] {
-  let offset = 0
-  const getOffset = () => offset++
+  let roundOffset = 0
+  const getRoundOffset = () => roundOffset++
 
   return (block.txns ?? []).flatMap((blockTransaction, roundIndex) => {
+    const rootTransactionData = extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen)
+    const rootTransactionId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
+      rootTransactionData.transaction.type === TransactionType.stpf
+        ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, Buffer.from(block.gh), block.gen)
+        : rootTransactionData.transaction.txID()
+
+    const rootTransaction = {
+      blockTransaction,
+      transactionId: rootTransactionId,
+      intraRoundOffset: getRoundOffset(),
+      roundIndex: roundIndex,
+      roundNumber: block.rnd,
+      roundTimestamp: block.ts,
+      genesisId: block.gen,
+      genesisHash: Buffer.from(block.gh),
+      ...rootTransactionData,
+    } satisfies TransactionInBlock
+
     let parentOffset = 0
     const getParentOffset = () => parentOffset++
-    const parentData = extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen)
+
     return [
-      {
-        blockTransaction,
-        block,
-        roundOffset: getOffset(),
-        roundIndex,
-        roundNumber: block.rnd,
-        roundTimestamp: block.ts,
-        genesisId: block.gen,
-        genesisHash: Buffer.from(block.gh),
-        ...parentData,
-      } as TransactionInBlock,
+      rootTransaction,
       ...(blockTransaction.dt?.itx ?? []).flatMap((innerTransaction) =>
-        getBlockInnerTransactions(
-          innerTransaction,
-          block,
-          blockTransaction,
-          parentData.transaction.txID(),
-          roundIndex,
-          getOffset,
-          getParentOffset,
-        ),
+        getBlockInnerTransactions(innerTransaction, block, rootTransaction, rootTransaction, getRoundOffset, getParentOffset),
       ),
     ]
   })
@@ -69,35 +69,40 @@ export function getBlockTransactions(block: Block): TransactionInBlock[] {
 function getBlockInnerTransactions(
   blockTransaction: BlockInnerTransaction,
   block: Block,
-  parentTransaction: BlockTransaction,
-  parentTransactionId: string,
-  roundIndex: number,
+  rootTransaction: TransactionInBlock,
+  parentTransaction: TransactionInBlock,
   getRoundOffset: () => number,
   getParentOffset: () => number,
 ): TransactionInBlock[] {
+  const transactionData = extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen)
+  const offset = getParentOffset() + 1
+  const transactionId =
+    rootTransaction.transactionId === parentTransaction.transactionId
+      ? `${rootTransaction.transactionId}/inner/${offset}`
+      : `${parentTransaction}/${offset}`
+
+  const transaction = {
+    blockTransaction,
+    roundIndex: rootTransaction.roundIndex,
+    roundNumber: block.rnd,
+    roundTimestamp: block.ts,
+    transactionId,
+    genesisId: block.gen,
+    genesisHash: Buffer.from(block.gh),
+    intraRoundOffset: getRoundOffset(),
+    rootTransactionId: rootTransaction.transactionId,
+    rootIntraRoundOffset: rootTransaction.intraRoundOffset,
+    parentTransactionId: parentTransaction.transactionId,
+    ...transactionData,
+  } satisfies TransactionInBlock
+
+  let parentOffset = 0
+  const getInnerParentOffset = () => parentOffset++
+
   return [
-    {
-      blockTransaction,
-      roundIndex,
-      roundNumber: block.rnd,
-      roundTimestamp: block.ts,
-      genesisId: block.gen,
-      genesisHash: Buffer.from(block.gh),
-      roundOffset: getRoundOffset(),
-      parentOffset: getParentOffset(),
-      parentTransactionId,
-      ...extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen),
-    },
+    transaction,
     ...(blockTransaction.dt?.itx ?? []).flatMap((innerInnerTransaction) =>
-      getBlockInnerTransactions(
-        innerInnerTransaction,
-        block,
-        parentTransaction,
-        parentTransactionId,
-        roundIndex,
-        getRoundOffset,
-        getParentOffset,
-      ),
+      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, transaction, getRoundOffset, getInnerParentOffset),
     ),
   ]
 }
@@ -105,7 +110,6 @@ function getBlockInnerTransactions(
 /**
  * Transform a raw block transaction representation into a `algosdk.Transaction` object and other key transaction data.
  *
- * **Note:** Doesn't currently support `keyreg` (Key Registration) or `stpf` (State Proof) transactions.
  * @param blockTransaction The raw transaction from a block
  * @param block The block the transaction belongs to
  * @returns The `algosdk.Transaction` object along with key secondary information from the block.
@@ -317,10 +321,7 @@ function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesis
  * @param closeAmount The amount of microAlgos that were transferred if the transaction had a close
  * @returns The indexer transaction formation (`TransactionResult`)
  */
-export function getIndexerTransactionFromAlgodTransaction(
-  t: TransactionInBlock & { getChildOffset?: () => number },
-  filterName?: string,
-): SubscribedTransaction {
+export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock, filterName?: string): SubscribedTransaction {
   const {
     transaction,
     createdAssetId,
@@ -328,9 +329,11 @@ export function getIndexerTransactionFromAlgodTransaction(
     assetCloseAmount,
     closeAmount,
     createdAppId,
-    roundOffset,
-    parentOffset,
+    intraRoundOffset,
+    transactionId,
     parentTransactionId,
+    rootIntraRoundOffset,
+    rootTransactionId,
     roundIndex,
     roundNumber,
     roundTimestamp,
@@ -345,22 +348,16 @@ export function getIndexerTransactionFromAlgodTransaction(
     throw new Error(`Received no transaction type for transaction ${transaction.txID()}`)
   }
 
-  let childOffset = roundOffset
-  const getChildOffset = t.getChildOffset ? t.getChildOffset : () => ++childOffset
-
   const encoder = new TextEncoder()
-
-  const txId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
-    transaction.type === TransactionType.stpf
-      ? getTxIdFromBlockTransaction(blockTransaction as BlockTransaction, genesisHash, genesisId)
-      : transaction.txID()
 
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
 
     return new SubscribedTransaction({
-      id: parentTransactionId ? `${parentTransactionId}/inner/${parentOffset! + 1}` : txId,
+      id: transactionId,
       parentTransactionId,
+      rootTransactionId,
+      rootIntraRoundOffset,
       filtersMatched: filterName ? [filterName] : undefined,
       ...(transaction.type === TransactionType.acfg
         ? {
@@ -541,7 +538,7 @@ export function getIndexerTransactionFromAlgodTransaction(
       sender: transaction.sender.toString(),
       confirmedRound: roundNumber,
       roundTime: Number(roundTimestamp),
-      intraRoundOffset: roundOffset,
+      intraRoundOffset: intraRoundOffset,
       createdAssetIndex: createdAssetId !== undefined ? createdAssetId : undefined,
       genesisHash: transaction.genesisHash,
       genesisId: transaction.genesisID,
@@ -555,12 +552,13 @@ export function getIndexerTransactionFromAlgodTransaction(
       innerTxns: blockTransaction.dt?.itx?.map((ibt) =>
         getIndexerTransactionFromAlgodTransaction({
           blockTransaction: ibt,
-          roundIndex,
-          roundOffset: getChildOffset(),
+          roundIndex: roundIndex,
+          intraRoundOffset: intraRoundOffset,
           ...extractTransactionFromBlockTransaction(ibt, genesisHash, genesisId),
-          getChildOffset,
-          parentOffset,
+          transactionId,
           parentTransactionId,
+          rootTransactionId,
+          rootIntraRoundOffset,
           roundNumber,
           roundTimestamp,
           genesisHash,
@@ -647,7 +645,7 @@ export function getIndexerTransactionFromAlgodTransaction(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     // eslint-disable-next-line no-console
-    console.error(`Failed to transform transaction ${txId} from block ${roundNumber} with offset ${roundOffset}`)
+    console.error(`Failed to transform transaction ${transactionId} from block ${roundNumber} with offset ${roundIndex}`)
     throw e
   }
 }

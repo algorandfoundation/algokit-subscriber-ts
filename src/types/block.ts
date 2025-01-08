@@ -334,6 +334,14 @@ export interface TransactionInBlock {
 
   /** The block data for the transaction */
   blockTransaction: BlockTransaction | BlockInnerTransaction
+  /** The transaction ID
+   *
+   * @example
+   *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA if it's a root transaction
+   *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1 if it's an inner transaction
+   *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1/2 if it's an inner inner transaction
+   */
+  transactionId: string
   /** The offset of the transaction within the round including inner transactions.
    *
    * @example
@@ -344,9 +352,9 @@ export interface TransactionInBlock {
    *      - 4
    *  - 5
    */
-  roundOffset: number
+  intraRoundOffset: number
   /**
-   * The index within the block.txns array of this transaction or if it's an inner transaction of it's ultimate parent transaction.
+   * The index within the block.txns array of this transaction or if it's an inner transaction of it's root transaction.
    *
    * @example
    *  - 0
@@ -358,21 +366,17 @@ export interface TransactionInBlock {
    */
   roundIndex: number
   /**
+   * The ID of the root transaction if this is an inner transaction.
+   */
+  rootTransactionId?: string
+  /**
+   * The intra-round offset of the root transaction if this is an inner transaction.
+   */
+  rootIntraRoundOffset?: number
+  /**
    * The ID of the parent transaction if this is an inner transaction.
    */
   parentTransactionId?: string
-  /**
-   * The offset within the parent transaction.
-   *
-   * @example
-   *  - `undefined`
-   *  - `undefined`
-   *    - 0
-   *    - 1
-   *      - 2
-   *  - `undefined`
-   */
-  parentOffset?: number
   /** The binary genesis hash of the network the transaction is within. */
   genesisHash: Buffer
   /** The string genesis ID of the network the transaction is within. */

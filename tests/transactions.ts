@@ -103,10 +103,11 @@ export const GetSubscribedTransactionsFromSender = (
 export function getTransactionInBlockForDiff(transaction: TransactionInBlock) {
   return {
     transaction: getTransactionForDiff(transaction.transaction),
-    parentOffset: transaction.parentOffset,
+    rootTransactionId: transaction.rootTransactionId,
+    rootIntraRoundOffset: transaction.rootIntraRoundOffset,
     parentTransactionId: transaction.parentTransactionId,
     roundIndex: transaction.roundIndex,
-    roundOffset: transaction.roundOffset,
+    intraRoundOffset: transaction.intraRoundOffset,
     createdAppId: transaction.createdAppId,
     createdAssetId: transaction.createdAppId,
     assetCloseAmount: transaction.assetCloseAmount,

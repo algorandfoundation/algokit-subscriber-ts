@@ -161,6 +161,10 @@ export interface ParticipationUpdates {
  * * Balance changes in algo or assets
  */
 export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
+  /** The transaction ID of the root transaction of this transaction (if it's an inner transaction). */
+  rootTransactionId?: string
+  /** The intra-round offset of the root transaction of this transaction (if it's an inner transaction). */
+  rootIntraRoundOffset?: number
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */
@@ -173,6 +177,8 @@ export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   balanceChanges?: BalanceChange[]
 
   constructor({
+    rootTransactionId,
+    rootIntraRoundOffset,
     parentTransactionId,
     innerTxns,
     arc28Events,
@@ -181,6 +187,8 @@ export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
     ...rest
   }: Omit<SubscribedTransaction, 'getEncodingSchema' | 'toEncodingData'>) {
     super(rest)
+    this.rootTransactionId = rootTransactionId
+    this.rootIntraRoundOffset = rootIntraRoundOffset
     this.parentTransactionId = parentTransactionId
     this.innerTxns = innerTxns
     this.arc28Events = arc28Events

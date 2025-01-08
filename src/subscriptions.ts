@@ -671,13 +671,17 @@ function getFilteredIndexerTransactions(
   transaction: algosdk.indexerModels.Transaction,
   filter: NamedTransactionFilter,
 ): SubscribedTransaction[] {
+  let rootOffset = 0
+  const getRootOffset = () => rootOffset++
+
   let parentOffset = 0
   const getParentOffset = () => parentOffset++
 
-  const transactions = [
-    new SubscribedTransaction({ ...transaction, filtersMatched: [filter.name] }),
-    ...getIndexerInnerTransactions(transaction, transaction, getParentOffset),
-  ] satisfies SubscribedTransaction[]
+  const innerTransactions = getIndexerInnerTransactions(transaction, transaction, getRootOffset, getParentOffset)
+  const rootTransaction = new SubscribedTransaction({ ...transaction, filtersMatched: [filter.name] })
+
+  const transactions = [rootTransaction, ...innerTransactions] satisfies SubscribedTransaction[]
+
   return transactions.filter(indexerPreFilterInMemory(filter.filter))
 }
 
@@ -685,23 +689,24 @@ function getFilteredIndexerTransactions(
 function getIndexerInnerTransactions(
   root: algosdk.indexerModels.Transaction,
   parent: algosdk.indexerModels.Transaction,
-  offset: () => number,
+  getRootOffset: () => number,
+  getParentOffset: () => number,
 ): SubscribedTransaction[] {
   return (parent.innerTxns ?? []).flatMap((t) => {
-    const parentOffset = offset()
-    const innerTxns = getIndexerInnerTransactions(root, t, offset)
+    let innerParentOffset = 0
+    const getInnerParentOffset = () => innerParentOffset++
+
+    const innerTransactions = getIndexerInnerTransactions(root, t, getRootOffset, getInnerParentOffset)
+    const transaction = new SubscribedTransaction({
+      ...t,
+      parentTransactionId: parent.id,
+      rootTransactionId: root.id,
+      rootIntraRoundOffset: root.intraRoundOffset!,
+      intraRoundOffset: root.intraRoundOffset! + getRootOffset() + 1,
+      innerTxns: innerTransactions,
+    })
+
     // TODO: add this as breaking change
-    // TODO: add rootIntraRoundOffset, rootTransactionId
-    // parentTransactionId is the real parent
-    return [
-      new SubscribedTransaction({
-        ...t,
-        parentTransactionId: root.id,
-        id: `${root.id}/inner/${parentOffset + 1}`, // TODO: fix this
-        intraRoundOffset: root.intraRoundOffset!,
-        innerTxns: innerTxns,
-      }),
-      ...innerTxns,
-    ] satisfies SubscribedTransaction[]
+    return [transaction, ...innerTransactions] satisfies SubscribedTransaction[]
   })
 }
