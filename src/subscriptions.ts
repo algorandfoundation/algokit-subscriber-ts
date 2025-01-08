@@ -690,11 +690,14 @@ function getIndexerInnerTransactions(
   return (parent.innerTxns ?? []).flatMap((t) => {
     const parentOffset = offset()
     const innerTxns = getIndexerInnerTransactions(root, t, offset)
+    // TODO: add this as breaking change
+    // TODO: add rootIntraRoundOffset, rootTransactionId
+    // parentTransactionId is the real parent
     return [
       new SubscribedTransaction({
         ...t,
         parentTransactionId: root.id,
-        id: `${root.id}/inner/${parentOffset + 1}`,
+        id: `${root.id}/inner/${parentOffset + 1}`, // TODO: fix this
         intraRoundOffset: root.intraRoundOffset!,
         innerTxns: innerTxns,
       }),

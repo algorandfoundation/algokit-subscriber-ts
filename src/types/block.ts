@@ -19,11 +19,11 @@ export interface BlockData {
  */
 export interface BlockAgreementCertificate {
   /** Round number */
-  rnd: number
+  rnd: bigint
   /** Period represents the current period of the source. */
   per: bigint
   /** Step represents the current period of the source. */
-  step: number
+  step: bigint
   /** The proposal */
   prop: {
     /** Original proposer */
@@ -83,13 +83,13 @@ export interface Block {
    * been distributed to each config.Protocol.RewardUnit of MicroAlgos
    * since genesis.
    **/
-  earn: number
+  earn: bigint
   /** The FeeSink accepts transaction fees. It can only spend to the incentive pool. */
   fees: Uint8Array
   /** The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
    * MicroAlgos for every reward unit in the next round.
    **/
-  frac: number | bigint
+  frac: bigint
   /** Genesis ID to which this block belongs. */
   gen: string
   /** Genesis hash to which this block belongs. */
@@ -99,11 +99,11 @@ export interface Block {
   /** UpgradeState tracks the protocol upgrade state machine; proto is the current protocol. */
   proto: string
   /** The number of new MicroAlgos added to the participation stake from rewards at the next round. */
-  rate?: number
+  rate?: bigint
   /** Round number. */
-  rnd: bigint | number
+  rnd: bigint
   /** The round at which the RewardsRate will be recalculated. */
-  rwcalr: number
+  rwcalr: bigint
   /** The RewardsPool accepts periodic injections from the
    * FeeSink and continually redistributes them to addresses as rewards.
    **/
@@ -114,9 +114,9 @@ export interface Block {
    * committed after this block.  Genesis blocks can start at either
    * 0 or 1000, depending on a consensus parameter (AppForbidLowResources).
    **/
-  tc: number
+  tc: bigint
   /** Round time (unix timestamp) */
-  ts: number
+  ts: bigint
   /** Root of transaction merkle tree using SHA512_256 hash function.
    * This commitment is computed based on the PaysetCommit type specified in the block's consensus protocol.
    * This value is only set when there are transactions in the block.
@@ -133,15 +133,15 @@ export interface Block {
   /**
    * Number of blocks which approved the protocol upgrade.
    */
-  nextyes?: number
+  nextyes?: bigint
   /**
    * Deadline round for this protocol upgrade (No votes will be considered after this round).
    */
-  nextbefore?: number
+  nextbefore?: bigint
   /**
    * Round on which the protocol upgrade will take effect.
    */
-  nextswitch?: number
+  nextswitch?: bigint
   /**
    * The transactions within the block.
    */
@@ -163,7 +163,7 @@ export interface Block {
   /**
    *  UpgradeDelay indicates the time between acceptance and execution
    */
-  upgradedelay?: number
+  upgradedelay?: bigint
   /**
    *  UpgradePropose indicates a proposed upgrade
    */
@@ -186,13 +186,13 @@ export interface BlockTransaction {
   /** The eval deltas for the block */
   dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
-  caid?: number
+  caid?: bigint
   /** App ID when an app is created by the transaction */
-  apid?: number
+  apid?: bigint
   /** Asset closing amount in decimal units */
-  aca?: number
+  aca?: bigint
   /** Algo closing amount in microAlgos */
-  ca?: number
+  ca?: bigint
   /** Has genesis id */
   hgi?: boolean
   /** Has genesis hash */
@@ -226,9 +226,9 @@ export interface LogicSig {
  */
 export interface MultisigSig {
   /** Multisig version */
-  v: number
+  v: bigint
   /** Multisig threshold */
-  thr: number
+  thr: bigint
   /** Sub-signatures */
   subsig: {
     /** ED25519 public key */
@@ -260,34 +260,34 @@ export interface BlockValueDelta {
    *   * `2`: SetUintAction indicates that a Uint should be stored at a key
    *   * `3`: DeleteAction indicates that the value for a particular key should be deleted
    **/
-  at: number
+  at: bigint
 
   /** Bytes value */
   bs?: Uint8Array
 
   /** Uint64 value */
-  ui?: number
+  ui?: bigint
 }
 
 interface Proof {
-  hsh: { t: number }
+  hsh: { t: bigint }
   pth?: Uint8Array[]
-  td?: number
+  td?: bigint
 }
 
 // https://github.com/algorand/go-algorand-sdk/blob/develop/types/stateproof.go
 export interface StateProof {
   c: Uint8Array
   P: Proof
-  pr: number[]
+  pr: bigint[]
   r: Map<
     number,
     {
-      p: { p: { cmt: Uint8Array; lf: number }; w: bigint }
+      p: { p: { cmt: Uint8Array; lf: bigint }; w: bigint }
       s: {
         l?: bigint
         s: {
-          idx: number
+          idx: bigint
           prf: Proof
           sig: Uint8Array
           vkey: { k: Uint8Array }
@@ -297,13 +297,13 @@ export interface StateProof {
   >
   S: Proof
   w: bigint
-  v?: number
+  v?: bigint
 }
 
 export interface StateProofMessage {
   b: Uint8Array
-  f: number
-  l: number
+  f: bigint
+  l: bigint
   P: bigint
   v: Uint8Array
 }
@@ -319,11 +319,11 @@ export interface StateProofTracking {
    * during the StateProof round (or zero, if the merkle root is zero - no commitment for StateProof voters).
    * This is intended for computing the threshold of votes to expect from StateProofVotersCommitment.
    */
-  t?: number
+  t?: bigint
   /**
    * StateProofNextRound is the next round for which we will accept a StateProof transaction.
    */
-  n?: number
+  n?: bigint
 }
 
 /** The representation of all important data for a single transaction or inner transaction
@@ -380,7 +380,7 @@ export interface TransactionInBlock {
   /** The round number of the block the transaction is within. */
   roundNumber: bigint
   /** The round unix timestamp of the block the transaction is within. */
-  roundTimestamp: number
+  roundTimestamp: bigint
 
   // Processed data
 
@@ -411,7 +411,7 @@ export interface EncodedAssetParams {
   /**
    * assetTotal
    */
-  t: number
+  t: bigint
   /**
    * assetDefaultFrozen
    */
@@ -419,7 +419,7 @@ export interface EncodedAssetParams {
   /**
    * assetDecimals
    */
-  dc: number
+  dc: bigint
   /**
    * assetManager
    */
@@ -457,27 +457,27 @@ export interface EncodedLocalStateSchema {
   /**
    * appLocalInts
    */
-  nui: number
+  nui: bigint
   /**
    * appLocalByteSlices
    */
-  nbs: number
+  nbs: bigint
 }
 export interface EncodedGlobalStateSchema {
   /**
    * appGlobalInts
    */
-  nui: number
+  nui: bigint
   /**
    * appGlobalByteSlices
    */
-  nbs: number
+  nbs: bigint
 }
 export interface EncodedBoxReference {
   /**
    * index of the app ID in the foreign apps array
    */
-  i: number
+  i: bigint
   /**
    * box name
    */
@@ -490,17 +490,17 @@ export interface EncodedTransaction {
   /**
    * fee
    */
-  fee?: number
+  fee?: bigint
 
   /**
    * firstRound
    */
-  fv?: bigint | number
+  fv?: bigint
 
   /**
    * lastRound
    */
-  lv: bigint | number
+  lv: bigint
 
   /**
    * note
@@ -540,12 +540,12 @@ export interface EncodedTransaction {
   /**
    * amount
    */
-  amt?: number | bigint
+  amt?: bigint
 
   /**
    * amount (but for asset transfers)
    */
-  aamt?: number | bigint
+  aamt?: bigint
 
   /**
    * closeRemainderTo
@@ -590,17 +590,17 @@ export interface EncodedTransaction {
   /**
    * voteFirst
    */
-  votefst?: number
+  votefst?: bigint
 
   /**
    * voteLast
    */
-  votelst?: number
+  votelst?: bigint
 
   /**
    * voteKeyDilution
    */
-  votekd?: number
+  votekd?: bigint
 
   /**
    * nonParticipation
@@ -610,17 +610,17 @@ export interface EncodedTransaction {
   /**
    * assetIndex
    */
-  caid?: number
+  caid?: bigint
 
   /**
    * assetIndex (but for asset transfers)
    */
-  xaid?: number
+  xaid?: bigint
 
   /**
    * assetIndex (but for asset freezing/unfreezing)
    */
-  faid?: number
+  faid?: bigint
 
   /**
    * freezeState
@@ -645,12 +645,12 @@ export interface EncodedTransaction {
   /**
    * appIndex
    */
-  apid?: number
+  apid?: bigint
 
   /**
    * appOnComplete
    */
-  apan?: number
+  apan?: bigint
 
   /**
    * See EncodedLocalStateSchema type
@@ -665,12 +665,12 @@ export interface EncodedTransaction {
   /**
    * appForeignApps
    */
-  apfa?: number[]
+  apfa?: bigint[]
 
   /**
    * appForeignAssets
    */
-  apas?: number[]
+  apas?: bigint[]
 
   /**
    * appApprovalProgram
@@ -695,7 +695,7 @@ export interface EncodedTransaction {
   /**
    * extraPages
    */
-  apep?: number
+  apep?: bigint
 
   /**
    * boxes
@@ -705,7 +705,7 @@ export interface EncodedTransaction {
   /*
    * stateProofType
    */
-  sptype?: number | bigint
+  sptype?: bigint
 
   /**
    * stateProof
@@ -741,7 +741,7 @@ export interface EncodedStateProof {
   /**
    * merkleSignatureSaltVersion
    */
-  v?: number
+  v?: bigint
 
   /**
    * reveal
@@ -768,14 +768,14 @@ export interface EncodedMerkleArrayProof {
   /**
    * tree depth
    */
-  td: number
+  td: bigint
 }
 
 export interface EncodedHashFactory {
   /**
    * hash type
    */
-  t: number
+  t: bigint
 }
 
 export interface EncodedReveal {

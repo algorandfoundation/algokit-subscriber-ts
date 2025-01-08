@@ -79,7 +79,7 @@ function getBlockInnerTransactions(
     {
       blockTransaction,
       roundIndex,
-      roundNumber: BigInt(block.rnd),
+      roundNumber: block.rnd,
       roundTimestamp: block.ts,
       genesisId: block.gen,
       genesisHash: Buffer.from(block.gh),
@@ -126,10 +126,10 @@ function extractTransactionFromBlockTransaction(
   const t = Transaction.fromEncodingData(txn)
   return {
     transaction: t,
-    createdAssetId: blockTransaction.caid ? BigInt(blockTransaction.caid) : undefined,
-    createdAppId: blockTransaction.apid ? BigInt(blockTransaction.apid) : undefined,
-    assetCloseAmount: blockTransaction.aca ? BigInt(blockTransaction.aca) : undefined,
-    closeAmount: blockTransaction.ca ? BigInt(blockTransaction.ca) : undefined,
+    createdAssetId: blockTransaction.caid,
+    createdAppId: blockTransaction.apid,
+    assetCloseAmount: blockTransaction.aca,
+    closeAmount: blockTransaction.ca,
     logs: blockTransaction.dt?.lg,
   } satisfies Partial<TransactionInBlock>
 }
@@ -172,7 +172,7 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
 const convertEncodedTransactionDataToMap = (object: Record<string, any>): Map<string, unknown> => {
   return new Map(
     Object.entries(object).map(([key, value]) => {
-      if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'number')) {
+      if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'bigint')) {
         return [key, value]
       }
       if (value instanceof Uint8Array) {
@@ -248,7 +248,7 @@ function extractTransactionAndConvertToMap(
 
   if (txn.type === TransactionType.stpf && txn.sp!.v == null) {
     // fromEncodingData expects v to be set
-    txn.sp!.v = 0
+    txn.sp!.v = 0n
   }
 
   return convertEncodedTransactionDataToMap(txn)
@@ -492,7 +492,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                 partProofs: transaction.stateProof!.stateProof?.partProofs
                   ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.partProofs)
                   : undefined,
-                positionsToReveal: transaction.stateProof!.stateProof?.positionsToReveal.map((p) => BigInt(p)),
+                positionsToReveal: transaction.stateProof!.stateProof?.positionsToReveal,
                 saltVersion: transaction.stateProof!.stateProof?.merkleSignatureSaltVersion,
                 sigCommit: transaction.stateProof!.stateProof?.sigCommit,
                 sigProofs: transaction.stateProof!.stateProof?.sigProofs
@@ -513,7 +513,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                         }),
                         position: position,
                         participant: new algosdk.indexerModels.StateProofParticipant({
-                          weight: Number(reveal.participant.weight),
+                          weight: reveal.participant.weight,
                           verifier: new algosdk.indexerModels.StateProofVerifier({
                             keyLifetime: reveal.participant.pk.keyLifetime,
                             commitment: reveal.participant.pk.commitment,
@@ -539,8 +539,8 @@ export function getIndexerTransactionFromAlgodTransaction(
       txType: transaction.type,
       fee: transaction.fee ?? 0,
       sender: transaction.sender.toString(),
-      confirmedRound: BigInt(roundNumber),
-      roundTime: roundTimestamp,
+      confirmedRound: roundNumber,
+      roundTime: Number(roundTimestamp),
       intraRoundOffset: roundOffset,
       createdAssetIndex: createdAssetId !== undefined ? createdAssetId : undefined,
       genesisHash: transaction.genesisHash,
@@ -619,7 +619,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                 value: new algosdk.indexerModels.EvalDelta({
                   action: value.at,
                   bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
-                  uint: value.ui !== undefined ? BigInt(value.ui) : undefined,
+                  uint: value.ui,
                 }),
               }),
           )
@@ -636,7 +636,7 @@ export function getIndexerTransactionFromAlgodTransaction(
                     value: new algosdk.indexerModels.EvalDelta({
                       action: value.at,
                       bytes: value.bs ? Buffer.from(value.bs).toString('base64') : undefined,
-                      uint: value.ui !== undefined ? BigInt(value.ui) : undefined,
+                      uint: value.ui,
                     }),
                   }),
               ),
@@ -672,7 +672,7 @@ function algodMerkleArrayProofToIndexerMerkleArrayProof(proof: algosdk.MerkleArr
 export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
   const { block, cert } = blockData
   return {
-    round: BigInt(block.rnd),
+    round: block.rnd,
     hash: cert?.prop?.dig ? Buffer.from(cert.prop.dig).toString('base64') : undefined,
     timestamp: block.ts,
     genesisId: block.gen,
@@ -686,17 +686,17 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       rewardsPool: algosdk.encodeAddress(block.rwd),
       rewardsLevel: block.earn,
       rewardsResidue: block.frac,
-      rewardsRate: block.rate ?? 0,
-      rewardsCalculationRound: BigInt(block.rwcalr),
+      rewardsRate: block.rate ?? 0n,
+      rewardsCalculationRound: block.rwcalr,
     },
     upgradeState: {
       currentProtocol: block.proto,
       nextProtocol: block.nextproto,
       nextProtocolApprovals: block.nextyes,
-      nextProtocolSwitchOn: block.nextswitch !== undefined ? BigInt(block.nextswitch) : undefined,
-      nextProtocolVoteBefore: block.nextbefore !== undefined ? BigInt(block.nextbefore) : undefined,
+      nextProtocolSwitchOn: block.nextswitch,
+      nextProtocolVoteBefore: block.nextbefore,
     },
-    txnCounter: BigInt(block.tc ?? 0),
+    txnCounter: block.tc ?? 0n,
     transactionsRoot: block.txn ? Buffer.from(block.txn).toString('base64') : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     transactionsRootSha256: block.txn256,
     proposer: block.prp ? algosdk.encodeAddress(block.prp) : undefined,
@@ -719,8 +719,8 @@ export function blockDataToBlockMetadata(blockData: BlockData): BlockMetadata {
       : undefined),
     stateProofTracking: block.spt
       ? Object.entries(block.spt).map(([key, value]) => ({
-          nextRound: value.n !== undefined ? BigInt(value.n) : undefined,
-          onlineTotalWeight: value.t ?? 0,
+          nextRound: value.n,
+          onlineTotalWeight: value.t ?? 0n,
           type: Number(key),
           votersCommitment: value.v,
         }))
@@ -743,7 +743,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
   if ((transaction.txn.fee ?? 0) > 0) {
     balanceChanges.push({
       address: algosdk.encodeAddress(transaction.txn.snd),
-      amount: -1n * BigInt(transaction.txn.fee ?? 0),
+      amount: -1n * (transaction.txn.fee ?? 0n),
       roles: [BalanceChangeRole.Sender],
       assetId: 0n,
     })
@@ -753,7 +753,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     balanceChanges.push(
       {
         address: algosdk.encodeAddress(transaction.txn.snd),
-        amount: -1n * BigInt(transaction.txn.amt ?? 0),
+        amount: -1n * (transaction.txn.amt ?? 0n),
         roles: [BalanceChangeRole.Sender],
         assetId: 0n,
       },
@@ -761,7 +761,7 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
         ? [
             {
               address: algosdk.encodeAddress(transaction.txn.rcv),
-              amount: BigInt(transaction.txn.amt ?? 0),
+              amount: transaction.txn.amt ?? 0n,
               roles: [BalanceChangeRole.Receiver],
               assetId: 0n,
             },
@@ -771,13 +771,13 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
         ? [
             {
               address: algosdk.encodeAddress(transaction.txn.close),
-              amount: BigInt(transaction.ca ?? 0),
+              amount: transaction.ca ?? 0n,
               roles: [BalanceChangeRole.CloseTo],
               assetId: 0n,
             },
             {
               address: algosdk.encodeAddress(transaction.txn.snd),
-              amount: -1n * BigInt(transaction.ca ?? 0),
+              amount: -1n * (transaction.ca ?? 0n),
               roles: [BalanceChangeRole.Sender],
               assetId: 0n,
             },
@@ -790,16 +790,16 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
     balanceChanges.push(
       {
         address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: BigInt(transaction.txn.xaid),
-        amount: -1n * BigInt(transaction.txn.aamt ?? 0),
+        assetId: transaction.txn.xaid,
+        amount: -1n * (transaction.txn.aamt ?? 0n),
         roles: [BalanceChangeRole.Sender],
       },
       ...(transaction.txn.arcv
         ? [
             {
               address: algosdk.encodeAddress(transaction.txn.arcv),
-              assetId: BigInt(transaction.txn.xaid),
-              amount: BigInt(transaction.txn.aamt ?? 0),
+              assetId: transaction.txn.xaid,
+              amount: transaction.txn.aamt ?? 0n,
               roles: [BalanceChangeRole.Receiver],
             },
           ]
@@ -808,14 +808,14 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
         ? [
             {
               address: algosdk.encodeAddress(transaction.txn.aclose),
-              assetId: BigInt(transaction.txn.xaid),
-              amount: BigInt(transaction.aca ?? 0),
+              assetId: transaction.txn.xaid,
+              amount: transaction.aca ?? 0n,
               roles: [BalanceChangeRole.CloseTo],
             },
             {
               address: algosdk.encodeAddress(transaction.txn.asnd ?? transaction.txn.snd),
-              assetId: BigInt(transaction.txn.xaid),
-              amount: -1n * BigInt(transaction.aca ?? 0),
+              assetId: transaction.txn.xaid,
+              amount: -1n * (transaction.aca ?? 0n),
               roles: [BalanceChangeRole.Sender],
             },
           ]
@@ -828,15 +828,15 @@ export function extractBalanceChangesFromBlockTransaction(transaction: BlockTran
       // Handle balance changes related to the creation of an asset.
       balanceChanges.push({
         address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: BigInt(transaction.caid),
-        amount: BigInt(transaction.txn.apar?.t ?? 0),
+        assetId: transaction.caid,
+        amount: transaction.txn.apar?.t ?? 0n,
         roles: [BalanceChangeRole.AssetCreator],
       })
     } else if (transaction.txn.caid && !transaction.txn.apar) {
       // Handle balance changes related to the destruction of an asset.
       balanceChanges.push({
         address: algosdk.encodeAddress(transaction.txn.snd),
-        assetId: BigInt(transaction.txn.caid),
+        assetId: transaction.txn.caid,
         amount: 0n,
         roles: [BalanceChangeRole.AssetDestroyer],
       })

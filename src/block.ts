@@ -24,7 +24,7 @@ export async function getBlocksBulk(context: { startRound: bigint; maxRound: big
           const response = await client.c.get({ relativePath: `/v2/blocks/${round}`, query: { format: 'msgpack' } })
           const body = response.body as Uint8Array
           const decodedWithMap = msgpack.decode(body, {
-            intMode: msgpack.IntMode.AS_ENCODED,
+            intMode: msgpack.IntMode.BIGINT,
             useMap: true,
             rawBinaryStringValues: true,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +45,7 @@ function blockMapToObject(object: Map<any, any>): BlockData {
   const result: { [key: string]: any } = {}
   const decoder = new TextDecoder()
   for (const [key, value] of object) {
-    if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'number')) {
+    if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'bigint')) {
       // State proof transactions have a property `r` with a map with numeric keys that must stay intact
       result[key] = value
     } else if (value instanceof Map) {

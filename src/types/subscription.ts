@@ -36,7 +36,7 @@ export interface BlockMetadata {
   /** The round of the block. */
   round: bigint
   /** Block creation timestamp in seconds since epoch */
-  timestamp: number
+  timestamp: bigint
   /** The genesis ID of the chain. */
   genesisId: string
   /** The base64 genesis hash of the chain. */
@@ -76,13 +76,13 @@ export interface BlockRewards {
   /** The number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round. */
   rewardsCalculationRound: bigint
   /** How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis. */
-  rewardsLevel: number
+  rewardsLevel: bigint
   /** RewardsPool is an address that accepts periodic injections from the fee-sink and continually redistributes them as rewards. */
   rewardsPool: string
   /** Number of new MicroAlgos added to the participation stake from rewards at the next round. */
-  rewardsRate: number
+  rewardsRate: bigint
   /** Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round. */
-  rewardsResidue: number | bigint
+  rewardsResidue: bigint
 }
 
 export interface BlockUpgradeState {
@@ -91,7 +91,7 @@ export interface BlockUpgradeState {
   /** The next proposed protocol version. */
   nextProtocol?: string
   /** Number of blocks which approved the protocol upgrade. */
-  nextProtocolApprovals?: number
+  nextProtocolApprovals?: bigint
   /** Deadline round for this protocol upgrade (No votes will be consider after this round). */
   nextProtocolVoteBefore?: bigint
   /** Round on which the protocol upgrade will take effect. */
@@ -108,7 +108,7 @@ export interface BlockStateProofTracking {
    * (t) The total number of microalgos held by the online accounts during the
    * StateProof round.
    */
-  onlineTotalWeight?: number
+  onlineTotalWeight?: bigint
 
   /**
    * State Proof Type. Note the raw object uses map with this as key.
