@@ -79,7 +79,7 @@ function getBlockInnerTransactions(
   const transactionId =
     rootTransaction.transactionId === parentTransaction.transactionId
       ? `${rootTransaction.transactionId}/inner/${offset}`
-      : `${parentTransaction}/${offset}`
+      : `${parentTransaction.transactionId}/${offset}`
 
   const transaction = {
     blockTransaction,
@@ -298,28 +298,10 @@ function getTxIdFromBlockTransaction(blockTransaction: BlockTransaction, genesis
 }
 
 /**
- * Transforms the given `algosdk.Transaction` object into an indexer transaction.
- *
- * **Note:** Currently the following fields are not supported:
- *  * `auth-addr`
- *  * `close-rewards`
- *  * `global-state-delta`
- *  * `inner-txns`
- *  * `keyreg-transaction`
- *  * `local-state-delta`
- *  * `receiver-rewards`
- *  * `sender-rewards`
- *  * `logs`
- *  * `signature`
- *
- * @param transaction The `algosdk.Transaction` object to transform
- * @param block The block data for the block the transaction belongs to
- * @param blockOffset The offset within the block that the transaction was in
- * @param createdAssetId The ID of the asset that was created if the transaction created an asset
- * @param createdAppId The ID of the app that was created if the transaction created an app
- * @param assetCloseAmount The amount of the asset that was transferred if the transaction had an asset close
- * @param closeAmount The amount of microAlgos that were transferred if the transaction had a close
- * @returns The indexer transaction formation (`TransactionResult`)
+ * Transforms the given TransactionInBlock object into a SubscribedTransaction.
+ * @param t The `TransactionInBlock` object to transform
+ * @param filterName The filter name
+ * @returns The SubscribedTransaction
  */
 export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock, filterName?: string): SubscribedTransaction {
   const {
@@ -347,6 +329,9 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
   if (!transaction.type) {
     throw new Error(`Received no transaction type for transaction ${transaction.txID()}`)
   }
+
+  let parentOffset = 1
+  const getParentOffset = () => parentOffset++
 
   const encoder = new TextEncoder()
 
@@ -549,22 +534,25 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       closingAmount: closeAmount,
       createdApplicationIndex: createdAppId !== undefined ? createdAppId : undefined,
       authAddr: blockTransaction.sgnr ? new algosdk.Address(blockTransaction.sgnr) : undefined,
-      innerTxns: blockTransaction.dt?.itx?.map((ibt) =>
-        getIndexerTransactionFromAlgodTransaction({
+      innerTxns: blockTransaction.dt?.itx?.map((ibt) => {
+        const offset = getParentOffset()
+        const innerTransactionId = transactionId === rootTransactionId ? `${transactionId}/inner/${offset}` : `${transactionId}/${offset}`
+
+        return getIndexerTransactionFromAlgodTransaction({
           blockTransaction: ibt,
           roundIndex: roundIndex,
-          intraRoundOffset: intraRoundOffset,
+          intraRoundOffset: intraRoundOffset + offset,
           ...extractTransactionFromBlockTransaction(ibt, genesisHash, genesisId),
-          transactionId,
-          parentTransactionId,
+          transactionId: innerTransactionId,
+          parentTransactionId: transactionId,
           rootTransactionId,
           rootIntraRoundOffset,
           roundNumber,
           roundTimestamp,
           genesisHash,
           genesisId,
-        }),
-      ),
+        })
+      }),
       ...(blockTransaction.sig || blockTransaction.lsig || blockTransaction.msig
         ? {
             signature: new algosdk.indexerModels.TransactionSignature({

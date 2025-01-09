@@ -28,7 +28,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(indexerTxns.subscribedTransactions.length).toBe(1)
     const txn = indexerTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
-    expect(txn.id).toBe(`${txnId}/inner/5`)
+    expect(txn.id).toBe(`${txnId}/inner/4`)
     expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "applicationTransaction": {
@@ -96,7 +96,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
         ],
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
-        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
+        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
         "innerTxns": [
           {
             "assetTransferTransaction": {
@@ -128,19 +128,21 @@ describe('Complex transaction with many nested inner transactions', () => {
             "confirmedRound": 35214367n,
             "fee": 0n,
             "firstValid": 35214365n,
-            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
+            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4/1",
             "innerTxns": [],
-            "intraRoundOffset": 142,
+            "intraRoundOffset": 148,
             "lastValid": 35214369n,
-            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
             "receiverRewards": 0n,
+            "rootIntraRoundOffset": 142,
+            "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
             "roundTime": 1705252440,
             "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
             "senderRewards": 0n,
             "txType": "axfer",
           },
         ],
-        "intraRoundOffset": 142,
+        "intraRoundOffset": 147,
         "lastValid": 35214369n,
         "logs": [
           "R2hHHwQAAAAAAAYExQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
@@ -149,6 +151,8 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "receiverRewards": 0n,
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundTime": 1705252440,
         "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
         "senderRewards": 0n,
@@ -175,7 +179,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(algodTxns.subscribedTransactions.length).toBe(1)
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
-    expect(txn.id).toBe(`${txnId}/inner/5`)
+    expect(txn.id).toBe(`${txnId}/inner/4`)
     expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "applicationTransaction": {
@@ -236,7 +240,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
         ],
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
-        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
+        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
         "innerTxns": [
           {
             "assetTransferTransaction": {
@@ -266,11 +270,13 @@ describe('Complex transaction with many nested inner transactions', () => {
             "fee": 0n,
             "firstValid": 35214365n,
             "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
+            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4/1",
             "intraRoundOffset": 148,
             "lastValid": 35214369n,
             "note": "",
-            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+            "rootIntraRoundOffset": 142,
+            "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
             "roundTime": 1705252440,
             "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
             "txType": "axfer",
@@ -285,6 +291,8 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "note": "",
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundTime": 1705252440,
         "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
         "txType": "appl",
@@ -352,10 +360,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": undefined,
+        "intraRoundOffset": 142,
         "parentTransactionId": undefined,
+        "rootIntraRoundOffset": undefined,
+        "rootTransactionId": undefined,
         "roundIndex": 46,
-        "roundOffset": 142,
         "transaction": {
           "applicationCall": {
             "accounts": [
@@ -411,10 +420,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 0,
+        "intraRoundOffset": 143,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 143,
         "transaction": {
           "fee": 1000n,
           "firstValid": 35214365n,
@@ -438,10 +448,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 1,
+        "intraRoundOffset": 144,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 144,
         "transaction": {
           "applicationCall": {
             "accounts": [
@@ -485,10 +496,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 2,
-        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "intraRoundOffset": 145,
+        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/2",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 145,
         "transaction": {
           "assetTransfer": {
             "amount": 394437n,
@@ -512,10 +524,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 3,
+        "intraRoundOffset": 146,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 146,
         "transaction": {
           "assetTransfer": {
             "amount": 394437n,
@@ -540,10 +553,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 4,
+        "intraRoundOffset": 147,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 147,
         "transaction": {
           "applicationCall": {
             "accounts": [],
@@ -586,10 +600,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 5,
-        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "intraRoundOffset": 148,
+        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 148,
         "transaction": {
           "assetTransfer": {
             "amount": 536012365n,
@@ -613,10 +628,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 6,
+        "intraRoundOffset": 149,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 149,
         "transaction": {
           "assetTransfer": {
             "amount": 536012365n,
@@ -641,10 +657,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 7,
+        "intraRoundOffset": 150,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 150,
         "transaction": {
           "applicationCall": {
             "accounts": [
@@ -688,10 +705,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 8,
-        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "intraRoundOffset": 151,
+        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 151,
         "transaction": {
           "fee": 0n,
           "firstValid": 35214365n,
@@ -714,10 +732,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         "closeAmount": undefined,
         "createdAppId": undefined,
         "createdAssetId": undefined,
-        "parentOffset": 9,
+        "intraRoundOffset": 152,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
+        "rootIntraRoundOffset": 142,
+        "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundIndex": 46,
-        "roundOffset": 152,
         "transaction": {
           "fee": 1000n,
           "firstValid": 35214365n,
