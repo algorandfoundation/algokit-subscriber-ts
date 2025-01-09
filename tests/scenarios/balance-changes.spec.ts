@@ -177,14 +177,14 @@ describe('Subscribing to calls that effect balance changes', () => {
       subscription.algod.subscribedTransactions[0].balanceChanges?.map((b) => ({
         ...b,
         address: b.address === testAccount.addr.toString() ? 'testAccount' : b.address === random.addr.toString() ? 'random' : b.address,
-        assetId: b.assetId === 0n ? 0 : b.assetId === asset ? 'ASSET' : b.assetId,
+        assetId: b.assetId === 0n ? 0n : b.assetId === asset ? 'ASSET' : b.assetId,
       })),
     ).toMatchInlineSnapshot(`
       [
         {
           "address": "testAccount",
           "amount": -2000n,
-          "assetId": 0,
+          "assetId": 0n,
           "roles": [
             "Sender",
           ],
@@ -211,14 +211,14 @@ describe('Subscribing to calls that effect balance changes', () => {
       subscription.indexer.subscribedTransactions[0].balanceChanges?.map((b) => ({
         ...b,
         address: b.address === testAccount.addr.toString() ? 'testAccount' : b.address === random.addr.toString() ? 'random' : b.address,
-        assetId: b.assetId === 0n ? 0 : b.assetId === asset ? 'ASSET' : b.assetId,
+        assetId: b.assetId === 0n ? 0n : b.assetId === asset ? 'ASSET' : b.assetId,
       })),
     ).toMatchInlineSnapshot(`
       [
         {
           "address": "testAccount",
           "amount": -2000n,
-          "assetId": 0,
+          "assetId": 0n,
           "roles": [
             "Sender",
           ],
