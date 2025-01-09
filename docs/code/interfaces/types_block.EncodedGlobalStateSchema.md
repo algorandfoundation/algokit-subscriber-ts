@@ -21,7 +21,7 @@ appGlobalByteSlices
 
 #### Defined in
 
-[src/types/block.ts:478](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L478)
+[src/types/block.ts:466](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L466)
 
 ___
 
@@ -33,4 +33,4 @@ appGlobalInts
 
 #### Defined in
 
-[src/types/block.ts:474](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L474)
+[src/types/block.ts:462](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L462)

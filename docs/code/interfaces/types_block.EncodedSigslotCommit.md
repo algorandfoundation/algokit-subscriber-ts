@@ -21,7 +21,7 @@ l
 
 #### Defined in
 
-[src/types/block.ts:806](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L806)
+[src/types/block.ts:794](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L794)
 
 ___
 
@@ -33,4 +33,4 @@ sig
 
 #### Defined in
 
-[src/types/block.ts:801](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L801)
+[src/types/block.ts:789](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L789)

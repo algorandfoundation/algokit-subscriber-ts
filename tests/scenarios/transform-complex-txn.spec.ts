@@ -364,7 +364,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": undefined,
         "rootIntraRoundOffset": undefined,
         "rootTransactionId": undefined,
-        "roundIndex": 46,
         "transaction": {
           "applicationCall": {
             "accounts": [
@@ -425,7 +424,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "fee": 1000n,
           "firstValid": 35214365n,
@@ -454,7 +452,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "applicationCall": {
             "accounts": [
@@ -503,7 +500,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/2",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "assetTransfer": {
             "amount": 394437n,
@@ -532,7 +528,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "assetTransfer": {
             "amount": 394437n,
@@ -562,7 +557,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "applicationCall": {
             "accounts": [],
@@ -610,7 +604,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "assetTransfer": {
             "amount": 536012365n,
@@ -639,7 +632,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "assetTransfer": {
             "amount": 536012365n,
@@ -669,7 +661,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "applicationCall": {
             "accounts": [
@@ -718,7 +709,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "fee": 0n,
           "firstValid": 35214365n,
@@ -746,7 +736,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
-        "roundIndex": 46,
         "transaction": {
           "fee": 1000n,
           "firstValid": 35214365n,

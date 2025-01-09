@@ -35,7 +35,7 @@ export function getBlockTransactions(block: Block): TransactionInBlock[] {
   let roundOffset = 0
   const getRoundOffset = () => roundOffset++
 
-  return (block.txns ?? []).flatMap((blockTransaction, roundIndex) => {
+  return (block.txns ?? []).flatMap((blockTransaction) => {
     const rootTransactionData = extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen)
     const rootTransactionId = // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
       rootTransactionData.transaction.type === TransactionType.stpf
@@ -46,7 +46,6 @@ export function getBlockTransactions(block: Block): TransactionInBlock[] {
       blockTransaction,
       transactionId: rootTransactionId,
       intraRoundOffset: getRoundOffset(),
-      roundIndex: roundIndex,
       roundNumber: block.rnd,
       roundTimestamp: block.ts,
       genesisId: block.gen,
@@ -83,7 +82,6 @@ function getBlockInnerTransactions(
 
   const transaction = {
     blockTransaction,
-    roundIndex: rootTransaction.roundIndex,
     roundNumber: block.rnd,
     roundTimestamp: block.ts,
     transactionId,
@@ -316,7 +314,6 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
     parentTransactionId,
     rootIntraRoundOffset,
     rootTransactionId,
-    roundIndex,
     roundNumber,
     roundTimestamp,
     genesisHash,
@@ -540,7 +537,6 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
 
         return getIndexerTransactionFromAlgodTransaction({
           blockTransaction: ibt,
-          roundIndex: roundIndex,
           intraRoundOffset: intraRoundOffset + offset,
           ...extractTransactionFromBlockTransaction(ibt, genesisHash, genesisId),
           transactionId: innerTransactionId,
@@ -633,7 +629,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     // eslint-disable-next-line no-console
-    console.error(`Failed to transform transaction ${transactionId} from block ${roundNumber} with offset ${roundIndex}`)
+    console.error(`Failed to transform transaction ${transactionId} from block ${roundNumber}`)
     throw e
   }
 }

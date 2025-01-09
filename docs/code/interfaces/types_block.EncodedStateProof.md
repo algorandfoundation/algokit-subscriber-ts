@@ -26,7 +26,7 @@ partProofs
 
 #### Defined in
 
-[src/types/block.ts:743](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L743)
+[src/types/block.ts:731](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L731)
 
 ___
 
@@ -38,7 +38,7 @@ sigProofs
 
 #### Defined in
 
-[src/types/block.ts:738](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L738)
+[src/types/block.ts:726](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L726)
 
 ___
 
@@ -50,7 +50,7 @@ sigCommit
 
 #### Defined in
 
-[src/types/block.ts:729](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L729)
+[src/types/block.ts:717](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L717)
 
 ___
 
@@ -62,7 +62,7 @@ positionsToReveal
 
 #### Defined in
 
-[src/types/block.ts:758](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L758)
+[src/types/block.ts:746](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L746)
 
 ___
 
@@ -74,7 +74,7 @@ reveal
 
 #### Defined in
 
-[src/types/block.ts:753](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L753)
+[src/types/block.ts:741](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L741)
 
 ___
 
@@ -86,7 +86,7 @@ merkleSignatureSaltVersion
 
 #### Defined in
 
-[src/types/block.ts:748](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L748)
+[src/types/block.ts:736](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L736)
 
 ___
 
@@ -98,4 +98,4 @@ sigWeight
 
 #### Defined in
 
-[src/types/block.ts:733](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L733)
+[src/types/block.ts:721](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L721)

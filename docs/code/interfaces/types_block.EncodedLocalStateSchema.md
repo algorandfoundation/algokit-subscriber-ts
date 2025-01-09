@@ -21,7 +21,7 @@ appLocalByteSlices
 
 #### Defined in
 
-[src/types/block.ts:468](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L468)
+[src/types/block.ts:456](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L456)
 
 ___
 
@@ -33,4 +33,4 @@ appLocalInts
 
 #### Defined in
 
-[src/types/block.ts:464](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L464)
+[src/types/block.ts:452](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L452)

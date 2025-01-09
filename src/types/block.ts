@@ -354,18 +354,6 @@ export interface TransactionInBlock {
    */
   intraRoundOffset: number
   /**
-   * The index within the block.txns array of this transaction or if it's an inner transaction of it's root transaction.
-   *
-   * @example
-   *  - 0
-   *  - 1
-   *    - 1
-   *    - 1
-   *      - 1
-   *  - 2
-   */
-  roundIndex: number
-  /**
    * The ID of the root transaction if this is an inner transaction.
    */
   rootTransactionId?: string
