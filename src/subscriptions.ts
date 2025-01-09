@@ -678,7 +678,7 @@ function getFilteredIndexerTransactions(
   const getParentOffset = () => parentOffset++
 
   const innerTransactions = getIndexerInnerTransactions(transaction, transaction, transaction.id!, getRootOffset, getParentOffset)
-  const rootTransaction = new SubscribedTransaction({ ...transaction, filtersMatched: [filter.name] })
+  const rootTransaction = new SubscribedTransaction({ ...transaction, innerTxns: innerTransactions, filtersMatched: [filter.name] })
 
   const transactions = [rootTransaction, ...innerTransactions] satisfies SubscribedTransaction[]
 

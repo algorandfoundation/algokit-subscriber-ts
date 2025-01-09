@@ -51,6 +51,7 @@ describe('Complex transaction with many nested inner transactions', () => {
       "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
       "genesisId": "mainnet-v1.0",
       "id": "LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA",
+      "innerTxns": [],
       "intraRoundOffset": 54,
       "keyregTransaction": {
         "nonParticipation": false,

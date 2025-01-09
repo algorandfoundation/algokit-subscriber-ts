@@ -41,6 +41,7 @@ describe('State proof transaction', () => {
         "firstValid": 35600002n,
         "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
         "id": "G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ",
+        "innerTxns": [],
         "intraRoundOffset": 1,
         "lastValid": 35601002n,
         "receiverRewards": 0n,
