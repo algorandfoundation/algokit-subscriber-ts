@@ -713,7 +713,6 @@ function getIndexerInnerTransactions(
       innerTxns: innerTransactions,
     })
 
-    // TODO: add this as breaking change
     return [transaction, ...innerTransactions] satisfies SubscribedTransaction[]
   })
 }
