@@ -131,7 +131,7 @@ export interface BlockUpgradeVote {
   /**
    * (upgradedelay) Indicates the time between acceptance and execution.
    */
-  upgradeDelay?: number | bigint
+  upgradeDelay?: bigint
 
   /**
    * (upgradeprop) Indicates a proposed upgrade.
