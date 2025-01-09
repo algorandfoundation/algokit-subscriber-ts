@@ -28,7 +28,7 @@ ___
 
 ### upgradeDelay
 
-• `Optional` **upgradeDelay**: `number` \| `bigint`
+• `Optional` **upgradeDelay**: `bigint`
 
 (upgradedelay) Indicates the time between acceptance and execution.
 
