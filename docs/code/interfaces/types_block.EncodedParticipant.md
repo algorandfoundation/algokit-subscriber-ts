@@ -21,7 +21,7 @@ pk
 
 #### Defined in
 
-[src/types/block.ts:838](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L838)
+[src/types/block.ts:842](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L842)
 
 ___
 
@@ -33,4 +33,4 @@ weight
 
 #### Defined in
 
-[src/types/block.ts:843](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L843)
+[src/types/block.ts:847](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L847)

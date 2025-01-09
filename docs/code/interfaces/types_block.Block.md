@@ -47,7 +47,7 @@ https://github.com/algorand/go-algorand/blob/master/data/bookkeeping/block.go#L3
 
 ### earn
 
-• **earn**: `number`
+• **earn**: `bigint`
 
 RewardsLevel specifies how many rewards, in MicroAlgos, have
 been distributed to each config.Protocol.RewardUnit of MicroAlgos
@@ -73,7 +73,7 @@ ___
 
 ### frac
 
-• **frac**: `number` \| `bigint`
+• **frac**: `bigint`
 
 The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
 MicroAlgos for every reward unit in the next round.
@@ -110,7 +110,7 @@ ___
 
 ### nextbefore
 
-• `Optional` **nextbefore**: `number`
+• `Optional` **nextbefore**: `bigint`
 
 Deadline round for this protocol upgrade (No votes will be considered after this round).
 
@@ -134,7 +134,7 @@ ___
 
 ### nextswitch
 
-• `Optional` **nextswitch**: `number`
+• `Optional` **nextswitch**: `bigint`
 
 Round on which the protocol upgrade will take effect.
 
@@ -146,7 +146,7 @@ ___
 
 ### nextyes
 
-• `Optional` **nextyes**: `number`
+• `Optional` **nextyes**: `bigint`
 
 Number of blocks which approved the protocol upgrade.
 
@@ -220,7 +220,7 @@ ___
 
 ### rate
 
-• `Optional` **rate**: `number`
+• `Optional` **rate**: `bigint`
 
 The number of new MicroAlgos added to the participation stake from rewards at the next round.
 
@@ -232,7 +232,7 @@ ___
 
 ### rnd
 
-• **rnd**: `number` \| `bigint`
+• **rnd**: `bigint`
 
 Round number.
 
@@ -244,7 +244,7 @@ ___
 
 ### rwcalr
 
-• **rwcalr**: `number`
+• **rwcalr**: `bigint`
 
 The round at which the RewardsRate will be recalculated.
 
@@ -291,7 +291,7 @@ ___
 
 ### tc
 
-• **tc**: `number`
+• **tc**: `bigint`
 
 TxnCounter is the number of the next transaction that will be
 committed after this block.  Genesis blocks can start at either
@@ -305,7 +305,7 @@ ___
 
 ### ts
 
-• **ts**: `number`
+• **ts**: `bigint`
 
 Round time (unix timestamp)
 
@@ -355,7 +355,7 @@ ___
 
 ### upgradedelay
 
-• `Optional` **upgradedelay**: `number`
+• `Optional` **upgradedelay**: `bigint`
 
 UpgradeDelay indicates the time between acceptance and execution
 

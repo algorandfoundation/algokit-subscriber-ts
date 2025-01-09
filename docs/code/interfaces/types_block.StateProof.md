@@ -50,7 +50,7 @@ ___
 
 ### pr
 
-• **pr**: `number`[]
+• **pr**: `bigint`[]
 
 #### Defined in
 
@@ -60,7 +60,7 @@ ___
 
 ### r
 
-• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `number` ; `prf`: `Proof` ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
+• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `bigint`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `bigint` ; `prf`: `Proof` ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
 
 #### Defined in
 
@@ -70,7 +70,7 @@ ___
 
 ### v
 
-• `Optional` **v**: `number`
+• `Optional` **v**: `bigint`
 
 #### Defined in
 

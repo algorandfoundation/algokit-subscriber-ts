@@ -34,7 +34,7 @@ ___
 
 ### thr
 
-• **thr**: `number`
+• **thr**: `bigint`
 
 Multisig threshold
 
@@ -46,7 +46,7 @@ ___
 
 ### v
 
-• **v**: `number`
+• **v**: `bigint`
 
 Multisig version
 

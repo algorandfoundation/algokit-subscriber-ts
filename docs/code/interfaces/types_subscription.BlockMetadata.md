@@ -177,7 +177,7 @@ ___
 
 ### timestamp
 
-• **timestamp**: `number`
+• **timestamp**: `bigint`
 
 Block creation timestamp in seconds since epoch
 

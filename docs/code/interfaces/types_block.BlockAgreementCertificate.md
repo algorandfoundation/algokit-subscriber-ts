@@ -71,7 +71,7 @@ ___
 
 ### rnd
 
-• **rnd**: `number`
+• **rnd**: `bigint`
 
 Round number
 
@@ -83,7 +83,7 @@ ___
 
 ### step
 
-• **step**: `number`
+• **step**: `bigint`
 
 Step represents the current period of the source.
 

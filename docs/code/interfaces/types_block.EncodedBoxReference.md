@@ -15,13 +15,13 @@
 
 ### i
 
-• **i**: `number`
+• **i**: `bigint`
 
 index of the app ID in the foreign apps array
 
 #### Defined in
 
-[src/types/block.ts:480](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L480)
+[src/types/block.ts:484](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L484)
 
 ___
 
@@ -33,4 +33,4 @@ box name
 
 #### Defined in
 
-[src/types/block.ts:484](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L484)
+[src/types/block.ts:488](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L488)

@@ -29,7 +29,7 @@ ___
 
 ### onlineTotalWeight
 
-• `Optional` **onlineTotalWeight**: `number`
+• `Optional` **onlineTotalWeight**: `bigint`
 
 (t) The total number of microalgos held by the online accounts during the
 StateProof round.

@@ -14,10 +14,10 @@
 
 ### t
 
-• **t**: `number`
+• **t**: `bigint`
 
 hash type
 
 #### Defined in
 
-[src/types/block.ts:778](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L778)
+[src/types/block.ts:782](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L782)

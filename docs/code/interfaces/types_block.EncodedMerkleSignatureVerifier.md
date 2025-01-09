@@ -21,7 +21,7 @@ commitment
 
 #### Defined in
 
-[src/types/block.ts:850](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L850)
+[src/types/block.ts:854](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L854)
 
 ___
 
@@ -33,4 +33,4 @@ keyLifetime
 
 #### Defined in
 
-[src/types/block.ts:855](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L855)
+[src/types/block.ts:859](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L859)

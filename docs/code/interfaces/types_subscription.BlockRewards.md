@@ -43,7 +43,7 @@ ___
 
 ### rewardsLevel
 
-• **rewardsLevel**: `number`
+• **rewardsLevel**: `bigint`
 
 How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis.
 
@@ -67,7 +67,7 @@ ___
 
 ### rewardsRate
 
-• **rewardsRate**: `number`
+• **rewardsRate**: `bigint`
 
 Number of new MicroAlgos added to the participation stake from rewards at the next round.
 
@@ -79,7 +79,7 @@ ___
 
 ### rewardsResidue
 
-• **rewardsResidue**: `number` \| `bigint`
+• **rewardsResidue**: `bigint`
 
 Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round.
 

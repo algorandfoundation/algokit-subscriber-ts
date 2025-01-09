@@ -42,7 +42,7 @@ ___
 
 ### nextProtocolApprovals
 
-• `Optional` **nextProtocolApprovals**: `number`
+• `Optional` **nextProtocolApprovals**: `bigint`
 
 Number of blocks which approved the protocol upgrade.
 

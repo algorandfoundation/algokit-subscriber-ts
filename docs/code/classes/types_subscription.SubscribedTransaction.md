@@ -58,6 +58,8 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://develop
 - [paymentTransaction](types_subscription.SubscribedTransaction.md#paymenttransaction)
 - [receiverRewards](types_subscription.SubscribedTransaction.md#receiverrewards)
 - [rekeyTo](types_subscription.SubscribedTransaction.md#rekeyto)
+- [rootIntraRoundOffset](types_subscription.SubscribedTransaction.md#rootintraroundoffset)
+- [rootTransactionId](types_subscription.SubscribedTransaction.md#roottransactionid)
 - [roundTime](types_subscription.SubscribedTransaction.md#roundtime)
 - [sender](types_subscription.SubscribedTransaction.md#sender)
 - [senderRewards](types_subscription.SubscribedTransaction.md#senderrewards)
@@ -97,7 +99,7 @@ algosdk.indexerModels.Transaction.constructor
 
 #### Defined in
 
-[src/types/subscription.ts:175](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L175)
+[src/types/subscription.ts:179](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L179)
 
 ## Properties
 
@@ -127,7 +129,7 @@ Any ARC-28 events emitted from an app call.
 
 #### Defined in
 
-[src/types/subscription.ts:169](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L169)
+[src/types/subscription.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L173)
 
 ___
 
@@ -213,7 +215,7 @@ The balance changes in the transaction.
 
 #### Defined in
 
-[src/types/subscription.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L173)
+[src/types/subscription.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L177)
 
 ___
 
@@ -322,7 +324,7 @@ The names of any filters that matched the given transaction to result in it bein
 
 #### Defined in
 
-[src/types/subscription.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L171)
+[src/types/subscription.ts:175](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L175)
 
 ___
 
@@ -437,7 +439,7 @@ algosdk.indexerModels.Transaction.innerTxns
 
 #### Defined in
 
-[src/types/subscription.ts:167](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L167)
+[src/types/subscription.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L171)
 
 ___
 
@@ -568,7 +570,7 @@ The transaction ID of the parent of this transaction (if it's an inner transacti
 
 #### Defined in
 
-[src/types/subscription.ts:165](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L165)
+[src/types/subscription.ts:169](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L169)
 
 ___
 
@@ -621,6 +623,30 @@ algosdk.indexerModels.Transaction.rekeyTo
 #### Defined in
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2215
+
+___
+
+### rootIntraRoundOffset
+
+• `Optional` **rootIntraRoundOffset**: `number`
+
+The intra-round offset of the root transaction of this transaction (if it's an inner transaction).
+
+#### Defined in
+
+[src/types/subscription.ts:167](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L167)
+
+___
+
+### rootTransactionId
+
+• `Optional` **rootTransactionId**: `string`
+
+The transaction ID of the root transaction of this transaction (if it's an inner transaction).
+
+#### Defined in
+
+[src/types/subscription.ts:165](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L165)
 
 ___
 

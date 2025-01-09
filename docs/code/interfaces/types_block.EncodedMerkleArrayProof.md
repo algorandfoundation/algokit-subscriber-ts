@@ -22,7 +22,7 @@ hash
 
 #### Defined in
 
-[src/types/block.ts:766](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L766)
+[src/types/block.ts:770](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L770)
 
 ___
 
@@ -34,16 +34,16 @@ path
 
 #### Defined in
 
-[src/types/block.ts:761](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L761)
+[src/types/block.ts:765](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L765)
 
 ___
 
 ### td
 
-• **td**: `number`
+• **td**: `bigint`
 
 tree depth
 
 #### Defined in
 
-[src/types/block.ts:771](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L771)
+[src/types/block.ts:775](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L775)

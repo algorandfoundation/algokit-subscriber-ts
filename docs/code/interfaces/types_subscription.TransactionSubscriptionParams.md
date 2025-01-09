@@ -38,7 +38,7 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[src/types/subscription.ts:253](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L253)
+[src/types/subscription.ts:261](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L261)
 
 ___
 
@@ -51,7 +51,7 @@ If not provided, it will be resolved on demand.
 
 #### Defined in
 
-[src/types/subscription.ts:375](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L375)
+[src/types/subscription.ts:383](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L383)
 
 ___
 
@@ -86,7 +86,7 @@ A list of filters with corresponding names.
 
 #### Defined in
 
-[src/types/subscription.ts:251](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L251)
+[src/types/subscription.ts:259](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L259)
 
 ___
 
@@ -109,7 +109,7 @@ boundary based on the number of rounds specified here.
 
 #### Defined in
 
-[src/types/subscription.ts:273](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L273)
+[src/types/subscription.ts:281](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L281)
 
 ___
 
@@ -131,7 +131,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[src/types/subscription.ts:262](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L262)
+[src/types/subscription.ts:270](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L270)
 
 ___
 
@@ -162,7 +162,7 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[src/types/subscription.ts:291](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L291)
+[src/types/subscription.ts:299](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L299)
 
 ___
 
@@ -182,4 +182,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[src/types/subscription.ts:370](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L370)
+[src/types/subscription.ts:378](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L378)

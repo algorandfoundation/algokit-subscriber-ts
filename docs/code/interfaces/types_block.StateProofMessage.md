@@ -38,7 +38,7 @@ ___
 
 ### f
 
-• **f**: `number`
+• **f**: `bigint`
 
 #### Defined in
 
@@ -48,7 +48,7 @@ ___
 
 ### l
 
-• **l**: `number`
+• **l**: `bigint`
 
 #### Defined in
 

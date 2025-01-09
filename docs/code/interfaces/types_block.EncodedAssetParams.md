@@ -32,7 +32,7 @@ assetMetadataHash
 
 #### Defined in
 
-[src/types/block.ts:454](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L454)
+[src/types/block.ts:458](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L458)
 
 ___
 
@@ -44,7 +44,7 @@ assetName
 
 #### Defined in
 
-[src/types/block.ts:442](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L442)
+[src/types/block.ts:446](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L446)
 
 ___
 
@@ -56,7 +56,7 @@ assetURL
 
 #### Defined in
 
-[src/types/block.ts:450](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L450)
+[src/types/block.ts:454](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L454)
 
 ___
 
@@ -68,19 +68,19 @@ assetClawback
 
 #### Defined in
 
-[src/types/block.ts:438](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L438)
+[src/types/block.ts:442](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L442)
 
 ___
 
 ### dc
 
-• **dc**: `number`
+• **dc**: `bigint`
 
 assetDecimals
 
 #### Defined in
 
-[src/types/block.ts:422](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L422)
+[src/types/block.ts:426](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L426)
 
 ___
 
@@ -92,7 +92,7 @@ assetDefaultFrozen
 
 #### Defined in
 
-[src/types/block.ts:418](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L418)
+[src/types/block.ts:422](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L422)
 
 ___
 
@@ -104,7 +104,7 @@ assetFreeze
 
 #### Defined in
 
-[src/types/block.ts:434](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L434)
+[src/types/block.ts:438](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L438)
 
 ___
 
@@ -116,7 +116,7 @@ assetManager
 
 #### Defined in
 
-[src/types/block.ts:426](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L426)
+[src/types/block.ts:430](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L430)
 
 ___
 
@@ -128,19 +128,19 @@ assetReserve
 
 #### Defined in
 
-[src/types/block.ts:430](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L430)
+[src/types/block.ts:434](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L434)
 
 ___
 
 ### t
 
-• **t**: `number`
+• **t**: `bigint`
 
 assetTotal
 
 #### Defined in
 
-[src/types/block.ts:414](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L414)
+[src/types/block.ts:418](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L418)
 
 ___
 
@@ -152,4 +152,4 @@ assetUnitName
 
 #### Defined in
 
-[src/types/block.ts:446](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L446)
+[src/types/block.ts:450](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L450)

@@ -26,7 +26,7 @@ partProofs
 
 #### Defined in
 
-[src/types/block.ts:739](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L739)
+[src/types/block.ts:743](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L743)
 
 ___
 
@@ -38,7 +38,7 @@ sigProofs
 
 #### Defined in
 
-[src/types/block.ts:734](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L734)
+[src/types/block.ts:738](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L738)
 
 ___
 
@@ -50,7 +50,7 @@ sigCommit
 
 #### Defined in
 
-[src/types/block.ts:725](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L725)
+[src/types/block.ts:729](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L729)
 
 ___
 
@@ -62,7 +62,7 @@ positionsToReveal
 
 #### Defined in
 
-[src/types/block.ts:754](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L754)
+[src/types/block.ts:758](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L758)
 
 ___
 
@@ -74,19 +74,19 @@ reveal
 
 #### Defined in
 
-[src/types/block.ts:749](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L749)
+[src/types/block.ts:753](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L753)
 
 ___
 
 ### v
 
-• `Optional` **v**: `number`
+• `Optional` **v**: `bigint`
 
 merkleSignatureSaltVersion
 
 #### Defined in
 
-[src/types/block.ts:744](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L744)
+[src/types/block.ts:748](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L748)
 
 ___
 
@@ -98,4 +98,4 @@ sigWeight
 
 #### Defined in
 
-[src/types/block.ts:729](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L729)
+[src/types/block.ts:733](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L733)

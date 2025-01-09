@@ -31,7 +31,7 @@ https://github.com/algorand/go-algorand/blob/master/data/transactions/signedtxn.
 
 ### aca
 
-• `Optional` **aca**: `number`
+• `Optional` **aca**: `bigint`
 
 Asset closing amount in decimal units
 
@@ -43,7 +43,7 @@ ___
 
 ### apid
 
-• `Optional` **apid**: `number`
+• `Optional` **apid**: `bigint`
 
 App ID when an app is created by the transaction
 
@@ -55,7 +55,7 @@ ___
 
 ### ca
 
-• `Optional` **ca**: `number`
+• `Optional` **ca**: `bigint`
 
 Algo closing amount in microAlgos
 
@@ -67,7 +67,7 @@ ___
 
 ### caid
 
-• `Optional` **caid**: `number`
+• `Optional` **caid**: `bigint`
 
 Asset ID when an asset is created by the transaction
 

@@ -16,7 +16,7 @@
 
 ### n
 
-• `Optional` **n**: `number`
+• `Optional` **n**: `bigint`
 
 StateProofNextRound is the next round for which we will accept a StateProof transaction.
 
@@ -28,7 +28,7 @@ ___
 
 ### t
 
-• `Optional` **t**: `number`
+• `Optional` **t**: `bigint`
 
 StateProofOnlineTotalWeight is the total number of microalgos held by the online accounts
 during the StateProof round (or zero, if the merkle root is zero - no commitment for StateProof voters).

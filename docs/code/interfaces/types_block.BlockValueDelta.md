@@ -18,7 +18,7 @@ A value delta as a result of a block transaction
 
 ### at
 
-• **at**: `number`
+• **at**: `bigint`
 
 DeltaAction is an enum of actions that may be performed when applying a delta to a TEAL key/value store:
   * `1`: SetBytesAction indicates that a TEAL byte slice should be stored at a key
@@ -45,7 +45,7 @@ ___
 
 ### ui
 
-• `Optional` **ui**: `number`
+• `Optional` **ui**: `bigint`
 
 Uint64 value
 

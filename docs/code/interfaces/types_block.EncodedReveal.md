@@ -21,7 +21,7 @@ participant
 
 #### Defined in
 
-[src/types/block.ts:790](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L790)
+[src/types/block.ts:794](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L794)
 
 ___
 
@@ -33,4 +33,4 @@ sigslot
 
 #### Defined in
 
-[src/types/block.ts:785](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L785)
+[src/types/block.ts:789](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L789)

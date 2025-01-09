@@ -15,22 +15,22 @@
 
 ### nbs
 
-• **nbs**: `number`
+• **nbs**: `bigint`
 
 appLocalByteSlices
 
 #### Defined in
 
-[src/types/block.ts:464](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L464)
+[src/types/block.ts:468](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L468)
 
 ___
 
 ### nui
 
-• **nui**: `number`
+• **nui**: `bigint`
 
 appLocalInts
 
 #### Defined in
 
-[src/types/block.ts:460](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L460)
+[src/types/block.ts:464](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L464)
