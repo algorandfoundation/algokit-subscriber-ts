@@ -339,7 +339,6 @@ export interface TransactionInBlock {
    * @example
    *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA if it's a root transaction
    *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1 if it's an inner transaction
-   *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1/2 if it's an inner inner transaction
    */
   transactionId: string
   /** The offset of the transaction within the round including inner transactions.

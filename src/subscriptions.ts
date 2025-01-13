@@ -674,10 +674,7 @@ function getFilteredIndexerTransactions(
   let rootOffset = 0
   const getRootOffset = () => rootOffset++
 
-  let parentOffset = 0
-  const getParentOffset = () => parentOffset++
-
-  const innerTransactions = getIndexerInnerTransactions(transaction, transaction, transaction.id!, getRootOffset, getParentOffset)
+  const innerTransactions = getIndexerInnerTransactions(transaction, transaction, transaction.id!, getRootOffset)
   const rootTransaction = new SubscribedTransaction({ ...transaction, innerTxns: innerTransactions, filtersMatched: [filter.name] })
 
   const transactions = [rootTransaction, ...innerTransactions] satisfies SubscribedTransaction[]
@@ -691,17 +688,13 @@ function getIndexerInnerTransactions(
   parent: algosdk.indexerModels.Transaction,
   parentTransactionId: string,
   getRootOffset: () => number,
-  getParentOffset: () => number,
 ): SubscribedTransaction[] {
   return (parent.innerTxns ?? []).flatMap((t) => {
-    const offset = getParentOffset() + 1
-    const transactionId = root.id === parentTransactionId ? `${root.id}/inner/${offset}` : `${parentTransactionId}/${offset}`
-    const intraRoundOffset = root.intraRoundOffset! + getRootOffset() + 1
+    const rootOffset = getRootOffset() + 1
+    const intraRoundOffset = root.intraRoundOffset! + rootOffset
+    const transactionId = `${root.id}/inner/${rootOffset}`
 
-    let innerParentOffset = 0
-    const getInnerParentOffset = () => innerParentOffset++
-
-    const innerTransactions = getIndexerInnerTransactions(root, t, transactionId, getRootOffset, getInnerParentOffset)
+    const innerTransactions = getIndexerInnerTransactions(root, t, transactionId, getRootOffset)
 
     const transaction = new SubscribedTransaction({
       ...t,

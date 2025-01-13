@@ -28,7 +28,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(indexerTxns.subscribedTransactions.length).toBe(1)
     const txn = indexerTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
-    expect(txn.id).toBe(`${txnId}/inner/4`)
+    expect(txn.id).toBe(`${txnId}/inner/5`)
     expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "applicationTransaction": {
@@ -96,7 +96,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
         ],
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
-        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "innerTxns": [
           {
             "assetTransferTransaction": {
@@ -128,11 +128,11 @@ describe('Complex transaction with many nested inner transactions', () => {
             "confirmedRound": 35214367n,
             "fee": 0n,
             "firstValid": 35214365n,
-            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4/1",
+            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
             "innerTxns": [],
             "intraRoundOffset": 148,
             "lastValid": 35214369n,
-            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
             "receiverRewards": 0n,
             "rootIntraRoundOffset": 142,
             "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
@@ -179,7 +179,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(algodTxns.subscribedTransactions.length).toBe(1)
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5
-    expect(txn.id).toBe(`${txnId}/inner/4`)
+    expect(txn.id).toBe(`${txnId}/inner/5`)
     expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "applicationTransaction": {
@@ -240,7 +240,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
         ],
         "group": "6ZssGapPFZ+DyccRludq0YjZigi05/FSeUAOFNDGGlo=",
-        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+        "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "innerTxns": [
           {
             "assetTransferTransaction": {
@@ -270,11 +270,11 @@ describe('Complex transaction with many nested inner transactions', () => {
             "fee": 0n,
             "firstValid": 35214365n,
             "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4/1",
+            "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
             "intraRoundOffset": 148,
             "lastValid": 35214369n,
             "note": "",
-            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+            "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
             "rootIntraRoundOffset": 142,
             "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
             "roundTime": 1705252440,
@@ -513,7 +513,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "QDNLKZLNM6ZUD4ZI24RSY6O4QHWF3RHDQIYDV7S5AAHKFZSV2MSSULCE4U",
           "type": "axfer",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/2/1",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/3",
       }
     `)
 
@@ -542,7 +542,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "axfer",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/3",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
       }
     `)
 
@@ -589,7 +589,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "appl",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
       }
     `)
 
@@ -601,7 +601,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "createdAppId": undefined,
         "createdAssetId": undefined,
         "intraRoundOffset": 148,
-        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
+        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
@@ -617,7 +617,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
           "type": "axfer",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4/1",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
       }
     `)
 
@@ -646,7 +646,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "axfer",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/7",
       }
     `)
 
@@ -694,7 +694,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "appl",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/8",
       }
     `)
 
@@ -706,7 +706,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "createdAppId": undefined,
         "createdAssetId": undefined,
         "intraRoundOffset": 151,
-        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
+        "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/8",
         "rootIntraRoundOffset": 142,
         "rootTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
@@ -721,7 +721,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
           "type": "pay",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6/1",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/9",
       }
     `)
 
@@ -749,7 +749,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "pay",
         },
-        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/7",
+        "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/10",
       }
     `)
   })

@@ -75,10 +75,7 @@ function getBlockInnerTransactions(
 ): TransactionInBlock[] {
   const transactionData = extractTransactionFromBlockTransaction(blockTransaction, Buffer.from(block.gh), block.gen)
   const offset = getParentOffset() + 1
-  const transactionId =
-    rootTransaction.transactionId === parentTransaction.transactionId
-      ? `${rootTransaction.transactionId}/inner/${offset}`
-      : `${parentTransaction.transactionId}/${offset}`
+  const transactionId = `${rootTransaction.transactionId}/inner/${offset}`
 
   const transaction = {
     blockTransaction,
@@ -94,13 +91,10 @@ function getBlockInnerTransactions(
     ...transactionData,
   } satisfies TransactionInBlock
 
-  let parentOffset = 0
-  const getInnerParentOffset = () => parentOffset++
-
   return [
     transaction,
     ...(blockTransaction.dt?.itx ?? []).flatMap((innerInnerTransaction) =>
-      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, transaction, getRoundOffset, getInnerParentOffset),
+      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, transaction, getRoundOffset, getParentOffset),
     ),
   ]
 }
@@ -533,11 +527,12 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       authAddr: blockTransaction.sgnr ? new algosdk.Address(blockTransaction.sgnr) : undefined,
       innerTxns: blockTransaction.dt?.itx?.map((ibt) => {
         const offset = getParentOffset()
-        const innerTransactionId = transactionId === rootTransactionId ? `${transactionId}/inner/${offset}` : `${transactionId}/${offset}`
+        const childIntraRoundOffset = intraRoundOffset + offset
+        const innerTransactionId = `${rootTransactionId}/inner/${childIntraRoundOffset - (rootIntraRoundOffset ?? intraRoundOffset)}`
 
         return getIndexerTransactionFromAlgodTransaction({
           blockTransaction: ibt,
-          intraRoundOffset: intraRoundOffset + offset,
+          intraRoundOffset: childIntraRoundOffset,
           ...extractTransactionFromBlockTransaction(ibt, genesisHash, genesisId),
           transactionId: innerTransactionId,
           parentTransactionId: transactionId,
