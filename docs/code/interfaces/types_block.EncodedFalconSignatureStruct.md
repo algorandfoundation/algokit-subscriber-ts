@@ -23,7 +23,7 @@ vectorCommitmentIndex
 
 #### Defined in
 
-[src/types/block.ts:806](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L806)
+[src/types/block.ts:805](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L805)
 
 ___
 
@@ -35,7 +35,7 @@ proof
 
 #### Defined in
 
-[src/types/block.ts:811](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L811)
+[src/types/block.ts:810](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L810)
 
 ___
 
@@ -47,7 +47,7 @@ signature
 
 #### Defined in
 
-[src/types/block.ts:801](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L801)
+[src/types/block.ts:800](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L800)
 
 ___
 
@@ -59,4 +59,4 @@ verifyingKey
 
 #### Defined in
 
-[src/types/block.ts:816](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L816)
+[src/types/block.ts:815](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L815)

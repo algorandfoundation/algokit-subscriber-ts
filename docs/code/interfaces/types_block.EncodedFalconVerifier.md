@@ -20,4 +20,4 @@ public key
 
 #### Defined in
 
-[src/types/block.ts:823](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L823)
+[src/types/block.ts:822](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L822)

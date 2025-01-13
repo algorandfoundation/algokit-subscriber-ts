@@ -24,7 +24,7 @@ lnProvenWeight
 
 #### Defined in
 
-[src/types/block.ts:864](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L864)
+[src/types/block.ts:863](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L863)
 
 ___
 
@@ -36,7 +36,7 @@ blockHeadersCommitment
 
 #### Defined in
 
-[src/types/block.ts:854](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L854)
+[src/types/block.ts:853](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L853)
 
 ___
 
@@ -48,7 +48,7 @@ firstAttestedRound
 
 #### Defined in
 
-[src/types/block.ts:869](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L869)
+[src/types/block.ts:868](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L868)
 
 ___
 
@@ -60,7 +60,7 @@ lastAttestedRound
 
 #### Defined in
 
-[src/types/block.ts:874](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L874)
+[src/types/block.ts:873](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L873)
 
 ___
 
@@ -72,4 +72,4 @@ votersCommitment
 
 #### Defined in
 
-[src/types/block.ts:859](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L859)
+[src/types/block.ts:858](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L858)
