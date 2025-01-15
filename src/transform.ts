@@ -1,6 +1,9 @@
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
-import algosdk, { SignedTxnWithAD } from 'algosdk'
+import * as msgpack from 'algorand-msgpack'
+import algosdk, { Address, SignedTxnWithAD, UntypedValue } from 'algosdk'
 import { Buffer } from 'buffer'
+import base32 from 'hi-base32'
+import sha512 from 'js-sha512'
 import type { TransactionInBlock } from './types/block'
 import { BalanceChange, BalanceChangeRole, BlockMetadata, SubscribedTransaction } from './types/subscription'
 import OnApplicationComplete = algosdk.OnApplicationComplete
@@ -29,23 +32,23 @@ function removeNulls(obj: any) {
  * @returns An array of processed transactions from the block
  */
 export function getBlockTransactions(blockResponse: algosdk.modelsv2.BlockResponse): TransactionInBlock[] {
-  const genesisHash = Buffer.from(blockResponse.block.header.genesisHash)
-  const genesisId = blockResponse.block.header.genesisID
-
   const block = blockResponse.block
 
   let roundOffset = 0
   const getRoundOffset = () => roundOffset++
 
   return (block.payset ?? []).flatMap((signedTransactionInBlock) => {
+    // FAILED: this spike failed here, signedTransactionInBlock.hasGenesisHash and signedTransactionInBlock.hasGenesisID are calculated wrong from algosdk
+    const genesisHash = Buffer.from(blockResponse.block.header.genesisHash)
+    const genesisId = signedTransactionInBlock.hasGenesisID ? blockResponse.block.header.genesisID : undefined
+
     const rootTransactionData = extractTransactionDataFromSignedTxnInBlock(signedTransactionInBlock.signedTxn, genesisHash, genesisId)
 
-    // TODO: PD - fix
-    // // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
-    // const txn = signedTransactionInBlock.signedTxn.signedTxn.txn
-    // // txn['stateProof'] = undefined
-    // txn['genesisHash'] = Buffer.from(block.header.genesisHash)
-    // txn['genesisID'] = block.header.genesisID
+    // There is a bug in algosdk that means it can't calculate transaction IDs for stpf txns
+    // const rootTransactionId =
+    //   rootTransactionData.transaction.type === TransactionType.stpf
+    //     ? getTxIdFromBlockTransaction(rootTransactionData.transaction)
+    //     : rootTransactionData.transaction.txID()
 
     const rootTransactionId = rootTransactionData.transaction.txID()
 
@@ -66,7 +69,7 @@ export function getBlockTransactions(blockResponse: algosdk.modelsv2.BlockRespon
     return [
       rootTransaction,
       ...(signedTransactionInBlock.signedTxn.applyData.evalDelta?.innerTxns ?? []).flatMap((innerTransaction) =>
-        getBlockInnerTransactions(innerTransaction, block, rootTransaction, rootTransaction, getRoundOffset, getParentOffset),
+        getBlockInnerTransactions(innerTransaction, block, rootTransaction, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
       ),
     ]
   })
@@ -79,11 +82,9 @@ function getBlockInnerTransactions(
   parentTransaction: TransactionInBlock,
   getRoundOffset: () => number,
   getParentOffset: () => number,
+  genesisHash?: Buffer,
 ): TransactionInBlock[] {
-  const genesisHash = Buffer.from(block.header.genesisHash)
-  const genesisId = block.header.genesisID
-
-  const transactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD, genesisHash, genesisId)
+  const transactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD, genesisHash)
   const offset = getParentOffset() + 1
   const transactionId = `${rootTransaction.transactionId}/inner/${offset}`
 
@@ -92,7 +93,6 @@ function getBlockInnerTransactions(
     roundNumber: block.header.round,
     roundTimestamp: block.header.timestamp,
     transactionId,
-    genesisId,
     genesisHash,
     intraRoundOffset: getRoundOffset(),
     rootTransactionId: rootTransaction.transactionId,
@@ -104,7 +104,7 @@ function getBlockInnerTransactions(
   return [
     transaction,
     ...(signedTxnWithAD.applyData.evalDelta?.innerTxns ?? []).flatMap((innerInnerTransaction) =>
-      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, transaction, getRoundOffset, getParentOffset),
+      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, transaction, getRoundOffset, getParentOffset, genesisHash),
     ),
   ]
 }
@@ -117,8 +117,8 @@ function getBlockInnerTransactions(
  */
 function extractTransactionDataFromSignedTxnInBlock(
   signedTxnWithAD: algosdk.SignedTxnWithAD,
-  genesisHash: Buffer,
-  genesisId: string,
+  genesisHash?: Buffer,
+  genesisId?: string,
 ): {
   transaction: Transaction
   createdAssetId?: bigint
@@ -128,9 +128,22 @@ function extractTransactionDataFromSignedTxnInBlock(
   logs?: Uint8Array[]
 } {
   // Normalise the transaction
-  const txnMap = signedTxnWithAD.signedTxn.txn.toEncodingData()
-  txnMap.set('gh', genesisHash)
-  txnMap.set('gen', genesisId)
+  const rawTxn = signedTxnWithAD.signedTxn.txn
+  const txnMap = rawTxn.toEncodingData()
+
+  if (genesisHash) {
+    txnMap.set('gh', genesisHash)
+  }
+  if (genesisId) {
+    txnMap.set('gen', genesisId)
+  }
+  if (rawTxn.type === TransactionType.axfer && !rawTxn.assetTransfer?.receiver) {
+    txnMap.set('arcv', Address.fromString(ALGORAND_ZERO_ADDRESS))
+  }
+  if (rawTxn.type === TransactionType.pay && !rawTxn.payment?.receiver) {
+    txnMap.set('rcv', Address.fromString(ALGORAND_ZERO_ADDRESS))
+  }
+
   const txn = algosdk.Transaction.fromEncodingData(txnMap)
 
   return {
@@ -177,55 +190,13 @@ function concatArrays(...arrs: ArrayLike<number>[]) {
   return c
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const convertEncodedTransactionDataToMap = (object: Record<string, any>): Map<string, unknown> => {
-  return new Map(
-    Object.entries(object).map(([key, value]) => {
-      if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'bigint')) {
-        return [key, value]
-      }
-      if (value instanceof Uint8Array) {
-        if (
-          ['snd', 'close', 'aclose', 'rekey', 'rcv', 'arcv', 'fadd', 'asnd', 'm', 'r', 'f', 'c', 'prp'].includes(key) &&
-          value.length === 32
-        ) {
-          // fromEncodingData expects Address type
-          return [key, new algosdk.Address(value)]
-        }
-        return [key, value]
-      }
-      if (Array.isArray(value)) {
-        return [
-          key,
-          value.map((v) => {
-            if (v instanceof Uint8Array) {
-              if (key === 'apat' && v.length === 32) {
-                return new algosdk.Address(v)
-              }
-              return v
-            }
-            if (typeof v === 'object' && v != null) {
-              return new Map(Object.entries(v))
-            }
-            return v
-          }),
-        ]
-      }
-      if (typeof value === 'object' && value != null) {
-        return [key, convertEncodedTransactionDataToMap(value)]
-      }
-      return [key, value]
-    }),
-  )
-}
-
-function getTxIdFromBlockTransaction(signedTxnWithAD: algosdk.SignedTxnWithAD, genesisHash: Buffer, genesisId: string): string {
-  const txnMap = signedTxnWithAD.signedTxn.txn.toEncodingData()
-  txnMap.set('gh', genesisHash)
-  txnMap.set('gen', genesisId)
-  // txnMap.set('sp', undefined)
-  const txn = algosdk.Transaction.fromEncodingData(txnMap)
-  return txn.txID()
+function getTxIdFromBlockTransaction(transaction: algosdk.Transaction): string {
+  const ALGORAND_TRANSACTION_LENGTH = 52
+  const encodedMessage = msgpack.encode(transaction, { sortKeys: true, ignoreUndefined: true })
+  const tag = Buffer.from('TX')
+  const gh = Buffer.from(concatArrays(tag, encodedMessage))
+  const rawTxId = Buffer.from(sha512.sha512_256.array(gh))
+  return base32.encode(rawTxId).slice(0, ALGORAND_TRANSACTION_LENGTH)
 }
 
 /**
@@ -308,8 +279,16 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                     clawback: transaction.assetConfig.clawback?.toString(),
                     freeze: transaction.assetConfig.freeze?.toString(),
                   })
-                : // TODO: PD - confirm asset edit / delete
-                  transaction.assetConfig
+                : // In algosdk, transaction.assetConfig is always defined, even if it's an asset destroy transaction
+                  // If any field is truthy, it's an asset update, otherwise, it's an asset destroy
+                  transaction.assetConfig.manager ||
+                    transaction.assetConfig.reserve ||
+                    transaction.assetConfig.clawback ||
+                    transaction.assetConfig.freeze ||
+                    transaction.assetConfig.unitName ||
+                    transaction.assetConfig.assetName ||
+                    transaction.assetConfig.assetURL ||
+                    transaction.assetConfig.assetMetadataHash
                   ? new algosdk.indexerModels.AssetParams({
                       manager: transaction.assetConfig.manager?.toString(),
                       reserve: transaction.assetConfig.reserve?.toString(),
@@ -473,7 +452,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
         return getIndexerTransactionFromAlgodTransaction({
           signedTxnWithAD: innerTxn,
           intraRoundOffset: childIntraRoundOffset,
-          ...extractTransactionDataFromSignedTxnInBlock(innerTxn),
+          ...extractTransactionDataFromSignedTxnInBlock(innerTxn, genesisHash, genesisId),
           transactionId: innerTransactionId,
           parentTransactionId: transactionId,
           rootTransactionId,
@@ -583,6 +562,26 @@ function algodMerkleArrayProofToIndexerMerkleArrayProof(proof: algosdk.MerkleArr
   })
 }
 
+function getHashFromBlockCert(cert: UntypedValue | undefined): string | undefined {
+  if (!cert) {
+    return undefined
+  }
+  if (!(cert.data instanceof Map)) {
+    return undefined
+  }
+  const prop = cert.data.get('prop')
+  if (!(prop instanceof Map)) {
+    return undefined
+  }
+
+  const dig = prop.get('dig')
+  if (!(dig instanceof Uint8Array)) {
+    return undefined
+  }
+
+  return Buffer.from(dig).toString('base64')
+}
+
 /**
  * Extract key metadata from a block.
  * @param blockResponse The block response from algod
@@ -592,7 +591,7 @@ export function blockDataToBlockMetadata(blockResponse: algosdk.modelsv2.BlockRe
   const { block, cert } = blockResponse
   return {
     round: block.header.round,
-    hash: (cert as any)?.prop?.dig ? Buffer.from((cert as any).prop.dig).toString('base64') : undefined,
+    hash: getHashFromBlockCert(cert),
     timestamp: block.header.timestamp,
     genesisId: block.header.genesisID,
     genesisHash: Buffer.from(block.header.genesisHash).toString('base64'),

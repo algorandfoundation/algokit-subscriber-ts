@@ -365,9 +365,9 @@ export interface TransactionInBlock {
    */
   parentTransactionId?: string
   /** The binary genesis hash of the network the transaction is within. */
-  genesisHash: Buffer
+  genesisHash?: Buffer
   /** The string genesis ID of the network the transaction is within. */
-  genesisId: string
+  genesisId?: string
   /** The round number of the block the transaction is within. */
   roundNumber: bigint
   /** The round unix timestamp of the block the transaction is within. */

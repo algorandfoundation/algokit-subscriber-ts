@@ -24,7 +24,6 @@ export async function getBlocksBulk(context: { startRound: bigint; maxRound: big
           const body = response.body as Uint8Array
           const blockResponse = algosdk.decodeMsgpack<algosdk.modelsv2.BlockResponse>(body, algosdk.modelsv2.BlockResponse)
 
-          const foo = blockResponse.block.payset[0].signedTxn.signedTxn.txn.txID()
           return blockResponse
           // const decodedWithMap = msgpack.decode(body, {
           //   intMode: msgpack.IntMode.BIGINT,
