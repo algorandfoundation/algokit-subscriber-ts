@@ -348,7 +348,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
     const intraRoundOffset = txn.transaction.intraRoundOffset!
 
-    const transformed = getBlockTransactions(b.block)
+    const transformed = getBlockTransactions(b)
 
     const receivedTxn = transformed[intraRoundOffset]
     expect(receivedTxn.transaction.txID()).toBe(txnId)
@@ -756,7 +756,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Transforms axfer without an arcv address', async () => {
     const blocks = await getBlocksBulk({ startRound: 39373576n, maxRound: 39373576n }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(30)
     expect(blockTransactions[5].transaction.assetTransfer?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
@@ -764,7 +764,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Transforms pay without a rcv address', async () => {
     const blocks = await getBlocksBulk({ startRound: 39723800n, maxRound: 39723800n }, algorand.client.algod) // Contains a pay close account inner transaction without a rcv address
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(486)
     expect(blockTransactions[371].transaction.payment?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
@@ -772,7 +772,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces the correct txID for a non hgi transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 39430981n, maxRound: 39430981n }, algorand.client.algod)
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
@@ -781,7 +781,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces the correct state deltas in an app call transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 39430981n, maxRound: 39430981n }, algorand.client.algod)
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[9])
     const transactionForDiff = getSubscribedTransactionForDiff(transaction)
@@ -830,7 +830,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces base64 encoded programs for an application create transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 34632059n, maxRound: 34632059n }, algorand.client.algod) // Contains a appl create transaction with approval and clear state programs
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(14)
 
@@ -845,7 +845,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces the correct state deltas in an application call transaction with r key', async () => {
     const blocks = await getBlocksBulk({ startRound: 45172924n, maxRound: 45172924n }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
     const txn = blockTransactions[4]
 
     const transaction = getIndexerTransactionFromAlgodTransaction(txn)
