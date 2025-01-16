@@ -484,6 +484,41 @@ export function getIndexerTransactionFromAlgodTransaction(
             },
           }
         : undefined),
+      ...(transaction.type === TransactionType.hb && transaction.heartbeatFields
+        ? {
+            'heartbeat-transaction': {
+              'hb-address':
+                typeof transaction.heartbeatFields.a === 'string'
+                  ? transaction.heartbeatFields.a
+                  : algosdk.encodeAddress(transaction.heartbeatFields.a.publicKey),
+              'hb-key-dilution': transaction.heartbeatFields.kd,
+              'hb-proof': {
+                'hb-pk':
+                  transaction.heartbeatFields.prf.p && transaction.heartbeatFields.prf.p.length
+                    ? Buffer.from(transaction.heartbeatFields.prf.p).toString('base64')
+                    : undefined,
+                'hb-pk1sig':
+                  transaction.heartbeatFields.prf.p1s && transaction.heartbeatFields.prf.p1s.length
+                    ? Buffer.from(transaction.heartbeatFields.prf.p1s).toString('base64')
+                    : undefined,
+                'hb-pk2':
+                  transaction.heartbeatFields.prf.p2 && transaction.heartbeatFields.prf.p2.length
+                    ? Buffer.from(transaction.heartbeatFields.prf.p2).toString('base64')
+                    : undefined,
+                'hb-pk2sig':
+                  transaction.heartbeatFields.prf.p2s && transaction.heartbeatFields.prf.p2s.length
+                    ? Buffer.from(transaction.heartbeatFields.prf.p2s).toString('base64')
+                    : undefined,
+                'hb-sig':
+                  transaction.heartbeatFields.prf.s && transaction.heartbeatFields.prf.s.length
+                    ? Buffer.from(transaction.heartbeatFields.prf.s).toString('base64')
+                    : undefined,
+              },
+              'hb-seed': Buffer.from(transaction.heartbeatFields.sd).toString('base64'),
+              'hb-vote-id': Buffer.from(transaction.heartbeatFields.vid).toString('base64'),
+            },
+          }
+        : undefined),
       'first-valid': transaction.firstRound,
       'last-valid': transaction.lastRound,
       'tx-type': transaction.type,
