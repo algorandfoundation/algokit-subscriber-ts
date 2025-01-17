@@ -18,13 +18,153 @@ import {
   ResolveAppClientByNetwork,
   CloneAppClientParams,
 } from '@algorandfoundation/algokit-utils/types/app-client'
-import { AppFactory as _AppFactory, AppFactoryAppClientParams, AppFactoryResolveAppClientByCreatorAndNameParams, AppFactoryDeployParams, AppFactoryParams, CreateSchema } from '@algorandfoundation/algokit-utils/types/app-factory'
-import { TransactionComposer, AppCallMethodCall, AppMethodCallTransactionArgument, SimulateOptions } from '@algorandfoundation/algokit-utils/types/composer'
-import { SendParams, SendSingleTransactionResult, SendAtomicTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
+import {
+  AppFactory as _AppFactory,
+  AppFactoryAppClientParams,
+  AppFactoryResolveAppClientByCreatorAndNameParams,
+  AppFactoryDeployParams,
+  AppFactoryParams,
+  CreateSchema,
+} from '@algorandfoundation/algokit-utils/types/app-factory'
+import {
+  TransactionComposer,
+  AppCallMethodCall,
+  AppMethodCallTransactionArgument,
+  SimulateOptions,
+  RawSimulateOptions,
+  SkipSignaturesSimulateOptions,
+} from '@algorandfoundation/algokit-utils/types/composer'
+import {
+  SendParams,
+  SendSingleTransactionResult,
+  SendAtomicTransactionComposerResults,
+} from '@algorandfoundation/algokit-utils/types/transaction'
 import { Address, encodeAddress, modelsv2, OnApplicationComplete, Transaction, TransactionSigner } from 'algosdk'
 import SimulateResponse = modelsv2.SimulateResponse
 
-export const APP_SPEC: Arc56Contract = {"arcs":[],"name":"TestingApp","structs":{},"methods":[{"name":"call_abi","args":[{"name":"value","type":"string"}],"returns":{"type":"string"},"events":[],"readonly":true,"actions":{"create":[],"call":["NoOp"]}},{"name":"call_abi_foreign_refs","args":[],"returns":{"type":"string"},"events":[],"readonly":true,"actions":{"create":[],"call":["NoOp"]}},{"name":"set_global","args":[{"name":"int1","type":"uint64"},{"name":"int2","type":"uint64"},{"name":"bytes1","type":"string"},{"name":"bytes2","type":"byte[4]"}],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}},{"name":"set_local","args":[{"name":"int1","type":"uint64"},{"name":"int2","type":"uint64"},{"name":"bytes1","type":"string"},{"name":"bytes2","type":"byte[4]"}],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}},{"name":"issue_transfer_to_sender","args":[{"name":"amount","type":"uint64"}],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}},{"name":"set_box","args":[{"name":"name","type":"byte[4]"},{"name":"value","type":"string"}],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}},{"name":"error","args":[],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}},{"name":"opt_in","args":[],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["OptIn"]}},{"name":"emitSwapped","args":[{"name":"a","type":"uint64"},{"name":"b","type":"uint64"}],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}},{"name":"emitSwappedTwice","args":[{"name":"a","type":"uint64"},{"name":"b","type":"uint64"}],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}},{"name":"emitComplex","args":[{"name":"a","type":"uint64"},{"name":"b","type":"uint64"},{"name":"array","type":"uint32[]"}],"returns":{"type":"void"},"events":[],"actions":{"create":[],"call":["NoOp"]}}],"state":{"schema":{"global":{"ints":3,"bytes":2},"local":{"ints":2,"bytes":2}},"keys":{"global":{"bytes1":{"key":"Ynl0ZXMx","keyType":"AVMString","valueType":"AVMBytes","desc":""},"bytes2":{"key":"Ynl0ZXMy","keyType":"AVMString","valueType":"AVMBytes","desc":""},"int1":{"key":"aW50MQ==","keyType":"AVMString","valueType":"AVMUint64","desc":""},"int2":{"key":"aW50Mg==","keyType":"AVMString","valueType":"AVMUint64","desc":""},"value":{"key":"dmFsdWU=","keyType":"AVMString","valueType":"AVMUint64","desc":""}},"local":{"local_bytes1":{"key":"bG9jYWxfYnl0ZXMx","keyType":"AVMString","valueType":"AVMBytes","desc":""},"local_bytes2":{"key":"bG9jYWxfYnl0ZXMy","keyType":"AVMString","valueType":"AVMBytes","desc":""},"local_int1":{"key":"bG9jYWxfaW50MQ==","keyType":"AVMString","valueType":"AVMUint64","desc":""},"local_int2":{"key":"bG9jYWxfaW50Mg==","keyType":"AVMString","valueType":"AVMUint64","desc":""}},"box":{}},"maps":{"global":{},"local":{},"box":{}}},"source":{"approval":"I3ByYWdtYSB2ZXJzaW9uIDgKaW50Y2Jsb2NrIDAgMSAxMApieXRlY2Jsb2NrIDB4IDB4MWNjYmQ5MjUgMHgxNTFmN2M3NQp0eG4gTnVtQXBwQXJncwppbnRjXzAgLy8gMAo9PQpibnogbWFpbl9sMjQKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhmMTdlODBhNSAvLyAiY2FsbF9hYmkoc3RyaW5nKXN0cmluZyIKPT0KYm56IG1haW5fbDIzCnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQ3NTYwMmMgLy8gImNhbGxfYWJpX2ZvcmVpZ25fcmVmcygpc3RyaW5nIgo9PQpibnogbWFpbl9sMjIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGNmOGRlYSAvLyAic2V0X2dsb2JhbCh1aW50NjQsdWludDY0LHN0cmluZyxieXRlWzRdKXZvaWQiCj09CmJueiBtYWluX2wyMQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGNlYzI4MzRhIC8vICJzZXRfbG9jYWwodWludDY0LHVpbnQ2NCxzdHJpbmcsYnl0ZVs0XSl2b2lkIgo9PQpibnogbWFpbl9sMjAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg5OGJlMjIxOSAvLyAiaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyKHVpbnQ2NCl2b2lkIgo9PQpibnogbWFpbl9sMTkKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGI0YTIzMCAvLyAic2V0X2JveChieXRlWzRdLHN0cmluZyl2b2lkIgo9PQpibnogbWFpbl9sMTgKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg0NGQwZGEwZCAvLyAiZXJyb3IoKXZvaWQiCj09CmJueiBtYWluX2wxNwp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDMwYzZkNThhIC8vICJvcHRfaW4oKXZvaWQiCj09CmJueiBtYWluX2wxNgp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGQ0M2NlZTVkIC8vICJlbWl0U3dhcHBlZCh1aW50NjQsdWludDY0KXZvaWQiCj09CmJueiBtYWluX2wxNQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDExYjA5NzVhIC8vICJlbWl0U3dhcHBlZFR3aWNlKHVpbnQ2NCx1aW50NjQpdm9pZCIKPT0KYm56IG1haW5fbDE0CnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQyMzBkMGMgLy8gImVtaXRDb21wbGV4KHVpbnQ2NCx1aW50NjQsdWludDMyW10pdm9pZCIKPT0KYm56IG1haW5fbDEzCmVycgptYWluX2wxMzoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBlbWl0Q29tcGxleGNhc3Rlcl8yNQppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTQ6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTU6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRjYXN0ZXJfMjMKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE2Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBvcHRpbmNhc3Rlcl8yMgppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTc6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZXJyb3JjYXN0ZXJfMjEKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE4Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIHNldGJveGNhc3Rlcl8yMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTk6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMDoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBzZXRsb2NhbGNhc3Rlcl8xOAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMjE6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgc2V0Z2xvYmFsY2FzdGVyXzE3CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMjoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBjYWxsYWJpZm9yZWlnbnJlZnNjYXN0ZXJfMTYKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDIzOgp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIGNhbGxhYmljYXN0ZXJfMTUKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDI0Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CmJueiBtYWluX2wzMgp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQpibnogbWFpbl9sMzEKdHhuIE9uQ29tcGxldGlvbgpwdXNoaW50IDQgLy8gVXBkYXRlQXBwbGljYXRpb24KPT0KYm56IG1haW5fbDMwCnR4biBPbkNvbXBsZXRpb24KcHVzaGludCA1IC8vIERlbGV0ZUFwcGxpY2F0aW9uCj09CmJueiBtYWluX2wyOQplcnIKbWFpbl9sMjk6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIGRlbGV0ZV8xMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMzA6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIHVwZGF0ZV85CmludGNfMSAvLyAxCnJldHVybgptYWluX2wzMToKdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKPT0KYXNzZXJ0CmNhbGxzdWIgY3JlYXRlXzgKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDMyOgp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAo9PQphc3NlcnQKY2FsbHN1YiBjcmVhdGVfOAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGNhbGxfYWJpCmNhbGxhYmlfMDoKcHJvdG8gMSAxCmJ5dGVjXzAgLy8gIiIKcHVzaGJ5dGVzIDB4NDg2NTZjNmM2ZjJjMjAgLy8gIkhlbGxvLCAiCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApjb25jYXQKZnJhbWVfYnVyeSAwCmZyYW1lX2RpZyAwCmxlbgppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAwCmNvbmNhdApmcmFtZV9idXJ5IDAKcmV0c3ViCgovLyBpdG9hCml0b2FfMToKcHJvdG8gMSAxCmZyYW1lX2RpZyAtMQppbnRjXzAgLy8gMAo9PQpibnogaXRvYV8xX2w1CmZyYW1lX2RpZyAtMQppbnRjXzIgLy8gMTAKLwppbnRjXzAgLy8gMAo+CmJueiBpdG9hXzFfbDQKYnl0ZWNfMCAvLyAiIgppdG9hXzFfbDM6CnB1c2hieXRlcyAweDMwMzEzMjMzMzQzNTM2MzczODM5IC8vICIwMTIzNDU2Nzg5IgpmcmFtZV9kaWcgLTEKaW50Y18yIC8vIDEwCiUKaW50Y18xIC8vIDEKZXh0cmFjdDMKY29uY2F0CmIgaXRvYV8xX2w2Cml0b2FfMV9sNDoKZnJhbWVfZGlnIC0xCmludGNfMiAvLyAxMAovCmNhbGxzdWIgaXRvYV8xCmIgaXRvYV8xX2wzCml0b2FfMV9sNToKcHVzaGJ5dGVzIDB4MzAgLy8gIjAiCml0b2FfMV9sNjoKcmV0c3ViCgovLyBjYWxsX2FiaV9mb3JlaWduX3JlZnMKY2FsbGFiaWZvcmVpZ25yZWZzXzI6CnByb3RvIDAgMQpieXRlY18wIC8vICIiCnB1c2hieXRlcyAweDQxNzA3MDNhMjAgLy8gIkFwcDogIgp0eG5hIEFwcGxpY2F0aW9ucyAxCmNhbGxzdWIgaXRvYV8xCmNvbmNhdApwdXNoYnl0ZXMgMHgyYzIwNDE3MzczNjU3NDNhMjAgLy8gIiwgQXNzZXQ6ICIKY29uY2F0CnR4bmEgQXNzZXRzIDAKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDJjMjA0MTYzNjM2Zjc1NmU3NDNhMjAgLy8gIiwgQWNjb3VudDogIgpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMCAvLyAwCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDNhIC8vICI6Igpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMSAvLyAxCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApsZW4KaXRvYgpleHRyYWN0IDYgMApmcmFtZV9kaWcgMApjb25jYXQKZnJhbWVfYnVyeSAwCnJldHN1YgoKLy8gc2V0X2dsb2JhbApzZXRnbG9iYWxfMzoKcHJvdG8gNCAwCnB1c2hieXRlcyAweDY5NmU3NDMxIC8vICJpbnQxIgpmcmFtZV9kaWcgLTQKYXBwX2dsb2JhbF9wdXQKcHVzaGJ5dGVzIDB4Njk2ZTc0MzIgLy8gImludDIiCmZyYW1lX2RpZyAtMwphcHBfZ2xvYmFsX3B1dApwdXNoYnl0ZXMgMHg2Mjc5NzQ2NTczMzEgLy8gImJ5dGVzMSIKZnJhbWVfZGlnIC0yCmV4dHJhY3QgMiAwCmFwcF9nbG9iYWxfcHV0CnB1c2hieXRlcyAweDYyNzk3NDY1NzMzMiAvLyAiYnl0ZXMyIgpmcmFtZV9kaWcgLTEKYXBwX2dsb2JhbF9wdXQKcmV0c3ViCgovLyBzZXRfbG9jYWwKc2V0bG9jYWxfNDoKcHJvdG8gNCAwCnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzEgLy8gImxvY2FsX2ludDEiCmZyYW1lX2RpZyAtNAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzIgLy8gImxvY2FsX2ludDIiCmZyYW1lX2RpZyAtMwphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMxIC8vICJsb2NhbF9ieXRlczEiCmZyYW1lX2RpZyAtMgpleHRyYWN0IDIgMAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMyIC8vICJsb2NhbF9ieXRlczIiCmZyYW1lX2RpZyAtMQphcHBfbG9jYWxfcHV0CnJldHN1YgoKLy8gaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyCmlzc3VldHJhbnNmZXJ0b3NlbmRlcl81Ogpwcm90byAxIDAKaXR4bl9iZWdpbgppbnRjXzEgLy8gcGF5Cml0eG5fZmllbGQgVHlwZUVudW0KZnJhbWVfZGlnIC0xCml0eG5fZmllbGQgQW1vdW50CnR4biBTZW5kZXIKaXR4bl9maWVsZCBSZWNlaXZlcgppbnRjXzAgLy8gMAppdHhuX2ZpZWxkIEZlZQppdHhuX3N1Ym1pdApyZXRzdWIKCi8vIHNldF9ib3gKc2V0Ym94XzY6CnByb3RvIDIgMApmcmFtZV9kaWcgLTIKYm94X2RlbApwb3AKZnJhbWVfZGlnIC0yCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApib3hfcHV0CnJldHN1YgoKLy8gZXJyb3IKZXJyb3JfNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCi8vIERlbGliZXJhdGUgZXJyb3IKYXNzZXJ0CnJldHN1YgoKLy8gY3JlYXRlCmNyZWF0ZV84Ogpwcm90byAwIDAKaW50Y18xIC8vIDEKcmV0dXJuCgovLyB1cGRhdGUKdXBkYXRlXzk6CnByb3RvIDAgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CmludGNfMSAvLyAxCnJldHVybgoKLy8gZGVsZXRlCmRlbGV0ZV8xMDoKcHJvdG8gMCAwCnR4biBTZW5kZXIKZ2xvYmFsIENyZWF0b3JBZGRyZXNzCj09Ci8vIHVuYXV0aG9yaXplZAphc3NlcnQKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBvcHRfaW4Kb3B0aW5fMTE6CnByb3RvIDAgMAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRTd2FwcGVkCmVtaXRTd2FwcGVkXzEyOgpwcm90byAyIDAKYnl0ZWNfMSAvLyAiU3dhcHBlZCh1aW50NjQsdWludDY0KSIKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmZyYW1lX2RpZyAtMQppdG9iCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBlbWl0U3dhcHBlZFR3aWNlCmVtaXRTd2FwcGVkVHdpY2VfMTM6CnByb3RvIDIgMApieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTIKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0xCml0b2IKY29uY2F0CmxvZwpieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTEKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmxvZwppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRDb21wbGV4CmVtaXRDb21wbGV4XzE0Ogpwcm90byAzIDAKYnl0ZWNfMCAvLyAiIgppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKYnl0ZWNfMSAvLyAiU3dhcHBlZCh1aW50NjQsdWludDY0KSIKZnJhbWVfZGlnIC0zCml0b2IKY29uY2F0CmZyYW1lX2RpZyAtMgppdG9iCmNvbmNhdApsb2cKZnJhbWVfZGlnIC0xCmZyYW1lX2J1cnkgNApmcmFtZV9kaWcgNApmcmFtZV9idXJ5IDMKaW50Y18yIC8vIDEwCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMQppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAtMgppdG9iCmNvbmNhdApmcmFtZV9kaWcgMwpjb25jYXQKZnJhbWVfYnVyeSAwCnB1c2hieXRlcyAweDE4ZGE1ZWE3IC8vICJDb21wbGV4KHVpbnQzMltdLHVpbnQ2NCkiCmZyYW1lX2RpZyAwCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBjYWxsX2FiaV9jYXN0ZXIKY2FsbGFiaWNhc3Rlcl8xNToKcHJvdG8gMCAwCmJ5dGVjXzAgLy8gIiIKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKZnJhbWVfYnVyeSAxCmZyYW1lX2RpZyAxCmNhbGxzdWIgY2FsbGFiaV8wCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIGNhbGxfYWJpX2ZvcmVpZ25fcmVmc19jYXN0ZXIKY2FsbGFiaWZvcmVpZ25yZWZzY2FzdGVyXzE2Ogpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpjYWxsc3ViIGNhbGxhYmlmb3JlaWducmVmc18yCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIHNldF9nbG9iYWxfY2FzdGVyCnNldGdsb2JhbGNhc3Rlcl8xNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cApieXRlY18wIC8vICIiCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwpmcmFtZV9idXJ5IDIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNApmcmFtZV9idXJ5IDMKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKZnJhbWVfZGlnIDIKZnJhbWVfZGlnIDMKY2FsbHN1YiBzZXRnbG9iYWxfMwpyZXRzdWIKCi8vIHNldF9sb2NhbF9jYXN0ZXIKc2V0bG9jYWxjYXN0ZXJfMTg6CnByb3RvIDAgMAppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCnR4bmEgQXBwbGljYXRpb25BcmdzIDQKZnJhbWVfYnVyeSAzCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmZyYW1lX2RpZyAzCmNhbGxzdWIgc2V0bG9jYWxfNApyZXRzdWIKCi8vIGlzc3VlX3RyYW5zZmVyX3RvX3NlbmRlcl9jYXN0ZXIKaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApjYWxsc3ViIGlzc3VldHJhbnNmZXJ0b3NlbmRlcl81CnJldHN1YgoKLy8gc2V0X2JveF9jYXN0ZXIKc2V0Ym94Y2FzdGVyXzIwOgpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBzZXRib3hfNgpyZXRzdWIKCi8vIGVycm9yX2Nhc3RlcgplcnJvcmNhc3Rlcl8yMToKcHJvdG8gMCAwCmNhbGxzdWIgZXJyb3JfNwpyZXRzdWIKCi8vIG9wdF9pbl9jYXN0ZXIKb3B0aW5jYXN0ZXJfMjI6CnByb3RvIDAgMApjYWxsc3ViIG9wdGluXzExCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRfY2FzdGVyCmVtaXRTd2FwcGVkY2FzdGVyXzIzOgpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKYnRvaQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpidG9pCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMApmcmFtZV9kaWcgMQpjYWxsc3ViIGVtaXRTd2FwcGVkXzEyCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRUd2ljZV9jYXN0ZXIKZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNDoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBlbWl0U3dhcHBlZFR3aWNlXzEzCnJldHN1YgoKLy8gZW1pdENvbXBsZXhfY2FzdGVyCmVtaXRDb21wbGV4Y2FzdGVyXzI1Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCmJ5dGVjXzAgLy8gIiIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmNhbGxzdWIgZW1pdENvbXBsZXhfMTQKcmV0c3Vi","clear":"I3ByYWdtYSB2ZXJzaW9uIDgKcHVzaGludCAwIC8vIDAKcmV0dXJu"},"bareActions":{"create":["NoOp","OptIn"],"call":["DeleteApplication","UpdateApplication"]}} as unknown as Arc56Contract
+export const APP_SPEC: Arc56Contract = {
+  arcs: [],
+  name: 'TestingApp',
+  structs: {},
+  methods: [
+    {
+      name: 'call_abi',
+      args: [{ name: 'value', type: 'string' }],
+      returns: { type: 'string' },
+      events: [],
+      readonly: true,
+      actions: { create: [], call: ['NoOp'] },
+    },
+    {
+      name: 'call_abi_foreign_refs',
+      args: [],
+      returns: { type: 'string' },
+      events: [],
+      readonly: true,
+      actions: { create: [], call: ['NoOp'] },
+    },
+    {
+      name: 'set_global',
+      args: [
+        { name: 'int1', type: 'uint64' },
+        { name: 'int2', type: 'uint64' },
+        { name: 'bytes1', type: 'string' },
+        { name: 'bytes2', type: 'byte[4]' },
+      ],
+      returns: { type: 'void' },
+      events: [],
+      actions: { create: [], call: ['NoOp'] },
+    },
+    {
+      name: 'set_local',
+      args: [
+        { name: 'int1', type: 'uint64' },
+        { name: 'int2', type: 'uint64' },
+        { name: 'bytes1', type: 'string' },
+        { name: 'bytes2', type: 'byte[4]' },
+      ],
+      returns: { type: 'void' },
+      events: [],
+      actions: { create: [], call: ['NoOp'] },
+    },
+    {
+      name: 'issue_transfer_to_sender',
+      args: [{ name: 'amount', type: 'uint64' }],
+      returns: { type: 'void' },
+      events: [],
+      actions: { create: [], call: ['NoOp'] },
+    },
+    {
+      name: 'set_box',
+      args: [
+        { name: 'name', type: 'byte[4]' },
+        { name: 'value', type: 'string' },
+      ],
+      returns: { type: 'void' },
+      events: [],
+      actions: { create: [], call: ['NoOp'] },
+    },
+    { name: 'error', args: [], returns: { type: 'void' }, events: [], actions: { create: [], call: ['NoOp'] } },
+    { name: 'opt_in', args: [], returns: { type: 'void' }, events: [], actions: { create: [], call: ['OptIn'] } },
+    {
+      name: 'emitSwapped',
+      args: [
+        { name: 'a', type: 'uint64' },
+        { name: 'b', type: 'uint64' },
+      ],
+      returns: { type: 'void' },
+      events: [],
+      actions: { create: [], call: ['NoOp'] },
+    },
+    {
+      name: 'emitSwappedTwice',
+      args: [
+        { name: 'a', type: 'uint64' },
+        { name: 'b', type: 'uint64' },
+      ],
+      returns: { type: 'void' },
+      events: [],
+      actions: { create: [], call: ['NoOp'] },
+    },
+    {
+      name: 'emitComplex',
+      args: [
+        { name: 'a', type: 'uint64' },
+        { name: 'b', type: 'uint64' },
+        { name: 'array', type: 'uint32[]' },
+      ],
+      returns: { type: 'void' },
+      events: [],
+      actions: { create: [], call: ['NoOp'] },
+    },
+  ],
+  state: {
+    schema: { global: { ints: 3, bytes: 2 }, local: { ints: 2, bytes: 2 } },
+    keys: {
+      global: {
+        bytes1: { key: 'Ynl0ZXMx', keyType: 'AVMString', valueType: 'AVMBytes', desc: '' },
+        bytes2: { key: 'Ynl0ZXMy', keyType: 'AVMString', valueType: 'AVMBytes', desc: '' },
+        int1: { key: 'aW50MQ==', keyType: 'AVMString', valueType: 'AVMUint64', desc: '' },
+        int2: { key: 'aW50Mg==', keyType: 'AVMString', valueType: 'AVMUint64', desc: '' },
+        value: { key: 'dmFsdWU=', keyType: 'AVMString', valueType: 'AVMUint64', desc: '' },
+      },
+      local: {
+        local_bytes1: { key: 'bG9jYWxfYnl0ZXMx', keyType: 'AVMString', valueType: 'AVMBytes', desc: '' },
+        local_bytes2: { key: 'bG9jYWxfYnl0ZXMy', keyType: 'AVMString', valueType: 'AVMBytes', desc: '' },
+        local_int1: { key: 'bG9jYWxfaW50MQ==', keyType: 'AVMString', valueType: 'AVMUint64', desc: '' },
+        local_int2: { key: 'bG9jYWxfaW50Mg==', keyType: 'AVMString', valueType: 'AVMUint64', desc: '' },
+      },
+      box: {},
+    },
+    maps: { global: {}, local: {}, box: {} },
+  },
+  source: {
+    approval:
+      'I3ByYWdtYSB2ZXJzaW9uIDgKaW50Y2Jsb2NrIDAgMSAxMApieXRlY2Jsb2NrIDB4IDB4MWNjYmQ5MjUgMHgxNTFmN2M3NQp0eG4gTnVtQXBwQXJncwppbnRjXzAgLy8gMAo9PQpibnogbWFpbl9sMjQKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhmMTdlODBhNSAvLyAiY2FsbF9hYmkoc3RyaW5nKXN0cmluZyIKPT0KYm56IG1haW5fbDIzCnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQ3NTYwMmMgLy8gImNhbGxfYWJpX2ZvcmVpZ25fcmVmcygpc3RyaW5nIgo9PQpibnogbWFpbl9sMjIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGNmOGRlYSAvLyAic2V0X2dsb2JhbCh1aW50NjQsdWludDY0LHN0cmluZyxieXRlWzRdKXZvaWQiCj09CmJueiBtYWluX2wyMQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGNlYzI4MzRhIC8vICJzZXRfbG9jYWwodWludDY0LHVpbnQ2NCxzdHJpbmcsYnl0ZVs0XSl2b2lkIgo9PQpibnogbWFpbl9sMjAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg5OGJlMjIxOSAvLyAiaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyKHVpbnQ2NCl2b2lkIgo9PQpibnogbWFpbl9sMTkKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhhNGI0YTIzMCAvLyAic2V0X2JveChieXRlWzRdLHN0cmluZyl2b2lkIgo9PQpibnogbWFpbl9sMTgKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg0NGQwZGEwZCAvLyAiZXJyb3IoKXZvaWQiCj09CmJueiBtYWluX2wxNwp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDMwYzZkNThhIC8vICJvcHRfaW4oKXZvaWQiCj09CmJueiBtYWluX2wxNgp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweGQ0M2NlZTVkIC8vICJlbWl0U3dhcHBlZCh1aW50NjQsdWludDY0KXZvaWQiCj09CmJueiBtYWluX2wxNQp0eG5hIEFwcGxpY2F0aW9uQXJncyAwCnB1c2hieXRlcyAweDExYjA5NzVhIC8vICJlbWl0U3dhcHBlZFR3aWNlKHVpbnQ2NCx1aW50NjQpdm9pZCIKPT0KYm56IG1haW5fbDE0CnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWQyMzBkMGMgLy8gImVtaXRDb21wbGV4KHVpbnQ2NCx1aW50NjQsdWludDMyW10pdm9pZCIKPT0KYm56IG1haW5fbDEzCmVycgptYWluX2wxMzoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBlbWl0Q29tcGxleGNhc3Rlcl8yNQppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTQ6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTU6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZW1pdFN3YXBwZWRjYXN0ZXJfMjMKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE2Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBvcHRpbmNhc3Rlcl8yMgppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTc6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgZXJyb3JjYXN0ZXJfMjEKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE4Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIHNldGJveGNhc3Rlcl8yMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTk6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMDoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBzZXRsb2NhbGNhc3Rlcl8xOAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMjE6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgc2V0Z2xvYmFsY2FzdGVyXzE3CmludGNfMSAvLyAxCnJldHVybgptYWluX2wyMjoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBjYWxsYWJpZm9yZWlnbnJlZnNjYXN0ZXJfMTYKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDIzOgp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIGNhbGxhYmljYXN0ZXJfMTUKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDI0Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CmJueiBtYWluX2wzMgp0eG4gT25Db21wbGV0aW9uCmludGNfMSAvLyBPcHRJbgo9PQpibnogbWFpbl9sMzEKdHhuIE9uQ29tcGxldGlvbgpwdXNoaW50IDQgLy8gVXBkYXRlQXBwbGljYXRpb24KPT0KYm56IG1haW5fbDMwCnR4biBPbkNvbXBsZXRpb24KcHVzaGludCA1IC8vIERlbGV0ZUFwcGxpY2F0aW9uCj09CmJueiBtYWluX2wyOQplcnIKbWFpbl9sMjk6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIGRlbGV0ZV8xMAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMzA6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CmFzc2VydApjYWxsc3ViIHVwZGF0ZV85CmludGNfMSAvLyAxCnJldHVybgptYWluX2wzMToKdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKPT0KYXNzZXJ0CmNhbGxzdWIgY3JlYXRlXzgKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDMyOgp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAo9PQphc3NlcnQKY2FsbHN1YiBjcmVhdGVfOAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGNhbGxfYWJpCmNhbGxhYmlfMDoKcHJvdG8gMSAxCmJ5dGVjXzAgLy8gIiIKcHVzaGJ5dGVzIDB4NDg2NTZjNmM2ZjJjMjAgLy8gIkhlbGxvLCAiCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApjb25jYXQKZnJhbWVfYnVyeSAwCmZyYW1lX2RpZyAwCmxlbgppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAwCmNvbmNhdApmcmFtZV9idXJ5IDAKcmV0c3ViCgovLyBpdG9hCml0b2FfMToKcHJvdG8gMSAxCmZyYW1lX2RpZyAtMQppbnRjXzAgLy8gMAo9PQpibnogaXRvYV8xX2w1CmZyYW1lX2RpZyAtMQppbnRjXzIgLy8gMTAKLwppbnRjXzAgLy8gMAo+CmJueiBpdG9hXzFfbDQKYnl0ZWNfMCAvLyAiIgppdG9hXzFfbDM6CnB1c2hieXRlcyAweDMwMzEzMjMzMzQzNTM2MzczODM5IC8vICIwMTIzNDU2Nzg5IgpmcmFtZV9kaWcgLTEKaW50Y18yIC8vIDEwCiUKaW50Y18xIC8vIDEKZXh0cmFjdDMKY29uY2F0CmIgaXRvYV8xX2w2Cml0b2FfMV9sNDoKZnJhbWVfZGlnIC0xCmludGNfMiAvLyAxMAovCmNhbGxzdWIgaXRvYV8xCmIgaXRvYV8xX2wzCml0b2FfMV9sNToKcHVzaGJ5dGVzIDB4MzAgLy8gIjAiCml0b2FfMV9sNjoKcmV0c3ViCgovLyBjYWxsX2FiaV9mb3JlaWduX3JlZnMKY2FsbGFiaWZvcmVpZ25yZWZzXzI6CnByb3RvIDAgMQpieXRlY18wIC8vICIiCnB1c2hieXRlcyAweDQxNzA3MDNhMjAgLy8gIkFwcDogIgp0eG5hIEFwcGxpY2F0aW9ucyAxCmNhbGxzdWIgaXRvYV8xCmNvbmNhdApwdXNoYnl0ZXMgMHgyYzIwNDE3MzczNjU3NDNhMjAgLy8gIiwgQXNzZXQ6ICIKY29uY2F0CnR4bmEgQXNzZXRzIDAKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDJjMjA0MTYzNjM2Zjc1NmU3NDNhMjAgLy8gIiwgQWNjb3VudDogIgpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMCAvLyAwCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CnB1c2hieXRlcyAweDNhIC8vICI6Igpjb25jYXQKdHhuYSBBY2NvdW50cyAwCmludGNfMSAvLyAxCmdldGJ5dGUKY2FsbHN1YiBpdG9hXzEKY29uY2F0CmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApsZW4KaXRvYgpleHRyYWN0IDYgMApmcmFtZV9kaWcgMApjb25jYXQKZnJhbWVfYnVyeSAwCnJldHN1YgoKLy8gc2V0X2dsb2JhbApzZXRnbG9iYWxfMzoKcHJvdG8gNCAwCnB1c2hieXRlcyAweDY5NmU3NDMxIC8vICJpbnQxIgpmcmFtZV9kaWcgLTQKYXBwX2dsb2JhbF9wdXQKcHVzaGJ5dGVzIDB4Njk2ZTc0MzIgLy8gImludDIiCmZyYW1lX2RpZyAtMwphcHBfZ2xvYmFsX3B1dApwdXNoYnl0ZXMgMHg2Mjc5NzQ2NTczMzEgLy8gImJ5dGVzMSIKZnJhbWVfZGlnIC0yCmV4dHJhY3QgMiAwCmFwcF9nbG9iYWxfcHV0CnB1c2hieXRlcyAweDYyNzk3NDY1NzMzMiAvLyAiYnl0ZXMyIgpmcmFtZV9kaWcgLTEKYXBwX2dsb2JhbF9wdXQKcmV0c3ViCgovLyBzZXRfbG9jYWwKc2V0bG9jYWxfNDoKcHJvdG8gNCAwCnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzEgLy8gImxvY2FsX2ludDEiCmZyYW1lX2RpZyAtNAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjk2ZTc0MzIgLy8gImxvY2FsX2ludDIiCmZyYW1lX2RpZyAtMwphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMxIC8vICJsb2NhbF9ieXRlczEiCmZyYW1lX2RpZyAtMgpleHRyYWN0IDIgMAphcHBfbG9jYWxfcHV0CnR4biBTZW5kZXIKcHVzaGJ5dGVzIDB4NmM2ZjYzNjE2YzVmNjI3OTc0NjU3MzMyIC8vICJsb2NhbF9ieXRlczIiCmZyYW1lX2RpZyAtMQphcHBfbG9jYWxfcHV0CnJldHN1YgoKLy8gaXNzdWVfdHJhbnNmZXJfdG9fc2VuZGVyCmlzc3VldHJhbnNmZXJ0b3NlbmRlcl81Ogpwcm90byAxIDAKaXR4bl9iZWdpbgppbnRjXzEgLy8gcGF5Cml0eG5fZmllbGQgVHlwZUVudW0KZnJhbWVfZGlnIC0xCml0eG5fZmllbGQgQW1vdW50CnR4biBTZW5kZXIKaXR4bl9maWVsZCBSZWNlaXZlcgppbnRjXzAgLy8gMAppdHhuX2ZpZWxkIEZlZQppdHhuX3N1Ym1pdApyZXRzdWIKCi8vIHNldF9ib3gKc2V0Ym94XzY6CnByb3RvIDIgMApmcmFtZV9kaWcgLTIKYm94X2RlbApwb3AKZnJhbWVfZGlnIC0yCmZyYW1lX2RpZyAtMQpleHRyYWN0IDIgMApib3hfcHV0CnJldHN1YgoKLy8gZXJyb3IKZXJyb3JfNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCi8vIERlbGliZXJhdGUgZXJyb3IKYXNzZXJ0CnJldHN1YgoKLy8gY3JlYXRlCmNyZWF0ZV84Ogpwcm90byAwIDAKaW50Y18xIC8vIDEKcmV0dXJuCgovLyB1cGRhdGUKdXBkYXRlXzk6CnByb3RvIDAgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CmludGNfMSAvLyAxCnJldHVybgoKLy8gZGVsZXRlCmRlbGV0ZV8xMDoKcHJvdG8gMCAwCnR4biBTZW5kZXIKZ2xvYmFsIENyZWF0b3JBZGRyZXNzCj09Ci8vIHVuYXV0aG9yaXplZAphc3NlcnQKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBvcHRfaW4Kb3B0aW5fMTE6CnByb3RvIDAgMAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRTd2FwcGVkCmVtaXRTd2FwcGVkXzEyOgpwcm90byAyIDAKYnl0ZWNfMSAvLyAiU3dhcHBlZCh1aW50NjQsdWludDY0KSIKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmZyYW1lX2RpZyAtMQppdG9iCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBlbWl0U3dhcHBlZFR3aWNlCmVtaXRTd2FwcGVkVHdpY2VfMTM6CnByb3RvIDIgMApieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTIKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0xCml0b2IKY29uY2F0CmxvZwpieXRlY18xIC8vICJTd2FwcGVkKHVpbnQ2NCx1aW50NjQpIgpmcmFtZV9kaWcgLTEKaXRvYgpjb25jYXQKZnJhbWVfZGlnIC0yCml0b2IKY29uY2F0CmxvZwppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGVtaXRDb21wbGV4CmVtaXRDb21wbGV4XzE0Ogpwcm90byAzIDAKYnl0ZWNfMCAvLyAiIgppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKYnl0ZWNfMSAvLyAiU3dhcHBlZCh1aW50NjQsdWludDY0KSIKZnJhbWVfZGlnIC0zCml0b2IKY29uY2F0CmZyYW1lX2RpZyAtMgppdG9iCmNvbmNhdApsb2cKZnJhbWVfZGlnIC0xCmZyYW1lX2J1cnkgNApmcmFtZV9kaWcgNApmcmFtZV9idXJ5IDMKaW50Y18yIC8vIDEwCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMQppdG9iCmV4dHJhY3QgNiAwCmZyYW1lX2RpZyAtMgppdG9iCmNvbmNhdApmcmFtZV9kaWcgMwpjb25jYXQKZnJhbWVfYnVyeSAwCnB1c2hieXRlcyAweDE4ZGE1ZWE3IC8vICJDb21wbGV4KHVpbnQzMltdLHVpbnQ2NCkiCmZyYW1lX2RpZyAwCmNvbmNhdApsb2cKaW50Y18xIC8vIDEKcmV0dXJuCgovLyBjYWxsX2FiaV9jYXN0ZXIKY2FsbGFiaWNhc3Rlcl8xNToKcHJvdG8gMCAwCmJ5dGVjXzAgLy8gIiIKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKZnJhbWVfYnVyeSAxCmZyYW1lX2RpZyAxCmNhbGxzdWIgY2FsbGFiaV8wCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIGNhbGxfYWJpX2ZvcmVpZ25fcmVmc19jYXN0ZXIKY2FsbGFiaWZvcmVpZ25yZWZzY2FzdGVyXzE2Ogpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpjYWxsc3ViIGNhbGxhYmlmb3JlaWducmVmc18yCmZyYW1lX2J1cnkgMApieXRlY18yIC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIHNldF9nbG9iYWxfY2FzdGVyCnNldGdsb2JhbGNhc3Rlcl8xNzoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cApieXRlY18wIC8vICIiCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwpmcmFtZV9idXJ5IDIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNApmcmFtZV9idXJ5IDMKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKZnJhbWVfZGlnIDIKZnJhbWVfZGlnIDMKY2FsbHN1YiBzZXRnbG9iYWxfMwpyZXRzdWIKCi8vIHNldF9sb2NhbF9jYXN0ZXIKc2V0bG9jYWxjYXN0ZXJfMTg6CnByb3RvIDAgMAppbnRjXzAgLy8gMApkdXAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCnR4bmEgQXBwbGljYXRpb25BcmdzIDQKZnJhbWVfYnVyeSAzCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmZyYW1lX2RpZyAzCmNhbGxzdWIgc2V0bG9jYWxfNApyZXRzdWIKCi8vIGlzc3VlX3RyYW5zZmVyX3RvX3NlbmRlcl9jYXN0ZXIKaXNzdWV0cmFuc2ZlcnRvc2VuZGVyY2FzdGVyXzE5Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApjYWxsc3ViIGlzc3VldHJhbnNmZXJ0b3NlbmRlcl81CnJldHN1YgoKLy8gc2V0X2JveF9jYXN0ZXIKc2V0Ym94Y2FzdGVyXzIwOgpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBzZXRib3hfNgpyZXRzdWIKCi8vIGVycm9yX2Nhc3RlcgplcnJvcmNhc3Rlcl8yMToKcHJvdG8gMCAwCmNhbGxzdWIgZXJyb3JfNwpyZXRzdWIKCi8vIG9wdF9pbl9jYXN0ZXIKb3B0aW5jYXN0ZXJfMjI6CnByb3RvIDAgMApjYWxsc3ViIG9wdGluXzExCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRfY2FzdGVyCmVtaXRTd2FwcGVkY2FzdGVyXzIzOgpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKYnRvaQpmcmFtZV9idXJ5IDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpidG9pCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMApmcmFtZV9kaWcgMQpjYWxsc3ViIGVtaXRTd2FwcGVkXzEyCnJldHN1YgoKLy8gZW1pdFN3YXBwZWRUd2ljZV9jYXN0ZXIKZW1pdFN3YXBwZWRUd2ljZWNhc3Rlcl8yNDoKcHJvdG8gMCAwCmludGNfMCAvLyAwCmR1cAp0eG5hIEFwcGxpY2F0aW9uQXJncyAxCmJ0b2kKZnJhbWVfYnVyeSAwCnR4bmEgQXBwbGljYXRpb25BcmdzIDIKYnRvaQpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKY2FsbHN1YiBlbWl0U3dhcHBlZFR3aWNlXzEzCnJldHN1YgoKLy8gZW1pdENvbXBsZXhfY2FzdGVyCmVtaXRDb21wbGV4Y2FzdGVyXzI1Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKZHVwCmJ5dGVjXzAgLy8gIiIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMAp0eG5hIEFwcGxpY2F0aW9uQXJncyAyCmJ0b2kKZnJhbWVfYnVyeSAxCnR4bmEgQXBwbGljYXRpb25BcmdzIDMKZnJhbWVfYnVyeSAyCmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAxCmZyYW1lX2RpZyAyCmNhbGxzdWIgZW1pdENvbXBsZXhfMTQKcmV0c3Vi',
+    clear: 'I3ByYWdtYSB2ZXJzaW9uIDgKcHVzaGludCAwIC8vIDAKcmV0dXJu',
+  },
+  bareActions: { create: ['NoOp', 'OptIn'], call: ['DeleteApplication', 'UpdateApplication'] },
+} as unknown as Arc56Contract
 
 /**
  * A state record containing binary data
@@ -61,7 +201,6 @@ export type Expand<T> = T extends (...args: infer A) => infer R
   : T extends infer O
     ? { [K in keyof O]: O[K] }
     : never
-
 
 /**
  * The argument types for the TestingApp contract
@@ -107,7 +246,7 @@ export type TestingAppArgs = {
     'emitComplex(uint64,uint64,uint32[])void': {
       a: bigint | number
       b: bigint | number
-      array: bigint | number[]
+      array: bigint[] | number[]
     }
   }
   /**
@@ -124,7 +263,7 @@ export type TestingAppArgs = {
     'opt_in()void': []
     'emitSwapped(uint64,uint64)void': [a: bigint | number, b: bigint | number]
     'emitSwappedTwice(uint64,uint64)void': [a: bigint | number, b: bigint | number]
-    'emitComplex(uint64,uint64,uint32[])void': [a: bigint | number, b: bigint | number, array: bigint | number[]]
+    'emitComplex(uint64,uint64,uint32[])void': [a: bigint | number, b: bigint | number, array: bigint[] | number[]]
   }
 }
 
@@ -152,62 +291,94 @@ export type TestingAppTypes = {
   /**
    * Maps method signatures / names to their argument and return types.
    */
-  methods:
-    & Record<'call_abi(string)string' | 'call_abi', {
+  methods: Record<
+    'call_abi(string)string' | 'call_abi',
+    {
       argsObj: TestingAppArgs['obj']['call_abi(string)string']
       argsTuple: TestingAppArgs['tuple']['call_abi(string)string']
       returns: TestingAppReturns['call_abi(string)string']
-    }>
-    & Record<'call_abi_foreign_refs()string' | 'call_abi_foreign_refs', {
-      argsObj: TestingAppArgs['obj']['call_abi_foreign_refs()string']
-      argsTuple: TestingAppArgs['tuple']['call_abi_foreign_refs()string']
-      returns: TestingAppReturns['call_abi_foreign_refs()string']
-    }>
-    & Record<'set_global(uint64,uint64,string,byte[4])void' | 'set_global', {
-      argsObj: TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
-      argsTuple: TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
-      returns: TestingAppReturns['set_global(uint64,uint64,string,byte[4])void']
-    }>
-    & Record<'set_local(uint64,uint64,string,byte[4])void' | 'set_local', {
-      argsObj: TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
-      argsTuple: TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
-      returns: TestingAppReturns['set_local(uint64,uint64,string,byte[4])void']
-    }>
-    & Record<'issue_transfer_to_sender(uint64)void' | 'issue_transfer_to_sender', {
-      argsObj: TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void']
-      argsTuple: TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
-      returns: TestingAppReturns['issue_transfer_to_sender(uint64)void']
-    }>
-    & Record<'set_box(byte[4],string)void' | 'set_box', {
-      argsObj: TestingAppArgs['obj']['set_box(byte[4],string)void']
-      argsTuple: TestingAppArgs['tuple']['set_box(byte[4],string)void']
-      returns: TestingAppReturns['set_box(byte[4],string)void']
-    }>
-    & Record<'error()void' | 'error', {
-      argsObj: TestingAppArgs['obj']['error()void']
-      argsTuple: TestingAppArgs['tuple']['error()void']
-      returns: TestingAppReturns['error()void']
-    }>
-    & Record<'opt_in()void' | 'opt_in', {
-      argsObj: TestingAppArgs['obj']['opt_in()void']
-      argsTuple: TestingAppArgs['tuple']['opt_in()void']
-      returns: TestingAppReturns['opt_in()void']
-    }>
-    & Record<'emitSwapped(uint64,uint64)void' | 'emitSwapped', {
-      argsObj: TestingAppArgs['obj']['emitSwapped(uint64,uint64)void']
-      argsTuple: TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
-      returns: TestingAppReturns['emitSwapped(uint64,uint64)void']
-    }>
-    & Record<'emitSwappedTwice(uint64,uint64)void' | 'emitSwappedTwice', {
-      argsObj: TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void']
-      argsTuple: TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
-      returns: TestingAppReturns['emitSwappedTwice(uint64,uint64)void']
-    }>
-    & Record<'emitComplex(uint64,uint64,uint32[])void' | 'emitComplex', {
-      argsObj: TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void']
-      argsTuple: TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
-      returns: TestingAppReturns['emitComplex(uint64,uint64,uint32[])void']
-    }>
+    }
+  > &
+    Record<
+      'call_abi_foreign_refs()string' | 'call_abi_foreign_refs',
+      {
+        argsObj: TestingAppArgs['obj']['call_abi_foreign_refs()string']
+        argsTuple: TestingAppArgs['tuple']['call_abi_foreign_refs()string']
+        returns: TestingAppReturns['call_abi_foreign_refs()string']
+      }
+    > &
+    Record<
+      'set_global(uint64,uint64,string,byte[4])void' | 'set_global',
+      {
+        argsObj: TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
+        argsTuple: TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
+        returns: TestingAppReturns['set_global(uint64,uint64,string,byte[4])void']
+      }
+    > &
+    Record<
+      'set_local(uint64,uint64,string,byte[4])void' | 'set_local',
+      {
+        argsObj: TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
+        argsTuple: TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
+        returns: TestingAppReturns['set_local(uint64,uint64,string,byte[4])void']
+      }
+    > &
+    Record<
+      'issue_transfer_to_sender(uint64)void' | 'issue_transfer_to_sender',
+      {
+        argsObj: TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void']
+        argsTuple: TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
+        returns: TestingAppReturns['issue_transfer_to_sender(uint64)void']
+      }
+    > &
+    Record<
+      'set_box(byte[4],string)void' | 'set_box',
+      {
+        argsObj: TestingAppArgs['obj']['set_box(byte[4],string)void']
+        argsTuple: TestingAppArgs['tuple']['set_box(byte[4],string)void']
+        returns: TestingAppReturns['set_box(byte[4],string)void']
+      }
+    > &
+    Record<
+      'error()void' | 'error',
+      {
+        argsObj: TestingAppArgs['obj']['error()void']
+        argsTuple: TestingAppArgs['tuple']['error()void']
+        returns: TestingAppReturns['error()void']
+      }
+    > &
+    Record<
+      'opt_in()void' | 'opt_in',
+      {
+        argsObj: TestingAppArgs['obj']['opt_in()void']
+        argsTuple: TestingAppArgs['tuple']['opt_in()void']
+        returns: TestingAppReturns['opt_in()void']
+      }
+    > &
+    Record<
+      'emitSwapped(uint64,uint64)void' | 'emitSwapped',
+      {
+        argsObj: TestingAppArgs['obj']['emitSwapped(uint64,uint64)void']
+        argsTuple: TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
+        returns: TestingAppReturns['emitSwapped(uint64,uint64)void']
+      }
+    > &
+    Record<
+      'emitSwappedTwice(uint64,uint64)void' | 'emitSwappedTwice',
+      {
+        argsObj: TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void']
+        argsTuple: TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
+        returns: TestingAppReturns['emitSwappedTwice(uint64,uint64)void']
+      }
+    > &
+    Record<
+      'emitComplex(uint64,uint64,uint32[])void' | 'emitComplex',
+      {
+        argsObj: TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void']
+        argsTuple: TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
+        returns: TestingAppReturns['emitComplex(uint64,uint64,uint32[])void']
+      }
+    >
   /**
    * Defines the shape of the state of the application.
    */
@@ -220,6 +391,7 @@ export type TestingAppTypes = {
         int2: bigint
         value: bigint
       }
+      maps: {}
     }
     local: {
       keys: {
@@ -228,6 +400,7 @@ export type TestingAppTypes = {
         localInt1: bigint
         localInt2: bigint
       }
+      maps: {}
     }
   }
 }
@@ -239,16 +412,21 @@ export type TestingAppSignatures = keyof TestingAppTypes['methods']
 /**
  * Defines the possible abi call signatures for methods that return a non-void value.
  */
-export type TestingAppNonVoidMethodSignatures = keyof TestingAppTypes['methods'] extends infer T ? T extends keyof TestingAppTypes['methods'] ? MethodReturn<T> extends void ? never : T  : never : never
+export type TestingAppNonVoidMethodSignatures = keyof TestingAppTypes['methods'] extends infer T
+  ? T extends keyof TestingAppTypes['methods']
+    ? MethodReturn<T> extends void
+      ? never
+      : T
+    : never
+  : never
 /**
  * Defines an object containing all relevant parameters for a single call to the contract.
  */
 export type CallParams<TArgs> = Expand<
-  Omit<AppClientMethodCallParams, 'method' | 'args' | 'onComplete'> &
-    {
-      /** The args for the ABI method call, either as an ordered array or an object */
-      args: Expand<TArgs>
-    }
+  Omit<AppClientMethodCallParams, 'method' | 'args' | 'onComplete'> & {
+    /** The args for the ABI method call, either as an ordered array or an object */
+    args: Expand<TArgs>
+  }
 >
 /**
  * Maps a method signature from the TestingApp smart contract to the method's arguments in either tuple or struct form
@@ -269,40 +447,41 @@ export type GlobalKeysState = TestingAppTypes['state']['global']['keys']
  */
 export type LocalKeysState = TestingAppTypes['state']['local']['keys']
 
-
 /**
  * Defines supported create method params for this smart contract
  */
-export type TestingAppCreateCallParams =
-  | Expand<AppClientBareCallParams & {method?: undefined} & {onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC} & CreateSchema>
+export type TestingAppCreateCallParams = Expand<
+  AppClientBareCallParams & { method?: never } & {
+    onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC
+  } & CreateSchema
+>
 /**
  * Defines supported update method params for this smart contract
  */
-export type TestingAppUpdateCallParams =
-  | Expand<AppClientBareCallParams> & {method?: undefined}
+export type TestingAppUpdateCallParams = Expand<AppClientBareCallParams> & { method?: never }
 /**
  * Defines supported delete method params for this smart contract
  */
-export type TestingAppDeleteCallParams =
-  | Expand<AppClientBareCallParams> & {method?: undefined}
+export type TestingAppDeleteCallParams = Expand<AppClientBareCallParams> & { method?: never }
 /**
  * Defines arguments required for the deploy method.
  */
-export type TestingAppDeployParams = Expand<Omit<AppFactoryDeployParams, 'createParams' | 'updateParams' | 'deleteParams'> & {
-  /**
-   * Create transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
-   */
-  createParams?: TestingAppCreateCallParams
-  /**
-   * Update transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
-   */
-  updateParams?: TestingAppUpdateCallParams
-  /**
-   * Delete transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
-   */
-  deleteParams?: TestingAppDeleteCallParams
-}>
-
+export type TestingAppDeployParams = Expand<
+  Omit<AppFactoryDeployParams, 'createParams' | 'updateParams' | 'deleteParams'> & {
+    /**
+     * Create transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
+     */
+    createParams?: TestingAppCreateCallParams
+    /**
+     * Update transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
+     */
+    updateParams?: TestingAppUpdateCallParams
+    /**
+     * Delete transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
+     */
+    deleteParams?: TestingAppDeleteCallParams
+  }
+>
 
 /**
  * Exposes methods for constructing `AppClient` params objects for ABI calls to the TestingApp smart contract
@@ -319,7 +498,9 @@ export abstract class TestingAppParamsFactory {
        * @param params Parameters for the call
        * @returns An `AppClientMethodCallParams` object for the call
        */
-      optIn(params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']>): AppClientMethodCallParams {
+      optIn(
+        params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']>,
+      ): AppClientMethodCallParams {
         return {
           ...params,
           method: 'opt_in()void' as const,
@@ -335,7 +516,10 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static callAbi(params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static callAbi(
+    params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'call_abi(string)string' as const,
@@ -348,7 +532,10 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static callAbiForeignRefs(params: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static callAbiForeignRefs(
+    params: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']> &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'call_abi_foreign_refs()string' as const,
@@ -361,7 +548,13 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static setGlobal(params: CallParams<TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static setGlobal(
+    params: CallParams<
+      | TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
+      | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
+    > &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'set_global(uint64,uint64,string,byte[4])void' as const,
@@ -374,7 +567,13 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static setLocal(params: CallParams<TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static setLocal(
+    params: CallParams<
+      | TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
+      | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
+    > &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'set_local(uint64,uint64,string,byte[4])void' as const,
@@ -387,7 +586,12 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static issueTransferToSender(params: CallParams<TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static issueTransferToSender(
+    params: CallParams<
+      TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
+    > &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'issue_transfer_to_sender(uint64)void' as const,
@@ -400,7 +604,10 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static setBox(params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static setBox(
+    params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'set_box(byte[4],string)void' as const,
@@ -413,7 +620,9 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static error(params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static error(
+    params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'error()void' as const,
@@ -426,7 +635,12 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static emitSwapped(params: CallParams<TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static emitSwapped(
+    params: CallParams<
+      TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
+    > &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'emitSwapped(uint64,uint64)void' as const,
@@ -439,7 +653,12 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static emitSwappedTwice(params: CallParams<TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static emitSwappedTwice(
+    params: CallParams<
+      TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
+    > &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'emitSwappedTwice(uint64,uint64)void' as const,
@@ -452,7 +671,12 @@ export abstract class TestingAppParamsFactory {
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static emitComplex(params: CallParams<TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static emitComplex(
+    params: CallParams<
+      TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
+    > &
+      CallOnComplete,
+  ): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
       method: 'emitComplex(uint64,uint64,uint32[])void' as const,
@@ -481,22 +705,22 @@ export class TestingAppFactory {
       appSpec: APP_SPEC,
     })
   }
-  
+
   /** The name of the app (from the ARC-32 / ARC-56 app spec or override). */
   public get appName() {
     return this.appFactory.appName
   }
-  
+
   /** The ARC-56 app spec being used */
   get appSpec() {
     return APP_SPEC
   }
-  
+
   /** A reference to the underlying `AlgorandClient` this app factory is using. */
   public get algorand(): AlgorandClientInterface {
     return this.appFactory.algorand
   }
-  
+
   /**
    * Returns a new `AppClient` client for an app instance of the given ID.
    *
@@ -508,7 +732,7 @@ export class TestingAppFactory {
   public getAppClientById(params: AppFactoryAppClientParams) {
     return new TestingAppClient(this.appFactory.getAppClientById(params))
   }
-  
+
   /**
    * Returns a new `AppClient` client, resolving the app by creator address and name
    * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
@@ -518,9 +742,7 @@ export class TestingAppFactory {
    * @param params The parameters to create the app client
    * @returns The `AppClient`
    */
-  public async getAppClientByCreatorAndName(
-    params: AppFactoryResolveAppClientByCreatorAndNameParams,
-  ) {
+  public async getAppClientByCreatorAndName(params: AppFactoryResolveAppClientByCreatorAndNameParams) {
     return new TestingAppClient(await this.appFactory.getAppClientByCreatorAndName(params))
   }
 
@@ -551,7 +773,13 @@ export class TestingAppFactory {
        * @param params The params for the bare (raw) call
        * @returns The params for a create call
        */
-      bare: (params?: Expand<AppClientBareCallParams & AppClientCompilationParams & CreateSchema & {onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC}>) => {
+      bare: (
+        params?: Expand<
+          AppClientBareCallParams &
+            AppClientCompilationParams &
+            CreateSchema & { onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC }
+        >,
+      ) => {
         return this.appFactory.params.bare.create(params)
       },
     },
@@ -585,7 +813,6 @@ export class TestingAppFactory {
         return this.appFactory.params.bare.deployDelete(params)
       },
     },
-
   }
 
   /**
@@ -602,11 +829,16 @@ export class TestingAppFactory {
        * @param params The params for the bare (raw) call
        * @returns The transaction for a create call
        */
-      bare: (params?: Expand<AppClientBareCallParams & AppClientCompilationParams & CreateSchema & {onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC}>) => {
+      bare: (
+        params?: Expand<
+          AppClientBareCallParams &
+            AppClientCompilationParams &
+            CreateSchema & { onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC }
+        >,
+      ) => {
         return this.appFactory.createTransaction.bare.create(params)
       },
     },
-
   }
 
   /**
@@ -623,14 +855,19 @@ export class TestingAppFactory {
        * @param params The params for the bare (raw) call
        * @returns The create result
        */
-      bare: async (params?: Expand<AppClientBareCallParams & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC}>) => {
+      bare: async (
+        params?: Expand<
+          AppClientBareCallParams &
+            AppClientCompilationParams &
+            CreateSchema &
+            SendParams & { onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC }
+        >,
+      ) => {
         const result = await this.appFactory.send.bare.create(params)
         return { result: result.result, appClient: new TestingAppClient(result.appClient) }
       },
     },
-
   }
-
 }
 /**
  * A client to make calls to the TestingApp smart contract
@@ -654,29 +891,34 @@ export class TestingAppClient {
    */
   constructor(params: Omit<AppClientParams, 'appSpec'>)
   constructor(appClientOrParams: _AppClient | Omit<AppClientParams, 'appSpec'>) {
-    this.appClient = appClientOrParams instanceof _AppClient ? appClientOrParams : new _AppClient({
-      ...appClientOrParams,
-      appSpec: APP_SPEC,
-    })
+    this.appClient =
+      appClientOrParams instanceof _AppClient
+        ? appClientOrParams
+        : new _AppClient({
+            ...appClientOrParams,
+            appSpec: APP_SPEC,
+          })
   }
-  
+
   /**
    * Checks for decode errors on the given return value and maps the return value to the return type for the given method
    * @returns The typed return value or undefined if there was no value
    */
   decodeReturnValue<TSignature extends TestingAppNonVoidMethodSignatures>(method: TSignature, returnValue: ABIReturn | undefined) {
-    return returnValue !== undefined ? getArc56ReturnValue<MethodReturn<TSignature>>(returnValue, this.appClient.getABIMethod(method), APP_SPEC.structs) : undefined
+    return returnValue !== undefined
+      ? getArc56ReturnValue<MethodReturn<TSignature>>(returnValue, this.appClient.getABIMethod(method), APP_SPEC.structs)
+      : undefined
   }
-  
+
   /**
    * Returns a new `TestingAppClient` client, resolving the app by creator address and name
    * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
    * @param params The parameters to create the app client
    */
   public static async fromCreatorAndName(params: Omit<ResolveAppClientByCreatorAndName, 'appSpec'>): Promise<TestingAppClient> {
-    return new TestingAppClient(await _AppClient.fromCreatorAndName({...params, appSpec: APP_SPEC}))
+    return new TestingAppClient(await _AppClient.fromCreatorAndName({ ...params, appSpec: APP_SPEC }))
   }
-  
+
   /**
    * Returns an `TestingAppClient` instance for the current network based on
    * pre-determined network-specific app IDs specified in the ARC-56 app spec.
@@ -684,32 +926,30 @@ export class TestingAppClient {
    * If no IDs are in the app spec or the network isn't recognised, an error is thrown.
    * @param params The parameters to create the app client
    */
-  static async fromNetwork(
-    params: Omit<ResolveAppClientByNetwork, 'appSpec'>
-  ): Promise<TestingAppClient> {
-    return new TestingAppClient(await _AppClient.fromNetwork({...params, appSpec: APP_SPEC}))
+  static async fromNetwork(params: Omit<ResolveAppClientByNetwork, 'appSpec'>): Promise<TestingAppClient> {
+    return new TestingAppClient(await _AppClient.fromNetwork({ ...params, appSpec: APP_SPEC }))
   }
-  
+
   /** The ID of the app instance this client is linked to. */
   public get appId() {
     return this.appClient.appId
   }
-  
+
   /** The app address of the app instance this client is linked to. */
   public get appAddress() {
     return this.appClient.appAddress
   }
-  
+
   /** The name of the app. */
   public get appName() {
     return this.appClient.appName
   }
-  
+
   /** The ARC-56 app spec being used */
   public get appSpec() {
     return this.appClient.appSpec
   }
-  
+
   /** A reference to the underlying `AlgorandClient` this app client is using. */
   public get algorand(): AlgorandClientInterface {
     return this.appClient.algorand
@@ -759,10 +999,9 @@ export class TestingAppClient {
        * @param params The params for the smart contract call
        * @returns The optIn params
        */
-      optIn: (params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']> = {args: []}) => {
+      optIn: (params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']> = { args: [] }) => {
         return this.appClient.params.optIn(TestingAppParamsFactory.optIn.optIn(params))
       },
-
     },
 
     /**
@@ -777,25 +1016,33 @@ export class TestingAppClient {
 
     /**
      * Makes a call to the TestingApp smart contract using the `call_abi(string)string` ABI method.
-     * 
+     *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    callAbi: (params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    callAbi: (
+      params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & {
+        onComplete?: OnApplicationComplete.NoOpOC
+      },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.callAbi(params))
     },
 
     /**
      * Makes a call to the TestingApp smart contract using the `call_abi_foreign_refs()string` ABI method.
-     * 
+     *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    callAbiForeignRefs: (params: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']> & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
+    callAbiForeignRefs: (
+      params: CallParams<
+        TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']
+      > & { onComplete?: OnApplicationComplete.NoOpOC } = { args: [] },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.callAbiForeignRefs(params))
     },
 
@@ -805,7 +1052,12 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    setGlobal: (params: CallParams<TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setGlobal: (
+      params: CallParams<
+        | TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
+        | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.setGlobal(params))
     },
 
@@ -815,7 +1067,12 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    setLocal: (params: CallParams<TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setLocal: (
+      params: CallParams<
+        | TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
+        | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.setLocal(params))
     },
 
@@ -825,7 +1082,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    issueTransferToSender: (params: CallParams<TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    issueTransferToSender: (
+      params: CallParams<
+        TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.issueTransferToSender(params))
     },
 
@@ -835,7 +1096,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    setBox: (params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setBox: (
+      params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> & {
+        onComplete?: OnApplicationComplete.NoOpOC
+      },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.setBox(params))
     },
 
@@ -845,7 +1110,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    error: (params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
+    error: (
+      params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & {
+        onComplete?: OnApplicationComplete.NoOpOC
+      } = { args: [] },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.error(params))
     },
 
@@ -855,7 +1124,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    emitSwapped: (params: CallParams<TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitSwapped: (
+      params: CallParams<
+        TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.emitSwapped(params))
     },
 
@@ -865,7 +1138,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    emitSwappedTwice: (params: CallParams<TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitSwappedTwice: (
+      params: CallParams<
+        TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.emitSwappedTwice(params))
     },
 
@@ -875,10 +1152,14 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    emitComplex: (params: CallParams<TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitComplex: (
+      params: CallParams<
+        | TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void']
+        | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.params.call(TestingAppParamsFactory.emitComplex(params))
     },
-
   }
 
   /**
@@ -925,10 +1206,9 @@ export class TestingAppClient {
        * @param params The params for the smart contract call
        * @returns The optIn transaction
        */
-      optIn: (params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']> = {args: []}) => {
+      optIn: (params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']> = { args: [] }) => {
         return this.appClient.createTransaction.optIn(TestingAppParamsFactory.optIn.optIn(params))
       },
-
     },
 
     /**
@@ -943,25 +1223,33 @@ export class TestingAppClient {
 
     /**
      * Makes a call to the TestingApp smart contract using the `call_abi(string)string` ABI method.
-     * 
+     *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    callAbi: (params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    callAbi: (
+      params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & {
+        onComplete?: OnApplicationComplete.NoOpOC
+      },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.callAbi(params))
     },
 
     /**
      * Makes a call to the TestingApp smart contract using the `call_abi_foreign_refs()string` ABI method.
-     * 
+     *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    callAbiForeignRefs: (params: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']> & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
+    callAbiForeignRefs: (
+      params: CallParams<
+        TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']
+      > & { onComplete?: OnApplicationComplete.NoOpOC } = { args: [] },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.callAbiForeignRefs(params))
     },
 
@@ -971,7 +1259,12 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    setGlobal: (params: CallParams<TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setGlobal: (
+      params: CallParams<
+        | TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
+        | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.setGlobal(params))
     },
 
@@ -981,7 +1274,12 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    setLocal: (params: CallParams<TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setLocal: (
+      params: CallParams<
+        | TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
+        | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.setLocal(params))
     },
 
@@ -991,7 +1289,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    issueTransferToSender: (params: CallParams<TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    issueTransferToSender: (
+      params: CallParams<
+        TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.issueTransferToSender(params))
     },
 
@@ -1001,7 +1303,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    setBox: (params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setBox: (
+      params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> & {
+        onComplete?: OnApplicationComplete.NoOpOC
+      },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.setBox(params))
     },
 
@@ -1011,7 +1317,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    error: (params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
+    error: (
+      params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & {
+        onComplete?: OnApplicationComplete.NoOpOC
+      } = { args: [] },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.error(params))
     },
 
@@ -1021,7 +1331,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    emitSwapped: (params: CallParams<TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitSwapped: (
+      params: CallParams<
+        TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.emitSwapped(params))
     },
 
@@ -1031,7 +1345,11 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    emitSwappedTwice: (params: CallParams<TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitSwappedTwice: (
+      params: CallParams<
+        TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.emitSwappedTwice(params))
     },
 
@@ -1041,10 +1359,14 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    emitComplex: (params: CallParams<TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitComplex: (
+      params: CallParams<
+        | TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void']
+        | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
+      > & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       return this.appClient.createTransaction.call(TestingAppParamsFactory.emitComplex(params))
     },
-
   }
 
   /**
@@ -1091,11 +1413,12 @@ export class TestingAppClient {
        * @param params The params for the smart contract call
        * @returns The optIn result
        */
-      optIn: async (params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']> & SendParams = {args: []}) => {
+      optIn: async (
+        params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']> & SendParams = { args: [] },
+      ) => {
         const result = await this.appClient.send.optIn(TestingAppParamsFactory.optIn.optIn(params))
-        return {...result, return: result.return as undefined | TestingAppReturns['opt_in()void']}
+        return { ...result, return: result.return as unknown as undefined | TestingAppReturns['opt_in()void'] }
       },
-
     },
 
     /**
@@ -1110,28 +1433,36 @@ export class TestingAppClient {
 
     /**
      * Makes a call to the TestingApp smart contract using the `call_abi(string)string` ABI method.
-     * 
+     *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    callAbi: async (params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    callAbi: async (
+      params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.callAbi(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['call_abi(string)string']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['call_abi(string)string'] }
     },
 
     /**
      * Makes a call to the TestingApp smart contract using the `call_abi_foreign_refs()string` ABI method.
-     * 
+     *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    callAbiForeignRefs: async (params: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
+    callAbiForeignRefs: async (
+      params: CallParams<
+        TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']
+      > &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC } = { args: [] },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.callAbiForeignRefs(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['call_abi_foreign_refs()string']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['call_abi_foreign_refs()string'] }
     },
 
     /**
@@ -1140,9 +1471,18 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    setGlobal: async (params: CallParams<TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setGlobal: async (
+      params: CallParams<
+        | TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
+        | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
+      > &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.setGlobal(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['set_global(uint64,uint64,string,byte[4])void']}
+      return {
+        ...result,
+        return: result.return as unknown as undefined | TestingAppReturns['set_global(uint64,uint64,string,byte[4])void'],
+      }
     },
 
     /**
@@ -1151,9 +1491,15 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    setLocal: async (params: CallParams<TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setLocal: async (
+      params: CallParams<
+        | TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
+        | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
+      > &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.setLocal(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['set_local(uint64,uint64,string,byte[4])void']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['set_local(uint64,uint64,string,byte[4])void'] }
     },
 
     /**
@@ -1162,9 +1508,14 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    issueTransferToSender: async (params: CallParams<TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    issueTransferToSender: async (
+      params: CallParams<
+        TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
+      > &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.issueTransferToSender(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['issue_transfer_to_sender(uint64)void']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['issue_transfer_to_sender(uint64)void'] }
     },
 
     /**
@@ -1173,9 +1524,12 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    setBox: async (params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    setBox: async (
+      params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.setBox(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['set_box(byte[4],string)void']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['set_box(byte[4],string)void'] }
     },
 
     /**
@@ -1184,9 +1538,12 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    error: async (params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
+    error: async (
+      params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC } = { args: [] },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.error(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['error()void']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['error()void'] }
     },
 
     /**
@@ -1195,9 +1552,14 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    emitSwapped: async (params: CallParams<TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitSwapped: async (
+      params: CallParams<
+        TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
+      > &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.emitSwapped(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['emitSwapped(uint64,uint64)void']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['emitSwapped(uint64,uint64)void'] }
     },
 
     /**
@@ -1206,9 +1568,14 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    emitSwappedTwice: async (params: CallParams<TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitSwappedTwice: async (
+      params: CallParams<
+        TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
+      > &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.emitSwappedTwice(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['emitSwappedTwice(uint64,uint64)void']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['emitSwappedTwice(uint64,uint64)void'] }
     },
 
     /**
@@ -1217,11 +1584,16 @@ export class TestingAppClient {
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    emitComplex: async (params: CallParams<TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    emitComplex: async (
+      params: CallParams<
+        | TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void']
+        | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
+      > &
+        SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
+    ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.emitComplex(params))
-      return {...result, return: result.return as undefined | TestingAppReturns['emitComplex(uint64,uint64,uint32[])void']}
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['emitComplex(uint64,uint64,uint32[])void'] }
     },
-
   }
 
   /**
@@ -1236,7 +1608,7 @@ export class TestingAppClient {
 
   /**
    * Makes a readonly (simulated) call to the TestingApp smart contract using the `call_abi(string)string` ABI method.
-   * 
+   *
    * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
    *
    * @param params The params for the smart contract call
@@ -1244,20 +1616,24 @@ export class TestingAppClient {
    */
   async callAbi(params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']>) {
     const result = await this.appClient.send.call(TestingAppParamsFactory.callAbi(params))
-    return result.return as TestingAppReturns['call_abi(string)string']
+    return result.return as unknown as TestingAppReturns['call_abi(string)string']
   }
 
   /**
    * Makes a readonly (simulated) call to the TestingApp smart contract using the `call_abi_foreign_refs()string` ABI method.
-   * 
+   *
    * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
    *
    * @param params The params for the smart contract call
    * @returns The call result
    */
-  async callAbiForeignRefs(params: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']> = {args: []}) {
+  async callAbiForeignRefs(
+    params: CallParams<
+      TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']
+    > = { args: [] },
+  ) {
     const result = await this.appClient.send.call(TestingAppParamsFactory.callAbiForeignRefs(params))
-    return result.return as TestingAppReturns['call_abi_foreign_refs()string']
+    return result.return as unknown as TestingAppReturns['call_abi_foreign_refs()string']
   }
 
   /**
@@ -1284,23 +1660,33 @@ export class TestingAppClient {
       /**
        * Get the current value of the bytes1 key in global state
        */
-      bytes1: async (): Promise<BinaryState> => { return new BinaryStateValue((await this.appClient.state.global.getValue("bytes1")) as Uint8Array | undefined) },
+      bytes1: async (): Promise<BinaryState> => {
+        return new BinaryStateValue((await this.appClient.state.global.getValue('bytes1')) as Uint8Array | undefined)
+      },
       /**
        * Get the current value of the bytes2 key in global state
        */
-      bytes2: async (): Promise<BinaryState> => { return new BinaryStateValue((await this.appClient.state.global.getValue("bytes2")) as Uint8Array | undefined) },
+      bytes2: async (): Promise<BinaryState> => {
+        return new BinaryStateValue((await this.appClient.state.global.getValue('bytes2')) as Uint8Array | undefined)
+      },
       /**
        * Get the current value of the int1 key in global state
        */
-      int1: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("int1")) as bigint | undefined },
+      int1: async (): Promise<bigint | undefined> => {
+        return (await this.appClient.state.global.getValue('int1')) as bigint | undefined
+      },
       /**
        * Get the current value of the int2 key in global state
        */
-      int2: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("int2")) as bigint | undefined },
+      int2: async (): Promise<bigint | undefined> => {
+        return (await this.appClient.state.global.getValue('int2')) as bigint | undefined
+      },
       /**
        * Get the current value of the value key in global state
        */
-      value: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("value")) as bigint | undefined },
+      value: async (): Promise<bigint | undefined> => {
+        return (await this.appClient.state.global.getValue('value')) as bigint | undefined
+      },
     },
     /**
      * Methods to access local state for the current TestingApp app
@@ -1323,19 +1709,27 @@ export class TestingAppClient {
         /**
          * Get the current value of the local_bytes1 key in local state
          */
-        localBytes1: async (): Promise<BinaryState> => { return new BinaryStateValue((await this.appClient.state.local(encodedAddress).getValue("localBytes1")) as Uint8Array | undefined) },
+        localBytes1: async (): Promise<BinaryState> => {
+          return new BinaryStateValue((await this.appClient.state.local(encodedAddress).getValue('localBytes1')) as Uint8Array | undefined)
+        },
         /**
          * Get the current value of the local_bytes2 key in local state
          */
-        localBytes2: async (): Promise<BinaryState> => { return new BinaryStateValue((await this.appClient.state.local(encodedAddress).getValue("localBytes2")) as Uint8Array | undefined) },
+        localBytes2: async (): Promise<BinaryState> => {
+          return new BinaryStateValue((await this.appClient.state.local(encodedAddress).getValue('localBytes2')) as Uint8Array | undefined)
+        },
         /**
          * Get the current value of the local_int1 key in local state
          */
-        localInt1: async (): Promise<bigint | undefined> => { return (await this.appClient.state.local(encodedAddress).getValue("localInt1")) as bigint | undefined },
+        localInt1: async (): Promise<bigint | undefined> => {
+          return (await this.appClient.state.local(encodedAddress).getValue('localInt1')) as bigint | undefined
+        },
         /**
          * Get the current value of the local_int2 key in local state
          */
-        localInt2: async (): Promise<bigint | undefined> => { return (await this.appClient.state.local(encodedAddress).getValue("localInt2")) as bigint | undefined },
+        localInt2: async (): Promise<bigint | undefined> => {
+          return (await this.appClient.state.local(encodedAddress).getValue('localInt2')) as bigint | undefined
+        },
       }
     },
   }
@@ -1343,13 +1737,17 @@ export class TestingAppClient {
   public newGroup(): TestingAppComposer {
     const client = this
     const composer = this.algorand.newGroup()
-    let promiseChain:Promise<unknown> = Promise.resolve()
+    let promiseChain: Promise<unknown> = Promise.resolve()
     const resultMappers: Array<undefined | ((x: ABIReturn | undefined) => any)> = []
     return {
       /**
        * Add a call_abi(string)string method call against the TestingApp contract
        */
-      callAbi(params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      callAbi(
+        params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']> & {
+          onComplete?: OnApplicationComplete.NoOpOC
+        },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.callAbi(params)))
         resultMappers.push((v) => client.decodeReturnValue('call_abi(string)string', v))
         return this
@@ -1357,7 +1755,11 @@ export class TestingAppClient {
       /**
        * Add a call_abi_foreign_refs()string method call against the TestingApp contract
        */
-      callAbiForeignRefs(params: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      callAbiForeignRefs(
+        params: CallParams<
+          TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.callAbiForeignRefs(params)))
         resultMappers.push((v) => client.decodeReturnValue('call_abi_foreign_refs()string', v))
         return this
@@ -1365,7 +1767,12 @@ export class TestingAppClient {
       /**
        * Add a set_global(uint64,uint64,string,byte[4])void method call against the TestingApp contract
        */
-      setGlobal(params: CallParams<TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      setGlobal(
+        params: CallParams<
+          | TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
+          | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.setGlobal(params)))
         resultMappers.push(undefined)
         return this
@@ -1373,7 +1780,12 @@ export class TestingAppClient {
       /**
        * Add a set_local(uint64,uint64,string,byte[4])void method call against the TestingApp contract
        */
-      setLocal(params: CallParams<TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      setLocal(
+        params: CallParams<
+          | TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
+          | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.setLocal(params)))
         resultMappers.push(undefined)
         return this
@@ -1381,7 +1793,11 @@ export class TestingAppClient {
       /**
        * Add a issue_transfer_to_sender(uint64)void method call against the TestingApp contract
        */
-      issueTransferToSender(params: CallParams<TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      issueTransferToSender(
+        params: CallParams<
+          TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.issueTransferToSender(params)))
         resultMappers.push(undefined)
         return this
@@ -1389,7 +1805,11 @@ export class TestingAppClient {
       /**
        * Add a set_box(byte[4],string)void method call against the TestingApp contract
        */
-      setBox(params: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      setBox(
+        params: CallParams<
+          TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.setBox(params)))
         resultMappers.push(undefined)
         return this
@@ -1397,7 +1817,11 @@ export class TestingAppClient {
       /**
        * Add a error()void method call against the TestingApp contract
        */
-      error(params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      error(
+        params: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']> & {
+          onComplete?: OnApplicationComplete.NoOpOC
+        },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.error(params)))
         resultMappers.push(undefined)
         return this
@@ -1405,7 +1829,11 @@ export class TestingAppClient {
       /**
        * Add a emitSwapped(uint64,uint64)void method call against the TestingApp contract
        */
-      emitSwapped(params: CallParams<TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      emitSwapped(
+        params: CallParams<
+          TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.emitSwapped(params)))
         resultMappers.push(undefined)
         return this
@@ -1413,7 +1841,11 @@ export class TestingAppClient {
       /**
        * Add a emitSwappedTwice(uint64,uint64)void method call against the TestingApp contract
        */
-      emitSwappedTwice(params: CallParams<TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      emitSwappedTwice(
+        params: CallParams<
+          TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.emitSwappedTwice(params)))
         resultMappers.push(undefined)
         return this
@@ -1421,14 +1853,19 @@ export class TestingAppClient {
       /**
        * Add a emitComplex(uint64,uint64,uint32[])void method call against the TestingApp contract
        */
-      emitComplex(params: CallParams<TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      emitComplex(
+        params: CallParams<
+          | TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void']
+          | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
+        > & { onComplete?: OnApplicationComplete.NoOpOC },
+      ) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.emitComplex(params)))
         resultMappers.push(undefined)
         return this
       },
       get update() {
         return {
-          bare: (params?: AppClientBareCallParams & AppClientCompilationParams ) => {
+          bare: (params?: AppClientBareCallParams & AppClientCompilationParams) => {
             promiseChain = promiseChain.then(async () => composer.addAppUpdate(await client.params.update.bare(params)))
             return this
           },
@@ -1436,7 +1873,7 @@ export class TestingAppClient {
       },
       get delete() {
         return {
-          bare: (params?: AppClientBareCallParams ) => {
+          bare: (params?: AppClientBareCallParams) => {
             promiseChain = promiseChain.then(() => composer.addAppDelete(client.params.delete.bare(params)))
             return this
           },
@@ -1468,10 +1905,10 @@ export class TestingAppClient {
       },
       async simulate(options?: SimulateOptions) {
         await promiseChain
-        const result = await composer.simulate(options)
+        const result = await (!options ? composer.simulate() : composer.simulate(options))
         return {
           ...result,
-          returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i]!(val) : val.returnValue)
+          returns: result.returns?.map((val, i) => (resultMappers[i] !== undefined ? resultMappers[i]!(val) : val.returnValue)),
         }
       },
       async send(params?: SendParams) {
@@ -1479,9 +1916,9 @@ export class TestingAppClient {
         const result = await composer.send(params)
         return {
           ...result,
-          returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i]!(val) : val.returnValue)
+          returns: result.returns?.map((val, i) => (resultMappers[i] !== undefined ? resultMappers[i]!(val) : val.returnValue)),
         }
-      }
+      },
     } as unknown as TestingAppComposer
   }
 }
@@ -1493,7 +1930,9 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  callAbi(params?: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']>): TestingAppComposer<[...TReturns, TestingAppReturns['call_abi(string)string'] | undefined]>
+  callAbi(
+    params?: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']>,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['call_abi(string)string'] | undefined]>
 
   /**
    * Calls the call_abi_foreign_refs()string ABI method.
@@ -1502,7 +1941,9 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  callAbiForeignRefs(params?: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']>): TestingAppComposer<[...TReturns, TestingAppReturns['call_abi_foreign_refs()string'] | undefined]>
+  callAbiForeignRefs(
+    params?: CallParams<TestingAppArgs['obj']['call_abi_foreign_refs()string'] | TestingAppArgs['tuple']['call_abi_foreign_refs()string']>,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['call_abi_foreign_refs()string'] | undefined]>
 
   /**
    * Calls the set_global(uint64,uint64,string,byte[4])void ABI method.
@@ -1511,7 +1952,12 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  setGlobal(params?: CallParams<TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']>): TestingAppComposer<[...TReturns, TestingAppReturns['set_global(uint64,uint64,string,byte[4])void'] | undefined]>
+  setGlobal(
+    params?: CallParams<
+      | TestingAppArgs['obj']['set_global(uint64,uint64,string,byte[4])void']
+      | TestingAppArgs['tuple']['set_global(uint64,uint64,string,byte[4])void']
+    >,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['set_global(uint64,uint64,string,byte[4])void'] | undefined]>
 
   /**
    * Calls the set_local(uint64,uint64,string,byte[4])void ABI method.
@@ -1520,7 +1966,12 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  setLocal(params?: CallParams<TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void'] | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']>): TestingAppComposer<[...TReturns, TestingAppReturns['set_local(uint64,uint64,string,byte[4])void'] | undefined]>
+  setLocal(
+    params?: CallParams<
+      | TestingAppArgs['obj']['set_local(uint64,uint64,string,byte[4])void']
+      | TestingAppArgs['tuple']['set_local(uint64,uint64,string,byte[4])void']
+    >,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['set_local(uint64,uint64,string,byte[4])void'] | undefined]>
 
   /**
    * Calls the issue_transfer_to_sender(uint64)void ABI method.
@@ -1529,7 +1980,11 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  issueTransferToSender(params?: CallParams<TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']>): TestingAppComposer<[...TReturns, TestingAppReturns['issue_transfer_to_sender(uint64)void'] | undefined]>
+  issueTransferToSender(
+    params?: CallParams<
+      TestingAppArgs['obj']['issue_transfer_to_sender(uint64)void'] | TestingAppArgs['tuple']['issue_transfer_to_sender(uint64)void']
+    >,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['issue_transfer_to_sender(uint64)void'] | undefined]>
 
   /**
    * Calls the set_box(byte[4],string)void ABI method.
@@ -1538,7 +1993,9 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  setBox(params?: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']>): TestingAppComposer<[...TReturns, TestingAppReturns['set_box(byte[4],string)void'] | undefined]>
+  setBox(
+    params?: CallParams<TestingAppArgs['obj']['set_box(byte[4],string)void'] | TestingAppArgs['tuple']['set_box(byte[4],string)void']>,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['set_box(byte[4],string)void'] | undefined]>
 
   /**
    * Calls the error()void ABI method.
@@ -1547,7 +2004,9 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  error(params?: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']>): TestingAppComposer<[...TReturns, TestingAppReturns['error()void'] | undefined]>
+  error(
+    params?: CallParams<TestingAppArgs['obj']['error()void'] | TestingAppArgs['tuple']['error()void']>,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['error()void'] | undefined]>
 
   /**
    * Calls the emitSwapped(uint64,uint64)void ABI method.
@@ -1556,7 +2015,11 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  emitSwapped(params?: CallParams<TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']>): TestingAppComposer<[...TReturns, TestingAppReturns['emitSwapped(uint64,uint64)void'] | undefined]>
+  emitSwapped(
+    params?: CallParams<
+      TestingAppArgs['obj']['emitSwapped(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwapped(uint64,uint64)void']
+    >,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['emitSwapped(uint64,uint64)void'] | undefined]>
 
   /**
    * Calls the emitSwappedTwice(uint64,uint64)void ABI method.
@@ -1565,7 +2028,11 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  emitSwappedTwice(params?: CallParams<TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']>): TestingAppComposer<[...TReturns, TestingAppReturns['emitSwappedTwice(uint64,uint64)void'] | undefined]>
+  emitSwappedTwice(
+    params?: CallParams<
+      TestingAppArgs['obj']['emitSwappedTwice(uint64,uint64)void'] | TestingAppArgs['tuple']['emitSwappedTwice(uint64,uint64)void']
+    >,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['emitSwappedTwice(uint64,uint64)void'] | undefined]>
 
   /**
    * Calls the emitComplex(uint64,uint64,uint32[])void ABI method.
@@ -1574,7 +2041,11 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  emitComplex(params?: CallParams<TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']>): TestingAppComposer<[...TReturns, TestingAppReturns['emitComplex(uint64,uint64,uint32[])void'] | undefined]>
+  emitComplex(
+    params?: CallParams<
+      TestingAppArgs['obj']['emitComplex(uint64,uint64,uint32[])void'] | TestingAppArgs['tuple']['emitComplex(uint64,uint64,uint32[])void']
+    >,
+  ): TestingAppComposer<[...TReturns, TestingAppReturns['emitComplex(uint64,uint64,uint32[])void'] | undefined]>
 
   /**
    * Gets available delete methods
@@ -1586,7 +2057,7 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
      * @param args The arguments for the bare call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    bare(params?: AppClientBareCallParams ): TestingAppComposer<[...TReturns, undefined]>
+    bare(params?: AppClientBareCallParams): TestingAppComposer<[...TReturns, undefined]>
   }
 
   /**
@@ -1600,7 +2071,9 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
      * @param params Any additional parameters for the call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    optIn(params?: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']>): TestingAppComposer<[...TReturns, TestingAppReturns['opt_in()void'] | undefined]>
+    optIn(
+      params?: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']>,
+    ): TestingAppComposer<[...TReturns, TestingAppReturns['opt_in()void'] | undefined]>
   }
 
   /**
@@ -1625,13 +2098,16 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
   /**
    * Simulates the transaction group and returns the result
    */
-  simulate(options?: SimulateOptions): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
+  simulate(): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
+  simulate(options: SkipSignaturesSimulateOptions): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
+  simulate(options: RawSimulateOptions): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
   /**
    * Sends the transaction group to the network and returns the results
    */
   send(params?: SendParams): Promise<TestingAppComposerResults<TReturns>>
 }
-export type TestingAppComposerResults<TReturns extends [...any[]]> = Expand<SendAtomicTransactionComposerResults & {
-  returns: TReturns
-}>
-
+export type TestingAppComposerResults<TReturns extends [...any[]]> = Expand<
+  SendAtomicTransactionComposerResults & {
+    returns: TReturns
+  }
+>
