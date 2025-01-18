@@ -1,6 +1,6 @@
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import * as msgpack from 'algorand-msgpack'
-import algosdk, { Address, SignedTxnWithAD, UntypedValue } from 'algosdk'
+import algosdk, { SignedTxnWithAD, UntypedValue } from 'algosdk'
 import { Buffer } from 'buffer'
 import base32 from 'hi-base32'
 import sha512 from 'js-sha512'
@@ -38,6 +38,7 @@ export function getBlockTransactions(blockResponse: algosdk.modelsv2.BlockRespon
   const getRoundOffset = () => roundOffset++
 
   return (block.payset ?? []).flatMap((signedTransactionInBlock) => {
+    signedTransactionInBlock.hasGenesisHash
     // FAILED: this spike failed here, signedTransactionInBlock.hasGenesisHash and signedTransactionInBlock.hasGenesisID are calculated wrong from algosdk
     const genesisHash = Buffer.from(blockResponse.block.header.genesisHash)
     const genesisId = signedTransactionInBlock.hasGenesisID ? blockResponse.block.header.genesisID : undefined
@@ -137,12 +138,12 @@ function extractTransactionDataFromSignedTxnInBlock(
   if (genesisId) {
     txnMap.set('gen', genesisId)
   }
-  if (rawTxn.type === TransactionType.axfer && !rawTxn.assetTransfer?.receiver) {
-    txnMap.set('arcv', Address.fromString(ALGORAND_ZERO_ADDRESS))
-  }
-  if (rawTxn.type === TransactionType.pay && !rawTxn.payment?.receiver) {
-    txnMap.set('rcv', Address.fromString(ALGORAND_ZERO_ADDRESS))
-  }
+  // if (rawTxn.type === TransactionType.axfer && !rawTxn.assetTransfer?.receiver) {
+  //   txnMap.set('arcv', Address.fromString(ALGORAND_ZERO_ADDRESS))
+  // }
+  // if (rawTxn.type === TransactionType.pay && !rawTxn.payment?.receiver) {
+  //   txnMap.set('rcv', Address.fromString(ALGORAND_ZERO_ADDRESS))
+  // }
 
   const txn = algosdk.Transaction.fromEncodingData(txnMap)
 

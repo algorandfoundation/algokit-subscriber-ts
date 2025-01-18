@@ -20,11 +20,11 @@ export async function getBlocksBulk(context: { startRound: bigint; maxRound: big
     blocks = blocks.concat(
       await Promise.all(
         chunk.map(async (round) => {
-          const response = await client.c.get({ relativePath: `/v2/blocks/${round}`, query: { format: 'msgpack' } })
-          const body = response.body as Uint8Array
-          const blockResponse = algosdk.decodeMsgpack<algosdk.modelsv2.BlockResponse>(body, algosdk.modelsv2.BlockResponse)
+          return await client.block(round).do()
+          // const body = response.body as Uint8Array
+          // const blockResponse = algosdk.decodeMsgpack<algosdk.modelsv2.BlockResponse>(body, algosdk.modelsv2.BlockResponse)
 
-          return blockResponse
+          // return blockResponse
           // const decodedWithMap = msgpack.decode(body, {
           //   intMode: msgpack.IntMode.BIGINT,
           //   useMap: true,
