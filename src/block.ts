@@ -1,6 +1,5 @@
 import { Config } from '@algorandfoundation/algokit-utils'
 import algosdk from 'algosdk'
-import { BlockData } from './types'
 import { chunkArray, range } from './utils'
 import Algodv2 = algosdk.Algodv2
 
@@ -21,52 +20,10 @@ export async function getBlocksBulk(context: { startRound: bigint; maxRound: big
       await Promise.all(
         chunk.map(async (round) => {
           return await client.block(round).do()
-          // const body = response.body as Uint8Array
-          // const blockResponse = algosdk.decodeMsgpack<algosdk.modelsv2.BlockResponse>(body, algosdk.modelsv2.BlockResponse)
-
-          // return blockResponse
-          // const decodedWithMap = msgpack.decode(body, {
-          //   intMode: msgpack.IntMode.BIGINT,
-          //   useMap: true,
-          //   rawBinaryStringValues: true,
-          //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          // }) as Map<any, any>
-          // const decoded = blockMapToObject(decodedWithMap)
-          // return decoded
         }),
       ),
     )
     Config.logger.debug(`Retrieved ${chunk.length} blocks from round ${chunk[0]} via algod in ${(+new Date() - start) / 1000}s`)
   }
   return blocks
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function blockMapToObject(object: Map<any, any>): BlockData {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result: { [key: string]: any } = {}
-  const decoder = new TextDecoder()
-  for (const [key, value] of object) {
-    if (key === 'r' && value instanceof Map && Array.from(value.keys()).every((k) => typeof k === 'bigint')) {
-      // State proof transactions have a property `r` with a map with numeric keys that must stay intact
-      result[key] = value
-    } else if (value instanceof Map) {
-      result[key] = blockMapToObject(value)
-    } else if (value instanceof Uint8Array) {
-      if (['txn256'].includes(key)) {
-        // The above keys have non UTF-8 values
-        result[key] = Buffer.from(value).toString('base64')
-      } else if (['gen', 'proto', 'nextproto', 'type', 'an', 'un', 'au'].includes(key)) {
-        // The above keys have UTF-8 values
-        result[key] = decoder.decode(value)
-      } else {
-        result[key] = value
-      }
-    } else if (value instanceof Array) {
-      result[key] = value.map((v) => (v instanceof Map ? blockMapToObject(v) : v))
-    } else {
-      result[key] = value
-    }
-  }
-  return result as BlockData
 }
