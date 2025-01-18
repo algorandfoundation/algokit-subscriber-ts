@@ -1,5 +1,4 @@
 import { Config } from '@algorandfoundation/algokit-utils'
-import * as msgpack from 'algorand-msgpack'
 import algosdk from 'algosdk'
 import { BlockData } from './types'
 import { chunkArray, range } from './utils'
@@ -14,23 +13,26 @@ import Algodv2 = algosdk.Algodv2
 export async function getBlocksBulk(context: { startRound: bigint; maxRound: bigint }, client: Algodv2) {
   // Grab 30 at a time in parallel to not overload the node
   const blockChunks = chunkArray(range(context.startRound, context.maxRound), 30)
-  let blocks: BlockData[] = []
+  let blocks: algosdk.modelsv2.BlockResponse[] = []
   for (const chunk of blockChunks) {
     Config.logger.info(`Retrieving ${chunk.length} blocks from round ${chunk[0]} via algod`)
     const start = +new Date()
     blocks = blocks.concat(
       await Promise.all(
         chunk.map(async (round) => {
-          const response = await client.c.get({ relativePath: `/v2/blocks/${round}`, query: { format: 'msgpack' } })
-          const body = response.body as Uint8Array
-          const decodedWithMap = msgpack.decode(body, {
-            intMode: msgpack.IntMode.BIGINT,
-            useMap: true,
-            rawBinaryStringValues: true,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          }) as Map<any, any>
-          const decoded = blockMapToObject(decodedWithMap)
-          return decoded
+          return await client.block(round).do()
+          // const body = response.body as Uint8Array
+          // const blockResponse = algosdk.decodeMsgpack<algosdk.modelsv2.BlockResponse>(body, algosdk.modelsv2.BlockResponse)
+
+          // return blockResponse
+          // const decodedWithMap = msgpack.decode(body, {
+          //   intMode: msgpack.IntMode.BIGINT,
+          //   useMap: true,
+          //   rawBinaryStringValues: true,
+          //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // }) as Map<any, any>
+          // const decoded = blockMapToObject(decodedWithMap)
+          // return decoded
         }),
       ),
     )

@@ -181,8 +181,8 @@ export interface Block {
  * @see https://github.com/algorand/go-algorand/blob/master/data/transactions/signedtxn.go#L32
  */
 export interface BlockTransaction {
-  /** The encoded transaction data */
-  txn: EncodedTransaction
+  /** The transaction data */
+  txn: Transaction
   /** The eval deltas for the block */
   dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
@@ -333,7 +333,7 @@ export interface TransactionInBlock {
   // Raw data
 
   /** The block data for the transaction */
-  blockTransaction: BlockTransaction | BlockInnerTransaction
+  signedTxnWithAD: algosdk.SignedTxnWithAD
   /** The transaction ID
    *
    * @example
@@ -365,9 +365,9 @@ export interface TransactionInBlock {
    */
   parentTransactionId?: string
   /** The binary genesis hash of the network the transaction is within. */
-  genesisHash: Buffer
+  genesisHash?: Buffer
   /** The string genesis ID of the network the transaction is within. */
-  genesisId: string
+  genesisId?: string
   /** The round number of the block the transaction is within. */
   roundNumber: bigint
   /** The round unix timestamp of the block the transaction is within. */

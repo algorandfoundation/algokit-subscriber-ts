@@ -197,6 +197,14 @@ describe('Complex transaction with many nested inner transactions', () => {
           "foreignAssets": [
             1390638935n,
           ],
+          "globalStateSchema": {
+            "numByteSlice": 0,
+            "numUint": 0,
+          },
+          "localStateSchema": {
+            "numByteSlice": 0,
+            "numUint": 0,
+          },
           "onCompletion": "noop",
         },
         "balanceChanges": [
@@ -222,6 +230,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "AAAAAAAAAAQAAAAAAhlUHw==",
+              "uint": 0n,
             },
           },
           {
@@ -229,6 +238,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "YC4Bj8ZCXdiWg6+eYEL5yV0gvi3ucnEckrGx2BQXDDIAAAAAUuN3VwAAAAAOsZeDAQAAAABS43dXAAAAAFLkB4YAAAAAAAAAAAAAAAAAAAAA/////5S/nq4AAAAAa0BhUQAAAA91+xl0AAAAAALtZZ8AAAAAAwsGTgAAAAAAAA==",
+              "uint": 0n,
             },
           },
           {
@@ -236,6 +246,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "h2MAAAAAAAAABQAAAAAAAAAZAAAAAAAAAB6KqC3yOXMVr2XD4nTi43RC3Rv0AGIvri+ssClC+HVNQgAAAAAAAAAAAA==",
+              "uint": 0n,
             },
           },
         ],
@@ -284,6 +295,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "intraRoundOffset": 147,
         "lastValid": 35214369n,
+        "localStateDelta": [],
         "logs": [
           "R2hHHwQAAAAAAAYExQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
           "AAAAAAAAYaAAAAAAH/LmTQAAAAAAAAAA",
@@ -307,8 +319,12 @@ describe('Complex transaction with many nested inner transactions', () => {
           "genesisId": "mainnet-v1.0",
           "hash": "EOq+HX242/G/ADonU6q5lfimxX7twuFKEwtG4rDt+kI=",
           "parentTransactionCount": 55,
+          "participationUpdates": {
+            "absentParticipationAccounts": [],
+            "expiredParticipationAccounts": [],
+          },
           "previousBlockHash": "8ReLxqOPxmuKuBfACtllRRr13n2E2r01f8wXt3vFYW0=",
-          "proposer": undefined,
+          "proposer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
           "rewards": {
             "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
             "rewardsCalculationRound": 35500000n,
@@ -324,7 +340,7 @@ describe('Complex transaction with many nested inner transactions', () => {
               "nextRound": 35214336n,
               "onlineTotalWeight": 0n,
               "type": 0,
-              "votersCommitment": undefined,
+              "votersCommitment": "",
             },
           ],
           "timestamp": 1705252440n,
@@ -338,6 +354,11 @@ describe('Complex transaction with many nested inner transactions', () => {
             "nextProtocolSwitchOn": 35275315n,
             "nextProtocolVoteBefore": 35125315n,
           },
+          "upgradeVote": {
+            "upgradeApprove": false,
+            "upgradeDelay": 0n,
+            "upgradePropose": "",
+          },
         },
       ]
     `)
@@ -348,7 +369,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
     const intraRoundOffset = txn.transaction.intraRoundOffset!
 
-    const transformed = getBlockTransactions(b.block)
+    const transformed = getBlockTransactions(b)
 
     const receivedTxn = transformed[intraRoundOffset]
     expect(receivedTxn.transaction.txID()).toBe(txnId)
@@ -756,7 +777,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Transforms axfer without an arcv address', async () => {
     const blocks = await getBlocksBulk({ startRound: 39373576n, maxRound: 39373576n }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(30)
     expect(blockTransactions[5].transaction.assetTransfer?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
@@ -764,7 +785,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Transforms pay without a rcv address', async () => {
     const blocks = await getBlocksBulk({ startRound: 39723800n, maxRound: 39723800n }, algorand.client.algod) // Contains a pay close account inner transaction without a rcv address
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(486)
     expect(blockTransactions[371].transaction.payment?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
@@ -772,7 +793,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces the correct txID for a non hgi transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 39430981n, maxRound: 39430981n }, algorand.client.algod)
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
@@ -781,7 +802,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces the correct state deltas in an app call transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 39430981n, maxRound: 39430981n }, algorand.client.algod)
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[9])
     const transactionForDiff = getSubscribedTransactionForDiff(transaction)
@@ -793,6 +814,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     "key": "Y3VycmVudF9taW5lcl9lZmZvcnQ=",
     "value": {
       "action": 2,
+      "bytes": "",
       "uint": 412000n,
     },
   },
@@ -800,6 +822,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     "key": "dG90YWxfZWZmb3J0",
     "value": {
       "action": 2,
+      "bytes": "",
       "uint": 2129702852933n,
     },
   },
@@ -807,6 +830,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     "key": "dG90YWxfdHJhbnNhY3Rpb25z",
     "value": {
       "action": 2,
+      "bytes": "",
       "uint": 324424783n,
     },
   },
@@ -820,6 +844,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "key": "ZWZmb3J0",
         "value": {
           "action": 2,
+          "bytes": "",
           "uint": 412000n,
         },
       },
@@ -830,7 +855,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces base64 encoded programs for an application create transaction', async () => {
     const blocks = await getBlocksBulk({ startRound: 34632059n, maxRound: 34632059n }, algorand.client.algod) // Contains a appl create transaction with approval and clear state programs
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(14)
 
@@ -845,7 +870,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
   it('Produces the correct state deltas in an application call transaction with r key', async () => {
     const blocks = await getBlocksBulk({ startRound: 45172924n, maxRound: 45172924n }, algorand.client.algod) // Contains an axfer opt out inner transaction without an arcv address
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
     const txn = blockTransactions[4]
 
     const transaction = getIndexerTransactionFromAlgodTransaction(txn)
@@ -855,7 +880,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     "key": "cg==",
     "value": EvalDelta {
       "action": 2,
-      "bytes": undefined,
+      "bytes": "",
       "uint": 6311n,
     },
   },
@@ -864,7 +889,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     "value": EvalDelta {
       "action": 1,
       "bytes": "gfOn0O9iF4/OGJ6kRsOFfbp/zhAedEwoZL/escO+M+QAAAAAQ/9CAQAAAAACsUi5AwAkCj8UAphDyseTKWeF7KZFZuNK8zA9rbqocWk+NJ5CpMtNsCSq7S8AAAAAAAAAJxAAAABi6BgWCgAAAAAAAAAA",
-      "uint": undefined,
+      "uint": 0n,
     },
   },
 ]`)

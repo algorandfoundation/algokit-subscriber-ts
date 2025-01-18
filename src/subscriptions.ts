@@ -185,7 +185,7 @@ export async function getSubscribedTransactions(
   if (!skipAlgodSync) {
     start = +new Date()
     const blocks = await getBlocksBulk({ startRound: algodSyncFromRoundNumber, maxRound: endRound }, algod)
-    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b.block))
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
     algodTransactions = filters
       .flatMap((f) =>
         blockTransactions
@@ -631,7 +631,7 @@ function transactionFilter(
       result &&= subscription.appCallArgumentsMatch(t.applicationCall?.appArgs)
     }
     if (subscription.balanceChanges) {
-      const balanceChanges = extractBalanceChangesFromBlockTransaction(txn.blockTransaction)
+      const balanceChanges = extractBalanceChangesFromBlockTransaction(txn.signedTxnWithAD)
       result &&= hasBalanceChangeMatch(balanceChanges, subscription.balanceChanges)
     }
     if (subscription.customFilter) {
