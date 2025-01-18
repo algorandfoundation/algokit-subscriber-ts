@@ -1,7 +1,7 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account } from 'algosdk'
+import type { Account } from 'algosdk'
 import { expect, vitest } from 'vitest'
 import { Arc28EventGroup, TransactionFilter } from '../src/types'
 import { GetSubscribedTransactions, SendXTransactions } from './transactions'
@@ -16,8 +16,8 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig) {
       {
         roundsToSync: 1,
         syncBehaviour: 'sync-oldest',
-        watermark: Number(result.confirmation?.confirmedRound) - 1,
-        currentRound: Number(result.confirmation?.confirmedRound),
+        watermark: result.confirmation!.confirmedRound! - 1n,
+        currentRound: result.confirmation!.confirmedRound,
         filters: filter,
         arc28Events,
       },
@@ -41,8 +41,8 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig) {
       {
         roundsToSync: 1,
         syncBehaviour: 'catchup-with-indexer',
-        watermark: Number(result.confirmation!.confirmedRound ?? 0) - 1,
-        currentRound: Number(result.confirmation?.confirmedRound) + 1,
+        watermark: (result.confirmation?.confirmedRound ?? 0n) - 1n,
+        currentRound: (result.confirmation?.confirmedRound ?? 0n) + 1n,
         filters: filter,
         arc28Events,
       },

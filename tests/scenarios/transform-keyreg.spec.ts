@@ -1,11 +1,12 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { TransactionType } from 'algosdk'
 import { describe, expect, it } from 'vitest'
-import { GetSubscribedTransactions, clearUndefineds } from '../transactions'
+import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
+import { GetSubscribedTransactions } from '../transactions'
 
 describe('Complex transaction with many nested inner transactions', () => {
   const txnId = 'LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA'
-  const roundNumber = 34418662
+  const roundNumber = 34418662n
   const algorand = AlgorandClient.mainNet()
 
   it('Can have a keyreg transaction subscribed correctly from indexer', async () => {
@@ -16,62 +17,61 @@ describe('Complex transaction with many nested inner transactions', () => {
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'catchup-with-indexer',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
 
     expect(indexerTxns.subscribedTransactions.length).toBe(1)
-    const txn = indexerTxns.subscribedTransactions[0]
+    const txn = getSubscribedTransactionForDiff(indexerTxns.subscribedTransactions[0])
     // https://allo.info/tx/LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA
     expect(txn.id).toBe(txnId)
     expect(txn).toMatchInlineSnapshot(`
-      {
-        "arc28Events": undefined,
-        "balanceChanges": [
-          {
-            "address": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
-            "amount": -1000n,
-            "assetId": 0,
-            "roles": [
-              "Sender",
-            ],
-          },
-        ],
-        "close-rewards": 0,
-        "closing-amount": 0,
-        "confirmed-round": 34418662,
-        "fee": 1000,
-        "filtersMatched": [
-          "default",
-        ],
-        "first-valid": 34418595,
-        "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-        "genesis-id": "mainnet-v1.0",
-        "id": "LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA",
-        "inner-txns": undefined,
-        "intra-round-offset": 54,
-        "keyreg-transaction": {
-          "non-participation": false,
-          "selection-participation-key": "Fsp1QLE/fXpmq5fsk/bWP8P1+H8n30bMD3X7hPdk/GU=",
-          "state-proof-key": "Qld9eu3U/OhHohBMF4atWbKbDQB5NGO2vPl5sZ9q9yHssmrbnQIOlhujP3vaSdFXqstnzD77Z85yrlfxJFfu+g==",
-          "vote-first-valid": 34300000,
-          "vote-key-dilution": 2450,
-          "vote-last-valid": 40300000,
-          "vote-participation-key": "yUR+nfHtSb2twOaprEXrnYjkhbFMBtmXW9D8x+/ROBg=",
+     {
+      "balanceChanges": [
+        {
+          "address": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
+          "amount": -1000n,
+          "assetId": 0n,
+          "roles": [
+            "Sender",
+          ],
         },
-        "last-valid": 34419595,
-        "receiver-rewards": 0,
-        "round-time": 1702579204,
-        "sender": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
-        "sender-rewards": 0,
-        "signature": {
-          "sig": "zs+8H5J4hXmmKk36uEupgupE5Filw/xMae0ox5c7yuHM4jYVPLPBYHLOdPapguScPzuz0Lney/+V9MFrKLj9Dw==",
-        },
-        "tx-type": "keyreg",
-      }
+      ],
+      "closeRewards": 0n,
+      "closingAmount": 0n,
+      "confirmedRound": 34418662n,
+      "fee": 1000n,
+      "filtersMatched": [
+        "default",
+      ],
+      "firstValid": 34418595n,
+      "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+      "genesisId": "mainnet-v1.0",
+      "id": "LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA",
+      "innerTxns": [],
+      "intraRoundOffset": 54,
+      "keyregTransaction": {
+        "nonParticipation": false,
+        "selectionParticipationKey": "Fsp1QLE/fXpmq5fsk/bWP8P1+H8n30bMD3X7hPdk/GU=",
+        "stateProofKey": "Qld9eu3U/OhHohBMF4atWbKbDQB5NGO2vPl5sZ9q9yHssmrbnQIOlhujP3vaSdFXqstnzD77Z85yrlfxJFfu+g==",
+        "voteFirstValid": 34300000n,
+        "voteKeyDilution": 2450n,
+        "voteLastValid": 40300000n,
+        "voteParticipationKey": "yUR+nfHtSb2twOaprEXrnYjkhbFMBtmXW9D8x+/ROBg=",
+      },
+      "lastValid": 34419595n,
+      "receiverRewards": 0n,
+      "roundTime": 1702579204,
+      "sender": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
+      "senderRewards": 0n,
+      "signature": {
+        "sig": "zs+8H5J4hXmmKk36uEupgupE5Filw/xMae0ox5c7yuHM4jYVPLPBYHLOdPapguScPzuz0Lney/+V9MFrKLj9Dw==",
+      },
+      "txType": "keyreg",
+    }
     `)
   })
 
@@ -83,9 +83,9 @@ describe('Complex transaction with many nested inner transactions', () => {
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
         roundsToSync: 1,
-        currentRound: roundNumber + 1,
+        currentRound: roundNumber + 1n,
         syncBehaviour: 'sync-oldest',
-        watermark: roundNumber - 1,
+        watermark: roundNumber - 1n,
       },
       algorand,
     )
@@ -94,46 +94,45 @@ describe('Complex transaction with many nested inner transactions', () => {
     const txn = algodTxns.subscribedTransactions[0]
     // https://allo.info/tx/LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA
     expect(txn.id).toBe(txnId)
-    expect(clearUndefineds(txn)).toMatchInlineSnapshot(`
+    expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "balanceChanges": [
           {
             "address": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
             "amount": -1000n,
-            "assetId": 0,
+            "assetId": 0n,
             "roles": [
               "Sender",
             ],
           },
         ],
-        "confirmed-round": 34418662,
-        "fee": 1000,
+        "confirmedRound": 34418662n,
+        "fee": 1000n,
         "filtersMatched": [
           "default",
         ],
-        "first-valid": 34418595,
-        "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-        "genesis-id": "mainnet-v1.0",
+        "firstValid": 34418595n,
+        "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+        "genesisId": "mainnet-v1.0",
         "id": "LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA",
-        "intra-round-offset": 54,
-        "keyreg-transaction": {
-          "non-participation": false,
-          "selection-participation-key": "Fsp1QLE/fXpmq5fsk/bWP8P1+H8n30bMD3X7hPdk/GU=",
-          "state-proof-key": "Qld9eu3U/OhHohBMF4atWbKbDQB5NGO2vPl5sZ9q9yHssmrbnQIOlhujP3vaSdFXqstnzD77Z85yrlfxJFfu+g==",
-          "vote-first-valid": 34300000,
-          "vote-key-dilution": 2450,
-          "vote-last-valid": 40300000,
-          "vote-participation-key": "yUR+nfHtSb2twOaprEXrnYjkhbFMBtmXW9D8x+/ROBg=",
+        "intraRoundOffset": 54,
+        "keyregTransaction": {
+          "nonParticipation": false,
+          "selectionParticipationKey": "Fsp1QLE/fXpmq5fsk/bWP8P1+H8n30bMD3X7hPdk/GU=",
+          "stateProofKey": "Qld9eu3U/OhHohBMF4atWbKbDQB5NGO2vPl5sZ9q9yHssmrbnQIOlhujP3vaSdFXqstnzD77Z85yrlfxJFfu+g==",
+          "voteFirstValid": 34300000n,
+          "voteKeyDilution": 2450n,
+          "voteLastValid": 40300000n,
+          "voteParticipationKey": "yUR+nfHtSb2twOaprEXrnYjkhbFMBtmXW9D8x+/ROBg=",
         },
-        "last-valid": 34419595,
-        "lease": "",
+        "lastValid": 34419595n,
         "note": "",
-        "round-time": 1702579204,
+        "roundTime": 1702579204,
         "sender": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
         "signature": {
           "sig": "zs+8H5J4hXmmKk36uEupgupE5Filw/xMae0ox5c7yuHM4jYVPLPBYHLOdPapguScPzuz0Lney/+V9MFrKLj9Dw==",
         },
-        "tx-type": "keyreg",
+        "txType": "keyreg",
       }
     `)
   })

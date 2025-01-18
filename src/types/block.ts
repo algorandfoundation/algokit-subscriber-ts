@@ -1,5 +1,4 @@
 import algosdk from 'algosdk'
-import EncodedTransaction = algosdk.EncodedTransaction
 import Transaction = algosdk.Transaction
 
 /**
@@ -20,11 +19,11 @@ export interface BlockData {
  */
 export interface BlockAgreementCertificate {
   /** Round number */
-  rnd: number
+  rnd: bigint
   /** Period represents the current period of the source. */
   per: bigint
   /** Step represents the current period of the source. */
-  step: number
+  step: bigint
   /** The proposal */
   prop: {
     /** Original proposer */
@@ -84,13 +83,13 @@ export interface Block {
    * been distributed to each config.Protocol.RewardUnit of MicroAlgos
    * since genesis.
    **/
-  earn: number
+  earn: bigint
   /** The FeeSink accepts transaction fees. It can only spend to the incentive pool. */
   fees: Uint8Array
   /** The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
    * MicroAlgos for every reward unit in the next round.
    **/
-  frac: number | bigint
+  frac: bigint
   /** Genesis ID to which this block belongs. */
   gen: string
   /** Genesis hash to which this block belongs. */
@@ -100,11 +99,11 @@ export interface Block {
   /** UpgradeState tracks the protocol upgrade state machine; proto is the current protocol. */
   proto: string
   /** The number of new MicroAlgos added to the participation stake from rewards at the next round. */
-  rate?: number
+  rate?: bigint
   /** Round number. */
-  rnd: number
+  rnd: bigint
   /** The round at which the RewardsRate will be recalculated. */
-  rwcalr: number
+  rwcalr: bigint
   /** The RewardsPool accepts periodic injections from the
    * FeeSink and continually redistributes them to addresses as rewards.
    **/
@@ -115,9 +114,9 @@ export interface Block {
    * committed after this block.  Genesis blocks can start at either
    * 0 or 1000, depending on a consensus parameter (AppForbidLowResources).
    **/
-  tc: number
+  tc: bigint
   /** Round time (unix timestamp) */
-  ts: number
+  ts: bigint
   /** Root of transaction merkle tree using SHA512_256 hash function.
    * This commitment is computed based on the PaysetCommit type specified in the block's consensus protocol.
    * This value is only set when there are transactions in the block.
@@ -134,15 +133,15 @@ export interface Block {
   /**
    * Number of blocks which approved the protocol upgrade.
    */
-  nextyes?: number
+  nextyes?: bigint
   /**
    * Deadline round for this protocol upgrade (No votes will be considered after this round).
    */
-  nextbefore?: number
+  nextbefore?: bigint
   /**
    * Round on which the protocol upgrade will take effect.
    */
-  nextswitch?: number
+  nextswitch?: bigint
   /**
    * The transactions within the block.
    */
@@ -164,7 +163,7 @@ export interface Block {
   /**
    *  UpgradeDelay indicates the time between acceptance and execution
    */
-  upgradedelay?: number
+  upgradedelay?: bigint
   /**
    *  UpgradePropose indicates a proposed upgrade
    */
@@ -187,13 +186,13 @@ export interface BlockTransaction {
   /** The eval deltas for the block */
   dt?: BlockTransactionEvalDelta
   /** Asset ID when an asset is created by the transaction */
-  caid?: number
+  caid?: bigint
   /** App ID when an app is created by the transaction */
-  apid?: number
+  apid?: bigint
   /** Asset closing amount in decimal units */
-  aca?: number | bigint
+  aca?: bigint
   /** Algo closing amount in microAlgos */
-  ca?: number
+  ca?: bigint
   /** Has genesis id */
   hgi?: boolean
   /** Has genesis hash */
@@ -227,9 +226,9 @@ export interface LogicSig {
  */
 export interface MultisigSig {
   /** Multisig version */
-  v: number
+  v: bigint
   /** Multisig threshold */
-  thr: number
+  thr: bigint
   /** Sub-signatures */
   subsig: {
     /** ED25519 public key */
@@ -261,34 +260,34 @@ export interface BlockValueDelta {
    *   * `2`: SetUintAction indicates that a Uint should be stored at a key
    *   * `3`: DeleteAction indicates that the value for a particular key should be deleted
    **/
-  at: number
+  at: bigint
 
   /** Bytes value */
   bs?: Uint8Array
 
   /** Uint64 value */
-  ui?: number
+  ui?: bigint
 }
 
 interface Proof {
-  hsh: { t: number }
+  hsh: { t: bigint }
   pth?: Uint8Array[]
-  td?: number
+  td?: bigint
 }
 
 // https://github.com/algorand/go-algorand-sdk/blob/develop/types/stateproof.go
 export interface StateProof {
   c: Uint8Array
   P: Proof
-  pr: number[]
+  pr: bigint[]
   r: Map<
     number,
     {
-      p: { p: { cmt: Uint8Array; lf: number }; w: bigint }
+      p: { p: { cmt: Uint8Array; lf: bigint }; w: bigint }
       s: {
         l?: bigint
         s: {
-          idx: number
+          idx: bigint
           prf: Proof
           sig: Uint8Array
           vkey: { k: Uint8Array }
@@ -298,13 +297,13 @@ export interface StateProof {
   >
   S: Proof
   w: bigint
-  v?: number
+  v?: bigint
 }
 
 export interface StateProofMessage {
   b: Uint8Array
-  f: number
-  l: number
+  f: bigint
+  l: bigint
   P: bigint
   v: Uint8Array
 }
@@ -320,11 +319,11 @@ export interface StateProofTracking {
    * during the StateProof round (or zero, if the merkle root is zero - no commitment for StateProof voters).
    * This is intended for computing the threshold of votes to expect from StateProofVotersCommitment.
    */
-  t?: number
+  t?: bigint
   /**
    * StateProofNextRound is the next round for which we will accept a StateProof transaction.
    */
-  n?: number
+  n?: bigint
 }
 
 /** The representation of all important data for a single transaction or inner transaction
@@ -335,6 +334,13 @@ export interface TransactionInBlock {
 
   /** The block data for the transaction */
   blockTransaction: BlockTransaction | BlockInnerTransaction
+  /** The transaction ID
+   *
+   * @example
+   *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA if it's a root transaction
+   *  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1 if it's an inner transaction
+   */
+  transactionId: string
   /** The offset of the transaction within the round including inner transactions.
    *
    * @example
@@ -345,62 +351,524 @@ export interface TransactionInBlock {
    *      - 4
    *  - 5
    */
-  roundOffset: number
+  intraRoundOffset: number
   /**
-   * The index within the block.txns array of this transaction or if it's an inner transaction of it's ultimate parent transaction.
-   *
-   * @example
-   *  - 0
-   *  - 1
-   *    - 1
-   *    - 1
-   *      - 1
-   *  - 2
+   * The ID of the root transaction if this is an inner transaction.
    */
-  roundIndex: number
+  rootTransactionId?: string
+  /**
+   * The intra-round offset of the root transaction if this is an inner transaction.
+   */
+  rootIntraRoundOffset?: number
   /**
    * The ID of the parent transaction if this is an inner transaction.
    */
   parentTransactionId?: string
-  /**
-   * The offset within the parent transaction.
-   *
-   * @example
-   *  - `undefined`
-   *  - `undefined`
-   *    - 0
-   *    - 1
-   *      - 2
-   *  - `undefined`
-   */
-  parentOffset?: number
   /** The binary genesis hash of the network the transaction is within. */
   genesisHash: Buffer
   /** The string genesis ID of the network the transaction is within. */
   genesisId: string
   /** The round number of the block the transaction is within. */
-  roundNumber: number
+  roundNumber: bigint
   /** The round unix timestamp of the block the transaction is within. */
-  roundTimestamp: number
+  roundTimestamp: bigint
 
   // Processed data
 
   /** The transaction as an algosdk `Transaction` object. */
   transaction: Transaction
   /** The asset ID if an asset was created from this transaction. */
-  createdAssetId?: number
+  createdAssetId?: bigint
   /** The app ID if an app was created from this transaction. */
-  createdAppId?: number
+  createdAppId?: bigint
   /** The asset close amount if the sender asset position was closed from this transaction. */
-  assetCloseAmount?: number | bigint
+  assetCloseAmount?: bigint
   /** The ALGO close amount if the sender account was closed from this transaction. */
-  closeAmount?: number
+  closeAmount?: bigint
   /** Any logs that were issued as a result of this transaction. */
   logs?: Uint8Array[]
   /** Rewards in microalgos applied to the close remainder to account. */
-  closeRewards?: number
+  closeRewards?: bigint
   /** Rewards in microalgos applied to the sender account. */
-  senderRewards?: number
+  senderRewards?: bigint
   /** Rewards in microalgos applied to the receiver account. */
-  receiverRewards?: number
+  receiverRewards?: bigint
+}
+
+/**
+ * Interfaces for the encoded transaction object. Every property is labelled with its associated Transaction type property
+ */
+export interface EncodedAssetParams {
+  /**
+   * assetTotal
+   */
+  t: bigint
+  /**
+   * assetDefaultFrozen
+   */
+  df: boolean
+  /**
+   * assetDecimals
+   */
+  dc: bigint
+  /**
+   * assetManager
+   */
+  m?: Buffer
+  /**
+   * assetReserve
+   */
+  r?: Buffer
+  /**
+   * assetFreeze
+   */
+  f?: Buffer
+  /**
+   * assetClawback
+   */
+  c?: Buffer
+  /**
+   * assetName
+   */
+  an?: string
+  /**
+   * assetUnitName
+   */
+  un?: string
+  /**
+   * assetURL
+   */
+  au?: string
+  /**
+   * assetMetadataHash
+   */
+  am?: Buffer
+}
+export interface EncodedLocalStateSchema {
+  /**
+   * appLocalInts
+   */
+  nui: bigint
+  /**
+   * appLocalByteSlices
+   */
+  nbs: bigint
+}
+export interface EncodedGlobalStateSchema {
+  /**
+   * appGlobalInts
+   */
+  nui: bigint
+  /**
+   * appGlobalByteSlices
+   */
+  nbs: bigint
+}
+export interface EncodedBoxReference {
+  /**
+   * index of the app ID in the foreign apps array
+   */
+  i: bigint
+  /**
+   * box name
+   */
+  n: Uint8Array
+}
+/**
+ * A rough structure for the encoded transaction object. Every property is labelled with its associated Transaction type property
+ */
+export interface EncodedTransaction {
+  /**
+   * fee
+   */
+  fee?: bigint
+
+  /**
+   * firstRound
+   */
+  fv?: bigint
+
+  /**
+   * lastRound
+   */
+  lv: bigint
+
+  /**
+   * note
+   */
+  note?: Buffer
+
+  /**
+   * from
+   */
+  snd: Buffer
+
+  /**
+   * type
+   */
+  type: string
+
+  /**
+   * genesisID
+   */
+  gen: string
+
+  /**
+   * genesisHash
+   */
+  gh: Buffer
+
+  /**
+   * lease
+   */
+  lx?: Buffer
+
+  /**
+   * group
+   */
+  grp?: Buffer
+
+  /**
+   * amount
+   */
+  amt?: bigint
+
+  /**
+   * amount (but for asset transfers)
+   */
+  aamt?: bigint
+
+  /**
+   * closeRemainderTo
+   */
+  close?: Buffer
+
+  /**
+   * closeRemainderTo (but for asset transfers)
+   */
+  aclose?: Buffer
+
+  /**
+   * reKeyTo
+   */
+  rekey?: Buffer
+
+  /**
+   * to
+   */
+  rcv?: Buffer
+
+  /**
+   * to (but for asset transfers)
+   */
+  arcv?: Buffer
+
+  /**
+   * voteKey
+   */
+  votekey?: Buffer
+
+  /**
+   * selectionKey
+   */
+  selkey?: Buffer
+
+  /**
+   * stateProofKey
+   */
+  sprfkey?: Buffer
+
+  /**
+   * voteFirst
+   */
+  votefst?: bigint
+
+  /**
+   * voteLast
+   */
+  votelst?: bigint
+
+  /**
+   * voteKeyDilution
+   */
+  votekd?: bigint
+
+  /**
+   * nonParticipation
+   */
+  nonpart?: boolean
+
+  /**
+   * assetIndex
+   */
+  caid?: bigint
+
+  /**
+   * assetIndex (but for asset transfers)
+   */
+  xaid?: bigint
+
+  /**
+   * assetIndex (but for asset freezing/unfreezing)
+   */
+  faid?: bigint
+
+  /**
+   * freezeState
+   */
+  afrz?: boolean
+
+  /**
+   * freezeAccount
+   */
+  fadd?: Buffer
+
+  /**
+   * assetRevocationTarget
+   */
+  asnd?: Buffer
+
+  /**
+   * See EncodedAssetParams type
+   */
+  apar?: EncodedAssetParams
+
+  /**
+   * appIndex
+   */
+  apid?: bigint
+
+  /**
+   * appOnComplete
+   */
+  apan?: bigint
+
+  /**
+   * See EncodedLocalStateSchema type
+   */
+  apls?: EncodedLocalStateSchema
+
+  /**
+   * See EncodedGlobalStateSchema type
+   */
+  apgs?: EncodedGlobalStateSchema
+
+  /**
+   * appForeignApps
+   */
+  apfa?: bigint[]
+
+  /**
+   * appForeignAssets
+   */
+  apas?: bigint[]
+
+  /**
+   * appApprovalProgram
+   */
+  apap?: Buffer
+
+  /**
+   * appClearProgram
+   */
+  apsu?: Buffer
+
+  /**
+   * appArgs
+   */
+  apaa?: Buffer[]
+
+  /**
+   * appAccounts
+   */
+  apat?: Buffer[]
+
+  /**
+   * extraPages
+   */
+  apep?: bigint
+
+  /**
+   * boxes
+   */
+  apbx?: EncodedBoxReference[]
+
+  /*
+   * stateProofType
+   */
+  sptype?: bigint
+
+  /**
+   * stateProof
+   */
+  sp?: EncodedStateProof
+
+  /**
+   * stateProofMessage
+   */
+  spmsg?: EncodedStateProofMessage
+}
+
+export interface EncodedStateProof {
+  /**
+   * sigCommit
+   */
+  c: Buffer
+  /**
+   * sigWeight
+   */
+  w: bigint
+
+  /**
+   * sigProofs
+   */
+  S: EncodedMerkleArrayProof
+
+  /**
+   * partProofs
+   */
+  P: EncodedMerkleArrayProof
+
+  /**
+   * merkleSignatureSaltVersion
+   */
+  v?: bigint
+
+  /**
+   * reveal
+   */
+  r: Map<bigint, EncodedReveal>
+
+  /**
+   * positionsToReveal
+   */
+  pr: bigint[]
+}
+
+export interface EncodedMerkleArrayProof {
+  /**
+   * path
+   */
+  pth: Buffer[]
+
+  /**
+   * hash
+   */
+  hsh: EncodedHashFactory
+
+  /**
+   * tree depth
+   */
+  td: bigint
+}
+
+export interface EncodedHashFactory {
+  /**
+   * hash type
+   */
+  t: bigint
+}
+
+export interface EncodedReveal {
+  /**
+   * sigslot
+   */
+  s: EncodedSigslotCommit
+
+  /**
+   * participant
+   */
+  p: EncodedParticipant
+}
+
+export interface EncodedSigslotCommit {
+  /**
+   * sig
+   */
+  sig: EncodedFalconSignatureStruct
+
+  /**
+   * l
+   */
+  l: bigint
+}
+
+export interface EncodedFalconSignatureStruct {
+  /**
+   * signature
+   */
+  sig: Buffer
+
+  /**
+   * vectorCommitmentIndex
+   */
+  idx: bigint
+
+  /**
+   * proof
+   */
+  prf: EncodedMerkleArrayProof
+
+  /**
+   * verifyingKey
+   */
+  vkey: EncodedFalconVerifier
+}
+
+export interface EncodedFalconVerifier {
+  /**
+   * public key
+   */
+  k: Buffer
+}
+
+export interface EncodedParticipant {
+  /**
+   * pk
+   */
+  p: EncodedMerkleSignatureVerifier
+
+  /**
+   * weight
+   */
+  w: bigint
+}
+
+export interface EncodedMerkleSignatureVerifier {
+  /**
+   * commitment
+   */
+  cmt: Buffer
+
+  /**
+   * keyLifetime
+   */
+  lf: bigint
+}
+
+export interface EncodedStateProofMessage {
+  /**
+   * blockHeadersCommitment
+   */
+  b: Buffer
+
+  /**
+   * votersCommitment
+   */
+  v: Buffer
+
+  /**
+   * lnProvenWeight
+   */
+  P: bigint
+
+  /**
+   * firstAttestedRound
+   */
+  f: bigint
+
+  /**
+   * lastAttestedRound
+   */
+  l: bigint
 }

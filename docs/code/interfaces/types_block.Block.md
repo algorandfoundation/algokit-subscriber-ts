@@ -47,7 +47,7 @@ https://github.com/algorand/go-algorand/blob/master/data/bookkeeping/block.go#L3
 
 ### earn
 
-• **earn**: `number`
+• **earn**: `bigint`
 
 RewardsLevel specifies how many rewards, in MicroAlgos, have
 been distributed to each config.Protocol.RewardUnit of MicroAlgos
@@ -55,7 +55,7 @@ since genesis.
 
 #### Defined in
 
-[types/block.ts:87](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L87)
+[src/types/block.ts:86](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L86)
 
 ___
 
@@ -67,20 +67,20 @@ The FeeSink accepts transaction fees. It can only spend to the incentive pool.
 
 #### Defined in
 
-[types/block.ts:89](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L89)
+[src/types/block.ts:88](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L88)
 
 ___
 
 ### frac
 
-• **frac**: `number` \| `bigint`
+• **frac**: `bigint`
 
 The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
 MicroAlgos for every reward unit in the next round.
 
 #### Defined in
 
-[types/block.ts:93](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L93)
+[src/types/block.ts:92](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L92)
 
 ___
 
@@ -92,7 +92,7 @@ Genesis ID to which this block belongs.
 
 #### Defined in
 
-[types/block.ts:95](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L95)
+[src/types/block.ts:94](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L94)
 
 ___
 
@@ -104,19 +104,19 @@ Genesis hash to which this block belongs.
 
 #### Defined in
 
-[types/block.ts:97](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L97)
+[src/types/block.ts:96](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L96)
 
 ___
 
 ### nextbefore
 
-• `Optional` **nextbefore**: `number`
+• `Optional` **nextbefore**: `bigint`
 
 Deadline round for this protocol upgrade (No votes will be considered after this round).
 
 #### Defined in
 
-[types/block.ts:141](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L141)
+[src/types/block.ts:140](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L140)
 
 ___
 
@@ -128,31 +128,31 @@ The next proposed protocol version.
 
 #### Defined in
 
-[types/block.ts:133](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L133)
+[src/types/block.ts:132](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L132)
 
 ___
 
 ### nextswitch
 
-• `Optional` **nextswitch**: `number`
+• `Optional` **nextswitch**: `bigint`
 
 Round on which the protocol upgrade will take effect.
 
 #### Defined in
 
-[types/block.ts:145](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L145)
+[src/types/block.ts:144](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L144)
 
 ___
 
 ### nextyes
 
-• `Optional` **nextyes**: `number`
+• `Optional` **nextyes**: `bigint`
 
 Number of blocks which approved the protocol upgrade.
 
 #### Defined in
 
-[types/block.ts:137](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L137)
+[src/types/block.ts:136](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L136)
 
 ___
 
@@ -165,7 +165,7 @@ needs to be converted to offline since they are not proposing.
 
 #### Defined in
 
-[types/block.ts:154](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L154)
+[src/types/block.ts:153](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L153)
 
 ___
 
@@ -178,7 +178,7 @@ converted to offline since their participation key expired.
 
 #### Defined in
 
-[types/block.ts:159](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L159)
+[src/types/block.ts:158](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L158)
 
 ___
 
@@ -190,7 +190,7 @@ The hash of the previous block
 
 #### Defined in
 
-[types/block.ts:99](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L99)
+[src/types/block.ts:98](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L98)
 
 ___
 
@@ -202,7 +202,7 @@ UpgradeState tracks the protocol upgrade state machine; proto is the current pro
 
 #### Defined in
 
-[types/block.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L101)
+[src/types/block.ts:100](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L100)
 
 ___
 
@@ -214,43 +214,43 @@ Proposer is the proposer of this block.
 
 #### Defined in
 
-[types/block.ts:177](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L177)
+[src/types/block.ts:176](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L176)
 
 ___
 
 ### rate
 
-• `Optional` **rate**: `number`
+• `Optional` **rate**: `bigint`
 
 The number of new MicroAlgos added to the participation stake from rewards at the next round.
 
 #### Defined in
 
-[types/block.ts:103](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L103)
+[src/types/block.ts:102](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L102)
 
 ___
 
 ### rnd
 
-• **rnd**: `number`
+• **rnd**: `bigint`
 
 Round number.
 
 #### Defined in
 
-[types/block.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L105)
+[src/types/block.ts:104](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L104)
 
 ___
 
 ### rwcalr
 
-• **rwcalr**: `number`
+• **rwcalr**: `bigint`
 
 The round at which the RewardsRate will be recalculated.
 
 #### Defined in
 
-[types/block.ts:107](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L107)
+[src/types/block.ts:106](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L106)
 
 ___
 
@@ -263,7 +263,7 @@ FeeSink and continually redistributes them to addresses as rewards.
 
 #### Defined in
 
-[types/block.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L111)
+[src/types/block.ts:110](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L110)
 
 ___
 
@@ -275,7 +275,7 @@ Sortition seed
 
 #### Defined in
 
-[types/block.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L113)
+[src/types/block.ts:112](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L112)
 
 ___
 
@@ -285,13 +285,13 @@ ___
 
 #### Defined in
 
-[types/block.ts:173](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L173)
+[src/types/block.ts:172](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L172)
 
 ___
 
 ### tc
 
-• **tc**: `number`
+• **tc**: `bigint`
 
 TxnCounter is the number of the next transaction that will be
 committed after this block.  Genesis blocks can start at either
@@ -299,19 +299,19 @@ committed after this block.  Genesis blocks can start at either
 
 #### Defined in
 
-[types/block.ts:118](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L118)
+[src/types/block.ts:117](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L117)
 
 ___
 
 ### ts
 
-• **ts**: `number`
+• **ts**: `bigint`
 
 Round time (unix timestamp)
 
 #### Defined in
 
-[types/block.ts:120](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L120)
+[src/types/block.ts:119](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L119)
 
 ___
 
@@ -325,7 +325,7 @@ This value is only set when there are transactions in the block.
 
 #### Defined in
 
-[types/block.ts:125](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L125)
+[src/types/block.ts:124](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L124)
 
 ___
 
@@ -337,7 +337,7 @@ Root of transaction vector commitment merkle tree using SHA256 hash function.
 
 #### Defined in
 
-[types/block.ts:129](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L129)
+[src/types/block.ts:128](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L128)
 
 ___
 
@@ -349,19 +349,19 @@ The transactions within the block.
 
 #### Defined in
 
-[types/block.ts:149](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L149)
+[src/types/block.ts:148](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L148)
 
 ___
 
 ### upgradedelay
 
-• `Optional` **upgradedelay**: `number`
+• `Optional` **upgradedelay**: `bigint`
 
 UpgradeDelay indicates the time between acceptance and execution
 
 #### Defined in
 
-[types/block.ts:167](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L167)
+[src/types/block.ts:166](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L166)
 
 ___
 
@@ -373,7 +373,7 @@ UpgradePropose indicates a proposed upgrade
 
 #### Defined in
 
-[types/block.ts:171](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L171)
+[src/types/block.ts:170](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L170)
 
 ___
 
@@ -385,4 +385,4 @@ UpgradeApprove indicates a yes vote for the current proposal
 
 #### Defined in
 
-[types/block.ts:163](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L163)
+[src/types/block.ts:162](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L162)

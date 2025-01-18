@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[types/block.ts:308](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L308)
+[src/types/block.ts:307](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L307)
 
 ___
 
@@ -32,27 +32,27 @@ ___
 
 #### Defined in
 
-[types/block.ts:305](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L305)
+[src/types/block.ts:304](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L304)
 
 ___
 
 ### f
 
-• **f**: `number`
+• **f**: `bigint`
 
 #### Defined in
 
-[types/block.ts:306](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L306)
+[src/types/block.ts:305](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L305)
 
 ___
 
 ### l
 
-• **l**: `number`
+• **l**: `bigint`
 
 #### Defined in
 
-[types/block.ts:307](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L307)
+[src/types/block.ts:306](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L306)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-[types/block.ts:309](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L309)
+[src/types/block.ts:308](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L308)

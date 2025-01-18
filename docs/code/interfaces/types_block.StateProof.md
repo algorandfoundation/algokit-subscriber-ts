@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[types/block.ts:282](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L282)
+[src/types/block.ts:281](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L281)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[types/block.ts:299](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L299)
+[src/types/block.ts:298](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L298)
 
 ___
 
@@ -44,37 +44,37 @@ ___
 
 #### Defined in
 
-[types/block.ts:281](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L281)
+[src/types/block.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L280)
 
 ___
 
 ### pr
 
-• **pr**: `number`[]
+• **pr**: `bigint`[]
 
 #### Defined in
 
-[types/block.ts:283](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L283)
+[src/types/block.ts:282](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L282)
 
 ___
 
 ### r
 
-• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `number`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `number` ; `prf`: `Proof` ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
+• **r**: `Map`\<`number`, \{ `p`: \{ `p`: \{ `cmt`: `Uint8Array` ; `lf`: `bigint`  } ; `w`: `bigint`  } ; `s`: \{ `l?`: `bigint` ; `s`: \{ `idx`: `bigint` ; `prf`: `Proof` ; `sig`: `Uint8Array` ; `vkey`: \{ `k`: `Uint8Array`  }  }  }  }\>
 
 #### Defined in
 
-[types/block.ts:284](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L284)
+[src/types/block.ts:283](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L283)
 
 ___
 
 ### v
 
-• `Optional` **v**: `number`
+• `Optional` **v**: `bigint`
 
 #### Defined in
 
-[types/block.ts:301](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L301)
+[src/types/block.ts:300](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L300)
 
 ___
 
@@ -84,4 +84,4 @@ ___
 
 #### Defined in
 
-[types/block.ts:300](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L300)
+[src/types/block.ts:299](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L299)
