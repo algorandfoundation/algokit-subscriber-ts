@@ -5,30 +5,41 @@
  * requires: @algorandfoundation/algokit-utils: ^7
  */
 import { AlgorandClientInterface } from '@algorandfoundation/algokit-utils/types/algorand-client-interface'
-import { ABIReturn } from '@algorandfoundation/algokit-utils/types/app'
-import { Arc56Contract, getArc56ReturnValue } from '@algorandfoundation/algokit-utils/types/app-arc56'
+import { ABIReturn, AppReturn, SendAppTransactionResult } from '@algorandfoundation/algokit-utils/types/app'
+import { Arc56Contract, getArc56ReturnValue, getABIStructFromABITuple } from '@algorandfoundation/algokit-utils/types/app-arc56'
 import {
   AppClient as _AppClient,
-  AppClientBareCallParams,
-  AppClientCompilationParams,
   AppClientMethodCallParams,
   AppClientParams,
+  AppClientBareCallParams,
   CallOnComplete,
-  CloneAppClientParams,
+  AppClientCompilationParams,
   ResolveAppClientByCreatorAndName,
   ResolveAppClientByNetwork,
+  CloneAppClientParams,
 } from '@algorandfoundation/algokit-utils/types/app-client'
 import {
   AppFactory as _AppFactory,
   AppFactoryAppClientParams,
+  AppFactoryResolveAppClientByCreatorAndNameParams,
   AppFactoryDeployParams,
   AppFactoryParams,
-  AppFactoryResolveAppClientByCreatorAndNameParams,
   CreateSchema,
 } from '@algorandfoundation/algokit-utils/types/app-factory'
-import { SimulateOptions, TransactionComposer } from '@algorandfoundation/algokit-utils/types/composer'
-import { SendAtomicTransactionComposerResults, SendParams } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Address, modelsv2, OnApplicationComplete, Transaction, TransactionSigner } from 'algosdk'
+import {
+  TransactionComposer,
+  AppCallMethodCall,
+  AppMethodCallTransactionArgument,
+  SimulateOptions,
+  RawSimulateOptions,
+  SkipSignaturesSimulateOptions,
+} from '@algorandfoundation/algokit-utils/types/composer'
+import {
+  SendParams,
+  SendSingleTransactionResult,
+  SendAtomicTransactionComposerResults,
+} from '@algorandfoundation/algokit-utils/types/transaction'
+import { Address, encodeAddress, modelsv2, OnApplicationComplete, Transaction, TransactionSigner } from 'algosdk'
 import SimulateResponse = modelsv2.SimulateResponse
 
 export const APP_SPEC: Arc56Contract = {
@@ -235,7 +246,7 @@ export type TestingAppArgs = {
     'emitComplex(uint64,uint64,uint32[])void': {
       a: bigint | number
       b: bigint | number
-      array: bigint | number[]
+      array: bigint[] | number[]
     }
   }
   /**
@@ -252,7 +263,7 @@ export type TestingAppArgs = {
     'opt_in()void': []
     'emitSwapped(uint64,uint64)void': [a: bigint | number, b: bigint | number]
     'emitSwappedTwice(uint64,uint64)void': [a: bigint | number, b: bigint | number]
-    'emitComplex(uint64,uint64,uint32[])void': [a: bigint | number, b: bigint | number, array: bigint | number[]]
+    'emitComplex(uint64,uint64,uint32[])void': [a: bigint | number, b: bigint | number, array: bigint[] | number[]]
   }
 }
 
@@ -380,6 +391,7 @@ export type TestingAppTypes = {
         int2: bigint
         value: bigint
       }
+      maps: {}
     }
     local: {
       keys: {
@@ -388,6 +400,7 @@ export type TestingAppTypes = {
         localInt1: bigint
         localInt2: bigint
       }
+      maps: {}
     }
   }
 }
@@ -438,18 +451,18 @@ export type LocalKeysState = TestingAppTypes['state']['local']['keys']
  * Defines supported create method params for this smart contract
  */
 export type TestingAppCreateCallParams = Expand<
-  AppClientBareCallParams & { method?: undefined } & {
+  AppClientBareCallParams & { method?: never } & {
     onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC
   } & CreateSchema
 >
 /**
  * Defines supported update method params for this smart contract
  */
-export type TestingAppUpdateCallParams = Expand<AppClientBareCallParams> & { method?: undefined }
+export type TestingAppUpdateCallParams = Expand<AppClientBareCallParams> & { method?: never }
 /**
  * Defines supported delete method params for this smart contract
  */
-export type TestingAppDeleteCallParams = Expand<AppClientBareCallParams> & { method?: undefined }
+export type TestingAppDeleteCallParams = Expand<AppClientBareCallParams> & { method?: never }
 /**
  * Defines arguments required for the deploy method.
  */
@@ -1404,7 +1417,7 @@ export class TestingAppClient {
         params: CallParams<TestingAppArgs['obj']['opt_in()void'] | TestingAppArgs['tuple']['opt_in()void']> & SendParams = { args: [] },
       ) => {
         const result = await this.appClient.send.optIn(TestingAppParamsFactory.optIn.optIn(params))
-        return { ...result, return: result.return as undefined | TestingAppReturns['opt_in()void'] }
+        return { ...result, return: result.return as unknown as undefined | TestingAppReturns['opt_in()void'] }
       },
     },
 
@@ -1431,7 +1444,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.callAbi(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['call_abi(string)string'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['call_abi(string)string'] }
     },
 
     /**
@@ -1449,7 +1462,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC } = { args: [] },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.callAbiForeignRefs(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['call_abi_foreign_refs()string'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['call_abi_foreign_refs()string'] }
     },
 
     /**
@@ -1466,7 +1479,10 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.setGlobal(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['set_global(uint64,uint64,string,byte[4])void'] }
+      return {
+        ...result,
+        return: result.return as unknown as undefined | TestingAppReturns['set_global(uint64,uint64,string,byte[4])void'],
+      }
     },
 
     /**
@@ -1483,7 +1499,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.setLocal(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['set_local(uint64,uint64,string,byte[4])void'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['set_local(uint64,uint64,string,byte[4])void'] }
     },
 
     /**
@@ -1499,7 +1515,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.issueTransferToSender(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['issue_transfer_to_sender(uint64)void'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['issue_transfer_to_sender(uint64)void'] }
     },
 
     /**
@@ -1513,7 +1529,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.setBox(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['set_box(byte[4],string)void'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['set_box(byte[4],string)void'] }
     },
 
     /**
@@ -1527,7 +1543,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC } = { args: [] },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.error(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['error()void'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['error()void'] }
     },
 
     /**
@@ -1543,7 +1559,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.emitSwapped(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['emitSwapped(uint64,uint64)void'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['emitSwapped(uint64,uint64)void'] }
     },
 
     /**
@@ -1559,7 +1575,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.emitSwappedTwice(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['emitSwappedTwice(uint64,uint64)void'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['emitSwappedTwice(uint64,uint64)void'] }
     },
 
     /**
@@ -1576,7 +1592,7 @@ export class TestingAppClient {
         SendParams & { onComplete?: OnApplicationComplete.NoOpOC },
     ) => {
       const result = await this.appClient.send.call(TestingAppParamsFactory.emitComplex(params))
-      return { ...result, return: result.return as undefined | TestingAppReturns['emitComplex(uint64,uint64,uint32[])void'] }
+      return { ...result, return: result.return as unknown as undefined | TestingAppReturns['emitComplex(uint64,uint64,uint32[])void'] }
     },
   }
 
@@ -1600,7 +1616,7 @@ export class TestingAppClient {
    */
   async callAbi(params: CallParams<TestingAppArgs['obj']['call_abi(string)string'] | TestingAppArgs['tuple']['call_abi(string)string']>) {
     const result = await this.appClient.send.call(TestingAppParamsFactory.callAbi(params))
-    return result.return as TestingAppReturns['call_abi(string)string']
+    return result.return as unknown as TestingAppReturns['call_abi(string)string']
   }
 
   /**
@@ -1617,7 +1633,7 @@ export class TestingAppClient {
     > = { args: [] },
   ) {
     const result = await this.appClient.send.call(TestingAppParamsFactory.callAbiForeignRefs(params))
-    return result.return as TestingAppReturns['call_abi_foreign_refs()string']
+    return result.return as unknown as TestingAppReturns['call_abi_foreign_refs()string']
   }
 
   /**
@@ -1676,7 +1692,7 @@ export class TestingAppClient {
      * Methods to access local state for the current TestingApp app
      */
     local: (address: string | Address) => {
-      const encodedAddress = typeof address === 'string' ? address : address.toString()
+      const encodedAddress = typeof address === 'string' ? address : encodeAddress(address.publicKey)
       return {
         /**
          * Get all current keyed values from local state
@@ -1889,7 +1905,7 @@ export class TestingAppClient {
       },
       async simulate(options?: SimulateOptions) {
         await promiseChain
-        const result = await composer.simulate(options)
+        const result = await (!options ? composer.simulate() : composer.simulate(options))
         return {
           ...result,
           returns: result.returns?.map((val, i) => (resultMappers[i] !== undefined ? resultMappers[i]!(val) : val.returnValue)),
@@ -2082,7 +2098,9 @@ export type TestingAppComposer<TReturns extends [...any[]] = []> = {
   /**
    * Simulates the transaction group and returns the result
    */
-  simulate(options?: SimulateOptions): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
+  simulate(): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
+  simulate(options: SkipSignaturesSimulateOptions): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
+  simulate(options: RawSimulateOptions): Promise<TestingAppComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
   /**
    * Sends the transaction group to the network and returns the results
    */

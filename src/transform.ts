@@ -371,6 +371,23 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
             }),
           }
         : undefined),
+      ...(transaction.type === TransactionType.hb && transaction.heartbeat
+        ? {
+            heartbeatTransaction: new algosdk.indexerModels.TransactionHeartbeat({
+              hbAddress: transaction.heartbeat.address.toString(),
+              hbKeyDilution: transaction.heartbeat.keyDilution,
+              hbProof: new algosdk.indexerModels.HbProofFields({
+                hbPk: transaction.heartbeat.proof.pk,
+                hbPk1sig: transaction.heartbeat.proof.pk1Sig,
+                hbPk2: transaction.heartbeat.proof.pk2,
+                hbPk2sig: transaction.heartbeat.proof.pk2Sig,
+                hbSig: transaction.heartbeat.proof.sig,
+              }),
+              hbSeed: transaction.heartbeat.seed,
+              hbVoteId: transaction.heartbeat.voteID,
+            }),
+          }
+        : undefined),
       firstValid: transaction.firstValid,
       lastValid: transaction.lastValid,
       txType: transaction.type,
@@ -857,6 +874,8 @@ export function getTransactionType(type: string): TransactionType {
       return TransactionType.appl
     case 'stpf':
       return TransactionType.stpf
+    case 'hb':
+      return TransactionType.hb
     default:
       throw new Error(`Unknown transaction type: ${type}`)
   }
