@@ -106,7 +106,7 @@ async function getXGovSubscriber() {
       async (p) => {
         // Optimistic locking of watermark from current poll
         const expectedStartingWatermark =
-          (await p.watermark.findUnique({ where: { id: watermarkId }, select: { watermark: true } }))?.watermark ?? 0
+          (await p.watermark.findUnique({ where: { id: watermarkId }, select: { watermark: true } }))?.watermark ?? 0n
         if (expectedStartingWatermark !== poll.startingWatermark) {
           throw new Error(`Watermark mismatch; expected ${expectedStartingWatermark} but got ${poll.startingWatermark}`)
         }
