@@ -12,7 +12,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 }
 
 interface DHMAsset {
-  id: bigint
+  id: string
   name: string
   unit: string
   mediaUrl: string
@@ -78,7 +78,7 @@ async function saveDHMTransactions(transactions: SubscribedTransaction[]) {
   for (const t of transactions) {
     if (t.createdAssetIndex) {
       assets.push({
-        id: t.createdAssetIndex,
+        id: t.createdAssetIndex.toString(),
         name: t.assetConfigTransaction!.params!.name!,
         unit: t.assetConfigTransaction!.params!.unitName!,
         mediaUrl: t.assetConfigTransaction!.params!.url!,
@@ -87,7 +87,7 @@ async function saveDHMTransactions(transactions: SubscribedTransaction[]) {
         lastModified: new Date(t.roundTime! * 1000).toISOString(),
       })
     } else {
-      const asset = assets.find((a) => a.id === t.assetConfigTransaction!.assetId)
+      const asset = assets.find((a) => a.id === t.assetConfigTransaction!.assetId!.toString())
       if (!asset) {
         // eslint-disable-next-line no-console
         console.error(t)
