@@ -569,7 +569,12 @@ describe('Subscribing to calls that effect balance changes', () => {
       ).confirmations![0].assetIndex!
 
       // eslint-disable-next-line no-console
-      console.log('accounts', [testAccount.addr, account.addr, account2.addr, account3.addr.toString()], 'assets', [asset1, asset2])
+      console.log(
+        'accounts',
+        [testAccount.addr.toString(), account.addr.toString(), account2.addr.toString(), account3.addr.toString()],
+        'assets',
+        [asset1, asset2],
+      )
       const address = {
         [testAccount.addr.toString()]: 'testAccount',
         [account.addr.toString()]: 'account1',
