@@ -26,7 +26,7 @@ Account was creating an asset and holds the full asset supply
 
 #### Defined in
 
-[src/types/subscription.ts:221](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L221)
+[src/types/subscription.ts:224](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L224)
 
 ___
 
@@ -39,7 +39,7 @@ A balance change with this role will always have a 0 amount and use the asset ma
 
 #### Defined in
 
-[src/types/subscription.ts:225](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L225)
+[src/types/subscription.ts:228](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L228)
 
 ___
 
@@ -51,7 +51,7 @@ Account was having an asset amount closed to it
 
 #### Defined in
 
-[src/types/subscription.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L219)
+[src/types/subscription.ts:222](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L222)
 
 ___
 
@@ -63,7 +63,7 @@ Account was receiving a transaction
 
 #### Defined in
 
-[src/types/subscription.ts:217](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L217)
+[src/types/subscription.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L220)
 
 ___
 
@@ -75,4 +75,4 @@ Account was sending a transaction (sending asset and/or spending fee if asset `0
 
 #### Defined in
 
-[src/types/subscription.ts:215](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L215)
+[src/types/subscription.ts:218](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L218)
