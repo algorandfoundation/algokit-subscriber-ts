@@ -136,7 +136,7 @@ async function getXGovSubscriber() {
 
         const votes = await p.vote.createMany({
           data: poll.subscribedTransactions.map((t) => ({
-            id: t.id!,
+            id: t.id,
             voterAddress: t.sender,
             votingRoundId: votingRoundId.toString(),
             castedAt: new Date(t.roundTime! * 1000).toISOString(),
@@ -158,7 +158,7 @@ async function getXGovSubscriber() {
                     id: `${t.id}-${answerIndexMetadata[questionOptionIndex].optionId}`,
                     questionOptionId: answerIndexMetadata[questionOptionIndex].optionId,
                     optionIndex: answerIndexMetadata[questionOptionIndex].optionIndex,
-                    voteId: t.id!,
+                    voteId: t.id,
                     voteWeight: '1',
                   }
                 }
@@ -166,7 +166,7 @@ async function getXGovSubscriber() {
                   id: `${t.id}-${answerIndexMetadata[i].optionId}`,
                   questionOptionId: answerIndexMetadata[i].optionId,
                   optionIndex: answerIndexMetadata[i].optionIndex,
-                  voteId: t.id!,
+                  voteId: t.id,
                   voteWeight: v.toString(),
                 }
               })

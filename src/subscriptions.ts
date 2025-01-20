@@ -244,7 +244,7 @@ function processExtraFields(
   return new SubscribedTransaction({
     ...transaction,
     arc28Events: extractArc28Events(
-      transaction.id!,
+      transaction.id,
       transaction.logs ?? [],
       eventsToApply,
       (groupName) => groupsToApply.find((g) => g.groupName === groupName)!.continueOnError ?? false,

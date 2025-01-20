@@ -46,7 +46,7 @@ describe('AlgorandSubscriber', () => {
       algorand.client.indexer,
     )
     subscriber.on('test-txn', (r) => {
-      subscribedTxns.push(r.id!)
+      subscribedTxns.push(r.id)
     })
     return {
       subscriber,
