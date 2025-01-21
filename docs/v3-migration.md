@@ -8,7 +8,7 @@ For further information about `algosdk@3`, see [migration guide for algosdk@3](h
 
 ## Migrating
 
-### Step 1 - Update transaction filters
+### Step 1 - Update usages of `AlgorandSubscriber`
 
 Since the types exported are now aligned with `algosdk@3`, relevant `number` fields are now `bigint`. As a result, any transaction filter that passes a `number` should now use a `bigint`.
 
@@ -50,117 +50,128 @@ const subscriber = new AlgorandSubscriber(
 )
 ```
 
-### Step 2 - Update usages of SubscribedTransaction
+The output of the methods in this class were changed significantly. They are now referencing a new `SubscribedTransaction` type. We will discuss it in the next step.
 
-Previously `SubscribedTransaction` extended `TransactionResult` from `@algorandfoundation/algokit-utils`, however now utils leverages the `algosdk@3` types directly. As a result `SubscribedTransaction` now extends `algosdk.indexerModels.Transaction` from `algosdk@3`. The changes needed to support this are described below.
+### Step 2 - Update usages of `SubscribedTransaction`
 
-1. Convert kebab cased fields to camel case
+Previously `SubscribedTransaction` extended `TransactionResult` from `@algorandfoundation/algokit-utils`, however now `@algorandfoundation/algokit-utils` leverages the `algosdk@3` types directly. As a result `SubscribedTransaction` now extends `algosdk.indexerModels.Transaction` from `algosdk@3`. The changes needed to support this are described below.
 
-```typescript
-/**** Before ****/
-transactionResult['asset-transfer-transaction']
-
-/**** After ****/
-transactionResult.assetTransferTransaction
-```
-
-2. Convert the transaction type field `txType` to an optional string
-
-TODO: Change the example
+- Convert kebab cased fields to camel case
+- Convert the transaction type field `txType` to an optional string
+- Convert number fields to bigint
 
 ```typescript
+// The example below attemps to access data from an asset transfer transaction
+
 /**** Before ****/
-transactionResult['tx-type'] = TransactionType.axfer
-
-/**** After ****/
-transactionResult.txType = 'axfer'
-```
-
-3. Convert number fields to bigint
-
-TODO: Change the example
-
-```typescript
-/**** Before ****/
-transactionResult['created-application-index'] === 1196727051
-
-/**** After ****/
-transactionResult.createdApplicationIndex = 1196727051n
-```
-
-### Step 3 - Update usages of BlockData
-
-Previously subscriber leveraged a custom `BlockData` type, as `algosdk@2` didn't export a suitable one. Now that `algosdk@3` does, `algosdk.BlockResponse` replaces `BlockData`, which ensure we follow the pattern of leveraging `algosdk` where applicable. The main changes needed to support this are described below.
-
-1. `BlockData` uses short algod field names where as `BlockResponse` uses more user friendly field names. You will need to update the field names to match the new type.
-
-```typescript
-/**** Before ****/
-interface Block {
-  /** Genesis ID to which this block belongs. */
-  gen: string
-  /** Genesis hash to which this block belongs. */
-  gh: Uint8Array
+if ((transactionResult['tx-type'] = TransactionType.axfer)) {
+  console.log('assetId', transactionResult['asset-transfer-transaction']['asset-id'])
 }
+// Result:
+//   assetId: 31566704
 
 /**** After ****/
-export declare class BlockHeader implements Encodable {
-  /**
-   * Genesis ID to which this block belongs.
-   */
-  genesisID: string
-  /**
-   * Genesis hash to which this block belongs.
-   */
-  genesisHash: Uint8Array
+if ((transactionResult.txType = 'axfer')) {
+  console.log('assetId', transactionResult.assetTransferTransaction.assetId)
 }
+// Result:
+//  assetId: 31566704n <- this is a bigint
 ```
 
-2. The `Block` type is now split into `header` and `payset`. The `payset` is the array of all the signed transactions in the block. The `header` contains the block header data such as the round, genesis ID, and genesis hash.
+### Step 3 - Update usages of `getBlockTransactions`
+
+This function takes a block from `algod` and returns an array of `TransactionInBlock`. Both the input and output types have changed.
+
+- Previously, the input type was a custom `BlockData` type, as `algosdk@2` didn't export a suitable one. Now that `algosdk@3` does, `algosdk.BlockResponse` replaces `BlockData`, which ensure we follow the pattern of leveraging `algosdk` where applicable. In `algosdk@3`, you can get the `algosdk.BlockResponse` directly from `algod` as below.
 
 ```typescript
 /**** Before ****/
-block.rnd
-block.gen
-block.txns
+const blockData = {
+  block: {
+    rnd: 1196727051,
+    gen: 'mainnet-v1.0',
+    gh: new Uint8Array([1, 2, 3, 4, ...]),
+    ...
+  },
+}
+const blockTransactions = getBlockTransactions(blockData)
+
+
 /**** After ****/
-block.header.round
-block.header.genesisID
-block.payset
+const block = algorand.client.algod.block(round).do()
+const blockTransactions = getBlockTransactions(block)
 ```
 
-3. Similar to transaction types, you need to convert any number fields to bigint
+- The output type is an array of `TransactionInBlock`. There were some changes to this type:
+  - The `intraRoundOffset` field is the offset of the transaction within the round including inner transactions.
+  - The `rootIntraRoundOffset` field is the intra-round offset of the root transaction if this is an inner transaction.
+  - The `rootTransactionId` field is the ID of the root transaction if this is an inner transaction.
+  - The `parentTransactionId` field is the ID of the parent transaction if this is an inner transaction.
+    - In this release, we made a fix to this field, previously, it was the ID of the root transaction, now it is the ID of the immediate parent transaction.
+  - The `blockTransaction` field is replaced with `signedTxnWithAD`. This is a part of the efford to align with `algosdk@3`. We will get into more details in the next step.
+
+### Step 4 - Update usages of `BlockTransaction`
+
+The type `BlockTransaction` was removed. It is replaced by `SignedTxnWithAD` from `algosdk@3`. The shape of `BlockTransaction` is what `algod` returns, while `SignedTxnWithAD` is processed by `algosdk@3`.
 
 ```typescript
+// To get the created asset ID from a block transaction
+
 /**** Before ****/
-block.rnd === 1196727051
+console.log('created asset ID', blockTransaction.caid)
+// Result:
+//   created asset ID: 31566704
+
 /**** After ****/
-blockHeader.round = 1196727051n
+console.log('created asset ID', signedTxnWithAD.applyData.configAsset)
+// Result:
+// created asset ID: 31566704n <- this is a bigint
 ```
-
-### Step 4 - Convert usages of BlockMetadata
-
-Moving from subscriber-ts@1 to subscriber-ts@2, the type `BlockMetadata` hasn't changed much, you only need to convert number fields to bigint.
 
 ```typescript
+// To access the transaction sender
+
 /**** Before ****/
-blockMetadata.round === 1196727051
+console.log('transaction sender', blockTransaction.txn.snd)
+// Result:
+// transaction sender: 25M5BT2DMMED3V6CWDEYKSNEFGPXX4QBIINCOICLXXRU3UGTSGRMF3MTOE
+
 /**** After ****/
-blockMetadata.round = 1196727051n
+// The sender now has `Address` type
+console.log('transaction sender', signedTxnWithAD.signedTxn.txn.sender.toString())
+// Result:
+// transaction sender: 25M5BT2DMMED3V6CWDEYKSNEFGPXX4QBIINCOICLXXRU3UGTSGRMF3MTOE
 ```
 
-### Step 5 - Handle bigint serialization
+### Step 5 - Update usages of `getIndexerTransactionFromAlgodTransaction`
+
+This method takes a `TransactionInBlock` and returns a `SubscribedTransaction`. The changes needed to support this are described in Step 2 and Step 3.
+
+### Step 4 - Update usages of `blockDataToBlockMetadata`
+
+This method was renamed to `blockResponseToBlockMetadata`. It takes a `BlockResponse` and returns a `BlockMetadata`. The changes needed to support this are described below.
+
+- Refer to step 3 for the changes to `BlockResponse`.
+- The `BlockMetadata` has not changed much, except for some fields that were `number` previously are now `bigint`.
+
+### Step 5 - Update usages of `extractBalanceChangesFromBlockTransaction`
+
+This method takes a `SignedTxnWithAD` and returns an array of `BalanceChange`.
+
+- The `SignedTxnWithAD` is taken from `algosdk@3`.
+- The `BalanceChange` type has not changed much, except for some fields that were `number` previously are now `bigint`.
+
+### Step 6 - Update usages of `extractBalanceChangesFromIndexerTransaction`
+
+This method takes a `SubscribedTransaction` and returns an array of `BalanceChange`.
+
+- The `SubscribedTransaction` is based on `algosdk.indexerModels.Transaction`.
+- The `BalanceChange` type has not changed much, except for some fields that were `number` previously are now `bigint`.
+
+### Step 7 - Handle bigint serialization
 
 Since all number fields are now `bigint`, the default `JSON.stringify` will no longer work. You may have to create a custom JSON serializer to handle the bigint values. Below is an example of how to do this.
 
 ```typescript
 export const asJson = (value: unknown) => JSON.stringify(value, (_, v) => (typeof v === 'bigint' ? v.toString() : v), 2)
 ```
-
-- Document parentTransactionId fix. Describe new behaviour + give example of how to keep the same behaviour
-- getBlockTransactions
-- getIndexerTransactionFromAlgodTransaction
-- blockDataToBlockMetadata. Should this be renamed to blockResponseToBlockMetadata
-- extractBalanceChangesFromBlockTransaction
-- extractBalanceChangesFromIndexerTransaction
-- Others...

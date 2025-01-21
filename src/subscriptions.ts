@@ -5,7 +5,7 @@ import sha512, { sha512_256 } from 'js-sha512'
 import { getBlocksBulk } from './block'
 import {
   algodOnCompleteToIndexerOnComplete,
-  blockDataToBlockMetadata,
+  blockResponseToBlockMetadata,
   extractBalanceChangesFromBlockTransaction,
   extractBalanceChangesFromIndexerTransaction,
   getBlockTransactions,
@@ -194,7 +194,7 @@ export async function getSubscribedTransactions(
       )
       .reduce(deduplicateSubscribedTransactionsReducer, [])
 
-    blockMetadata = blocks.map((b) => blockDataToBlockMetadata(b))
+    blockMetadata = blocks.map((b) => blockResponseToBlockMetadata(b))
 
     Config.logger.debug(
       `Retrieved ${blockTransactions.length} transactions from algod via round(s) ${algodSyncFromRoundNumber}-${endRound} in ${

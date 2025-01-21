@@ -549,7 +549,7 @@ function getHashFromBlockCert(cert: UntypedValue | undefined): string | undefine
  * @param blockResponse The block response from algod
  * @returns The block metadata
  */
-export function blockDataToBlockMetadata(blockResponse: algosdk.modelsv2.BlockResponse): BlockMetadata {
+export function blockResponseToBlockMetadata(blockResponse: algosdk.modelsv2.BlockResponse): BlockMetadata {
   const { block, cert } = blockResponse
   return {
     round: block.header.round,
