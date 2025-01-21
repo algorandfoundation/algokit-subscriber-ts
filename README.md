@@ -92,8 +92,8 @@ The balance change for an asset create transaction will be as below:
 ```json
 {
   "address": "VIDHG4SYANCP2GUQXXSFSNBPJWS4TAQSI3GH4GYO54FSYPDIBYPMSF7HBY", // The asset creator
-  "assetId": 2391, // The created asset id
-  "amount": 100000, // Full asset supply of the created asset
+  "assetId": 2391n, // The created asset id
+  "amount": 100000n, // Full asset supply of the created asset
   "roles": ["AssetCreator"]
 }
 ```
@@ -104,11 +104,11 @@ If you need to account for the asset supply being destroyed from the creators ac
 
 The balance change for an asset destroy transaction will be as below:
 
-```json
+```typescript
 {
   "address": "PIDHG4SYANCP2GUQXXSFSNBPJWS4TAQSI3GH4GYO54FSYPDIBYPMSF7HBY", // The asset destroyer, which will always be the asset manager
-  "assetId": 2391, // The destroyed asset id
-  "amount": 0, // This value will always be 0
+  "assetId": 2391n, // The destroyed asset id
+  "amount": 0n, // This value will always be 0
   "roles": ["AssetDestroyer"]
 }
 ```
@@ -123,7 +123,7 @@ The watermark is stored in-memory so this particular example is not resilient to
 
 ```typescript
 const algorand = AlgorandClient.fromEnvironment()
-let watermark = 0
+let watermark = 0n
 const subscriber = new AlgorandSubscriber(
   {
     events: [
@@ -168,7 +168,7 @@ The following code, when algod is pointed to MainNet, will find all transfers of
 
 ```typescript
 const algorand = AlgorandClient.fromEnvironment()
-let watermark = 0
+let watermark = 0n
 
 const subscriber = new AlgorandSubscriber(
   {
@@ -177,8 +177,8 @@ const subscriber = new AlgorandSubscriber(
         eventName: 'usdc',
         filter: {
           type: TransactionType.axfer,
-          assetId: 31566704, // MainNet: USDC
-          minAmount: 1_000_000, // $1
+          assetId: 31566704n, // MainNet: USDC
+          minAmount: 1_000_000n, // $1
         },
       },
     ],
@@ -196,8 +196,8 @@ const subscriber = new AlgorandSubscriber(
 subscriber.on('usdc', (transfer) => {
   // eslint-disable-next-line no-console
   console.log(
-    `${transfer.sender} sent ${transfer['asset-transfer-transaction']?.receiver} USDC$${(
-      (transfer['asset-transfer-transaction']?.amount ?? 0) / 1_000_000
+    `${transfer.sender} sent ${transfer.assetTransferTransaction?.receiver} USDC$${Number(
+      (transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000n,
     ).toFixed(2)} in transaction ${transfer.id}`,
   )
 })

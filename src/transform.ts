@@ -743,7 +743,7 @@ export function extractBalanceChangesFromBlockTransaction(signedTxnWithAD: Signe
  * @param transaction The transaction to extract balance changes from
  * @returns The set of balance changes
  */
-export function extractBalanceChangesFromIndexerTransaction(transaction: SubscribedTransaction): BalanceChange[] {
+export function extractBalanceChangesFromIndexerTransaction(transaction: algosdk.indexerModels.Transaction): BalanceChange[] {
   const balanceChanges: BalanceChange[] = []
 
   if (transaction.fee > 0) {
