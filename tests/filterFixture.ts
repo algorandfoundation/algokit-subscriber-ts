@@ -1,12 +1,46 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
+import { AlgorandFixture, AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import type { Account } from 'algosdk'
+import type { Account, Transaction } from 'algosdk'
+import algosdk from 'algosdk'
 import { expect, vitest } from 'vitest'
-import { Arc28EventGroup, TransactionFilter } from '../src/types'
+import { Arc28EventGroup, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
 import { GetSubscribedTransactions, SendXTransactions } from './transactions'
 
-export function filterFixture(fixtureConfig?: AlgorandFixtureConfig) {
+export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
+  localnet: AlgorandFixture
+  systemAccount: () => Account
+  subscribeAlgod: (
+    filter: TransactionFilter,
+    result: SendTransactionResult,
+    arc28Events?: Arc28EventGroup[],
+  ) => Promise<TransactionSubscriptionResult>
+  subscribeIndexer: (
+    filter: TransactionFilter,
+    result: SendTransactionResult,
+    arc28Events?: Arc28EventGroup[],
+  ) => Promise<TransactionSubscriptionResult>
+  subscribeAndVerify: (
+    filter: TransactionFilter,
+    result: SendTransactionResult,
+    arc28Events?: Arc28EventGroup[],
+  ) => Promise<TransactionSubscriptionResult>
+  subscribeAndVerifyFilter: (
+    filter: TransactionFilter,
+    result: SendTransactionResult | SendTransactionResult[],
+    arc28Events?: Arc28EventGroup[],
+  ) => Promise<{ algod: TransactionSubscriptionResult; indexer: TransactionSubscriptionResult }>
+  extractFromGroupResult: (
+    groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>,
+    index: number,
+  ) => {
+    transaction: Transaction
+    confirmation: algosdk.modelsv2.PendingTransactionResponse
+  }
+  beforeEach: () => Promise<void>
+  beforeAll: () => Promise<void>
+  afterEach: () => Promise<void>
+} {
   const localnet = algorandFixture(fixtureConfig)
   let systemAccount: Account
 
