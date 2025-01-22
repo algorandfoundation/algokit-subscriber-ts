@@ -318,8 +318,7 @@ export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
 
   constructor({
     id,
-    rootTransactionId,
-    rootIntraRoundOffset,
+    parentIntraRoundOffset,
     parentTransactionId,
     innerTxns,
     arc28Events,
@@ -329,8 +328,7 @@ export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   }: Omit<SubscribedTransaction, 'getEncodingSchema' | 'toEncodingData'>) {
     super(rest)
     this.id = id
-    this.rootTransactionId = rootTransactionId
-    this.rootIntraRoundOffset = rootIntraRoundOffset
+    this.parentIntraRoundOffset = parentIntraRoundOffset
     this.parentTransactionId = parentTransactionId
     this.innerTxns = innerTxns
     this.arc28Events = arc28Events

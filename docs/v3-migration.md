@@ -46,7 +46,7 @@ This type has had several changes, mainly to make this type more aligned with `S
 - The field `transactionId` was added. This is the ID of the transaction. For example:
   - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA if it's a parent transaction
   - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1 if it's an inner transaction
-- The field `roundOffset` was renamed `intraRoundOffset`. This is the offset of the transaction within the block including inner transactions.
+- The field `roundOffset` was renamed to `intraRoundOffset`. This is the offset of the transaction within the block including inner transactions.
   - There is a fix applied to this field. Previously, the calculation was only performed to the first level of inner transactions, nested inner transactions had the same `roundOffset` as their parent transaction. Now, it's calculated for all levels of inner transactions.
 - The field `roundIndex` was renamed to `parentIntraRoundOffset`. This is the offset of the parent transaction within the block.
 - The field `parentOffset` was removed. It is not needed as the value can be calculated from the `parentIntraRoundOffset` and `intraRoundOffset`.
@@ -107,7 +107,7 @@ This type has not changed much, except for some fields have been converted from 
 
 ### Step 1 - Update usages of `AlgorandSubscriber` and `getSubscribedTransactions`
 
-Since the types exported are now mostly aligned with `algosdk@3`, relevant `number` fields are now `bigint`. To maintain consistency, any transaction filter that passes a `number` should now use a `bigint`.
+Since the types exported are now mostly aligned with `algosdk@3`, relevant `number` fields are now `bigint`. To maintain consistency, relevant filters that passed a `number` should now use a `bigint`.
 
 ```typescript
 /**** Before ****/
@@ -195,12 +195,12 @@ result.subscribedTransactions.forEach((subscribedTransaction) => {
 })
 ```
 
-The `SubscribedTransaction` returned from your subscriber now leverage the `algosdk@3` types, so your handling code will require updates to accont for these changes. See [changes to `SubscribedTransaction`](#changes-to-subscribedtransaction) for details on how to update.
+The `SubscribedTransaction` returned from your subscriber now leverage the `algosdk@3` types, so your handling code will require updates to account for these changes. See [Changes to `SubscribedTransaction`](#changes-to-subscribedtransaction) for details on how to update.
 
 ### Step 2 - Update usages of `getBlockTransactions`
 
-The previous input type `Block` has been changed to `algosdk.modelsv2.BlockResponse`, see [removal of `BlockData`](#removal-of-blockdata) for more information.
-The output type `TransactionInBlock` has been updated to support the `algosdk@3` types, see [changes to `TransactionInBlock`](#changes-to-transactioninblock) for more information.
+The previous input type `Block` has been changed to `algosdk.modelsv2.BlockResponse`, see [Removal of `BlockData`](#removal-of-blockdata) for more information.
+The output type `TransactionInBlock` has been updated to support the `algosdk@3` types, see [Changes to `TransactionInBlock`](#changes-to-transactioninblock) for more information.
 
 ```typescript
 /**** Before ****/
@@ -215,13 +215,13 @@ const blockTransactions = getBlockTransactions(block)
 
 ### Step 3 - Update usages of `getIndexerTransactionFromAlgodTransaction`
 
-The input type `TransactionInBlock` has been updated to support the `algosdk@3` types, see [changes to `TransactionInBlock`](#changes-to-transactioninblock) for more information.
-The output type `SubscribedTransaction` has been updated to support the `algosdk@3` types, see [changes to `SubscribedTransaction`](#changes-to-subscribedtransaction) for more information.
+The input type `TransactionInBlock` has been updated to support the `algosdk@3` types, see [Changes to `TransactionInBlock`](#changes-to-transactioninblock) for more information.
+The output type `SubscribedTransaction` has been updated to support the `algosdk@3` types, see [Changes to `SubscribedTransaction`](#changes-to-subscribedtransaction) for more information.
 
 ### Step 4 - Update usages of `blockDataToBlockMetadata`
 
-This method has been renamed to `blockResponseToBlockMetadata`. Additionally the previous input type `BlockData` has been changed to `algosdk.modelsv2.BlockResponse`, see [removal of `BlockData`](#removal-of-blockdata) for more information.
-The output type `BlockMetadata` has been changed in a few small ways, see [changes to `BlockMetadata`](#changes-to-blockmetadata) for details on how to update.
+This method has been renamed to `blockResponseToBlockMetadata`. Additionally the previous input type `BlockData` has been changed to `algosdk.modelsv2.BlockResponse`, see [Removal of `BlockData`](#removal-of-blockdata) for more information.
+The output type `BlockMetadata` has been changed in a few small ways, see [Changes to `BlockMetadata`](#changes-to-blockmetadata) for more information.
 
 ```typescript
 /**** Before ****/
@@ -236,17 +236,17 @@ const blockMetadata = blockResponseToBlockMetadata(block)
 
 ### Step 5 - Update usages of `extractBalanceChangesFromBlockTransaction`
 
-The previous input type `BlockTransaction | BlockInnerTransaction` has been changed to `algosdk.SignedTxnWithAD`, see [removal of `BlockTransaction` and `BlockInnerTransaction`](#removal-of-blocktransaction-and-blockinnertransaction) for more information.
-The output type `BalanceChange` has been changed in a few small ways, see [changes to `BalanceChange`](#changes-to-balancechange) for more information.
+The previous input type `BlockTransaction | BlockInnerTransaction` has been changed to `algosdk.SignedTxnWithAD`, see [Removal of `BlockTransaction` and `BlockInnerTransaction`](#removal-of-blocktransaction-and-blockinnertransaction) for more information.
+The output type `BalanceChange` has been changed in a few small ways, see [Changes to `BalanceChange`](#changes-to-balancechange) for more information.
 
 ### Step 6 - Update usages of `extractBalanceChangesFromIndexerTransaction`
 
-The previous input type `TransactionResult` has been changed to `algosdk.indexerModels.Transaction`, see [changes to `SubscribedTransaction`](#changes-to-subscribedtransaction) for more information.
-The output type `BalanceChange[]` has been changed in a few small ways, see [changes to `BalanceChange`](#changes-to-balancechange) for more information.
+The previous input type `TransactionResult` has been changed to `algosdk.indexerModels.Transaction`, see [Changes to `SubscribedTransaction`](#changes-to-subscribedtransaction) for more information.
+The output type `BalanceChange[]` has been changed in a few small ways, see [Changes to `BalanceChange`](#changes-to-balancechange) for more information.
 
 ### Step 7 - Handle bigint serialization
 
-Since the majority of number fields are now `bigint`, the default `JSON.stringify` will no longer work. We recommend you use a custom JSON replacer to handle the bigint values. Below is an example of how you might do this.
+Since the majority of number fields are now `bigint`, the default `JSON.stringify` will no longer work in scenarios where it previously did. We recommend you use a custom JSON replacer to handle the bigint values. Below is an example of how you might do this.
 
 ```typescript
 export const asJson = (value: unknown) => JSON.stringify(value, (_, v) => (typeof v === 'bigint' ? v.toString() : v), 2)
