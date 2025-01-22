@@ -51,7 +51,7 @@ Filter to app transactions that meet the given app arguments predicate.
 
 #### Defined in
 
-[src/types/subscription.ts:343](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L343)
+[src/types/subscription.ts:339](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L339)
 
 ___
 
@@ -63,7 +63,7 @@ Filter to transactions that are creating an app.
 
 #### Defined in
 
-[src/types/subscription.ts:326](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L326)
+[src/types/subscription.ts:322](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L322)
 
 ___
 
@@ -75,7 +75,7 @@ Filter to transactions against the app with the given ID(s).
 
 #### Defined in
 
-[src/types/subscription.ts:324](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L324)
+[src/types/subscription.ts:320](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L320)
 
 ___
 
@@ -87,7 +87,7 @@ Filter to transactions that have given on complete(s).
 
 #### Defined in
 
-[src/types/subscription.ts:328](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L328)
+[src/types/subscription.ts:324](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L324)
 
 ___
 
@@ -100,7 +100,7 @@ Note: the definitions for these events must be passed in to the subscription con
 
 #### Defined in
 
-[src/types/subscription.ts:347](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L347)
+[src/types/subscription.ts:343](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L343)
 
 ___
 
@@ -112,7 +112,7 @@ Filter to transactions that are creating an asset.
 
 #### Defined in
 
-[src/types/subscription.ts:332](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L332)
+[src/types/subscription.ts:328](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L328)
 
 ___
 
@@ -124,7 +124,7 @@ Filter to transactions against the asset with the given ID(s).
 
 #### Defined in
 
-[src/types/subscription.ts:330](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L330)
+[src/types/subscription.ts:326](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L326)
 
 ___
 
@@ -136,7 +136,7 @@ Filter to transactions that result in balance changes that match one or more of 
 
 #### Defined in
 
-[src/types/subscription.ts:349](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L349)
+[src/types/subscription.ts:345](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L345)
 
 ___
 
@@ -162,7 +162,7 @@ Catch-all custom filter to filter for things that the rest of the filters don't 
 
 #### Defined in
 
-[src/types/subscription.ts:366](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L366)
+[src/types/subscription.ts:362](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L362)
 
 ___
 
@@ -175,7 +175,7 @@ or equal to the given maximum (microAlgos or decimal units of an ASA if type: ax
 
 #### Defined in
 
-[src/types/subscription.ts:338](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L338)
+[src/types/subscription.ts:334](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L334)
 
 ___
 
@@ -188,7 +188,7 @@ the given method signature as the first app argument.
 
 #### Defined in
 
-[src/types/subscription.ts:341](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L341)
+[src/types/subscription.ts:337](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L337)
 
 ___
 
@@ -201,7 +201,7 @@ than or equal to the given minimum (microAlgos or decimal units of an ASA if typ
 
 #### Defined in
 
-[src/types/subscription.ts:335](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L335)
+[src/types/subscription.ts:331](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L331)
 
 ___
 
@@ -213,7 +213,7 @@ Filter to transactions with a note having the given prefix.
 
 #### Defined in
 
-[src/types/subscription.ts:322](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L322)
+[src/types/subscription.ts:318](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L318)
 
 ___
 
@@ -225,7 +225,7 @@ Filter to transactions being received by the specified address(es).
 
 #### Defined in
 
-[src/types/subscription.ts:320](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L320)
+[src/types/subscription.ts:316](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L316)
 
 ___
 
@@ -237,7 +237,7 @@ Filter to transactions sent from the specified address(es).
 
 #### Defined in
 
-[src/types/subscription.ts:318](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L318)
+[src/types/subscription.ts:314](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L314)
 
 ___
 
@@ -249,4 +249,4 @@ Filter based on the given transaction type(s).
 
 #### Defined in
 
-[src/types/subscription.ts:316](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L316)
+[src/types/subscription.ts:312](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L312)

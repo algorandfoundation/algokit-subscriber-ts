@@ -36,15 +36,20 @@ if (subscribedTransaction.txType === TransactionType.axfer) {
 //  assetId: 31566704n <- this is now a bigint
 ```
 
+- A fixed was applied to the `intraRoundOffset` field. Previously, the calculation was only done to the first level of inner transactions, nested transactions had the same `intraRoundOffset` as their root transaction. Now, it's calculated for all levels of inner transactions.
+- The `parentIntraRoundOffset` field was added. This is the offset of the root transaction within the round.
+
 ### Changes to `TransactionInBlock`
 
-This type has had several changes:
+This type has had several changes, mainly to make this type more aligned with `SubscribedTransaction`:
 
-- The `intraRoundOffset` field is the offset of the transaction within the round including inner transactions.
-- The `rootIntraRoundOffset` field is the intra-round offset of the root transaction if this is an inner transaction.
-- The `rootTransactionId` field is the ID of the root transaction if this is an inner transaction.
-- The `parentTransactionId` field is the ID of the parent transaction if this is an inner transaction.
-- In this release, we made a fix to this field, previously, it was the ID of the root transaction, now it is the ID of the immediate parent transaction.
+- The field `transactionId` was added. This is the ID of the transaction. For example:
+  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA if it's a root transaction
+  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1 if it's an inner transaction
+- The field `roundOffset` was renamed `intraRoundOffset`. This is the offset of the transaction within the round including inner transactions.
+  - There is a fix applied to this field. Previously, the calculation was only done to the first level of inner transactions, nested transactions had the same `roundOffset` as their root transaction. Now, it's calculated for all levels of inner transactions.
+- The field `roundIndex` was renamed to `parentIntraRoundOffset`. This is the offset of the root transaction within the round.
+- The field `parentOffset` was removed. It is not needed as the value can be calculated from the `parentIntraRoundOffset` and `intraRoundOffset`.
 - The `blockTransaction` field is replaced with `signedTxnWithAD`. This is a part of the effort to align with `algosdk@3`. See [Removal of `BlockTransaction` and `BlockInnerTransaction`](#removal-of-blocktransaction-and-blockinnertransaction) for more details.
 
 ### Removal of `BlockData`

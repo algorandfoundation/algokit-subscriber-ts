@@ -57,7 +57,7 @@
 
 #### Defined in
 
-[src/types/subscription.ts:420](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L420)
+[src/types/subscription.ts:416](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L416)
 
 ___
 
@@ -88,4 +88,4 @@ ___
 
 #### Defined in
 
-[src/types/subscription.ts:418](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L418)
+[src/types/subscription.ts:414](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L414)
