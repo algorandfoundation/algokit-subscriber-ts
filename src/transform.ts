@@ -45,7 +45,7 @@ export function getBlockTransactions(blockResponse: algosdk.modelsv2.BlockRespon
     return [
       rootTransaction,
       ...(signedTransactionInBlock.signedTxn.applyData.evalDelta?.innerTxns ?? []).flatMap((innerTransaction) =>
-        getBlockInnerTransactions(innerTransaction, block, rootTransaction, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
+        getBlockInnerTransactions(innerTransaction, block, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
       ),
     ]
   })
@@ -55,7 +55,6 @@ function getBlockInnerTransactions(
   signedTxnWithAD: algosdk.SignedTxnWithAD,
   block: algosdk.Block,
   rootTransaction: TransactionInBlock,
-  parentTransaction: TransactionInBlock,
   getRoundOffset: () => number,
   getParentOffset: () => number,
   genesisHash?: Buffer,
@@ -71,16 +70,15 @@ function getBlockInnerTransactions(
     transactionId,
     genesisHash,
     intraRoundOffset: getRoundOffset(),
-    rootTransactionId: rootTransaction.transactionId,
-    rootIntraRoundOffset: rootTransaction.intraRoundOffset,
-    parentTransactionId: parentTransaction.transactionId,
+    parentIntraRoundOffset: rootTransaction.intraRoundOffset,
+    parentTransactionId: rootTransaction.transactionId,
     ...transactionData,
   } satisfies TransactionInBlock
 
   return [
     transaction,
     ...(signedTxnWithAD.applyData.evalDelta?.innerTxns ?? []).flatMap((innerInnerTransaction) =>
-      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, transaction, getRoundOffset, getParentOffset, genesisHash),
+      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
     ),
   ]
 }
@@ -161,8 +159,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
     intraRoundOffset,
     transactionId,
     parentTransactionId,
-    rootIntraRoundOffset,
-    rootTransactionId,
+    parentIntraRoundOffset,
     roundNumber,
     roundTimestamp,
     genesisHash,
@@ -187,8 +184,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
     return new SubscribedTransaction({
       id: transactionId,
       parentTransactionId,
-      rootTransactionId,
-      rootIntraRoundOffset,
+      parentIntraRoundOffset,
       filtersMatched: filterName ? [filterName] : undefined,
       ...(transaction.type === TransactionType.acfg && transaction.assetConfig
         ? {
@@ -409,16 +405,15 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       innerTxns: signedTxnWithAD.applyData.evalDelta?.innerTxns.map((innerTxn) => {
         const offset = getParentOffset()
         const childIntraRoundOffset = intraRoundOffset + offset
-        const innerTransactionId = `${rootTransactionId}/inner/${childIntraRoundOffset - (rootIntraRoundOffset ?? intraRoundOffset)}`
+        const innerTransactionId = `${parentTransactionId}/inner/${childIntraRoundOffset - (parentIntraRoundOffset ?? intraRoundOffset)}`
 
         return getIndexerTransactionFromAlgodTransaction({
           signedTxnWithAD: innerTxn,
           intraRoundOffset: childIntraRoundOffset,
           ...extractTransactionDataFromSignedTxnInBlock(innerTxn, genesisHash, genesisId),
           transactionId: innerTransactionId,
-          parentTransactionId: transactionId,
-          rootTransactionId,
-          rootIntraRoundOffset,
+          parentTransactionId: parentTransactionId,
+          parentIntraRoundOffset: parentIntraRoundOffset,
           roundNumber,
           roundTimestamp,
           genesisHash,

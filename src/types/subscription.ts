@@ -162,10 +162,8 @@ export interface ParticipationUpdates {
  */
 export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   id: string
-  /** The transaction ID of the root transaction of this transaction (if it's an inner transaction). */
-  rootTransactionId?: string
-  /** The intra-round offset of the root transaction of this transaction (if it's an inner transaction). */
-  rootIntraRoundOffset?: number
+  /** The intra-round offset of the parent of this transaction (if it's an inner transaction). */
+  parentIntraRoundOffset?: number
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */
@@ -179,8 +177,7 @@ export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
 
   constructor({
     id,
-    rootTransactionId,
-    rootIntraRoundOffset,
+    parentIntraRoundOffset,
     parentTransactionId,
     innerTxns,
     arc28Events,
@@ -190,8 +187,7 @@ export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   }: Omit<SubscribedTransaction, 'getEncodingSchema' | 'toEncodingData'>) {
     super(rest)
     this.id = id
-    this.rootTransactionId = rootTransactionId
-    this.rootIntraRoundOffset = rootIntraRoundOffset
+    this.parentIntraRoundOffset = parentIntraRoundOffset
     this.parentTransactionId = parentTransactionId
     this.innerTxns = innerTxns
     this.arc28Events = arc28Events

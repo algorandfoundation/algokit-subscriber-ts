@@ -29,13 +29,9 @@ export interface TransactionInBlock {
    */
   intraRoundOffset: number
   /**
-   * The ID of the root transaction if this is an inner transaction.
+   * The intra-round offset of the parent transaction if this is an inner transaction.
    */
-  rootTransactionId?: string
-  /**
-   * The intra-round offset of the root transaction if this is an inner transaction.
-   */
-  rootIntraRoundOffset?: number
+  parentIntraRoundOffset?: number
   /**
    * The ID of the parent transaction if this is an inner transaction.
    */

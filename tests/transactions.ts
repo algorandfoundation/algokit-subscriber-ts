@@ -104,9 +104,8 @@ export function getTransactionInBlockForDiff(transaction: TransactionInBlock) {
   return {
     transactionId: transaction.transactionId,
     transaction: getTransactionForDiff(transaction.transaction),
-    rootTransactionId: transaction.rootTransactionId,
-    rootIntraRoundOffset: transaction.rootIntraRoundOffset,
     parentTransactionId: transaction.parentTransactionId,
+    parentIntraRoundOffset: transaction.parentIntraRoundOffset,
     intraRoundOffset: transaction.intraRoundOffset,
     createdAppId: transaction.createdAppId,
     createdAssetId: transaction.createdAppId,
