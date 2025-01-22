@@ -303,10 +303,8 @@ The definition of the type is:
 ```typescript
 export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   id: string
-  /** The transaction ID of the root transaction of this transaction (if it's an inner transaction). */
-  rootTransactionId?: string
-  /** The intra-round offset of the root transaction of this transaction (if it's an inner transaction). */
-  rootIntraRoundOffset?: number
+  /** The intra-round offset of the parent of this transaction (if it's an inner transaction). */
+  parentIntraRoundOffset?: number
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */

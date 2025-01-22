@@ -40,7 +40,7 @@ The asset close amount if the sender asset position was closed from this transac
 
 #### Defined in
 
-[src/types/block.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L54)
+[src/types/block.ts:61](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L61)
 
 ___
 
@@ -52,7 +52,7 @@ The ALGO close amount if the sender account was closed from this transaction.
 
 #### Defined in
 
-[src/types/block.ts:56](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L56)
+[src/types/block.ts:63](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L63)
 
 ___
 
@@ -64,7 +64,7 @@ Rewards in microalgos applied to the close remainder to account.
 
 #### Defined in
 
-[src/types/block.ts:60](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L60)
+[src/types/block.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L67)
 
 ___
 
@@ -76,7 +76,7 @@ The app ID if an app was created from this transaction.
 
 #### Defined in
 
-[src/types/block.ts:52](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L52)
+[src/types/block.ts:59](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L59)
 
 ___
 
@@ -88,7 +88,7 @@ The asset ID if an asset was created from this transaction.
 
 #### Defined in
 
-[src/types/block.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L50)
+[src/types/block.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L57)
 
 ___
 
@@ -100,7 +100,7 @@ The binary genesis hash of the network the transaction is within.
 
 #### Defined in
 
-[src/types/block.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L40)
+[src/types/block.ts:47](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L47)
 
 ___
 
@@ -112,7 +112,7 @@ The string genesis ID of the network the transaction is within.
 
 #### Defined in
 
-[src/types/block.ts:42](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L42)
+[src/types/block.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L49)
 
 ___
 
@@ -147,7 +147,7 @@ Any logs that were issued as a result of this transaction.
 
 #### Defined in
 
-[src/types/block.ts:58](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L58)
+[src/types/block.ts:65](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L65)
 
 ___
 
@@ -157,9 +157,20 @@ ___
 
 The intra-round offset of the parent transaction if this is an inner transaction.
 
+**`Example`**
+
+```ts
+- 0
+ - 1
+   - 1
+   - 1
+     - 1
+ - 2
+```
+
 #### Defined in
 
-[src/types/block.ts:34](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L34)
+[src/types/block.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L41)
 
 ___
 
@@ -171,7 +182,7 @@ The ID of the parent transaction if this is an inner transaction.
 
 #### Defined in
 
-[src/types/block.ts:38](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L38)
+[src/types/block.ts:45](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L45)
 
 ___
 
@@ -183,7 +194,7 @@ Rewards in microalgos applied to the receiver account.
 
 #### Defined in
 
-[src/types/block.ts:64](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L64)
+[src/types/block.ts:71](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L71)
 
 ___
 
@@ -195,7 +206,7 @@ The round number of the block the transaction is within.
 
 #### Defined in
 
-[src/types/block.ts:44](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L44)
+[src/types/block.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L51)
 
 ___
 
@@ -207,7 +218,7 @@ The round unix timestamp of the block the transaction is within.
 
 #### Defined in
 
-[src/types/block.ts:46](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L46)
+[src/types/block.ts:53](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L53)
 
 ___
 
@@ -219,7 +230,7 @@ Rewards in microalgos applied to the sender account.
 
 #### Defined in
 
-[src/types/block.ts:62](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L62)
+[src/types/block.ts:69](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L69)
 
 ___
 
@@ -243,7 +254,7 @@ The transaction as an algosdk `Transaction` object.
 
 #### Defined in
 
-[src/types/block.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L48)
+[src/types/block.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/block.ts#L55)
 
 ___
 
@@ -256,7 +267,7 @@ The transaction ID
 **`Example`**
 
 ```ts
-- W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA if it's a root transaction
+- W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA if it's a parent transaction
  - W6IG6SETWKISJV4JQSS6GNZGWKYXOOLH7FT3NQM4BIFRLCOXOQHA/inner/1 if it's an inner transaction
 ```
 
