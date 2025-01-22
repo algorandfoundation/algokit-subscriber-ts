@@ -113,11 +113,11 @@ You can create reliable syncing / indexing services through a simple round water
 This works through the use of the `watermarkPersistence` parameter in [`AlgorandSubscriber`](./subscriber.md) and `watermark` parameter in [`getSubscribedTransactions`](./subscriptions.md):
 
 ```typescript
-async function getSavedWatermark(): Promise<number> {
+async function getSavedWatermark(): Promise<bigint> {
   // Return the watermark from a persistence store e.g. database, redis, file system, etc.
 }
 
-async function saveWatermark(newWatermark: number): Promise<void> {
+async function saveWatermark(newWatermark: bigint): Promise<void> {
   // Save the watermark to a persistence store e.g. database, redis, file system, etc.
 }
 
@@ -143,7 +143,7 @@ If you are doing a quick test or creating an ephemeral subscriber that just need
 ```typescript
 let watermark = 0
 const subscriber = new AlgorandSubscriber({watermarkPersistence: {
-  get: () => watermark, set: (newWatermark: number) => watermark = newWatermark
+  get: () => watermark, set: (newWatermark: bigint) => watermark = newWatermark
 }, ...}, ...)
 
 // or:
@@ -194,10 +194,10 @@ Currently this allows you filter based on any combination (AND logic) of:
     Note: For this to work you need to [specify ARC-28 events in the subscription config](#arc-28-event-subscription-and-reads).
 
 - Assets
-  - ID e.g. `filter: { assetId: 123456 }` or `filter: { assetId: [123456, 456789] }`
+  - ID e.g. `filter: { assetId: 123456n }` or `filter: { assetId: [123456n, 456789n] }`
   - Creation e.g. `filter: { assetCreate: true }`
   - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
-  - Balance changes (asset ID, sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{assetId: [15345, 36234], roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
+  - Balance changes (asset ID, sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{assetId: [15345n, 36234n], roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
 - Algo transfers (pay transactions)
   - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
   - Balance changes (sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
@@ -243,7 +243,7 @@ export interface Arc28EventGroup {
   /** The name to designate for this group of events. */
   groupName: string
   /** Optional list of app IDs that this event should apply to */
-  processForAppIds?: number[]
+  processForAppIds?: bigint[]
   /** Optional predicate to indicate if these ARC-28 events should be processed for the given transaction */
   processTransaction?: (transaction: TransactionResult) => boolean
   /** Whether or not to silently (with warning log) continue if an error is encountered processing the ARC-28 event data; default = false */
