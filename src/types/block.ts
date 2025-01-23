@@ -50,7 +50,7 @@ export interface TransactionInBlock {
   /** The round number of the block the transaction is within. */
   roundNumber: bigint
   /** The round unix timestamp of the block the transaction is within. */
-  roundTimestamp: bigint
+  roundTimestamp: number
   /** The transaction as an algosdk `Transaction` object. */
   transaction: algosdk.Transaction
   /** The asset ID if an asset was created from this transaction. */

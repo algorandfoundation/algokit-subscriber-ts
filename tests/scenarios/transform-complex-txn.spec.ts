@@ -339,7 +339,7 @@ describe('Complex transaction with many nested inner transactions', () => {
               "votersCommitment": "",
             },
           ],
-          "timestamp": 1705252440n,
+          "timestamp": 1705252440,
           "transactionsRoot": "xrzxjhAycO5dLAJ622EAMV4ffb2T1sagFWYQPR1S0IQ=",
           "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
           "txnCounter": 1401537349n,

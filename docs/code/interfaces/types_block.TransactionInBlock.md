@@ -212,7 +212,7 @@ ___
 
 ### roundTimestamp
 
-• **roundTimestamp**: `bigint`
+• **roundTimestamp**: `number`
 
 The round unix timestamp of the block the transaction is within.
 

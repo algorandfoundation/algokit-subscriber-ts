@@ -36,7 +36,7 @@ export interface BlockMetadata {
   /** The round of the block. */
   round: bigint
   /** Block creation timestamp in seconds since epoch */
-  timestamp: bigint
+  timestamp: number
   /** The genesis ID of the chain. */
   genesisId: string
   /** The base64 genesis hash of the chain. */

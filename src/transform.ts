@@ -33,7 +33,7 @@ export function getBlockTransactions(blockResponse: algosdk.modelsv2.BlockRespon
       transactionId: rootTransactionData.transaction.txID(),
       intraRoundOffset: getRoundOffset(),
       roundNumber: block.header.round,
-      roundTimestamp: block.header.timestamp,
+      roundTimestamp: Number(block.header.timestamp),
       genesisId: block.header.genesisID,
       genesisHash: Buffer.from(block.header.genesisHash),
       ...rootTransactionData,
@@ -66,7 +66,7 @@ function getBlockInnerTransactions(
   const transaction = {
     signedTxnWithAD,
     roundNumber: block.header.round,
-    roundTimestamp: block.header.timestamp,
+    roundTimestamp: Number(block.header.timestamp),
     transactionId,
     genesisHash,
     intraRoundOffset: getRoundOffset(),
@@ -549,7 +549,7 @@ export function blockResponseToBlockMetadata(blockResponse: algosdk.modelsv2.Blo
   return {
     round: block.header.round,
     hash: getHashFromBlockCert(cert),
-    timestamp: block.header.timestamp,
+    timestamp: Number(block.header.timestamp),
     genesisId: block.header.genesisID,
     genesisHash: Buffer.from(block.header.genesisHash).toString('base64'),
     previousBlockHash: block.header.branch ? Buffer.from(block.header.branch).toString('base64') : undefined,

@@ -244,7 +244,11 @@ The output type `BalanceChange` has been changed in a few small ways, see [Chang
 The previous input type `TransactionResult` has been changed to `algosdk.indexerModels.Transaction`, see [Changes to `SubscribedTransaction`](#changes-to-subscribedtransaction) for more information.
 The output type `BalanceChange[]` has been changed in a few small ways, see [Changes to `BalanceChange`](#changes-to-balancechange) for more information.
 
-### Step 7 - Handle bigint serialization
+### Step 7 - Update usages of `getBlocksBulk`
+
+The previous return type `BlockData` has been changed to `algosdk.modelsv2.BlockResponse`, see [Removal of `BlockData`](#removal-of-blockdata) for more information.
+
+### Step 8 - Handle bigint serialization
 
 Since the majority of number fields are now `bigint`, the default `JSON.stringify` will no longer work in scenarios where it previously did. We recommend you use a custom JSON replacer to handle the bigint values. Below is an example of how you might do this.
 
