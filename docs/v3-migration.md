@@ -26,14 +26,14 @@ if (subscribedTransaction['tx-type'] === TransactionType.axfer) {
   console.log('assetId', subscribedTransaction['asset-transfer-transaction']['asset-id'])
 }
 // Result:
-//  assetId: 31566705
+//  assetId: 31566704
 
 /**** After ****/
 if (subscribedTransaction.txType === TransactionType.axfer) {
   console.log('assetId', subscribedTransaction.assetTransferTransaction.assetId)
 }
 // Result:
-//  assetId: 31566705n <- this is now a bigint
+//  assetId: 31566704n <- this is now a bigint
 ```
 
 - A fix was applied to the `intraRoundOffset` field. Previously, the calculation was only performed on the first level of inner transactions, nested inner transactions had the same `intraRoundOffset` as their parent transaction. Now, it's calculated for all levels of inner transactions.
