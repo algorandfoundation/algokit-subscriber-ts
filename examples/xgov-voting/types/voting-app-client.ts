@@ -5,41 +5,36 @@
  * requires: @algorandfoundation/algokit-utils: ^7
  */
 import { AlgorandClientInterface } from '@algorandfoundation/algokit-utils/types/algorand-client-interface'
-import { ABIReturn, AppReturn, SendAppTransactionResult } from '@algorandfoundation/algokit-utils/types/app'
-import { Arc56Contract, getArc56ReturnValue, getABIStructFromABITuple } from '@algorandfoundation/algokit-utils/types/app-arc56'
+import { ABIReturn } from '@algorandfoundation/algokit-utils/types/app'
+import { Arc56Contract, getABIStructFromABITuple, getArc56ReturnValue } from '@algorandfoundation/algokit-utils/types/app-arc56'
 import {
   AppClient as _AppClient,
+  AppClientBareCallParams,
+  AppClientCompilationParams,
   AppClientMethodCallParams,
   AppClientParams,
-  AppClientBareCallParams,
   CallOnComplete,
-  AppClientCompilationParams,
+  CloneAppClientParams,
   ResolveAppClientByCreatorAndName,
   ResolveAppClientByNetwork,
-  CloneAppClientParams,
 } from '@algorandfoundation/algokit-utils/types/app-client'
 import {
   AppFactory as _AppFactory,
   AppFactoryAppClientParams,
-  AppFactoryResolveAppClientByCreatorAndNameParams,
   AppFactoryDeployParams,
   AppFactoryParams,
+  AppFactoryResolveAppClientByCreatorAndNameParams,
   CreateSchema,
 } from '@algorandfoundation/algokit-utils/types/app-factory'
 import {
-  TransactionComposer,
-  AppCallMethodCall,
   AppMethodCallTransactionArgument,
-  SimulateOptions,
   RawSimulateOptions,
+  SimulateOptions,
   SkipSignaturesSimulateOptions,
+  TransactionComposer,
 } from '@algorandfoundation/algokit-utils/types/composer'
-import {
-  SendParams,
-  SendSingleTransactionResult,
-  SendAtomicTransactionComposerResults,
-} from '@algorandfoundation/algokit-utils/types/transaction'
-import { Address, encodeAddress, modelsv2, OnApplicationComplete, Transaction, TransactionSigner } from 'algosdk'
+import { SendAtomicTransactionComposerResults, SendParams } from '@algorandfoundation/algokit-utils/types/transaction'
+import { modelsv2, OnApplicationComplete, Transaction, TransactionSigner } from 'algosdk'
 import SimulateResponse = modelsv2.SimulateResponse
 
 export const APP_SPEC: Arc56Contract = {

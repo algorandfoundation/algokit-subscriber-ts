@@ -1,5 +1,6 @@
 import { microAlgo } from '@algorandfoundation/algokit-utils'
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
+import { Address } from 'algosdk'
 import invariant from 'tiny-invariant'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { BalanceChangeRole } from '../../src/types'
@@ -20,7 +21,7 @@ describe('Subscribing to calls that effect balance changes', () => {
   beforeAll(hooks.beforeAll, 10_000)
   beforeEach(hooks.beforeEach, 10_000)
   afterEach(hooks.afterEach)
-  const acfgCreate = (sender: string, fee: AlgoAmount, total?: bigint) => {
+  const acfgCreate = (sender: Address, fee: AlgoAmount, total?: bigint) => {
     return localnet.algorand.createTransaction.assetCreate({
       sender,
       decimals: 0,
@@ -32,7 +33,7 @@ describe('Subscribing to calls that effect balance changes', () => {
     })
   }
 
-  const acfgDestroy = (sender: string, fee: AlgoAmount, assetId: bigint) => {
+  const acfgDestroy = (sender: Address, fee: AlgoAmount, assetId: bigint) => {
     return localnet.algorand.createTransaction.assetDestroy({
       sender,
       assetId,
@@ -40,7 +41,7 @@ describe('Subscribing to calls that effect balance changes', () => {
     })
   }
 
-  const pay = (amount: AlgoAmount, sender: string, receiver: string, fee: AlgoAmount, closeRemainderTo?: string) => {
+  const pay = (amount: AlgoAmount, sender: Address, receiver: Address, fee: AlgoAmount, closeRemainderTo?: Address) => {
     return localnet.algorand.createTransaction.payment({
       amount,
       sender,
@@ -53,11 +54,11 @@ describe('Subscribing to calls that effect balance changes', () => {
   const axfer = (
     assetId: bigint,
     amount: bigint,
-    sender: string,
-    receiver: string,
+    sender: Address,
+    receiver: Address,
     fee: AlgoAmount,
-    clawbackTarget?: string,
-    closeAssetTo?: string,
+    clawbackTarget?: Address,
+    closeAssetTo?: Address,
   ) => {
     return localnet.algorand.createTransaction.assetTransfer({
       amount,
@@ -94,12 +95,12 @@ describe('Subscribing to calls that effect balance changes', () => {
     invariant(transaction.balanceChanges)
     expect(transaction.balanceChanges.length).toBe(2)
 
-    expect(transaction.balanceChanges[0].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[0].address).toBe(testAccount.addr.toString())
     expect(transaction.balanceChanges[0].amount).toBe(-2000n) // min txn fee
     expect(transaction.balanceChanges[0].roles).toEqual([BalanceChangeRole.Sender])
-    expect(transaction.balanceChanges[0].assetId).toBe(0)
+    expect(transaction.balanceChanges[0].assetId).toBe(0n)
 
-    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr.toString())
     expect(transaction.balanceChanges[1].amount).toBe(100_000_000n)
     expect(transaction.balanceChanges[1].roles).toEqual([BalanceChangeRole.AssetCreator])
     expect(transaction.balanceChanges[1].assetId).toBe(asset)
@@ -111,7 +112,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       .newGroup()
       .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 100_000_000n))
       .send()
-    const asset = BigInt(createAssetTxns.confirmations![0].assetIndex!)
+    const asset = createAssetTxns.confirmations![0].assetIndex!
 
     const txns = await localnet.algorand
       .newGroup()
@@ -133,15 +134,15 @@ describe('Subscribing to calls that effect balance changes', () => {
     invariant(transaction.balanceChanges)
     expect(transaction.balanceChanges.length).toBe(2)
 
-    expect(transaction.balanceChanges[0].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[0].address).toBe(testAccount.addr.toString())
     expect(transaction.balanceChanges[0].amount).toBe(-2000n) // min txn fee
     expect(transaction.balanceChanges[0].roles).toEqual([BalanceChangeRole.Sender])
-    expect(transaction.balanceChanges[0].assetId).toBe(0)
+    expect(transaction.balanceChanges[0].assetId).toBe(0n)
 
-    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr)
+    expect(transaction.balanceChanges[1].address).toBe(testAccount.addr.toString())
     expect(transaction.balanceChanges[1].amount).toBe(0n)
     expect(transaction.balanceChanges[1].roles).toEqual([BalanceChangeRole.AssetDestroyer])
-    expect(transaction.balanceChanges[1].assetId).toBe(Number(asset))
+    expect(transaction.balanceChanges[1].assetId).toBe(asset)
   })
 
   test('Works for > 53-bit totals', async () => {
@@ -151,7 +152,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       .newGroup()
       .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 135_640_597_783_270_612n)) // this is > Number.MAX_SAFE_INTEGER
       .send()
-    const asset = BigInt(txns.confirmations![0].assetIndex!)
+    const asset = txns.confirmations![0].assetIndex!
     const axferTxns = await localnet.algorand
       .newGroup()
       .addTransaction(await axfer(asset, 0n, random.addr, random.addr, microAlgo(2000))) // Opt-in
@@ -163,7 +164,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         balanceChanges: [
           {
             assetId: [asset],
-            address: testAccount.addr,
+            address: testAccount.addr.toString(),
             role: [BalanceChangeRole.Sender],
             minAbsoluteAmount: 134_640_597_783_270_612n,
           },
@@ -175,15 +176,15 @@ describe('Subscribing to calls that effect balance changes', () => {
     expect(
       subscription.algod.subscribedTransactions[0].balanceChanges?.map((b) => ({
         ...b,
-        address: b.address === testAccount.addr ? 'testAccount' : b.address === random.addr ? 'random' : b.address,
-        assetId: b.assetId === 0 ? 0 : b.assetId === Number(asset) ? 'ASSET' : b.assetId,
+        address: b.address === testAccount.addr.toString() ? 'testAccount' : b.address === random.addr.toString() ? 'random' : b.address,
+        assetId: b.assetId === 0n ? 0n : b.assetId === asset ? 'ASSET' : b.assetId,
       })),
     ).toMatchInlineSnapshot(`
       [
         {
           "address": "testAccount",
           "amount": -2000n,
-          "assetId": 0,
+          "assetId": 0n,
           "roles": [
             "Sender",
           ],
@@ -209,15 +210,15 @@ describe('Subscribing to calls that effect balance changes', () => {
     expect(
       subscription.indexer.subscribedTransactions[0].balanceChanges?.map((b) => ({
         ...b,
-        address: b.address === testAccount.addr ? 'testAccount' : b.address === random.addr ? 'random' : b.address,
-        assetId: b.assetId === 0 ? 0 : b.assetId === Number(asset) ? 'ASSET' : b.assetId,
+        address: b.address === testAccount.addr.toString() ? 'testAccount' : b.address === random.addr.toString() ? 'random' : b.address,
+        assetId: b.assetId === 0n ? 0n : b.assetId === asset ? 'ASSET' : b.assetId,
       })),
     ).toMatchInlineSnapshot(`
       [
         {
           "address": "testAccount",
           "amount": -2000n,
-          "assetId": 0,
+          "assetId": 0n,
           "roles": [
             "Sender",
           ],
@@ -257,13 +258,13 @@ describe('Subscribing to calls that effect balance changes', () => {
       {
         balanceChanges: [
           {
-            assetId: [0],
-            address: testAccount.addr,
+            assetId: [0n],
+            address: testAccount.addr.toString(),
             role: [BalanceChangeRole.Sender],
-            minAmount: -4000,
-            maxAmount: -2000,
-            minAbsoluteAmount: 2000,
-            maxAbsoluteAmount: 4000,
+            minAmount: -4000n,
+            maxAmount: -2000n,
+            minAbsoluteAmount: 2000n,
+            maxAbsoluteAmount: 4000n,
           },
         ],
       },
@@ -278,9 +279,9 @@ describe('Subscribing to calls that effect balance changes', () => {
       const account2 = await generateAccount({ initialFunds: (200_000).microAlgos() })
       const account3 = await generateAccount({ initialFunds: (200_000).microAlgos() })
       const address = {
-        [account.addr]: 'account1',
-        [account2.addr]: 'account2',
-        [account3.addr]: 'account3',
+        [account.addr.toString()]: 'account1',
+        [account2.addr.toString()]: 'account2',
+        [account3.addr.toString()]: 'account3',
       }
       const txns = await localnet.algorand
         .newGroup()
@@ -301,11 +302,11 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account.addr,
+              assetId: [0n],
+              address: account.addr.toString(),
               role: [BalanceChangeRole.Sender],
-              minAbsoluteAmount: 2001,
-              maxAbsoluteAmount: 3000,
+              minAbsoluteAmount: 2001n,
+              maxAbsoluteAmount: 3000n,
             },
           ],
         },
@@ -316,11 +317,11 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account.addr,
+              assetId: [0n],
+              address: account.addr.toString(),
               role: [BalanceChangeRole.Sender],
-              minAmount: -3000,
-              maxAmount: -2001,
+              minAmount: -3000n,
+              maxAmount: -2001n,
             },
           ],
         },
@@ -331,10 +332,10 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account.addr,
-              minAmount: -2000,
-              maxAmount: -2000,
+              assetId: [0n],
+              address: account.addr.toString(),
+              minAmount: -2000n,
+              maxAmount: -2000n,
             },
           ],
         },
@@ -345,10 +346,10 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account.addr,
-              minAmount: 1000,
-              maxAmount: 1000,
+              assetId: [0n],
+              address: account.addr.toString(),
+              minAmount: 1000n,
+              maxAmount: 1000n,
             },
           ],
         },
@@ -359,13 +360,13 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account2.addr,
+              assetId: [0n],
+              address: account2.addr.toString(),
               role: [BalanceChangeRole.Sender],
-              minAmount: -3000,
-              maxAmount: -2001,
-              minAbsoluteAmount: 2001,
-              maxAbsoluteAmount: 3000,
+              minAmount: -3000n,
+              maxAmount: -2001n,
+              minAbsoluteAmount: 2001n,
+              maxAbsoluteAmount: 3000n,
             },
           ],
         },
@@ -376,10 +377,10 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account.addr,
-              minAbsoluteAmount: 1,
-              maxAbsoluteAmount: 1000,
+              assetId: [0n],
+              address: account.addr.toString(),
+              minAbsoluteAmount: 1n,
+              maxAbsoluteAmount: 1000n,
             },
           ],
         },
@@ -390,9 +391,9 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account2.addr,
-              maxAbsoluteAmount: 1000,
+              assetId: [0n],
+              address: account2.addr.toString(),
+              maxAbsoluteAmount: 1000n,
             },
           ],
         },
@@ -403,8 +404,8 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account3.addr,
+              assetId: [0n],
+              address: account3.addr.toString(),
               role: BalanceChangeRole.CloseTo,
             },
           ],
@@ -416,10 +417,10 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              assetId: [0],
-              address: account3.addr,
+              assetId: [0n],
+              address: account3.addr.toString(),
               role: [BalanceChangeRole.CloseTo, BalanceChangeRole.Sender],
-              minAmount: 0,
+              minAmount: 0n,
             },
           ],
         },
@@ -430,7 +431,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              minAmount: 196_000,
+              minAmount: 196_000n,
             },
           ],
         },
@@ -441,9 +442,9 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              address: [account2.addr, account3.addr],
-              minAbsoluteAmount: 296_000,
-              maxAbsoluteAmount: 296_000,
+              address: [account2.addr.toString(), account3.addr.toString()],
+              minAbsoluteAmount: 296_000n,
+              maxAbsoluteAmount: 296_000n,
             },
           ],
         },
@@ -454,7 +455,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              minAbsoluteAmount: 297_000,
+              minAbsoluteAmount: 297_000n,
             },
           ],
         },
@@ -465,7 +466,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              maxAmount: -297_000,
+              maxAmount: -297_000n,
             },
           ],
         },
@@ -476,15 +477,15 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              minAmount: 0,
-              maxAmount: 0,
+              minAmount: 0n,
+              maxAmount: 0n,
             },
           ],
         },
         extractFromGroupResult(txns, 9),
       )
 
-      const result = await subscribeAlgod({ balanceChanges: [{ minAmount: 0 }] }, extractFromGroupResult(txns, 0))
+      const result = await subscribeAlgod({ balanceChanges: [{ minAmount: 0n }] }, extractFromGroupResult(txns, 0))
       const balanceChanges = result.subscribedTransactions.map((s) =>
         s
           .balanceChanges!.map((b) => ({
@@ -553,30 +554,32 @@ describe('Subscribing to calls that effect balance changes', () => {
       const account2 = await generateAccount({ initialFunds: (1).algos() })
       const account3 = await generateAccount({ initialFunds: (1).algos() })
 
-      const asset1 = BigInt(
-        (
-          await algorand
-            .newGroup()
-            .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1000)))
-            .send()
-        ).confirmations![0].assetIndex!,
-      )
+      const asset1 = (
+        await algorand
+          .newGroup()
+          .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1000)))
+          .send()
+      ).confirmations![0].assetIndex!
 
-      const asset2 = BigInt(
-        (
-          await algorand
-            .newGroup()
-            .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1001)))
-            .send()
-        ).confirmations![0].assetIndex!,
-      )
+      const asset2 = (
+        await algorand
+          .newGroup()
+          .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1001)))
+          .send()
+      ).confirmations![0].assetIndex!
+
       // eslint-disable-next-line no-console
-      console.log('accounts', [testAccount.addr, account.addr, account2.addr, account3.addr], 'assets', [asset1, asset2])
+      console.log(
+        'accounts',
+        [testAccount.addr.toString(), account.addr.toString(), account2.addr.toString(), account3.addr.toString()],
+        'assets',
+        [asset1, asset2],
+      )
       const address = {
-        [testAccount.addr]: 'testAccount',
-        [account.addr]: 'account1',
-        [account2.addr]: 'account2',
-        [account3.addr]: 'account3',
+        [testAccount.addr.toString()]: 'testAccount',
+        [account.addr.toString()]: 'account1',
+        [account2.addr.toString()]: 'account2',
+        [account3.addr.toString()]: 'account3',
       }
       const asset = {
         [asset1.toString()]: 'asset1',
@@ -627,7 +630,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account.addr,
+              address: account.addr.toString(),
               role: [BalanceChangeRole.Sender],
               minAbsoluteAmount: 1.1,
               maxAbsoluteAmount: 2,
@@ -642,7 +645,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account.addr,
+              address: account.addr.toString(),
               role: [BalanceChangeRole.Sender],
               minAmount: -2,
               maxAmount: -1.1,
@@ -657,7 +660,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account.addr,
+              address: account.addr.toString(),
               minAmount: -1,
               maxAmount: -1,
             },
@@ -671,7 +674,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account.addr,
+              address: account.addr.toString(),
               minAmount: 1,
               maxAmount: 1,
             },
@@ -685,7 +688,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account2.addr,
+              address: account2.addr.toString(),
               role: [BalanceChangeRole.Sender],
               minAmount: -2,
               maxAmount: -1.1,
@@ -702,7 +705,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account.addr,
+              address: account.addr.toString(),
               minAmount: 0.1,
               maxAbsoluteAmount: 1,
             },
@@ -716,7 +719,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account2.addr,
+              address: account2.addr.toString(),
               minAmount: 0.1,
               maxAbsoluteAmount: 1,
             },
@@ -730,7 +733,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account3.addr,
+              address: account3.addr.toString(),
               role: BalanceChangeRole.CloseTo,
             },
           ],
@@ -743,7 +746,7 @@ describe('Subscribing to calls that effect balance changes', () => {
           balanceChanges: [
             {
               assetId: [asset1],
-              address: account3.addr,
+              address: account3.addr.toString(),
               role: [BalanceChangeRole.CloseTo, BalanceChangeRole.Sender],
               minAmount: 0,
             },
@@ -768,7 +771,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              address: [account2.addr, account3.addr],
+              address: [account2.addr.toString(), account3.addr.toString()],
               minAbsoluteAmount: 17,
               maxAbsoluteAmount: 17,
             },
@@ -793,7 +796,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
-              address: account2.addr,
+              address: account2.addr.toString(),
               maxAmount: -23,
               maxAbsoluteAmount: 23, // Stop algo balance changes triggering it
             },
@@ -805,10 +808,10 @@ describe('Subscribing to calls that effect balance changes', () => {
       const result = await subscribeAlgod({ balanceChanges: [{ minAmount: 0 }] }, extractFromGroupResult(txns, 0))
       const balanceChanges = result.subscribedTransactions.map((s) =>
         s
-          .balanceChanges!.filter((b) => b.assetId !== 0)
+          .balanceChanges!.filter((b) => b.assetId !== 0n)
           .map((b) => ({
             ...b,
-            address: address[b.address],
+            address: address[b.address.toString()],
             assetId: asset[b.assetId.toString()],
           }))
           .sort((a, b) => a.address.localeCompare(b.address))

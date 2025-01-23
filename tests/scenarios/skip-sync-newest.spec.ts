@@ -15,13 +15,13 @@ describe('Subscribing using skip-sync-newest', () => {
     const { txns, lastTxnRound } = await SendXTransactions(2, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
+      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: 0n, currentRound: lastTxnRound },
       testAccount,
       algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
-    expect(subscribed.startingWatermark).toBe(0)
+    expect(subscribed.startingWatermark).toBe(0n)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([lastTxnRound, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
@@ -34,13 +34,13 @@ describe('Subscribing using skip-sync-newest', () => {
     const { txns, lastTxnRound: currentRound } = await SendXTransactions(1, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: olderTxnRound - 1, currentRound },
+      { roundsToSync: 1, syncBehaviour: 'skip-sync-newest', watermark: olderTxnRound - 1n, currentRound },
       testAccount,
       algorand,
     )
 
     expect(subscribed.currentRound).toBe(currentRound)
-    expect(subscribed.startingWatermark).toBe(olderTxnRound - 1)
+    expect(subscribed.startingWatermark).toBe(olderTxnRound - 1n)
     expect(subscribed.newWatermark).toBe(currentRound)
     expect(subscribed.syncedRoundRange).toEqual([currentRound, currentRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
@@ -52,13 +52,13 @@ describe('Subscribing using skip-sync-newest', () => {
     const { txns, lastTxnRound, rounds } = await SendXTransactions(3, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: lastTxnRound - rounds[1] + 1, syncBehaviour: 'skip-sync-newest', watermark: 0, currentRound: lastTxnRound },
+      { roundsToSync: Number(lastTxnRound - rounds[1]) + 1, syncBehaviour: 'skip-sync-newest', watermark: 0n, currentRound: lastTxnRound },
       testAccount,
       algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
-    expect(subscribed.startingWatermark).toBe(0)
+    expect(subscribed.startingWatermark).toBe(0n)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([rounds[1], lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(2)

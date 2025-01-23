@@ -17,26 +17,26 @@
 
 ### nextRound
 
-• `Optional` **nextRound**: `number`
+• `Optional` **nextRound**: `bigint`
 
 (n) Next round for which we will accept a state proof transaction.
 
 #### Defined in
 
-[types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L105)
+[src/types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L105)
 
 ___
 
 ### onlineTotalWeight
 
-• `Optional` **onlineTotalWeight**: `number`
+• `Optional` **onlineTotalWeight**: `bigint`
 
 (t) The total number of microalgos held by the online accounts during the
 StateProof round.
 
 #### Defined in
 
-[types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L111)
+[src/types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L111)
 
 ___
 
@@ -48,7 +48,7 @@ State Proof Type. Note the raw object uses map with this as key.
 
 #### Defined in
 
-[types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L116)
+[src/types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L116)
 
 ___
 
@@ -61,4 +61,4 @@ the proof.
 
 #### Defined in
 
-[types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)
+[src/types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)

@@ -17,7 +17,7 @@ describe('Subscribing using fail', () => {
     await expect(
       async () =>
         await GetSubscribedTransactionsFromSender(
-          { roundsToSync: 1, syncBehaviour: 'fail', watermark: 0, currentRound: lastTxnRound },
+          { roundsToSync: 1, syncBehaviour: 'fail', watermark: 0n, currentRound: lastTxnRound },
           testAccount,
           algorand,
         ),
@@ -29,13 +29,13 @@ describe('Subscribing using fail', () => {
     const { txns, lastTxnRound } = await SendXTransactions(2, testAccount, algorand)
 
     const subscribed = await GetSubscribedTransactionsFromSender(
-      { roundsToSync: 1, syncBehaviour: 'fail', watermark: lastTxnRound - 1, currentRound: lastTxnRound },
+      { roundsToSync: 1, syncBehaviour: 'fail', watermark: lastTxnRound - 1n, currentRound: lastTxnRound },
       testAccount,
       algorand,
     )
 
     expect(subscribed.currentRound).toBe(lastTxnRound)
-    expect(subscribed.startingWatermark).toBe(lastTxnRound - 1)
+    expect(subscribed.startingWatermark).toBe(lastTxnRound - 1n)
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([lastTxnRound, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)

@@ -1,4 +1,4 @@
-import type { ApplicationOnComplete, TransactionResult } from '@algorandfoundation/algokit-utils/types/indexer'
+import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import algosdk from 'algosdk'
 import { Arc28EventGroup, EmittedArc28Event } from './arc-28'
 import TransactionType = algosdk.TransactionType
@@ -6,17 +6,17 @@ import TransactionType = algosdk.TransactionType
 /** The result of a single subscription pull/poll. */
 export interface TransactionSubscriptionResult {
   /** The round range that was synced from/to */
-  syncedRoundRange: [startRound: number, endRound: number]
+  syncedRoundRange: [startRound: bigint, endRound: bigint]
   /** The current detected tip of the configured Algorand blockchain. */
-  currentRound: number
+  currentRound: bigint
   /** The watermark value that was retrieved at the start of the subscription poll. */
-  startingWatermark: number
+  startingWatermark: bigint
   /** The new watermark value to persist for the next call to
    * `getSubscribedTransactions` to continue the sync.
    * Will be equal to `syncedRoundRange[1]`. Only persist this
    * after processing (or in the same atomic transaction as)
    * subscribed transactions to keep it reliable. */
-  newWatermark: number
+  newWatermark: bigint
   /** Any transactions that matched the given filter within
    * the synced round range. This substantively uses the [indexer transaction
    * format](https://developer.algorand.org/docs/rest-apis/indexer/#transaction)
@@ -34,7 +34,7 @@ export interface BlockMetadata {
   /** The base64 block hash. */
   hash?: string
   /** The round of the block. */
-  round: number
+  round: bigint
   /** Block creation timestamp in seconds since epoch */
   timestamp: number
   /** The genesis ID of the chain. */
@@ -52,7 +52,7 @@ export interface BlockMetadata {
   /** Full count of transactions and inner transactions (recursively) in this block. */
   fullTransactionCount: number
   /** Number of the next transaction that will be committed after this block.  It is 0 when no transactions have ever been committed (since TxnCounter started being supported). */
-  txnCounter: number
+  txnCounter: bigint
   /** TransactionsRoot authenticates the set of transactions appearing in the block. More specifically, it's the root of a merkle tree whose leaves are the block's Txids, in lexicographic order. For the empty block, it's 0. Note that the TxnRoot does not authenticate the signatures on the transactions, only the transactions themselves. Two blocks with the same transactions but in a different order and with different signatures will have the same TxnRoot.
   Pattern : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$" */
   transactionsRoot: string
@@ -73,16 +73,16 @@ export interface BlockMetadata {
 export interface BlockRewards {
   /** FeeSink is an address that accepts transaction fees, it can only spend to the incentive pool. */
   feeSink: string
-  /** number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round. */
-  rewardsCalculationRound: number
+  /** The number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round. */
+  rewardsCalculationRound: bigint
   /** How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis. */
-  rewardsLevel: number
+  rewardsLevel: bigint
   /** RewardsPool is an address that accepts periodic injections from the fee-sink and continually redistributes them as rewards. */
   rewardsPool: string
   /** Number of new MicroAlgos added to the participation stake from rewards at the next round. */
-  rewardsRate: number
+  rewardsRate: bigint
   /** Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round. */
-  rewardsResidue: number | bigint
+  rewardsResidue: bigint
 }
 
 export interface BlockUpgradeState {
@@ -91,24 +91,24 @@ export interface BlockUpgradeState {
   /** The next proposed protocol version. */
   nextProtocol?: string
   /** Number of blocks which approved the protocol upgrade. */
-  nextProtocolApprovals?: number
+  nextProtocolApprovals?: bigint
   /** Deadline round for this protocol upgrade (No votes will be consider after this round). */
-  nextProtocolVoteBefore?: number
+  nextProtocolVoteBefore?: bigint
   /** Round on which the protocol upgrade will take effect. */
-  nextProtocolSwitchOn?: number
+  nextProtocolSwitchOn?: bigint
 }
 
 export interface BlockStateProofTracking {
   /**
    * (n) Next round for which we will accept a state proof transaction.
    */
-  nextRound?: number
+  nextRound?: bigint
 
   /**
    * (t) The total number of microalgos held by the online accounts during the
    * StateProof round.
    */
-  onlineTotalWeight?: number
+  onlineTotalWeight?: bigint
 
   /**
    * State Proof Type. Note the raw object uses map with this as key.
@@ -131,7 +131,7 @@ export interface BlockUpgradeVote {
   /**
    * (upgradedelay) Indicates the time between acceptance and execution.
    */
-  upgradeDelay?: number | bigint
+  upgradeDelay?: bigint
 
   /**
    * (upgradeprop) Indicates a proposed upgrade.
@@ -160,17 +160,40 @@ export interface ParticipationUpdates {
  * * Add emitted ARC-28 events via `arc28Events`
  * * Balance changes in algo or assets
  */
-export type SubscribedTransaction = TransactionResult & {
+export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
+  id: string
+  /** The intra-round offset of the parent of this transaction (if it's an inner transaction). */
+  parentIntraRoundOffset?: number
   /** The transaction ID of the parent of this transaction (if it's an inner transaction). */
   parentTransactionId?: string
   /** Inner transactions produced by application execution. */
-  'inner-txns'?: SubscribedTransaction[]
+  innerTxns?: SubscribedTransaction[]
   /** Any ARC-28 events emitted from an app call. */
   arc28Events?: EmittedArc28Event[]
   /** The names of any filters that matched the given transaction to result in it being 'subscribed'. */
   filtersMatched?: string[]
   /** The balance changes in the transaction. */
   balanceChanges?: BalanceChange[]
+
+  constructor({
+    id,
+    parentIntraRoundOffset,
+    parentTransactionId,
+    innerTxns,
+    arc28Events,
+    filtersMatched,
+    balanceChanges,
+    ...rest
+  }: Omit<SubscribedTransaction, 'getEncodingSchema' | 'toEncodingData'>) {
+    super(rest)
+    this.id = id
+    this.parentIntraRoundOffset = parentIntraRoundOffset
+    this.parentTransactionId = parentTransactionId
+    this.innerTxns = innerTxns
+    this.arc28Events = arc28Events
+    this.filtersMatched = filtersMatched
+    this.balanceChanges = balanceChanges
+  }
 }
 
 /** Represents a balance change effect for a transaction. */
@@ -178,7 +201,7 @@ export interface BalanceChange {
   /** The address that the balance change is for. */
   address: string
   /** The asset ID of the balance change, or 0 for Algos. */
-  assetId: number
+  assetId: bigint
   /** The amount of the balance change in smallest divisible unit or microAlgos. */
   amount: bigint
   /** The roles the account was playing that led to the balance change */
@@ -204,9 +227,9 @@ export enum BalanceChangeRole {
 /** Metadata about an impending subscription poll. */
 export interface BeforePollMetadata {
   /** The current watermark of the subscriber */
-  watermark: number
+  watermark: bigint
   /** The current round of algod */
-  currentRound: number
+  currentRound: bigint
 }
 
 /** Common parameters to control a single subscription pull/poll for both `AlgorandSubscriber` and `getSubscribedTransactions`. */
@@ -294,13 +317,13 @@ export interface TransactionFilter {
   /** Filter to transactions with a note having the given prefix. */
   notePrefix?: string
   /** Filter to transactions against the app with the given ID(s). */
-  appId?: number | number[] | bigint | bigint[]
+  appId?: bigint | bigint[]
   /** Filter to transactions that are creating an app. */
   appCreate?: boolean
   /** Filter to transactions that have given on complete(s). */
   appOnComplete?: ApplicationOnComplete | ApplicationOnComplete[]
   /** Filter to transactions against the asset with the given ID(s). */
-  assetId?: number | number[] | bigint | bigint[]
+  assetId?: bigint | bigint[]
   /** Filter to transactions that are creating an asset. */
   assetCreate?: boolean
   /** Filter to transactions where the amount being transferred is greater
@@ -313,7 +336,7 @@ export interface TransactionFilter {
    * the given method signature as the first app argument. */
   methodSignature?: string | string[]
   /** Filter to app transactions that meet the given app arguments predicate. */
-  appCallArgumentsMatch?: (appCallArguments?: Uint8Array[]) => boolean
+  appCallArgumentsMatch?: (appCallArguments?: readonly Uint8Array[]) => boolean
   /** Filter to app transactions that emit the given ARC-28 events.
    * Note: the definitions for these events must be passed in to the subscription config via `arc28Events`.
    */
@@ -321,7 +344,7 @@ export interface TransactionFilter {
   /** Filter to transactions that result in balance changes that match one or more of the given set of balance changes. */
   balanceChanges?: {
     /** Match transactions with balance changes for one of the given asset ID(s), with Algo being `0` */
-    assetId?: number | number[] | bigint | bigint[]
+    assetId?: bigint | bigint[]
     /** Match transactions with balance changes for an account with one of the given role(s) */
     role?: BalanceChangeRole | BalanceChangeRole[]
     /** Match transactions with balance changes affecting one of the given account(s) */
@@ -351,12 +374,12 @@ export interface TransactionSubscriptionParams extends CoreTransactionSubscripti
    * Start from 0 if you want to start from the beginning of time, noting that
    * will be slow if `onMaxRounds` is `sync-oldest`.
    **/
-  watermark: number
+  watermark: bigint
 
   /** The current tip of the configured Algorand blockchain.
    * If not provided, it will be resolved on demand.
    */
-  currentRound?: number
+  currentRound?: bigint
 }
 
 /** Configuration for an `AlgorandSubscriber`. */
@@ -371,9 +394,9 @@ export interface AlgorandSubscriberConfig extends CoreTransactionSubscriptionPar
    * its position in the chain */
   watermarkPersistence: {
     /** Returns the current watermark that syncing has previously been processed to */
-    get: () => Promise<number>
+    get: () => Promise<bigint>
     /** Persist the new watermark that has been processed */
-    set: (newWatermark: number) => Promise<void>
+    set: (newWatermark: bigint) => Promise<void>
   }
 }
 
