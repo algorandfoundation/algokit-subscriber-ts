@@ -18,14 +18,59 @@ To create an `AlgorandSubscriber` you can use the constructor:
 
 The key configuration is the `AlgorandSubscriberConfig` interface:
 
-```typescript
-/** Configuration for a subscription */
-export interface AlgorandSubscriberConfig {
+````typescript
+/** Configuration for an `AlgorandSubscriber`. */
+export interface AlgorandSubscriberConfig extends CoreTransactionSubscriptionParams {
+  /** The set of filters to subscribe to / emit events for, along with optional data mappers. */
+  filters: SubscriberConfigFilter<unknown>[]
   /** The frequency to poll for new blocks in seconds; defaults to 1s */
   frequencyInSeconds?: number
   /** Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription */
   waitForBlockWhenAtTip?: boolean
-  /** The maximum number of rounds to sync at a time; defaults to 500 */
+  /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
+   * its position in the chain */
+  watermarkPersistence: {
+    /** Returns the current watermark that syncing has previously been processed to */
+    get: () => Promise<bigint>
+    /** Persist the new watermark that has been processed */
+    set: (newWatermark: bigint) => Promise<void>
+  }
+}
+
+/** Common parameters to control a single subscription pull/poll for both `AlgorandSubscriber` and `getSubscribedTransactions`. */
+export interface CoreTransactionSubscriptionParams {
+  /** The filter(s) to apply to find transactions of interest.
+   * A list of filters with corresponding names.
+   *
+   * @example
+   * ```typescript
+   *  filter: [{
+   *   name: 'asset-transfers',
+   *   filter: {
+   *     type: TransactionType.axfer,
+   *     //...
+   *   }
+   *  }, {
+   *   name: 'payments',
+   *   filter: {
+   *     type: TransactionType.pay,
+   *     //...
+   *   }
+   *  }]
+   * ```
+   *
+   */
+  filters: NamedTransactionFilter[]
+  /** Any ARC-28 event definitions to process from app call logs */
+  arc28Events?: Arc28EventGroup[]
+  /** The maximum number of rounds to sync from algod for each subscription pull/poll.
+   *
+   * Defaults to 500.
+   *
+   * This gives you control over how many rounds you wait for at a time,
+   * your staleness tolerance when using `skip-sync-newest` or `fail`, and
+   * your catchup speed when using `sync-oldest`.
+   **/
   maxRoundsToSync?: number
   /**
    * The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
@@ -38,32 +83,26 @@ export interface AlgorandSubscriberConfig {
    * boundary based on the number of rounds specified here.
    */
   maxIndexerRoundsToSync?: number
-  /** The set of filters to subscribe to / emit events for, along with optional data mappers */
-  filters: SubscriberConfigFilter<unknown>[]
-  /** Any ARC-28 event definitions to process from app call logs */
-  arc28Events?: Arc28EventGroup[]
-  /** The behaviour when the number of rounds to sync is greater than `maxRoundsToSync`:
-   *  * `skip-sync-newest`: Discard old rounds.
-   *  * `sync-oldest`: Sync from the oldest records up to `maxRoundsToSync` rounds.
-   *
-   *    **Note:** will be slow to catch up if sync is significantly behind the tip of the chain
-   *  * `sync-oldest-start-now`: Sync from the oldest records up to `maxRoundsToSync` rounds, unless
-   *    current watermark is `0` in which case it will start `maxRoundsToSync` back from the tip of the chain.
-   *  * `catchup-with-indexer`: Will catch up to `tipOfTheChain - maxRoundsToSync` using indexer (fast) and then
-   *    continue with algod.
+  /** If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
+   * past `watermark` then how should that be handled:
+   *  * `skip-sync-newest`: Discard old blocks/transactions and sync the newest; useful
+   *    for real-time notification scenarios where you don't care about history and
+   *    are happy to lose old transactions.
+   *  * `sync-oldest`: Sync from the oldest rounds forward `maxRoundsToSync` rounds
+   *    using algod; note: this will be slow if you are starting from 0 and requires
+   *    an archival node.
+   *  * `sync-oldest-start-now`: Same as `sync-oldest`, but if the `watermark` is `0`
+   *    then start at the current round i.e. don't sync historical records, but once
+   *    subscribing starts sync everything; note: if it falls behind it requires an
+   *    archival node.
+   *  * `catchup-with-indexer`: Sync to round `currentRound - maxRoundsToSync + 1`
+   *    using indexer (much faster than using algod for long time periods) and then
+   *    use algod from there.
    *  * `fail`: Throw an error.
-   */
+   **/
   syncBehaviour: 'skip-sync-newest' | 'sync-oldest' | 'sync-oldest-start-now' | 'catchup-with-indexer' | 'fail'
-  /** Methods to retrieve and persist the current watermark so syncing is resilient and maintains
-   * its position in the chain */
-  watermarkPersistence: {
-    /** Returns the current watermark that syncing has previously been processed to */
-    get: () => Promise<number>
-    /** Persist the new watermark that has been processed */
-    set: (newWatermark: number) => Promise<void>
-  }
 }
-```
+````
 
 `watermarkPersistence` allows you to ensure reliability against your code having outages since you can persist the last block your code processed up to and then provide it again the next time your code runs.
 

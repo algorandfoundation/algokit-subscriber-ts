@@ -38,20 +38,20 @@ Any ARC-28 event definitions to process from app call logs
 
 #### Defined in
 
-[types/subscription.ts:237](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L237)
+[src/types/subscription.ts:260](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L260)
 
 ___
 
 ### currentRound
 
-• `Optional` **currentRound**: `number`
+• `Optional` **currentRound**: `bigint`
 
 The current tip of the configured Algorand blockchain.
 If not provided, it will be resolved on demand.
 
 #### Defined in
 
-[types/subscription.ts:359](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L359)
+[src/types/subscription.ts:382](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L382)
 
 ___
 
@@ -86,7 +86,7 @@ A list of filters with corresponding names.
 
 #### Defined in
 
-[types/subscription.ts:235](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L235)
+[src/types/subscription.ts:258](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L258)
 
 ___
 
@@ -109,7 +109,7 @@ boundary based on the number of rounds specified here.
 
 #### Defined in
 
-[types/subscription.ts:257](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L257)
+[src/types/subscription.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L280)
 
 ___
 
@@ -131,7 +131,7 @@ your catchup speed when using `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:246](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L246)
+[src/types/subscription.ts:269](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L269)
 
 ___
 
@@ -162,13 +162,13 @@ past `watermark` then how should that be handled:
 
 #### Defined in
 
-[types/subscription.ts:275](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L275)
+[src/types/subscription.ts:298](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L298)
 
 ___
 
 ### watermark
 
-• **watermark**: `number`
+• **watermark**: `bigint`
 
 The current round watermark that transactions have previously been synced to.
 
@@ -182,4 +182,4 @@ will be slow if `onMaxRounds` is `sync-oldest`.
 
 #### Defined in
 
-[types/subscription.ts:354](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L354)
+[src/types/subscription.ts:377](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L377)

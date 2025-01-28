@@ -2,9 +2,31 @@
 
 This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism. It allows you to quickly create Node.js or JavaScript services that follow or subscribe to the Algorand Blockchain.
 
-> npm install @algorandfoundation/algokit-subscriber
-
 [Documentation](./docs/README.md)
+
+## Install
+
+Before installing, you'll need to decide on the version you want to target. Version 2 and 3 have largerly the same feature set, however v2 leverages algosdk@>=2.9.0<3.0, whereas v3 leverages algosdk@>=3.0.0. It is recommended that you aim to target the latest version, however in some circumstances that might not be possible.
+
+Once you've decided on the target version, this library can be installed from NPM using your favourite npm client, e.g.:
+
+To target algosdk@2 and use version 2 of AlgoKit Subscriber, run the below:
+
+```
+npm install algosdk@^2.10.0 @algorandfoundation/algokit-utils@^7.1.0 @algorandfoundation/algokit-subscriber@^2.2.0
+```
+
+To target algosdk@3 and use the latest version of AlgoKit Subscriber, run the below:
+
+```
+npm install algosdk@^3.1.0 @algorandfoundation/algokit-utils @algorandfoundation/algokit-subscriber
+```
+
+## Migration
+
+Whilst we aim to minimise breaking changes, there are situations where they are required.
+
+If you're migrating from an older version to v3, please refer to the [v3 migration guide](./docs/v3-migration.md).
 
 ## Quick start
 
@@ -70,8 +92,8 @@ The balance change for an asset create transaction will be as below:
 ```json
 {
   "address": "VIDHG4SYANCP2GUQXXSFSNBPJWS4TAQSI3GH4GYO54FSYPDIBYPMSF7HBY", // The asset creator
-  "assetId": 2391, // The created asset id
-  "amount": 100000, // Full asset supply of the created asset
+  "assetId": 2391n, // The created asset id
+  "amount": 100000n, // Full asset supply of the created asset
   "roles": ["AssetCreator"]
 }
 ```
@@ -82,11 +104,11 @@ If you need to account for the asset supply being destroyed from the creators ac
 
 The balance change for an asset destroy transaction will be as below:
 
-```json
+```typescript
 {
   "address": "PIDHG4SYANCP2GUQXXSFSNBPJWS4TAQSI3GH4GYO54FSYPDIBYPMSF7HBY", // The asset destroyer, which will always be the asset manager
-  "assetId": 2391, // The destroyed asset id
-  "amount": 0, // This value will always be 0
+  "assetId": 2391n, // The destroyed asset id
+  "amount": 0n, // This value will always be 0
   "roles": ["AssetDestroyer"]
 }
 ```
@@ -101,7 +123,7 @@ The watermark is stored in-memory so this particular example is not resilient to
 
 ```typescript
 const algorand = AlgorandClient.fromEnvironment()
-let watermark = 0
+let watermark = 0n
 const subscriber = new AlgorandSubscriber(
   {
     events: [
@@ -146,7 +168,7 @@ The following code, when algod is pointed to MainNet, will find all transfers of
 
 ```typescript
 const algorand = AlgorandClient.fromEnvironment()
-let watermark = 0
+let watermark = 0n
 
 const subscriber = new AlgorandSubscriber(
   {
@@ -155,8 +177,8 @@ const subscriber = new AlgorandSubscriber(
         eventName: 'usdc',
         filter: {
           type: TransactionType.axfer,
-          assetId: 31566704, // MainNet: USDC
-          minAmount: 1_000_000, // $1
+          assetId: 31566704n, // MainNet: USDC
+          minAmount: 1_000_000n, // $1
         },
       },
     ],
@@ -174,8 +196,8 @@ const subscriber = new AlgorandSubscriber(
 subscriber.on('usdc', (transfer) => {
   // eslint-disable-next-line no-console
   console.log(
-    `${transfer.sender} sent ${transfer['asset-transfer-transaction']?.receiver} USDC$${(
-      (transfer['asset-transfer-transaction']?.amount ?? 0) / 1_000_000
+    `${transfer.sender} sent ${transfer.assetTransferTransaction?.receiver} USDC$${Number(
+      (transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000n,
     ).toFixed(2)} in transaction ${transfer.id}`,
   )
 })
