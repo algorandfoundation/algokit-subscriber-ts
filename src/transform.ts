@@ -199,20 +199,20 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                     metadataHash: transaction.assetConfig.assetMetadataHash,
                     ...(transaction.assetConfig.unitName
                       ? {
-                          name: transaction.assetConfig.unitName,
-                          nameB64: encoder.encode(Buffer.from(transaction.assetConfig.unitName).toString('base64')),
+                          unitName: transaction.assetConfig.unitName,
+                          unitNameB64: Buffer.from(transaction.assetConfig.unitName).toString('base64'),
                         }
                       : undefined),
                     ...(transaction.assetConfig.assetName
                       ? {
                           name: transaction.assetConfig.assetName,
-                          nameB64: encoder.encode(Buffer.from(transaction.assetConfig.assetName).toString('base64')),
+                          nameB64: Buffer.from(transaction.assetConfig.assetName).toString('base64'),
                         }
                       : undefined),
                     ...(transaction.assetConfig.assetURL
                       ? {
                           url: transaction.assetConfig.assetURL,
-                          urlB64: encoder.encode(Buffer.from(transaction.assetConfig.assetURL).toString('base64')),
+                          urlB64: Buffer.from(transaction.assetConfig.assetURL).toString('base64'),
                         }
                       : undefined),
                     manager: transaction.assetConfig.manager?.toString(),
@@ -248,7 +248,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
         ? {
             assetTransferTransaction: new algosdk.indexerModels.TransactionAssetTransfer({
               assetId: transaction.assetTransfer!.assetIndex,
-              amount: transaction.assetTransfer!.amount, // The amount can be undefined
+              amount: transaction.assetTransfer!.amount,
               receiver: transaction.assetTransfer!.receiver.toString(),
               sender: transaction.assetTransfer!.assetSender ? transaction.assetTransfer!.assetSender.toString() : undefined,
               closeAmount: assetCloseAmount,
@@ -292,6 +292,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                   }
                 : undefined),
               accounts: transaction.applicationCall!.accounts.map((a) => a),
+              extraProgramPages: transaction.applicationCall!.extraPages,
             }),
           }
         : undefined),
