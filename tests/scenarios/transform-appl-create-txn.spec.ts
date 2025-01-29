@@ -3,7 +3,7 @@ import { TransactionType } from 'algosdk'
 import { describe, expect, it } from 'vitest'
 import { GetSubscribedTransactions } from '../transactions'
 
-describe('Application config transaction', () => {
+describe('Application create transaction', () => {
   const txnId = 'ZCQ5OCGWV253DIN5XVJTFNWVVTOQ6PYOUI3KH7ORQISLN4PEXIGQ'
   const roundNumber = 31171197n
   const algorand = AlgorandClient.mainNet()
