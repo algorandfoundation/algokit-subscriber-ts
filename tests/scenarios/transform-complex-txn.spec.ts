@@ -191,6 +191,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "applicationId": 1390675395n,
           "approvalProgram": "",
           "clearStateProgram": "",
+          "extraProgramPages": 0,
           "foreignApps": [],
           "foreignAssets": [
             1390638935n,
