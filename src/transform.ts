@@ -176,8 +176,6 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
   let parentOffset = 1
   const getParentOffset = () => parentOffset++
 
-  const encoder = new TextEncoder()
-
   try {
     // https://github.com/algorand/indexer/blob/main/api/converter_utils.go#L249
 
