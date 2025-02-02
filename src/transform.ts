@@ -472,8 +472,14 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                 key: Buffer.from(key).toString('base64'),
                 value: new algosdk.indexerModels.EvalDelta({
                   action: value.action,
-                  bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
-                  uint: value.uint,
+                  ...(value.action === 2
+                    ? {
+                        uint: value.uint,
+                      }
+                    : {
+                        bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
+                        uint: value.uint,
+                      }),
                 }),
               }),
           )
@@ -489,8 +495,14 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                     key: Buffer.from(key).toString('base64'),
                     value: new algosdk.indexerModels.EvalDelta({
                       action: value.action,
-                      bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
-                      uint: value.uint,
+                      ...(value.action === 2
+                        ? {
+                            uint: value.uint,
+                          }
+                        : {
+                            bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
+                            uint: value.uint,
+                          }),
                     }),
                   }),
               ),

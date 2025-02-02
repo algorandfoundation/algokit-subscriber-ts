@@ -795,48 +795,46 @@ describe('Complex transaction with many nested inner transactions', () => {
     const localStateDelta = transactionForDiff.localStateDelta
     const globalStateDelta = transactionForDiff.globalStateDelta
     expect(globalStateDelta).toMatchInlineSnapshot(`
-[
-  {
-    "key": "Y3VycmVudF9taW5lcl9lZmZvcnQ=",
-    "value": {
-      "action": 2,
-      "bytes": "",
-      "uint": 412000n,
-    },
-  },
-  {
-    "key": "dG90YWxfZWZmb3J0",
-    "value": {
-      "action": 2,
-      "bytes": "",
-      "uint": 2129702852933n,
-    },
-  },
-  {
-    "key": "dG90YWxfdHJhbnNhY3Rpb25z",
-    "value": {
-      "action": 2,
-      "bytes": "",
-      "uint": 324424783n,
-    },
-  },
-]`)
-    expect(localStateDelta).toMatchInlineSnapshot(`
-[
-  {
-    "address": "R4Q3KN5RBXUQIJWSVMQUJ7FTL7YURP6DY6W724HTD4Z43IRGUCZ2ORANGE",
-    "delta": [
-      {
-        "key": "ZWZmb3J0",
-        "value": {
-          "action": 2,
-          "bytes": "",
-          "uint": 412000n,
+      [
+        {
+          "key": "Y3VycmVudF9taW5lcl9lZmZvcnQ=",
+          "value": {
+            "action": 2,
+            "uint": 412000n,
+          },
         },
-      },
-    ],
-  },
-]`)
+        {
+          "key": "dG90YWxfZWZmb3J0",
+          "value": {
+            "action": 2,
+            "uint": 2129702852933n,
+          },
+        },
+        {
+          "key": "dG90YWxfdHJhbnNhY3Rpb25z",
+          "value": {
+            "action": 2,
+            "uint": 324424783n,
+          },
+        },
+      ]
+    `)
+    expect(localStateDelta).toMatchInlineSnapshot(`
+      [
+        {
+          "address": "R4Q3KN5RBXUQIJWSVMQUJ7FTL7YURP6DY6W724HTD4Z43IRGUCZ2ORANGE",
+          "delta": [
+            {
+              "key": "ZWZmb3J0",
+              "value": {
+                "action": 2,
+                "uint": 412000n,
+              },
+            },
+          ],
+        },
+      ]
+    `)
   })
 
   it('Produces base64 encoded programs for an application create transaction', async () => {
@@ -861,23 +859,25 @@ describe('Complex transaction with many nested inner transactions', () => {
 
     const transaction = getIndexerTransactionFromAlgodTransaction(txn)
     const globalStateDelta = transaction.globalStateDelta
-    expect(globalStateDelta).toMatchInlineSnapshot(`[
-  EvalDeltaKeyValue {
-    "key": "cg==",
-    "value": EvalDelta {
-      "action": 2,
-      "bytes": "",
-      "uint": 6311n,
-    },
-  },
-  EvalDeltaKeyValue {
-    "key": "cmk=",
-    "value": EvalDelta {
-      "action": 1,
-      "bytes": "gfOn0O9iF4/OGJ6kRsOFfbp/zhAedEwoZL/escO+M+QAAAAAQ/9CAQAAAAACsUi5AwAkCj8UAphDyseTKWeF7KZFZuNK8zA9rbqocWk+NJ5CpMtNsCSq7S8AAAAAAAAAJxAAAABi6BgWCgAAAAAAAAAA",
-      "uint": 0n,
-    },
-  },
-]`)
+    expect(globalStateDelta).toMatchInlineSnapshot(`
+      [
+        EvalDeltaKeyValue {
+          "key": "cg==",
+          "value": EvalDelta {
+            "action": 2,
+            "bytes": undefined,
+            "uint": 6311n,
+          },
+        },
+        EvalDeltaKeyValue {
+          "key": "cmk=",
+          "value": EvalDelta {
+            "action": 1,
+            "bytes": "gfOn0O9iF4/OGJ6kRsOFfbp/zhAedEwoZL/escO+M+QAAAAAQ/9CAQAAAAACsUi5AwAkCj8UAphDyseTKWeF7KZFZuNK8zA9rbqocWk+NJ5CpMtNsCSq7S8AAAAAAAAAJxAAAABi6BgWCgAAAAAAAAAA",
+            "uint": 0n,
+          },
+        },
+      ]
+    `)
   })
 })
