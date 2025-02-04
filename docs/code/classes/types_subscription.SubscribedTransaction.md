@@ -6,12 +6,11 @@
 
 The common model used to expose a transaction that is returned from a subscription.
 
-Substantively, based on the Indexer [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
-
-- Add the `parentTransactionId` field so inner transactions have a reference to their parent
-- Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
-- Add emitted ARC-28 events via `arc28Events`
-- Balance changes in algo or assets
+Substantively, based on the Indexer  [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
+* Add the `parentTransactionId` field so inner transactions have a reference to their parent
+* Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
+* Add emitted ARC-28 events via `arc28Events`
+* Balance changes in algo or assets
 
 ## Hierarchy
 
@@ -86,9 +85,9 @@ Substantively, based on the Indexer [`TransactionResult` model](https://develope
 
 #### Parameters
 
-| Name             | Type                                                                                                                          |
-| :--------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `«destructured»` | `Omit`\<[`SubscribedTransaction`](types_subscription.SubscribedTransaction.md), `"getEncodingSchema"` \| `"toEncodingData"`\> |
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Omit`\<[`SubscribedTransaction`](types_subscription.SubscribedTransaction.md), ``"getEncodingSchema"`` \| ``"toEncodingData"``\> |
 
 #### Returns
 
@@ -120,7 +119,7 @@ algosdk.indexerModels.Transaction.applicationTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2176
 
----
+___
 
 ### arc28Events
 
@@ -132,7 +131,7 @@ Any ARC-28 events emitted from an app call.
 
 [src/types/subscription.ts:172](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L172)
 
----
+___
 
 ### assetConfigTransaction
 
@@ -152,7 +151,7 @@ algosdk.indexerModels.Transaction.assetConfigTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2184
 
----
+___
 
 ### assetFreezeTransaction
 
@@ -170,7 +169,7 @@ algosdk.indexerModels.Transaction.assetFreezeTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2190
 
----
+___
 
 ### assetTransferTransaction
 
@@ -188,7 +187,7 @@ algosdk.indexerModels.Transaction.assetTransferTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2196
 
----
+___
 
 ### authAddr
 
@@ -206,7 +205,7 @@ algosdk.indexerModels.Transaction.authAddr
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2202
 
----
+___
 
 ### balanceChanges
 
@@ -218,7 +217,7 @@ The balance changes in the transaction.
 
 [src/types/subscription.ts:176](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L176)
 
----
+___
 
 ### closeRewards
 
@@ -234,7 +233,7 @@ algosdk.indexerModels.Transaction.closeRewards
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2206
 
----
+___
 
 ### closingAmount
 
@@ -250,7 +249,7 @@ algosdk.indexerModels.Transaction.closingAmount
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2210
 
----
+___
 
 ### confirmedRound
 
@@ -266,7 +265,7 @@ algosdk.indexerModels.Transaction.confirmedRound
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2214
 
----
+___
 
 ### createdApplicationIndex
 
@@ -283,7 +282,7 @@ algosdk.indexerModels.Transaction.createdApplicationIndex
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2219
 
----
+___
 
 ### createdAssetIndex
 
@@ -299,7 +298,7 @@ algosdk.indexerModels.Transaction.createdAssetIndex
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2223
 
----
+___
 
 ### fee
 
@@ -315,7 +314,7 @@ algosdk.indexerModels.Transaction.fee
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2158
 
----
+___
 
 ### filtersMatched
 
@@ -327,7 +326,7 @@ The names of any filters that matched the given transaction to result in it bein
 
 [src/types/subscription.ts:174](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L174)
 
----
+___
 
 ### firstValid
 
@@ -343,7 +342,7 @@ algosdk.indexerModels.Transaction.firstValid
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2162
 
----
+___
 
 ### genesisHash
 
@@ -359,7 +358,7 @@ algosdk.indexerModels.Transaction.genesisHash
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2227
 
----
+___
 
 ### genesisId
 
@@ -375,7 +374,7 @@ algosdk.indexerModels.Transaction.genesisId
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2231
 
----
+___
 
 ### globalStateDelta
 
@@ -392,7 +391,7 @@ algosdk.indexerModels.Transaction.globalStateDelta
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2236
 
----
+___
 
 ### group
 
@@ -410,7 +409,7 @@ algosdk.indexerModels.Transaction.group
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2242
 
----
+___
 
 ### heartbeatTransaction
 
@@ -428,7 +427,7 @@ algosdk.indexerModels.Transaction.heartbeatTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2248
 
----
+___
 
 ### id
 
@@ -442,7 +441,7 @@ algosdk.indexerModels.Transaction.id
 
 [src/types/subscription.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L164)
 
----
+___
 
 ### innerTxns
 
@@ -458,7 +457,7 @@ algosdk.indexerModels.Transaction.innerTxns
 
 [src/types/subscription.ts:170](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L170)
 
----
+___
 
 ### intraRoundOffset
 
@@ -474,7 +473,7 @@ algosdk.indexerModels.Transaction.intraRoundOffset
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2260
 
----
+___
 
 ### keyregTransaction
 
@@ -492,7 +491,7 @@ algosdk.indexerModels.Transaction.keyregTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2266
 
----
+___
 
 ### lastValid
 
@@ -508,7 +507,7 @@ algosdk.indexerModels.Transaction.lastValid
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2166
 
----
+___
 
 ### lease
 
@@ -528,7 +527,7 @@ algosdk.indexerModels.Transaction.lease
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2274
 
----
+___
 
 ### localStateDelta
 
@@ -545,7 +544,7 @@ algosdk.indexerModels.Transaction.localStateDelta
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2279
 
----
+___
 
 ### logs
 
@@ -561,7 +560,7 @@ algosdk.indexerModels.Transaction.logs
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2283
 
----
+___
 
 ### note
 
@@ -577,7 +576,7 @@ algosdk.indexerModels.Transaction.note
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2287
 
----
+___
 
 ### parentIntraRoundOffset
 
@@ -589,7 +588,7 @@ The intra-round offset of the parent of this transaction (if it's an inner trans
 
 [src/types/subscription.ts:166](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L166)
 
----
+___
 
 ### parentTransactionId
 
@@ -601,7 +600,7 @@ The transaction ID of the parent of this transaction (if it's an inner transacti
 
 [src/types/subscription.ts:168](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L168)
 
----
+___
 
 ### paymentTransaction
 
@@ -619,7 +618,7 @@ algosdk.indexerModels.Transaction.paymentTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2293
 
----
+___
 
 ### receiverRewards
 
@@ -635,7 +634,7 @@ algosdk.indexerModels.Transaction.receiverRewards
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2297
 
----
+___
 
 ### rekeyTo
 
@@ -653,7 +652,7 @@ algosdk.indexerModels.Transaction.rekeyTo
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2303
 
----
+___
 
 ### roundTime
 
@@ -669,7 +668,7 @@ algosdk.indexerModels.Transaction.roundTime
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2307
 
----
+___
 
 ### sender
 
@@ -685,7 +684,7 @@ algosdk.indexerModels.Transaction.sender
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2170
 
----
+___
 
 ### senderRewards
 
@@ -701,7 +700,7 @@ algosdk.indexerModels.Transaction.senderRewards
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2311
 
----
+___
 
 ### signature
 
@@ -718,7 +717,7 @@ algosdk.indexerModels.Transaction.signature
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2316
 
----
+___
 
 ### stateProofTransaction
 
@@ -736,7 +735,7 @@ algosdk.indexerModels.Transaction.stateProofTransaction
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2322
 
----
+___
 
 ### txType
 
@@ -745,15 +744,14 @@ node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2322
 (type) Indicates what type of transaction this is. Different types have
 different fields.
 Valid types, and where their fields are stored:
-
-- (pay) payment-transaction
-- (keyreg) keyreg-transaction
-- (acfg) asset-config-transaction
-- (axfer) asset-transfer-transaction
-- (afrz) asset-freeze-transaction
-- (appl) application-transaction
-- (stpf) state-proof-transaction
-- (hb) heartbeat-transaction
+* (pay) payment-transaction
+* (keyreg) keyreg-transaction
+* (acfg) asset-config-transaction
+* (axfer) asset-transfer-transaction
+* (afrz) asset-freeze-transaction
+* (appl) application-transaction
+* (stpf) state-proof-transaction
+* (hb) heartbeat-transaction
 
 #### Inherited from
 
@@ -799,7 +797,7 @@ algosdk.indexerModels.Transaction.getEncodingSchema
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2454
 
----
+___
 
 ### toEncodingData
 
@@ -817,7 +815,7 @@ algosdk.indexerModels.Transaction.toEncodingData
 
 node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2455
 
----
+___
 
 ### fromEncodingData
 
@@ -825,8 +823,8 @@ node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2455
 
 #### Parameters
 
-| Name   | Type      |
-| :----- | :-------- |
+| Name | Type |
+| :------ | :------ |
 | `data` | `unknown` |
 
 #### Returns

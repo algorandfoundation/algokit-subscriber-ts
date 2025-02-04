@@ -26,9 +26,9 @@ An asynchronous event listener
 
 ##### Parameters
 
-| Name        | Type                 |
-| :---------- | :------------------- |
-| `event`     | `unknown`            |
+| Name | Type |
+| :------ | :------ |
+| `event` | `unknown` |
 | `eventName` | `string` \| `symbol` |
 
 ##### Returns

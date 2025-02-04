@@ -39,151 +39,151 @@
 
 Re-exports [AlgorandSubscriberConfig](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
 
----
+___
 
 ### Arc28Event
 
 Re-exports [Arc28Event](../interfaces/types_arc_28.Arc28Event.md)
 
----
+___
 
 ### Arc28EventGroup
 
 Re-exports [Arc28EventGroup](../interfaces/types_arc_28.Arc28EventGroup.md)
 
----
+___
 
 ### Arc28EventToProcess
 
 Re-exports [Arc28EventToProcess](../interfaces/types_arc_28.Arc28EventToProcess.md)
 
----
+___
 
 ### AsyncEventEmitter
 
 Re-exports [AsyncEventEmitter](../classes/types_async_event_emitter.AsyncEventEmitter.md)
 
----
+___
 
 ### AsyncEventListener
 
 Re-exports [AsyncEventListener](types_async_event_emitter.md#asynceventlistener)
 
----
+___
 
 ### BalanceChange
 
 Re-exports [BalanceChange](../interfaces/types_subscription.BalanceChange.md)
 
----
+___
 
 ### BalanceChangeRole
 
 Re-exports [BalanceChangeRole](../enums/types_subscription.BalanceChangeRole.md)
 
----
+___
 
 ### BeforePollMetadata
 
 Re-exports [BeforePollMetadata](../interfaces/types_subscription.BeforePollMetadata.md)
 
----
+___
 
 ### BlockMetadata
 
 Re-exports [BlockMetadata](../interfaces/types_subscription.BlockMetadata.md)
 
----
+___
 
 ### BlockRewards
 
 Re-exports [BlockRewards](../interfaces/types_subscription.BlockRewards.md)
 
----
+___
 
 ### BlockStateProofTracking
 
 Re-exports [BlockStateProofTracking](../interfaces/types_subscription.BlockStateProofTracking.md)
 
----
+___
 
 ### BlockUpgradeState
 
 Re-exports [BlockUpgradeState](../interfaces/types_subscription.BlockUpgradeState.md)
 
----
+___
 
 ### BlockUpgradeVote
 
 Re-exports [BlockUpgradeVote](../interfaces/types_subscription.BlockUpgradeVote.md)
 
----
+___
 
 ### CoreTransactionSubscriptionParams
 
 Re-exports [CoreTransactionSubscriptionParams](../interfaces/types_subscription.CoreTransactionSubscriptionParams.md)
 
----
+___
 
 ### EmittedArc28Event
 
 Re-exports [EmittedArc28Event](../interfaces/types_arc_28.EmittedArc28Event.md)
 
----
+___
 
 ### ErrorListener
 
 Re-exports [ErrorListener](types_subscription.md#errorlistener)
 
----
+___
 
 ### NamedTransactionFilter
 
 Re-exports [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
 
----
+___
 
 ### ParticipationUpdates
 
 Re-exports [ParticipationUpdates](../interfaces/types_subscription.ParticipationUpdates.md)
 
----
+___
 
 ### SubscribedTransaction
 
 Re-exports [SubscribedTransaction](../classes/types_subscription.SubscribedTransaction.md)
 
----
+___
 
 ### SubscriberConfigFilter
 
 Re-exports [SubscriberConfigFilter](../interfaces/types_subscription.SubscriberConfigFilter.md)
 
----
+___
 
 ### TransactionFilter
 
 Re-exports [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
 
----
+___
 
 ### TransactionInBlock
 
 Re-exports [TransactionInBlock](../interfaces/types_block.TransactionInBlock.md)
 
----
+___
 
 ### TransactionSubscriptionParams
 
 Re-exports [TransactionSubscriptionParams](../interfaces/types_subscription.TransactionSubscriptionParams.md)
 
----
+___
 
 ### TransactionSubscriptionResult
 
 Re-exports [TransactionSubscriptionResult](../interfaces/types_subscription.TransactionSubscriptionResult.md)
 
----
+___
 
 ### TypedAsyncEventListener
 

@@ -9,8 +9,8 @@ A single event to subscribe to / emit.
 ## Type parameters
 
 | Name |
-| :--- |
-| `T`  |
+| :------ |
+| `T` |
 
 ## Hierarchy
 
@@ -42,7 +42,7 @@ The filter itself.
 
 [src/types/subscription.ts:306](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L306)
 
----
+___
 
 ### mapper
 
@@ -60,8 +60,8 @@ Note: if you provide multiple filters with the same name then only the mapper of
 
 ##### Parameters
 
-| Name          | Type                                                                                |
-| :------------ | :---------------------------------------------------------------------------------- |
+| Name | Type |
+| :------ | :------ |
 | `transaction` | [`SubscribedTransaction`](../classes/types_subscription.SubscribedTransaction.md)[] |
 
 ##### Returns
@@ -72,7 +72,7 @@ Note: if you provide multiple filters with the same name then only the mapper of
 
 [src/types/subscription.ts:411](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L411)
 
----
+___
 
 ### name
 
