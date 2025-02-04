@@ -89,6 +89,8 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
       },
       localnet.algorand,
     )
+
+    subscribed.subscribedTransactions = subscribed.subscribedTransactions.filter(syntheticTxnFilter)
     return subscribed
   }
 
@@ -111,13 +113,11 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
       subscribeIndexer(filter, results[0], arc28Events),
     ])
 
-    const algodTxns = algod.subscribedTransactions.filter(syntheticTxnFilter)
-    expect(algodTxns.length).toBe(results.length)
-    expect(algodTxns.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    expect(algod.subscribedTransactions.length).toBe(results.length)
+    expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
 
-    const indexerTransactions = indexer.subscribedTransactions.filter(syntheticTxnFilter)
-    expect(indexerTransactions.length).toBe(results.length)
-    expect(indexerTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    expect(indexer.subscribedTransactions.length).toBe(results.length)
+    expect(indexer.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
 
     return { algod, indexer }
   }
