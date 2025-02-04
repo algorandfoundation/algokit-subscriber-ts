@@ -2,10 +2,15 @@ import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { AlgorandFixture, AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
 import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import type { Account, Transaction } from 'algosdk'
-import algosdk, { TransactionType } from 'algosdk'
+import algosdk from 'algosdk'
 import { expect, vitest } from 'vitest'
-import { Arc28EventGroup, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
+import { Arc28EventGroup, SubscribedTransaction, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
 import { GetSubscribedTransactions, SendXTransactions } from './transactions'
+
+/** Filter out synthetic transaction. We check for 0 fee on an outer txn without a group, which should never occur naturally */
+const syntheticTxnFilter = (t: SubscribedTransaction) => {
+  return !(BigInt(t.fee) === 0n && t.parentTransactionId === undefined && t.group === undefined)
+}
 
 export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
   localnet: AlgorandFixture
@@ -57,6 +62,8 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
       },
       localnet.algorand,
     )
+
+    subscribed.subscribedTransactions = subscribed.subscribedTransactions.filter(syntheticTxnFilter)
     return subscribed
   }
 
@@ -104,22 +111,13 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
       subscribeIndexer(filter, results[0], arc28Events),
     ])
 
-    expect(algod.subscribedTransactions.length).toBe(results.length)
-    expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    const algodTxns = algod.subscribedTransactions.filter(syntheticTxnFilter)
+    expect(algodTxns.length).toBe(results.length)
+    expect(algodTxns.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
 
-    // Filter out the proposal payout transaction from the indexer
-    const subscribedTransactions = indexer.subscribedTransactions.filter(
-      (t) =>
-        !(
-          t.fee === 0n &&
-          t.confirmedRound === t.firstValid &&
-          t.confirmedRound === t.lastValid &&
-          t.txType === TransactionType.pay &&
-          t.parentTransactionId === undefined
-        ),
-    )
-    expect(subscribedTransactions.length).toBe(results.length)
-    expect(subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    const indexerTransactions = indexer.subscribedTransactions.filter(syntheticTxnFilter)
+    expect(indexerTransactions.length).toBe(results.length)
+    expect(indexerTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
 
     return { algod, indexer }
   }

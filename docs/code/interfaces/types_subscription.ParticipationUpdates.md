@@ -23,7 +23,7 @@
 
 [src/types/subscription.ts:146](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L146)
 
-___
+---
 
 ### expiredParticipationAccounts
 

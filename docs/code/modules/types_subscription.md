@@ -47,8 +47,8 @@
 
 ##### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type      |
+| :------ | :-------- |
 | `error` | `unknown` |
 
 ##### Returns
@@ -59,7 +59,7 @@
 
 [src/types/subscription.ts:416](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L416)
 
-___
+---
 
 ### TypedAsyncEventListener
 
@@ -68,8 +68,8 @@ ___
 #### Type parameters
 
 | Name |
-| :------ |
-| `T` |
+| :--- |
+| `T`  |
 
 #### Type declaration
 
@@ -77,9 +77,9 @@ ___
 
 ##### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
+| Name        | Type                 |
+| :---------- | :------------------- |
+| `event`     | `T`                  |
 | `eventName` | `string` \| `symbol` |
 
 ##### Returns
