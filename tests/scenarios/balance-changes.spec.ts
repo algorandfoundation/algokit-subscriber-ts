@@ -935,6 +935,7 @@ describe('Subscribing to calls that effect balance changes', () => {
     const indexerTxn = indexerPollResult.subscribedTransactions[0]
 
     expect(indexerTxn.id).toEqual(txn.id)
+    expect(indexerTxn.intraRoundOffset).toEqual(txn.intraRoundOffset)
   })
 
 })

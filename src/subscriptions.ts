@@ -2,7 +2,7 @@ import { Config, SearchForTransactions, searchTransactions } from '@algorandfoun
 import algosdk from 'algosdk'
 import { Buffer } from 'buffer'
 import sha512, { sha512_256 } from 'js-sha512'
-import { getBlocksBulk, getTransactionFromBlockPayout } from './block'
+import { getBlocksBulk } from './block'
 import {
   algodOnCompleteToIndexerOnComplete,
   blockResponseToBlockMetadata,
@@ -185,7 +185,7 @@ export async function getSubscribedTransactions(
   if (!skipAlgodSync) {
     start = +new Date()
     const blocks = await getBlocksBulk({ startRound: algodSyncFromRoundNumber, maxRound: endRound }, algod)
-    const blockTransactions = blocks.flatMap((b) => [getTransactionFromBlockPayout(b), ...getBlockTransactions(b)])
+    const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
     algodTransactions = filters
       .flatMap((f) =>
         blockTransactions
