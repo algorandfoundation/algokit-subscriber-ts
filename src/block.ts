@@ -27,3 +27,4 @@ export async function getBlocksBulk(context: { startRound: bigint; maxRound: big
   }
   return blocks
 }
+

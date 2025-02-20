@@ -4,8 +4,13 @@ import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@al
 import type { Account, Transaction } from 'algosdk'
 import algosdk from 'algosdk'
 import { expect, vitest } from 'vitest'
-import { Arc28EventGroup, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
+import { Arc28EventGroup, SubscribedTransaction, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
 import { GetSubscribedTransactions, SendXTransactions } from './transactions'
+
+/** Filter out synthetic transaction. We check for 0 fee on an outer txn without a group, which should never occur naturally */
+const syntheticTxnFilter = (t: SubscribedTransaction) => {
+  return !(BigInt(t.fee) === 0n && t.parentTransactionId === undefined && t.group === undefined)
+}
 
 export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
   localnet: AlgorandFixture
@@ -57,6 +62,8 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
       },
       localnet.algorand,
     )
+
+    subscribed.subscribedTransactions = subscribed.subscribedTransactions.filter(syntheticTxnFilter)
     return subscribed
   }
 
@@ -82,6 +89,8 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
       },
       localnet.algorand,
     )
+
+    subscribed.subscribedTransactions = subscribed.subscribedTransactions.filter(syntheticTxnFilter)
     return subscribed
   }
 
@@ -106,6 +115,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
 
     expect(algod.subscribedTransactions.length).toBe(results.length)
     expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+
     expect(indexer.subscribedTransactions.length).toBe(results.length)
     expect(indexer.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
 

@@ -1,10 +1,11 @@
-import { microAlgo } from '@algorandfoundation/algokit-utils'
+import { AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
 import { Address } from 'algosdk'
 import invariant from 'tiny-invariant'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
-import { BalanceChangeRole } from '../../src/types'
+import { AlgorandSubscriberConfig, BalanceChangeRole } from '../../src/types'
 import { filterFixture } from '../filterFixture'
+import { AlgorandSubscriber } from '../../src'
 
 describe('Subscribing to calls that effect balance changes', () => {
   const {
@@ -879,4 +880,62 @@ describe('Subscribing to calls that effect balance changes', () => {
       throw e
     }
   }, 30_000)
+
+
+  test('Works when filtering for synthetic block payout', async () => {
+    const mainnet = AlgorandClient.mainNet()
+    const testRound = 46838092n
+    let watermark = testRound - 1n
+    const block = (await mainnet.client.algod.block(testRound).do()).block
+
+    const feeSink = block.header.rewardState.feeSink
+    const proposer = block.header.proposer
+    const payout = block.header.proposerPayout
+
+    const config: AlgorandSubscriberConfig = {
+      filters: [{
+        name: 'payout',
+        filter: {
+          customFilter: (tx) => {
+            return tx.fee === 0n && tx.parentTransactionId === undefined && tx.group === undefined
+          },
+        }
+      }],
+      syncBehaviour: 'sync-oldest',
+      watermarkPersistence: {
+        get: async () => watermark,
+        set: async (newWatermark) => {
+          watermark = newWatermark
+        },
+      },
+      maxRoundsToSync: 1,
+      maxIndexerRoundsToSync: 1,
+    }
+
+    const subscriber = new AlgorandSubscriber(config, mainnet.client.algod)
+
+    const pollResult = await subscriber.pollOnce()
+    expect(pollResult.subscribedTransactions).toHaveLength(1)
+
+    const txn = pollResult.subscribedTransactions[0]
+    const pay = txn.paymentTransaction
+
+    // Make sure the fields are what we expect
+    expect(txn.sender).toEqual(feeSink.toString())
+    expect(pay).toBeDefined()
+    expect(pay!.receiver).toEqual(proposer.toString())
+    expect(pay!.amount).toEqual(payout)
+
+    // Now make sure it matches indexer txn
+    config.syncBehaviour = 'catchup-with-indexer'
+    watermark = testRound - 1n
+    const indexerSubscriber = new AlgorandSubscriber(config, mainnet.client.algod, mainnet.client.indexer)
+    const indexerPollResult = await indexerSubscriber.pollOnce()
+    expect(indexerPollResult.subscribedTransactions).toHaveLength(1)
+    const indexerTxn = indexerPollResult.subscribedTransactions[0]
+
+    expect(indexerTxn.id).toEqual(txn.id)
+    expect(indexerTxn.intraRoundOffset).toEqual(txn.intraRoundOffset)
+  })
+
 })
