@@ -144,7 +144,7 @@ export class AlgorandSubscriber {
           const waitStart = +new Date()
           // Despite what the `statusAfterBlock` method description suggests, you need to wait for the round before
           //  the round you are waiting for per the API description:
-          //  https://dev.algorand.co/reference/rest-api/algod/#waitforblock
+          //  https://developer.algorand.org/docs/rest-apis/algod/#get-v2statuswait-for-block-afterround
           await race(this.algod.statusAfterBlock(result.currentRound).do(), this.abortController.signal)
           Config.getLogger(suppressLog).info(`Waited for ${(+new Date() - waitStart) / 1000}s until next block`)
         }

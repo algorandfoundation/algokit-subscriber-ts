@@ -19,7 +19,7 @@ export interface TransactionSubscriptionResult {
   newWatermark: bigint
   /** Any transactions that matched the given filter within
    * the synced round range. This substantively uses the [indexer transaction
-   * format](https://dev.algorand.co/reference/rest-api/indexer#transaction)
+   * format](https://developer.algorand.org/docs/rest-apis/indexer/#transaction)
    * to represent the data with some additional fields.
    */
   subscribedTransactions: SubscribedTransaction[]
@@ -154,7 +154,7 @@ export interface ParticipationUpdates {
 
 /** The common model used to expose a transaction that is returned from a subscription.
  *
- * Substantively, based on the Indexer  [`TransactionResult` model](https://dev.algorand.co/reference/rest-api/indexer#transaction) format with some modifications to:
+ * Substantively, based on the Indexer  [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
  * * Add the `parentTransactionId` field so inner transactions have a reference to their parent
  * * Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
  * * Add emitted ARC-28 events via `arc28Events`
