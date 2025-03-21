@@ -78,7 +78,7 @@ ___
 
 Any transactions that matched the given filter within
 the synced round range. This substantively uses the [indexer transaction
-format](https://developer.algorand.org/docs/rest-apis/indexer/#transaction)
+format](https://dev.algorand.co/reference/rest-api/indexer#transaction)
 to represent the data with some additional fields.
 
 #### Defined in
