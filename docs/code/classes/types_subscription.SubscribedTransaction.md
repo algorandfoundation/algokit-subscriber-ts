@@ -6,7 +6,7 @@
 
 The common model used to expose a transaction that is returned from a subscription.
 
-Substantively, based on the Indexer  [`TransactionResult` model](https://developer.algorand.org/docs/rest-apis/indexer/#transaction) format with some modifications to:
+Substantively, based on the Indexer  [`TransactionResult` model](https://dev.algorand.co/reference/rest-apis/indexer#transaction) format with some modifications to:
 * Add the `parentTransactionId` field so inner transactions have a reference to their parent
 * Override the type of `inner-txns` to be `SubscribedTransaction[]` so inner transactions (recursively) get these extra fields too
 * Add emitted ARC-28 events via `arc28Events`
