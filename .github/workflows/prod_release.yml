@@ -3,8 +3,6 @@ name: Prod Publish
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
 
 jobs:
   prod_release:
