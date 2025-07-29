@@ -9,11 +9,6 @@ on:
 
 concurrency: release
 
-permissions:
-  contents: write
-  issues: write
-  checks: write
-
 jobs:
   ci:
     name: Continuous Integration
