@@ -231,202 +231,224 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       filtersMatched: filterName ? [filterName] : undefined,
       ...(transaction.type === TransactionType.acfg && transaction.assetConfig
         ? {
-          assetConfigTransaction: new algosdk.indexerModels.TransactionAssetConfig({
-            assetId: transaction.assetConfig.assetIndex,
-            params: createdAssetId
-              ? new algosdk.indexerModels.AssetParams({
-                creator: transaction.sender.toString(),
-                decimals: transaction.assetConfig.decimals,
-                total: transaction.assetConfig.total,
-                defaultFrozen: transaction.assetConfig.defaultFrozen,
-                metadataHash: transaction.assetConfig.assetMetadataHash,
-                ...(transaction.assetConfig.unitName
-                  ? {
-                    unitName: transaction.assetConfig.unitName,
-                    unitNameB64: Buffer.from(transaction.assetConfig.unitName).toString('base64'),
-                  }
-                  : undefined),
-                ...(transaction.assetConfig.assetName
-                  ? {
-                    name: transaction.assetConfig.assetName,
-                    nameB64: Buffer.from(transaction.assetConfig.assetName).toString('base64'),
-                  }
-                  : undefined),
-                ...(transaction.assetConfig.assetURL
-                  ? {
-                    url: transaction.assetConfig.assetURL,
-                    urlB64: Buffer.from(transaction.assetConfig.assetURL).toString('base64'),
-                  }
-                  : undefined),
-                manager: transaction.assetConfig.manager?.toString(),
-                reserve: transaction.assetConfig.reserve?.toString(),
-                clawback: transaction.assetConfig.clawback?.toString(),
-                freeze: transaction.assetConfig.freeze?.toString(),
-              })
-              : // In algosdk, transaction.assetConfig is always defined, even if it's an asset destroy transaction
-              // If any field is truthy, it's an asset update, otherwise, it's an asset destroy
-              transaction.assetConfig.manager ||
-                transaction.assetConfig.reserve ||
-                transaction.assetConfig.clawback ||
-                transaction.assetConfig.freeze ||
-                transaction.assetConfig.unitName ||
-                transaction.assetConfig.assetName ||
-                transaction.assetConfig.assetURL ||
-                transaction.assetConfig.assetMetadataHash
+            assetConfigTransaction: new algosdk.indexerModels.TransactionAssetConfig({
+              assetId: transaction.assetConfig.assetIndex,
+              params: createdAssetId
                 ? new algosdk.indexerModels.AssetParams({
-                  manager: transaction.assetConfig.manager?.toString(),
-                  reserve: transaction.assetConfig.reserve?.toString(),
-                  clawback: transaction.assetConfig.clawback?.toString(),
-                  freeze: transaction.assetConfig.freeze?.toString(),
-                  // These parameters are required in the indexer type so setting to empty values
-                  creator: '',
-                  decimals: 0,
-                  total: 0,
-                })
-                : undefined,
-          }),
-        }
+                    creator: transaction.sender.toString(),
+                    decimals: transaction.assetConfig.decimals,
+                    total: transaction.assetConfig.total,
+                    defaultFrozen: transaction.assetConfig.defaultFrozen,
+                    metadataHash: transaction.assetConfig.assetMetadataHash,
+                    ...(transaction.assetConfig.unitName
+                      ? {
+                          unitName: transaction.assetConfig.unitName,
+                          unitNameB64: Buffer.from(transaction.assetConfig.unitName).toString('base64'),
+                        }
+                      : undefined),
+                    ...(transaction.assetConfig.assetName
+                      ? {
+                          name: transaction.assetConfig.assetName,
+                          nameB64: Buffer.from(transaction.assetConfig.assetName).toString('base64'),
+                        }
+                      : undefined),
+                    ...(transaction.assetConfig.assetURL
+                      ? {
+                          url: transaction.assetConfig.assetURL,
+                          urlB64: Buffer.from(transaction.assetConfig.assetURL).toString('base64'),
+                        }
+                      : undefined),
+                    manager: transaction.assetConfig.manager?.toString(),
+                    reserve: transaction.assetConfig.reserve?.toString(),
+                    clawback: transaction.assetConfig.clawback?.toString(),
+                    freeze: transaction.assetConfig.freeze?.toString(),
+                  })
+                : // In algosdk, transaction.assetConfig is always defined, even if it's an asset destroy transaction
+                  // If any field is truthy, it's an asset update, otherwise, it's an asset destroy
+                  transaction.assetConfig.manager ||
+                    transaction.assetConfig.reserve ||
+                    transaction.assetConfig.clawback ||
+                    transaction.assetConfig.freeze ||
+                    transaction.assetConfig.unitName ||
+                    transaction.assetConfig.assetName ||
+                    transaction.assetConfig.assetURL ||
+                    transaction.assetConfig.assetMetadataHash
+                  ? new algosdk.indexerModels.AssetParams({
+                      manager: transaction.assetConfig.manager?.toString(),
+                      reserve: transaction.assetConfig.reserve?.toString(),
+                      clawback: transaction.assetConfig.clawback?.toString(),
+                      freeze: transaction.assetConfig.freeze?.toString(),
+                      // These parameters are required in the indexer type so setting to empty values
+                      creator: '',
+                      decimals: 0,
+                      total: 0,
+                    })
+                  : undefined,
+            }),
+          }
         : undefined),
       ...(transaction.type === TransactionType.axfer
         ? {
-          assetTransferTransaction: new algosdk.indexerModels.TransactionAssetTransfer({
-            assetId: transaction.assetTransfer!.assetIndex,
-            amount: transaction.assetTransfer!.amount,
-            receiver: transaction.assetTransfer!.receiver.toString(),
-            sender: transaction.assetTransfer!.assetSender ? transaction.assetTransfer!.assetSender.toString() : undefined,
-            closeAmount: assetCloseAmount,
-            closeTo: transaction.assetTransfer!.closeRemainderTo ? transaction.assetTransfer!.closeRemainderTo.toString() : undefined,
-          }),
-        }
+            assetTransferTransaction: new algosdk.indexerModels.TransactionAssetTransfer({
+              assetId: transaction.assetTransfer!.assetIndex,
+              amount: transaction.assetTransfer!.amount,
+              receiver: transaction.assetTransfer!.receiver.toString(),
+              sender: transaction.assetTransfer!.assetSender ? transaction.assetTransfer!.assetSender.toString() : undefined,
+              closeAmount: assetCloseAmount,
+              closeTo: transaction.assetTransfer!.closeRemainderTo ? transaction.assetTransfer!.closeRemainderTo.toString() : undefined,
+            }),
+          }
         : undefined),
       ...(transaction.type === TransactionType.afrz
         ? {
-          assetFreezeTransaction: new algosdk.indexerModels.TransactionAssetFreeze({
-            assetId: transaction.assetFreeze!.assetIndex,
-            newFreezeStatus: transaction.assetFreeze!.frozen,
-            address: transaction.assetFreeze!.freezeAccount.toString(),
-          }),
-        }
+            assetFreezeTransaction: new algosdk.indexerModels.TransactionAssetFreeze({
+              assetId: transaction.assetFreeze!.assetIndex,
+              newFreezeStatus: transaction.assetFreeze!.frozen,
+              address: transaction.assetFreeze!.freezeAccount.toString(),
+            }),
+          }
         : undefined),
       ...(transaction.type === TransactionType.appl
         ? {
-          applicationTransaction: new algosdk.indexerModels.TransactionApplication({
-            applicationId: transaction.applicationCall!.appIndex ?? 0,
-            approvalProgram: transaction.applicationCall!.approvalProgram,
-            clearStateProgram: transaction.applicationCall!.clearProgram,
-            onCompletion: algodOnCompleteToIndexerOnComplete(transaction.applicationCall!.onComplete),
-            applicationArgs: transaction.applicationCall!.appArgs.map((a) => a),
-            foreignApps: transaction.applicationCall!.foreignApps.map((a) => a),
-            foreignAssets: transaction.applicationCall!.foreignAssets.map((a) => a),
-            ...(transaction.applicationCall
-              ? {
-                globalStateSchema: new algosdk.indexerModels.StateSchema({
-                  numByteSlice: transaction.applicationCall.numGlobalByteSlices,
-                  numUint: transaction.applicationCall.numGlobalInts,
-                }),
-              }
-              : undefined),
-            ...(transaction.applicationCall
-              ? {
-                localStateSchema: new algosdk.indexerModels.StateSchema({
-                  numByteSlice: transaction.applicationCall.numLocalByteSlices,
-                  numUint: transaction.applicationCall.numLocalInts,
-                }),
-              }
-              : undefined),
-            accounts: transaction.applicationCall!.accounts.map((a) => a),
-            extraProgramPages: transaction.applicationCall!.extraPages,
-          }),
-        }
+            applicationTransaction: new algosdk.indexerModels.TransactionApplication({
+              applicationId: transaction.applicationCall!.appIndex ?? 0,
+              approvalProgram: transaction.applicationCall!.approvalProgram,
+              clearStateProgram: transaction.applicationCall!.clearProgram,
+              onCompletion: algodOnCompleteToIndexerOnComplete(transaction.applicationCall!.onComplete),
+              applicationArgs: transaction.applicationCall!.appArgs.map((a) => a),
+              foreignApps: transaction.applicationCall!.foreignApps.map((a) => a),
+              foreignAssets: transaction.applicationCall!.foreignAssets.map((a) => a),
+              globalStateSchema: new algosdk.indexerModels.StateSchema({
+                numByteSlice: transaction.applicationCall!.numGlobalByteSlices,
+                numUint: transaction.applicationCall!.numGlobalInts,
+              }),
+              localStateSchema: new algosdk.indexerModels.StateSchema({
+                numByteSlice: transaction.applicationCall!.numLocalByteSlices,
+                numUint: transaction.applicationCall!.numLocalInts,
+              }),
+              accounts: transaction.applicationCall!.accounts.map((a) => a),
+              boxReferences:
+                transaction.applicationCall!.boxes?.map((b) => {
+                  return new algosdk.indexerModels.BoxReference({ app: b.appIndex, name: b.name })
+                }) ?? [],
+              access:
+                transaction.applicationCall!.access?.map((ar) => {
+                  return new algosdk.indexerModels.ResourceRef({
+                    address: ar.address,
+                    applicationId: ar.appIndex,
+                    assetId: ar.assetIndex,
+                    box: ar.box
+                      ? new algosdk.indexerModels.BoxReference({
+                          app: ar.box.appIndex,
+                          name: ar.box.name,
+                        })
+                      : undefined,
+                    holding: ar.holding
+                      ? new algosdk.indexerModels.HoldingRef({
+                          address: ar.holding.address,
+                          asset: ar.holding.assetIndex,
+                        })
+                      : undefined,
+                    local: ar.locals
+                      ? new algosdk.indexerModels.LocalsRef({
+                          address: ar.locals.address,
+                          app: ar.locals.appIndex,
+                        })
+                      : undefined,
+                  })
+                }) ?? [],
+              extraProgramPages: transaction.applicationCall!.extraPages,
+            }),
+          }
         : undefined),
       ...(transaction.type === TransactionType.pay
         ? {
-          paymentTransaction: new algosdk.indexerModels.TransactionPayment({
-            amount: transaction.payment!.amount,
-            receiver: transaction.payment!.receiver.toString(),
-            closeAmount: closeAmount,
-            closeRemainderTo: transaction.payment!.closeRemainderTo?.toString(),
-          }),
-        }
+            paymentTransaction: new algosdk.indexerModels.TransactionPayment({
+              amount: transaction.payment!.amount,
+              receiver: transaction.payment!.receiver.toString(),
+              closeAmount: closeAmount,
+              closeRemainderTo: transaction.payment!.closeRemainderTo?.toString(),
+            }),
+          }
         : undefined),
       ...(transaction.type === TransactionType.keyreg
         ? {
-          keyregTransaction: new algosdk.indexerModels.TransactionKeyreg({
-            nonParticipation: transaction.keyreg!.nonParticipation,
-            selectionParticipationKey: transaction.keyreg!.selectionKey,
-            stateProofKey: transaction.keyreg!.stateProofKey,
-            voteFirstValid: transaction.keyreg!.voteFirst,
-            voteKeyDilution: transaction.keyreg!.voteKeyDilution,
-            voteLastValid: transaction.keyreg!.voteLast,
-            voteParticipationKey: transaction.keyreg!.voteKey,
-          }),
-        }
+            keyregTransaction: new algosdk.indexerModels.TransactionKeyreg({
+              nonParticipation: transaction.keyreg!.nonParticipation,
+              selectionParticipationKey: transaction.keyreg!.selectionKey,
+              stateProofKey: transaction.keyreg!.stateProofKey,
+              voteFirstValid: transaction.keyreg!.voteFirst,
+              voteKeyDilution: transaction.keyreg!.voteKeyDilution,
+              voteLastValid: transaction.keyreg!.voteLast,
+              voteParticipationKey: transaction.keyreg!.voteKey,
+            }),
+          }
         : undefined),
       ...(transaction.type === TransactionType.stpf
         ? {
-          stateProofTransaction: new algosdk.indexerModels.TransactionStateProof({
-            stateProof: new algosdk.indexerModels.StateProofFields({
-              partProofs: transaction.stateProof!.stateProof?.partProofs
-                ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.partProofs)
-                : undefined,
-              positionsToReveal: transaction.stateProof!.stateProof?.positionsToReveal,
-              saltVersion: transaction.stateProof!.stateProof?.merkleSignatureSaltVersion,
-              sigCommit: transaction.stateProof!.stateProof?.sigCommit,
-              sigProofs: transaction.stateProof!.stateProof?.sigProofs
-                ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.sigProofs)
-                : undefined,
-              signedWeight: transaction.stateProof!.stateProof?.signedWeight,
-              reveals: transaction.stateProof!.stateProof?.reveals
-                ? Array.from(transaction.stateProof!.stateProof?.reveals.entries()).map(([position, reveal]) => {
-                  return new algosdk.indexerModels.StateProofReveal({
-                    sigSlot: new algosdk.indexerModels.StateProofSigSlot({
-                      lowerSigWeight: reveal.sigslot.l,
-                      signature: new algosdk.indexerModels.StateProofSignature({
-                        merkleArrayIndex: reveal.sigslot.sig.vectorCommitmentIndex,
-                        falconSignature: Buffer.from(reveal.sigslot.sig.signature),
-                        proof: algodMerkleArrayProofToIndexerMerkleArrayProof(reveal.sigslot.sig.proof),
-                        verifyingKey: reveal.sigslot.sig.verifyingKey.publicKey,
-                      }),
-                    }),
-                    position: position,
-                    participant: new algosdk.indexerModels.StateProofParticipant({
-                      weight: reveal.participant.weight,
-                      verifier: new algosdk.indexerModels.StateProofVerifier({
-                        keyLifetime: reveal.participant.pk.keyLifetime,
-                        commitment: reveal.participant.pk.commitment,
-                      }),
-                    }),
-                  })
-                })
-                : undefined,
+            stateProofTransaction: new algosdk.indexerModels.TransactionStateProof({
+              stateProof: new algosdk.indexerModels.StateProofFields({
+                partProofs: transaction.stateProof!.stateProof?.partProofs
+                  ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.partProofs)
+                  : undefined,
+                positionsToReveal: transaction.stateProof!.stateProof?.positionsToReveal,
+                saltVersion: transaction.stateProof!.stateProof?.merkleSignatureSaltVersion,
+                sigCommit: transaction.stateProof!.stateProof?.sigCommit,
+                sigProofs: transaction.stateProof!.stateProof?.sigProofs
+                  ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.sigProofs)
+                  : undefined,
+                signedWeight: transaction.stateProof!.stateProof?.signedWeight,
+                reveals: transaction.stateProof!.stateProof?.reveals
+                  ? Array.from(transaction.stateProof!.stateProof?.reveals.entries()).map(([position, reveal]) => {
+                      return new algosdk.indexerModels.StateProofReveal({
+                        sigSlot: new algosdk.indexerModels.StateProofSigSlot({
+                          lowerSigWeight: reveal.sigslot.l,
+                          signature: new algosdk.indexerModels.StateProofSignature({
+                            merkleArrayIndex: reveal.sigslot.sig.vectorCommitmentIndex,
+                            falconSignature: Buffer.from(reveal.sigslot.sig.signature),
+                            proof: algodMerkleArrayProofToIndexerMerkleArrayProof(reveal.sigslot.sig.proof),
+                            verifyingKey: reveal.sigslot.sig.verifyingKey.publicKey,
+                          }),
+                        }),
+                        position: position,
+                        participant: new algosdk.indexerModels.StateProofParticipant({
+                          weight: reveal.participant.weight,
+                          verifier: new algosdk.indexerModels.StateProofVerifier({
+                            keyLifetime: reveal.participant.pk.keyLifetime,
+                            commitment: reveal.participant.pk.commitment,
+                          }),
+                        }),
+                      })
+                    })
+                  : undefined,
+              }),
+              message: new algosdk.indexerModels.IndexerStateProofMessage({
+                blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
+                firstAttestedRound: transaction.stateProof!.message!.firstAttestedRound,
+                latestAttestedRound: transaction.stateProof!.message!.lastAttestedRound,
+                lnProvenWeight: transaction.stateProof!.message!.lnProvenWeight,
+                votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
+              }),
+              stateProofType: Number(transaction.stateProof!.stateProofType ?? 0),
             }),
-            message: new algosdk.indexerModels.IndexerStateProofMessage({
-              blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
-              firstAttestedRound: transaction.stateProof!.message!.firstAttestedRound,
-              latestAttestedRound: transaction.stateProof!.message!.lastAttestedRound,
-              lnProvenWeight: transaction.stateProof!.message!.lnProvenWeight,
-              votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
-            }),
-            stateProofType: Number(transaction.stateProof!.stateProofType ?? 0),
-          }),
-        }
+          }
         : undefined),
       ...(transaction.type === TransactionType.hb && transaction.heartbeat
         ? {
-          heartbeatTransaction: new algosdk.indexerModels.TransactionHeartbeat({
-            hbAddress: transaction.heartbeat.address.toString(),
-            hbKeyDilution: transaction.heartbeat.keyDilution,
-            hbProof: new algosdk.indexerModels.HbProofFields({
-              hbPk: transaction.heartbeat.proof.pk,
-              hbPk1sig: transaction.heartbeat.proof.pk1Sig,
-              hbPk2: transaction.heartbeat.proof.pk2,
-              hbPk2sig: transaction.heartbeat.proof.pk2Sig,
-              hbSig: transaction.heartbeat.proof.sig,
+            heartbeatTransaction: new algosdk.indexerModels.TransactionHeartbeat({
+              hbAddress: transaction.heartbeat.address.toString(),
+              hbKeyDilution: transaction.heartbeat.keyDilution,
+              hbProof: new algosdk.indexerModels.HbProofFields({
+                hbPk: transaction.heartbeat.proof.pk,
+                hbPk1sig: transaction.heartbeat.proof.pk1Sig,
+                hbPk2: transaction.heartbeat.proof.pk2,
+                hbPk2sig: transaction.heartbeat.proof.pk2Sig,
+                hbSig: transaction.heartbeat.proof.sig,
+              }),
+              hbSeed: transaction.heartbeat.seed,
+              hbVoteId: transaction.heartbeat.voteID,
             }),
-            hbSeed: transaction.heartbeat.seed,
-            hbVoteId: transaction.heartbeat.voteID,
-          }),
-        }
+          }
         : undefined),
       firstValid: transaction.firstValid,
       lastValid: transaction.lastValid,
@@ -466,20 +488,35 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       }),
       ...(signedTxnWithAD.signedTxn.sig || signedTxnWithAD.signedTxn.lsig || signedTxnWithAD.signedTxn.msig
         ? {
-          signature: new algosdk.indexerModels.TransactionSignature({
-            sig: signedTxnWithAD.signedTxn.sig ? Buffer.from(signedTxnWithAD.signedTxn.sig).toString('base64') : undefined,
-            logicsig: signedTxnWithAD.signedTxn.lsig
-              ? new algosdk.indexerModels.TransactionSignatureLogicsig({
-                logic: Buffer.from(signedTxnWithAD.signedTxn.lsig.logic).toString('base64'),
-                args: signedTxnWithAD.signedTxn.lsig.args,
-                signature: signedTxnWithAD.signedTxn.lsig.sig
-                  ? Buffer.from(signedTxnWithAD.signedTxn.lsig.sig).toString('base64')
-                  : undefined,
-                multisigSignature: signedTxnWithAD.signedTxn.lsig.msig
-                  ? new algosdk.indexerModels.TransactionSignatureMultisig({
-                    version: signedTxnWithAD.signedTxn.lsig.msig.v,
-                    threshold: signedTxnWithAD.signedTxn.lsig.msig.thr,
-                    subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsig.map(
+            signature: new algosdk.indexerModels.TransactionSignature({
+              sig: signedTxnWithAD.signedTxn.sig ? Buffer.from(signedTxnWithAD.signedTxn.sig).toString('base64') : undefined,
+              logicsig: signedTxnWithAD.signedTxn.lsig
+                ? new algosdk.indexerModels.TransactionSignatureLogicsig({
+                    logic: Buffer.from(signedTxnWithAD.signedTxn.lsig.logic).toString('base64'),
+                    args: signedTxnWithAD.signedTxn.lsig.args,
+                    signature: signedTxnWithAD.signedTxn.lsig.sig
+                      ? Buffer.from(signedTxnWithAD.signedTxn.lsig.sig).toString('base64')
+                      : undefined,
+                    multisigSignature: signedTxnWithAD.signedTxn.lsig.msig
+                      ? new algosdk.indexerModels.TransactionSignatureMultisig({
+                          version: signedTxnWithAD.signedTxn.lsig.msig.v,
+                          threshold: signedTxnWithAD.signedTxn.lsig.msig.thr,
+                          subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsig.map(
+                            (s) =>
+                              new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
+                                publicKey: Buffer.from(s.pk).toString('base64'),
+                                signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
+                              }),
+                          ),
+                        })
+                      : undefined,
+                  })
+                : undefined,
+              multisig: signedTxnWithAD.signedTxn.msig
+                ? new algosdk.indexerModels.TransactionSignatureMultisig({
+                    version: signedTxnWithAD.signedTxn.msig.v,
+                    threshold: signedTxnWithAD.signedTxn.msig.thr,
+                    subsignature: signedTxnWithAD.signedTxn.msig.subsig.map(
                       (s) =>
                         new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
                           publicKey: Buffer.from(s.pk).toString('base64'),
@@ -487,24 +524,9 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                         }),
                     ),
                   })
-                  : undefined,
-              })
-              : undefined,
-            multisig: signedTxnWithAD.signedTxn.msig
-              ? new algosdk.indexerModels.TransactionSignatureMultisig({
-                version: signedTxnWithAD.signedTxn.msig.v,
-                threshold: signedTxnWithAD.signedTxn.msig.thr,
-                subsignature: signedTxnWithAD.signedTxn.msig.subsig.map(
-                  (s) =>
-                    new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
-                      publicKey: Buffer.from(s.pk).toString('base64'),
-                      signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
-                    }),
-                ),
-              })
-              : undefined,
-          }),
-        }
+                : undefined,
+            }),
+          }
         : undefined),
       logs: signedTxnWithAD.applyData.evalDelta?.logs,
       closeRewards: closeRewards,
@@ -512,47 +534,47 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       senderRewards: senderRewards,
       globalStateDelta: signedTxnWithAD.applyData.evalDelta?.globalDelta
         ? Array.from(signedTxnWithAD.applyData.evalDelta?.globalDelta.entries()).map(
-          ([key, value]) =>
-            new algosdk.indexerModels.EvalDeltaKeyValue({
-              key: Buffer.from(key).toString('base64'),
-              value: new algosdk.indexerModels.EvalDelta({
-                action: value.action,
-                ...(value.action === 2
-                  ? {
-                    uint: value.uint,
-                  }
-                  : {
-                    bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
-                    uint: value.uint,
-                  }),
-              }),
-            }),
-        )
-        : undefined,
-      localStateDelta: signedTxnWithAD.applyData.evalDelta?.localDeltas
-        ? Array.from(signedTxnWithAD.applyData.evalDelta?.localDeltas.entries()).map(([addressIndex, delta]) => {
-          const addresses = [transaction.sender.toString(), ...(transaction.applicationCall?.accounts?.map((a) => a.toString()) || [])]
-          return new algosdk.indexerModels.AccountStateDelta({
-            address: addresses[Number(addressIndex)],
-            delta: Array.from(delta.entries()).map(
-              ([key, value]) =>
-                new algosdk.indexerModels.EvalDeltaKeyValue({
-                  key: Buffer.from(key).toString('base64'),
-                  value: new algosdk.indexerModels.EvalDelta({
-                    action: value.action,
-                    ...(value.action === 2
-                      ? {
+            ([key, value]) =>
+              new algosdk.indexerModels.EvalDeltaKeyValue({
+                key: Buffer.from(key).toString('base64'),
+                value: new algosdk.indexerModels.EvalDelta({
+                  action: value.action,
+                  ...(value.action === 2
+                    ? {
                         uint: value.uint,
                       }
-                      : {
+                    : {
                         bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
                         uint: value.uint,
                       }),
-                  }),
                 }),
-            ),
+              }),
+          )
+        : undefined,
+      localStateDelta: signedTxnWithAD.applyData.evalDelta?.localDeltas
+        ? Array.from(signedTxnWithAD.applyData.evalDelta?.localDeltas.entries()).map(([addressIndex, delta]) => {
+            const addresses = [transaction.sender.toString(), ...(transaction.applicationCall?.accounts?.map((a) => a.toString()) || [])]
+            return new algosdk.indexerModels.AccountStateDelta({
+              address: addresses[Number(addressIndex)],
+              delta: Array.from(delta.entries()).map(
+                ([key, value]) =>
+                  new algosdk.indexerModels.EvalDeltaKeyValue({
+                    key: Buffer.from(key).toString('base64'),
+                    value: new algosdk.indexerModels.EvalDelta({
+                      action: value.action,
+                      ...(value.action === 2
+                        ? {
+                            uint: value.uint,
+                          }
+                        : {
+                            bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
+                            uint: value.uint,
+                          }),
+                    }),
+                  }),
+              ),
+            })
           })
-        })
         : undefined,
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -567,8 +589,8 @@ function algodMerkleArrayProofToIndexerMerkleArrayProof(proof: algosdk.MerkleArr
   return new algosdk.indexerModels.MerkleArrayProof({
     hashFactory: proof.hashFactory
       ? new algosdk.indexerModels.HashFactory({
-        hashType: proof.hashFactory.hashType,
-      })
+          hashType: proof.hashFactory.hashType,
+        })
       : undefined,
     path: proof.path,
     treeDepth: proof.treeDepth,
@@ -633,28 +655,28 @@ export function blockResponseToBlockMetadata(blockResponse: algosdk.modelsv2.Blo
     proposer: block.header.proposer?.toString(),
     ...(block.header.upgradeVote
       ? {
-        upgradeVote: {
-          upgradeApprove: block.header.upgradeVote.upgradeApprove,
-          upgradeDelay: block.header.upgradeVote.upgradeDelay,
-          upgradePropose: block.header.upgradeVote.upgradePropose,
-        },
-      }
+          upgradeVote: {
+            upgradeApprove: block.header.upgradeVote.upgradeApprove,
+            upgradeDelay: block.header.upgradeVote.upgradeDelay,
+            upgradePropose: block.header.upgradeVote.upgradePropose,
+          },
+        }
       : undefined),
     ...(block.header.participationUpdates
       ? {
-        participationUpdates: {
-          absentParticipationAccounts: block.header.participationUpdates.absentParticipationAccounts.map((addr) => addr.toString()),
-          expiredParticipationAccounts: block.header.participationUpdates.expiredParticipationAccounts.map((addr) => addr.toString()),
-        },
-      }
+          participationUpdates: {
+            absentParticipationAccounts: block.header.participationUpdates.absentParticipationAccounts.map((addr) => addr.toString()),
+            expiredParticipationAccounts: block.header.participationUpdates.expiredParticipationAccounts.map((addr) => addr.toString()),
+          },
+        }
       : undefined),
     stateProofTracking: block.header.stateproofTracking
       ? Array.from(block.header.stateproofTracking.entries()).map(([key, value]) => ({
-        nextRound: value.stateProofNextRound,
-        onlineTotalWeight: value.stateProofOnlineTotalWeight ?? 0n,
-        type: Number(key),
-        votersCommitment: Buffer.from(value.stateProofVotersCommitment).toString('base64'),
-      }))
+          nextRound: value.stateProofNextRound,
+          onlineTotalWeight: value.stateProofOnlineTotalWeight ?? 0n,
+          type: Number(key),
+          votersCommitment: Buffer.from(value.stateProofVotersCommitment).toString('base64'),
+        }))
       : undefined,
   }
 }
@@ -691,29 +713,29 @@ export function extractBalanceChangesFromBlockTransaction(signedTxnWithAD: Signe
       },
       ...(transaction.payment?.receiver
         ? [
-          {
-            address: transaction.payment.receiver.toString(),
-            amount: transaction.payment.amount,
-            roles: [BalanceChangeRole.Receiver],
-            assetId: 0n,
-          },
-        ]
+            {
+              address: transaction.payment.receiver.toString(),
+              amount: transaction.payment.amount,
+              roles: [BalanceChangeRole.Receiver],
+              assetId: 0n,
+            },
+          ]
         : []),
       ...(transaction.payment?.closeRemainderTo
         ? [
-          {
-            address: transaction.payment.closeRemainderTo.toString(),
-            amount: signedTxnWithAD.applyData.closingAmount ?? 0n,
-            roles: [BalanceChangeRole.CloseTo],
-            assetId: 0n,
-          },
-          {
-            address: transaction.sender.toString(),
-            amount: -1n * (signedTxnWithAD.applyData.closingAmount ?? 0n),
-            roles: [BalanceChangeRole.Sender],
-            assetId: 0n,
-          },
-        ]
+            {
+              address: transaction.payment.closeRemainderTo.toString(),
+              amount: signedTxnWithAD.applyData.closingAmount ?? 0n,
+              roles: [BalanceChangeRole.CloseTo],
+              assetId: 0n,
+            },
+            {
+              address: transaction.sender.toString(),
+              amount: -1n * (signedTxnWithAD.applyData.closingAmount ?? 0n),
+              roles: [BalanceChangeRole.Sender],
+              assetId: 0n,
+            },
+          ]
         : []),
     )
   }
@@ -728,29 +750,29 @@ export function extractBalanceChangesFromBlockTransaction(signedTxnWithAD: Signe
       },
       ...(transaction.assetTransfer!.receiver
         ? [
-          {
-            address: transaction.assetTransfer!.receiver.toString(),
-            assetId: transaction.assetTransfer!.assetIndex,
-            amount: transaction.assetTransfer!.amount,
-            roles: [BalanceChangeRole.Receiver],
-          },
-        ]
+            {
+              address: transaction.assetTransfer!.receiver.toString(),
+              assetId: transaction.assetTransfer!.assetIndex,
+              amount: transaction.assetTransfer!.amount,
+              roles: [BalanceChangeRole.Receiver],
+            },
+          ]
         : []),
       ...(transaction.assetTransfer!.closeRemainderTo
         ? [
-          {
-            address: transaction.assetTransfer!.closeRemainderTo.toString(),
-            assetId: transaction.assetTransfer!.assetIndex,
-            amount: signedTxnWithAD.applyData.assetClosingAmount ?? 0n,
-            roles: [BalanceChangeRole.CloseTo],
-          },
-          {
-            address: transaction.sender.toString(),
-            assetId: transaction.assetTransfer!.assetIndex,
-            amount: -1n * (signedTxnWithAD.applyData.assetClosingAmount ?? 0n),
-            roles: [BalanceChangeRole.Sender],
-          },
-        ]
+            {
+              address: transaction.assetTransfer!.closeRemainderTo.toString(),
+              assetId: transaction.assetTransfer!.assetIndex,
+              amount: signedTxnWithAD.applyData.assetClosingAmount ?? 0n,
+              roles: [BalanceChangeRole.CloseTo],
+            },
+            {
+              address: transaction.sender.toString(),
+              assetId: transaction.assetTransfer!.assetIndex,
+              amount: -1n * (signedTxnWithAD.applyData.assetClosingAmount ?? 0n),
+              roles: [BalanceChangeRole.Sender],
+            },
+          ]
         : []),
     )
   }
@@ -823,19 +845,19 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: algosdk
       },
       ...(pay.closeAmount
         ? [
-          {
-            address: pay.closeRemainderTo!,
-            amount: pay.closeAmount,
-            roles: [BalanceChangeRole.CloseTo],
-            assetId: 0n,
-          },
-          {
-            address: transaction.sender,
-            amount: -1n * pay.closeAmount,
-            roles: [BalanceChangeRole.Sender],
-            assetId: 0n,
-          },
-        ]
+            {
+              address: pay.closeRemainderTo!,
+              amount: pay.closeAmount,
+              roles: [BalanceChangeRole.CloseTo],
+              assetId: 0n,
+            },
+            {
+              address: transaction.sender,
+              amount: -1n * pay.closeAmount,
+              roles: [BalanceChangeRole.Sender],
+              assetId: 0n,
+            },
+          ]
         : []),
     )
   }
@@ -857,19 +879,19 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: algosdk
       },
       ...(axfer.closeAmount && axfer.closeTo
         ? [
-          {
-            address: axfer.closeTo,
-            assetId: axfer.assetId,
-            amount: axfer.closeAmount,
-            roles: [BalanceChangeRole.CloseTo],
-          },
-          {
-            address: axfer.sender ?? transaction.sender,
-            assetId: axfer.assetId,
-            amount: -1n * axfer.closeAmount,
-            roles: [BalanceChangeRole.Sender],
-          },
-        ]
+            {
+              address: axfer.closeTo,
+              assetId: axfer.assetId,
+              amount: axfer.closeAmount,
+              roles: [BalanceChangeRole.CloseTo],
+            },
+            {
+              address: axfer.sender ?? transaction.sender,
+              assetId: axfer.assetId,
+              amount: -1n * axfer.closeAmount,
+              roles: [BalanceChangeRole.Sender],
+            },
+          ]
         : []),
     )
   }

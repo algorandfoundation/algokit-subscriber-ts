@@ -881,7 +881,6 @@ describe('Subscribing to calls that effect balance changes', () => {
     }
   }, 30_000)
 
-
   test('Works when filtering for synthetic block payout', async () => {
     const mainnet = AlgorandClient.mainNet()
     const testRound = 46838092n
@@ -893,14 +892,16 @@ describe('Subscribing to calls that effect balance changes', () => {
     const payout = block.header.proposerPayout
 
     const config: AlgorandSubscriberConfig = {
-      filters: [{
-        name: 'payout',
-        filter: {
-          customFilter: (tx) => {
-            return tx.fee === 0n && tx.parentTransactionId === undefined && tx.group === undefined
+      filters: [
+        {
+          name: 'payout',
+          filter: {
+            customFilter: (tx) => {
+              return tx.fee === 0n && tx.parentTransactionId === undefined && tx.group === undefined
+            },
           },
-        }
-      }],
+        },
+      ],
       syncBehaviour: 'sync-oldest',
       watermarkPersistence: {
         get: async () => watermark,
@@ -937,5 +938,4 @@ describe('Subscribing to calls that effect balance changes', () => {
     expect(indexerTxn.id).toEqual(txn.id)
     expect(indexerTxn.intraRoundOffset).toEqual(txn.intraRoundOffset)
   })
-
 })

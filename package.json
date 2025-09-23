@@ -98,8 +98,8 @@
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
-    "@algorandfoundation/algokit-utils": "^9.0.0",
-    "algosdk": "^3.0.0"
+    "@algorandfoundation/algokit-utils": "^9.1.2",
+    "algosdk": "^3.5.0"
   },
   "publishConfig": {
     "access": "public"

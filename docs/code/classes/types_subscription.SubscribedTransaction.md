@@ -117,7 +117,7 @@ algosdk.indexerModels.Transaction.applicationTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2176
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2340
 
 ___
 
@@ -149,7 +149,7 @@ algosdk.indexerModels.Transaction.assetConfigTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2184
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2348
 
 ___
 
@@ -167,7 +167,7 @@ algosdk.indexerModels.Transaction.assetFreezeTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2190
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2354
 
 ___
 
@@ -185,7 +185,7 @@ algosdk.indexerModels.Transaction.assetTransferTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2196
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2360
 
 ___
 
@@ -203,7 +203,7 @@ algosdk.indexerModels.Transaction.authAddr
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2202
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2366
 
 ___
 
@@ -231,7 +231,7 @@ algosdk.indexerModels.Transaction.closeRewards
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2206
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2370
 
 ___
 
@@ -247,7 +247,7 @@ algosdk.indexerModels.Transaction.closingAmount
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2210
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2374
 
 ___
 
@@ -263,7 +263,7 @@ algosdk.indexerModels.Transaction.confirmedRound
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2214
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2378
 
 ___
 
@@ -280,7 +280,7 @@ algosdk.indexerModels.Transaction.createdApplicationIndex
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2219
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2383
 
 ___
 
@@ -296,7 +296,7 @@ algosdk.indexerModels.Transaction.createdAssetIndex
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2223
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2387
 
 ___
 
@@ -312,7 +312,7 @@ algosdk.indexerModels.Transaction.fee
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2158
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2322
 
 ___
 
@@ -340,7 +340,7 @@ algosdk.indexerModels.Transaction.firstValid
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2162
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2326
 
 ___
 
@@ -356,7 +356,7 @@ algosdk.indexerModels.Transaction.genesisHash
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2227
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2391
 
 ___
 
@@ -372,7 +372,7 @@ algosdk.indexerModels.Transaction.genesisId
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2231
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2395
 
 ___
 
@@ -389,7 +389,7 @@ algosdk.indexerModels.Transaction.globalStateDelta
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2236
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2400
 
 ___
 
@@ -407,7 +407,7 @@ algosdk.indexerModels.Transaction.group
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2242
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2406
 
 ___
 
@@ -425,7 +425,7 @@ algosdk.indexerModels.Transaction.heartbeatTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2248
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2412
 
 ___
 
@@ -471,7 +471,7 @@ algosdk.indexerModels.Transaction.intraRoundOffset
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2260
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2424
 
 ___
 
@@ -489,7 +489,7 @@ algosdk.indexerModels.Transaction.keyregTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2266
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2430
 
 ___
 
@@ -505,7 +505,7 @@ algosdk.indexerModels.Transaction.lastValid
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2166
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2330
 
 ___
 
@@ -525,7 +525,7 @@ algosdk.indexerModels.Transaction.lease
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2274
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2438
 
 ___
 
@@ -542,7 +542,7 @@ algosdk.indexerModels.Transaction.localStateDelta
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2279
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2443
 
 ___
 
@@ -558,7 +558,7 @@ algosdk.indexerModels.Transaction.logs
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2283
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2447
 
 ___
 
@@ -574,7 +574,7 @@ algosdk.indexerModels.Transaction.note
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2287
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2451
 
 ___
 
@@ -616,7 +616,7 @@ algosdk.indexerModels.Transaction.paymentTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2293
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2457
 
 ___
 
@@ -632,7 +632,7 @@ algosdk.indexerModels.Transaction.receiverRewards
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2297
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2461
 
 ___
 
@@ -650,7 +650,7 @@ algosdk.indexerModels.Transaction.rekeyTo
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2303
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2467
 
 ___
 
@@ -666,7 +666,7 @@ algosdk.indexerModels.Transaction.roundTime
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2307
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2471
 
 ___
 
@@ -682,7 +682,7 @@ algosdk.indexerModels.Transaction.sender
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2170
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2334
 
 ___
 
@@ -698,7 +698,7 @@ algosdk.indexerModels.Transaction.senderRewards
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2311
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2475
 
 ___
 
@@ -715,7 +715,7 @@ algosdk.indexerModels.Transaction.signature
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2316
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2480
 
 ___
 
@@ -733,7 +733,7 @@ algosdk.indexerModels.Transaction.stateProofTransaction
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2322
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2486
 
 ___
 
@@ -759,7 +759,7 @@ algosdk.indexerModels.Transaction.txType
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2336
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2500
 
 ## Accessors
 
@@ -777,7 +777,7 @@ algosdk.indexerModels.Transaction.encodingSchema
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2154
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2318
 
 ## Methods
 
@@ -795,7 +795,7 @@ algosdk.indexerModels.Transaction.getEncodingSchema
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2454
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2618
 
 ___
 
@@ -813,7 +813,7 @@ algosdk.indexerModels.Transaction.toEncodingData
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2455
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2619
 
 ___
 
@@ -837,4 +837,4 @@ algosdk.indexerModels.Transaction.fromEncodingData
 
 #### Defined in
 
-node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2456
+node_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts:2620
