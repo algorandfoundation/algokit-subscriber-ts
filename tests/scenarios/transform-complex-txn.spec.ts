@@ -209,6 +209,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "numUint": 0,
           },
           "onCompletion": "noop",
+          "rejectVersion": 0,
         },
         "balanceChanges": [
           {

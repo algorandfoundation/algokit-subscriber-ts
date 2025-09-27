@@ -358,6 +358,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                   })
                 }) ?? [],
               extraProgramPages: transaction.applicationCall!.extraPages,
+              rejectVersion: transaction.applicationCall!.rejectVersion,
             }),
           }
         : undefined),
