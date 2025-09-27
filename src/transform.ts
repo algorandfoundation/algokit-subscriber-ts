@@ -510,6 +510,19 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                           ),
                         })
                       : undefined,
+                    logicMultisigSignature: signedTxnWithAD.signedTxn.lsig.lmsig
+                      ? new algosdk.indexerModels.TransactionSignatureMultisig({
+                          version: signedTxnWithAD.signedTxn.lsig.lmsig.v,
+                          threshold: signedTxnWithAD.signedTxn.lsig.lmsig.thr,
+                          subsignature: signedTxnWithAD.signedTxn.lsig.lmsig.subsig.map(
+                            (s) =>
+                              new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
+                                publicKey: Buffer.from(s.pk).toString('base64'),
+                                signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
+                              }),
+                          ),
+                        })
+                      : undefined,
                   })
                 : undefined,
               multisig: signedTxnWithAD.signedTxn.msig
