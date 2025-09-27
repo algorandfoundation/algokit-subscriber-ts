@@ -4,7 +4,6 @@ import { getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from 
 
 describe('Application transaction', () => {
   it('correctly handles application access list', async () => {
-    const address = algosdk.Address.fromString('FDMKB5D72THLYSJEBHBDHUE7XFRDOM5IHO44SOJ7AWPD6EZMWOQ2WKN7HQ')
     const block = new algosdk.modelsv2.BlockResponse({
       block: new algosdk.Block({
         header: new algosdk.BlockHeader({
@@ -112,19 +111,19 @@ describe('Application transaction', () => {
                     appArgs: [new Uint8Array([241, 126, 128, 165]), new Uint8Array([0, 4, 116, 101, 115, 116])],
                     access: [
                       { appIndex: 123n },
-                      { address: address },
+                      { address: algosdk.Address.fromString('FDMKB5D72THLYSJEBHBDHUE7XFRDOM5IHO44SOJ7AWPD6EZMWOQ2WKN7HQ') },
                       { assetIndex: 54n },
                       {
                         holding: {
                           assetIndex: 54n,
-                          address: address,
+                          address: algosdk.Address.fromString('FDMKB5D72THLYSJEBHBDHUE7XFRDOM5IHO44SOJ7AWPD6EZMWOQ2WKN7HQ'),
                         },
                       },
                       { appIndex: 432n },
                       {
                         locals: {
                           appIndex: 432n,
-                          address: address,
+                          address: algosdk.Address.fromString('FDMKB5D72THLYSJEBHBDHUE7XFRDOM5IHO44SOJ7AWPD6EZMWOQ2WKN7HQ'),
                         },
                       },
                       { appIndex: 678n },
