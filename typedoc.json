@@ -1,15 +1,31 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["src/index.ts", "src/types/*.ts"],
-  "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
-  "entryPointStrategy": "expand",
-  "out": "docs/code",
-  "plugin": ["typedoc-plugin-markdown"],
-  "theme": "default",
-  "cleanOutputDir": true,
-  "githubPages": false,
+  "entryPoints": [
+    "src/index.ts",
+    "src/types/*.ts"
+  ],
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-frontmatter",
+    "@larkiny/algo-docs-sync/dist/plugins/custom-frontmatter.mjs"
+  ],
+  "readmeFrontmatter": {
+    "title": "Overview",
+    "sidebar": {
+      "order": 0
+    }
+  },
   "readme": "none",
-  "entryDocument": "README.md",
-  "gitRevision": "main",
-  "tsconfig": "tsconfig.build.json"
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "hideGenerator": true,
+  "hideBreadcrumbs": true,
+  "tsconfig": "tsconfig.build.json",
+  "out": "docs-build/api",
+  "githubPages": false,
+  "exclude": [
+    "src/**/*.spec.ts",
+    "tests/**/*.*",
+    "examples/**/*.*"
+  ]
 }

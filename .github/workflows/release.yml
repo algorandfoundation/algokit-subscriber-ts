@@ -94,6 +94,8 @@ jobs:
 
       - name: Install dependencies to get semantic release components and plugins
         run: npm ci --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ steps.app_token.outputs.token }}
 
       - name: 'Semantic release'
         run: npx semantic-release
