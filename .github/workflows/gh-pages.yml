@@ -1,0 +1,35 @@
+name: 'Run typedoc and publish to pages'
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-and-publish-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Npm install
+        run: npm ci --ignore-scripts
+
+      - name: Build doc
+        run: npm run script:documentation
+
+      - name: Upload to GitHub pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_html
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

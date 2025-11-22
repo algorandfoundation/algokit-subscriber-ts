@@ -4,12 +4,12 @@
   "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
   "entryPointStrategy": "expand",
   "out": "docs/code",
-  "plugin": ["typedoc-plugin-markdown"],
+  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-coverage"],
   "theme": "default",
   "cleanOutputDir": true,
   "githubPages": false,
   "readme": "none",
-  "entryDocument": "README.md",
+  // "entryDocument": "README.md",
   "gitRevision": "main",
   "tsconfig": "tsconfig.build.json"
 }
