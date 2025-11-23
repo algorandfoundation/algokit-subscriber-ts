@@ -1,5 +1,1 @@
-{
-"1105444": {
-  "notes": "There is currently (2025-06-13) no available fix. brace-expansion is a bundled transitive dependency of npm (semantic-release -> npm -> (bundled) minimatch -> brace-expansion). Even the current latest version of npm (11.4.2) still bundles a vulnerable version of brace-expansion through minimatch. All of this means that we can't fix this through overrides (bundled) and we can't upgrade semantic-release to indirectly upgrade npm (because all current versions of npm bundle a vulnerable version of brace-expansion)."
-  }
-}
+{}

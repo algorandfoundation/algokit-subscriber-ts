@@ -3,7 +3,6 @@ name: Prod Publish
 on:
   workflow_dispatch:
 
-
 jobs:
   prod_release:
     runs-on: ubuntu-latest
@@ -24,7 +23,6 @@ jobs:
       # Set git user to the GitHub App
       - name: Set Git user as GitHub actions
         run: git config --global user.email "179917785+engineering-ci[bot]@users.noreply.github.com" && git config --global user.name "engineering-ci[bot]"
-
 
       - name: Merge main -> release
         uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f
