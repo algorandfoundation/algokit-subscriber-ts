@@ -436,7 +436,7 @@ pt.Log(pt.Concat(pt.MethodSignature("MyEvent(byte[],uint64)"), a.get(), pt.Itob(
 
 ### TEAL
 
-```teal
+```text
 method "MyEvent(byte[],uint64)"
 frame_dig 0 // or any other command to put the ARC-4 encoded bytes for the event on the stack
 concat

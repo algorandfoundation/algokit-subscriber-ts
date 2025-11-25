@@ -48,5 +48,25 @@
   "mypy.runUsingActiveInterpreter": true,
   "mypy.enabled": true,
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": false
+  "python.testing.pytestEnabled": false,
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#83c85a",
+    "activityBar.background": "#83c85a",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#406fbf",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#83c85a",
+    "statusBar.background": "#68b33c",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#528d2f",
+    "statusBarItem.remoteBackground": "#68b33c",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#68b33c",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#68b33c99",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#68b33c"
 }

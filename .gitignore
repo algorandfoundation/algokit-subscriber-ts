@@ -68,3 +68,7 @@ __pycache__
 
 *.db
 *.db-journal
+
+#docs
+docs/_html
+docs/md

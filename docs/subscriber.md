@@ -110,7 +110,7 @@ export interface CoreTransactionSubscriptionParams {
 
 `frequencyInSeconds` allows you to control the polling frequency and by association your latency tolerance for new events once you've caught up to the tip of the chain. Alternatively, you can set `waitForBlockWhenAtTip` to get the subscriber to ask algod to tell it when there is a new block ready to reduce latency when it's caught up to the tip of the chain.
 
-`arc28Events` are any [ARC-28 event definitions](subscriptions.md#arc-28-events).
+`arc28Events` are any [ARC-28 event definitions](subscriptions.md#arc28eventgroup).
 
 Filters defines the different subscription(s) you want to make, and is defined by the following interface:
 
