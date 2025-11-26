@@ -3,7 +3,7 @@
   "entryPoints": ["src/index.ts", "src/types/*.ts"],
   "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
   "entryPointStrategy": "expand",
-  "projectDocuments": ["docs/index.md", "docs/README.md", "docs/subscriber.md", "docs/subscriptions.md", "docs/v3-migration.md"],
+  "projectDocuments": ["docs/README.md", "docs/subscriber.md", "docs/subscriptions.md", "docs/v3-migration.md"],
   "outputs": [{ "name": "html", "path": "docs/_html" }],
   "plugin": ["typedoc-plugin-markdown"],
   "theme": "default",
