@@ -8,6 +8,8 @@
 
 - [README](_html/documents/README.html)
 - [subscribers](_html/documents/subscriber.html)
+- [subscriptions](_html/documents/subscriptions.html)
+- [v3-migration](_html/documents/v3-migration.html)
 
 ## Modules
 
