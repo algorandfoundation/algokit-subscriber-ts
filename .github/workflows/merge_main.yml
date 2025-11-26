@@ -86,12 +86,16 @@ jobs:
   generate-publish-docs:
     name: Generate and Publish docs
     needs: release
+<<<<<<< HEAD:.github/workflows/merge_main.yml
     if: github.ref_name == 'main'
     permissions:
       id-token: write
       contents: read
       pages: write
     uses: ./.github/workflows/publish_docs.yml
+=======
+    if: github.ref_name == 'release'
+    uses: ./.github/workflows/gh-pages.yml
+>>>>>>> b7ed9ad4d3c69dcb11db0cf93448a0bb16be2f7d:.github/workflows/release.yml
     secrets:
-      BOT_ID: ${{ secrets.BOT_ID }}
       BOT_SK: ${{ secrets.BOT_SK }}

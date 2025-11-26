@@ -5,8 +5,11 @@ on:
     secrets:
       BOT_SK:
         required: true
+<<<<<<< HEAD:.github/workflows/publish_docs.yml
       BOT_ID:
         required: true
+=======
+>>>>>>> b7ed9ad4d3c69dcb11db0cf93448a0bb16be2f7d:.github/workflows/docs.yml
 
   workflow_dispatch:
 
@@ -49,5 +52,10 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
+<<<<<<< HEAD:.github/workflows/publish_docs.yml
         env:
           GITHUB_TOKEN: ${{ steps.bot_app_token.outputs.token }}
+=======
+        with:
+          token: ${{ secrets.BOT_SK }}
+>>>>>>> b7ed9ad4d3c69dcb11db0cf93448a0bb16be2f7d:.github/workflows/docs.yml
