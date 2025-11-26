@@ -2,6 +2,10 @@ name: 'Run typedoc and publish to pages'
 
 on:
   workflow_call:
+    secrets:
+      BOT_SK:
+        required: true
+
   workflow_dispatch:
 
 jobs:
@@ -9,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
       id-token: write
     steps:
       - name: Checkout source code
@@ -33,3 +36,5 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.BOT_SK }}
