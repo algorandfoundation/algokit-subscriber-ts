@@ -1,0 +1,90 @@
+name: Build Documentation
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      DOCS_OUTPUT: docs-build
+      DOCS_BRANCH: docs-dist
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Prepare publish workspace
+        run: |
+          rm -rf docs-publish
+          if git ls-remote --exit-code origin "${DOCS_BRANCH}" > /dev/null 2>&1; then
+            git clone --depth 1 --branch "${DOCS_BRANCH}" "https://github.com/${GITHUB_REPOSITORY}.git" docs-publish
+            rm -rf docs-publish/.git
+          else
+            mkdir docs-publish
+          fi
+
+      - name: Build documentation
+        run: npx algo-docs build
+
+      - name: Generate manifest
+        run: npx algo-docs manifest
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-dist
+          path: ${{ env.DOCS_OUTPUT }}
+
+      - name: Determine docs target
+        id: docs_target
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            if [[ -z "${{ github.event.release.tag_name }}" ]]; then
+              echo "Release event missing tag_name" >&2
+              exit 1
+            fi
+            target="v${{ github.event.release.tag_name }}"
+            update_latest="true"
+          else
+            target="latest"
+            update_latest="false"
+          fi
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          echo "update_latest=$update_latest" >> "$GITHUB_OUTPUT"
+
+      - name: Stage docs for publish
+        run: |
+          target="${{ steps.docs_target.outputs.target }}"
+          folders=("$target")
+          if [[ "${{ steps.docs_target.outputs.update_latest }}" == "true" && "$target" != "latest" ]]; then
+            folders+=("latest")
+          fi
+
+          for folder in "${folders[@]}"; do
+            rm -rf "docs-publish/${folder}"
+            mkdir -p "docs-publish/${folder}"
+            cp -R "${DOCS_OUTPUT}/." "docs-publish/${folder}/"
+          done
+
+      - name: Publish docs branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs-publish
+          publish_branch: ${{ env.DOCS_BRANCH }}
+          keep_files: false
