@@ -1,6 +1,7 @@
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
-import { SendAtomicTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account, TransactionType } from 'algosdk'
+import { SendTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
+import type { Account } from '@algorandfoundation/algokit-utils/sdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { afterEach, beforeAll, beforeEach, describe, test } from 'vitest'
 import { TestingAppFactory } from '../contract/client'
 import { filterFixture } from '../filterFixture'
@@ -24,7 +25,7 @@ describe('Subscribing using various filters', () => {
       .send()
 
     return {
-      assetId: create.confirmations[0].assetIndex!,
+      assetId: create.confirmations[0].assetId!,
       ...create,
     }
   }
@@ -42,7 +43,7 @@ describe('Subscribing using various filters', () => {
         testAccount: Account
         account2: Account
         account3: Account
-        txns: SendAtomicTransactionComposerResults
+        txns: SendTransactionComposerResults
       }
     | undefined = undefined
   const algoTransfersFixture = async () => {
@@ -173,7 +174,7 @@ describe('Subscribing using various filters', () => {
         asset1: Awaited<ReturnType<typeof createAsset>>
         asset2: Awaited<ReturnType<typeof createAsset>>
         testAccount: Account
-        txns: SendAtomicTransactionComposerResults
+        txns: SendTransactionComposerResults
       }
     | undefined = undefined
   const assetsFixture = async () => {
@@ -262,7 +263,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr.toString(),
-          type: TransactionType.axfer,
+          type: TransactionType.AssetTransfer,
         },
         [
           extractFromGroupResult(txns, 0),
@@ -275,7 +276,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr.toString(),
-          type: TransactionType.acfg,
+          type: TransactionType.AssetConfig,
         },
         extractFromGroupResult(txns, 2),
       )
@@ -283,7 +284,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr.toString(),
-          type: [TransactionType.acfg, TransactionType.axfer],
+          type: [TransactionType.AssetConfig, TransactionType.AssetTransfer],
         },
         [
           extractFromGroupResult(txns, 0),
@@ -300,7 +301,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          type: TransactionType.axfer,
+          type: TransactionType.AssetTransfer,
           sender: testAccount.addr.toString(),
           minAmount: 2,
         },
@@ -313,7 +314,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          type: TransactionType.axfer,
+          type: TransactionType.AssetTransfer,
           sender: testAccount.addr.toString(),
           maxAmount: 1,
         },
@@ -326,7 +327,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          type: TransactionType.axfer,
+          type: TransactionType.AssetTransfer,
           sender: testAccount.addr.toString(),
           maxAmount: 1,
           assetId: asset1.assetId,
@@ -340,7 +341,7 @@ describe('Subscribing using various filters', () => {
 
       await subscribeAndVerifyFilter(
         {
-          type: TransactionType.axfer,
+          type: TransactionType.AssetTransfer,
           sender: testAccount.addr.toString(),
           minAmount: 1,
           maxAmount: 1,
@@ -356,7 +357,7 @@ describe('Subscribing using various filters', () => {
         app1: Awaited<ReturnType<TestingAppFactory['send']['create']['bare']>>
         app2: Awaited<ReturnType<TestingAppFactory['send']['create']['bare']>>
         testAccount: Account
-        txns: SendAtomicTransactionComposerResults
+        txns: SendTransactionComposerResults
       }
     | undefined = undefined
   const appsFixture = async () => {

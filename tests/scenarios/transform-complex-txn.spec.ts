@@ -1,4 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { getTransactionId } from '@algorandfoundation/algokit-utils/transact'
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
 import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
@@ -362,14 +363,14 @@ describe('Complex transaction with many nested inner transactions', () => {
   })
 
   it('Can be processed correctly from algod raw block', async () => {
-    const txn = await algorand.client.indexer.lookupTransactionByID(txnId).do()
+    const txn = await algorand.client.indexer.lookupTransactionById(txnId)
     const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
     const intraRoundOffset = txn.transaction.intraRoundOffset!
 
     const transformed = getBlockTransactions(b)
 
     const receivedTxn = transformed[intraRoundOffset]
-    expect(receivedTxn.transaction.txID()).toBe(txnId)
+    expect(getTransactionId(receivedTxn.transaction)).toBe(txnId)
 
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/
     expect(getTransactionInBlockForDiff(receivedTxn)).toMatchInlineSnapshot(`
@@ -783,7 +784,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
-    expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
+    expect(transaction.id).toBe(getTransactionId(blockTransactions[0].transaction))
   })
 
   it('Produces the correct state deltas in an app call transaction', async () => {

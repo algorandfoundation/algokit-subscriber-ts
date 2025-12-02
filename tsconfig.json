@@ -20,5 +20,6 @@
     "isolatedModules": true,
     "resolveJsonModule": true
   },
-  "include": ["examples/**/*.ts", "src/**/*.ts", "tests/**/*.ts", "rollup/**/*.ts", "rollup.config.ts"]
+  "include": ["examples/**/*.ts", "src/**/*.ts", "tests/**/*.ts", "rollup/**/*.ts", "rollup.config.ts"],
+  "exclude": ["examples/xgov-voting/**/*.ts"]
 }

@@ -1,5 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { describe, expect, it } from 'vitest'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions } from '../transactions'
@@ -13,7 +13,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.keyreg,
+          type: TransactionType.KeyRegistration,
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
         roundsToSync: 1,
@@ -79,7 +79,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.keyreg,
+          type: TransactionType.KeyRegistration,
           sender: 'HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY',
         },
         roundsToSync: 1,

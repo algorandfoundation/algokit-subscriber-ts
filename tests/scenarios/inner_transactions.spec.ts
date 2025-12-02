@@ -1,6 +1,7 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account, TransactionType } from 'algosdk'
+import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
+import type { Account } from '@algorandfoundation/algokit-utils/sdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { TransactionFilter } from '../../src/types'
 import { app } from '../testing-app'
@@ -58,7 +59,7 @@ describe('Inner transactions', () => {
   }
 
   const extractFromGroupResult = (
-    groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>,
+    groupResult: Omit<SendTransactionComposerResults, 'returns'>,
     index: number,
     innerTransactionIndex?: number,
   ) => {
@@ -102,7 +103,7 @@ describe('Inner transactions', () => {
 
     await subscribeAndVerifyFilter(
       {
-        type: TransactionType.pay,
+        type: TransactionType.Payment,
         receiver: testAccount.addr.toString(),
         maxAmount: 1,
       },

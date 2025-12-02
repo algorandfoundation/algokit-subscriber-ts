@@ -1,8 +1,8 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { AlgorandFixture, AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
-import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import type { Account, Transaction } from 'algosdk'
-import algosdk from 'algosdk'
+import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
+import type { Account } from '@algorandfoundation/algokit-utils/sdk'
+import type { PendingTransactionResponseWrapper, TransactionWrapper } from '@algorandfoundation/algokit-utils/types/transaction'
 import { expect, vitest } from 'vitest'
 import { Arc28EventGroup, SubscribedTransaction, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
 import { GetSubscribedTransactions, SendXTransactions } from './transactions'
@@ -36,11 +36,11 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     arc28Events?: Arc28EventGroup[],
   ) => Promise<{ algod: TransactionSubscriptionResult; indexer: TransactionSubscriptionResult }>
   extractFromGroupResult: (
-    groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>,
+    groupResult: Omit<SendTransactionComposerResults, 'returns'>,
     index: number,
   ) => {
-    transaction: Transaction
-    confirmation: algosdk.modelsv2.PendingTransactionResponse
+    transaction: TransactionWrapper
+    confirmation: PendingTransactionResponseWrapper | undefined
   }
   beforeEach: () => Promise<void>
   beforeAll: () => Promise<void>
@@ -122,7 +122,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     return { algod, indexer }
   }
 
-  const extractFromGroupResult = (groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>, index: number) => {
+  const extractFromGroupResult = (groupResult: Omit<SendTransactionComposerResults, 'returns'>, index: number) => {
     return {
       transaction: groupResult.transactions[index],
       confirmation: groupResult.confirmations?.[index],
