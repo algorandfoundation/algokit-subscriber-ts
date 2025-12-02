@@ -1,5 +1,8 @@
-import { Config, SearchForTransactions, searchTransactions } from '@algorandfoundation/algokit-utils'
-import algosdk from 'algosdk'
+import { Config, indexer } from '@algorandfoundation/algokit-utils'
+import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
+import type { IndexerClient, Transaction as IndexerTransaction } from '@algorandfoundation/algokit-utils/indexer-client'
+import { ABITupleType, type ABIValue } from '@algorandfoundation/algokit-utils/abi'
+import { TransactionType, OnApplicationComplete } from '@algorandfoundation/algokit-utils/transact'
 import { Buffer } from 'buffer'
 import sha512, { sha512_256 } from 'js-sha512'
 import { getBlocksBulk } from './block'
@@ -16,7 +19,7 @@ import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './
 import type { TransactionInBlock } from './types/block'
 import {
   BlockMetadata,
-  SubscribedTransaction,
+  type SubscribedTransaction,
   type BalanceChange,
   type NamedTransactionFilter,
   type TransactionFilter,
@@ -24,12 +27,8 @@ import {
   type TransactionSubscriptionResult,
 } from './types/subscription'
 import { chunkArray } from './utils'
-import ABITupleType = algosdk.ABITupleType
-import ABIValue = algosdk.ABIValue
-import Algodv2 = algosdk.Algodv2
-import Indexer = algosdk.Indexer
-import TransactionType = algosdk.TransactionType
-import OnApplicationComplete = algosdk.OnApplicationComplete
+
+type SearchForTransactionsCriteria = Parameters<typeof indexer.searchTransactions>[1]
 
 const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: SubscribedTransaction[], t: SubscribedTransaction) => {
   const existing = dedupedTransactions.find((e) => e.id === t.id)
@@ -55,12 +54,12 @@ const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: Subscribe
  */
 export async function getSubscribedTransactions(
   subscription: TransactionSubscriptionParams,
-  algod: Algodv2,
-  indexer?: Indexer,
+  algod: AlgodClient,
+  indexerClient?: IndexerClient,
 ): Promise<TransactionSubscriptionResult> {
   const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds, currentRound: _currentRound } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
-  const currentRound = _currentRound ?? (await algod.status().do()).lastRound
+  const currentRound = _currentRound ?? (await algod.getStatus()).lastRound
   let blockMetadata: BlockMetadata[] | undefined
 
   // Pre-calculate a flat list of all ARC-28 events to process
@@ -123,7 +122,7 @@ export async function getSubscribedTransactions(
         }
         break
       case 'catchup-with-indexer':
-        if (!indexer) {
+        if (!indexerClient) {
           throw new Error("Can't catch up using indexer since it's not provided")
         }
 
@@ -149,7 +148,7 @@ export async function getSubscribedTransactions(
                 // For each filter
                 chunkedFilters.map(async (f) =>
                   // Retrieve all pre-filtered transactions from the indexer
-                  (await searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
+                  (await indexer.searchTransactions(indexerClient, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
                     // Re-run the pre-filter in-memory so we properly extract inner transactions
                     .flatMap((t) => getFilteredIndexerTransactions(t, f))
                     // Run the post-filter so we get the final list of matching transactions
@@ -231,17 +230,17 @@ function processExtraFields(
   arc28Groups: Arc28EventGroup[],
 ): SubscribedTransaction {
   const groupsToApply =
-    transaction.txType !== TransactionType.appl
+    transaction.txType !== 'appl'
       ? []
       : arc28Groups.filter((g) =>
           transactionIsInArc28EventGroup(
             g,
-            transaction.createdApplicationIndex ?? transaction.applicationTransaction?.applicationId ?? 0n,
+            transaction.createdAssetId ?? transaction.applicationTransaction?.applicationId ?? 0n,
             () => transaction,
           ),
         )
   const eventsToApply = groupsToApply.length > 0 ? arc28Events.filter((e) => groupsToApply.some((g) => g.groupName === e.groupName)) : []
-  return new SubscribedTransaction({
+  return {
     ...transaction,
     arc28Events: extractArc28Events(
       transaction.id,
@@ -251,7 +250,7 @@ function processExtraFields(
     ),
     balanceChanges: extractBalanceChangesFromIndexerTransaction(transaction),
     innerTxns: transaction.innerTxns?.map((inner) => processExtraFields(inner, arc28Events, arc28Groups)),
-  })
+  }
 }
 
 function hasEmittedMatchingArc28Event(
@@ -331,48 +330,52 @@ function indexerPreFilter(
   subscription: TransactionFilter,
   minRound: bigint,
   maxRound: bigint,
-): (s: SearchForTransactions) => SearchForTransactions {
-  return (s) => {
-    // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
-    let filter = s
-    if (subscription.sender && typeof subscription.sender === 'string') {
-      filter = filter.address(subscription.sender).addressRole('sender')
-    }
-    if (subscription.receiver && typeof subscription.receiver === 'string') {
-      filter = filter.address(subscription.receiver).addressRole('receiver')
-    }
-    if (subscription.type && typeof subscription.type === 'string') {
-      filter = filter.txType(subscription.type.toString())
-    }
-    if (subscription.notePrefix) {
-      filter = filter.notePrefix(Buffer.from(subscription.notePrefix).toString('base64'))
-    }
-    if (subscription.appId && typeof subscription.appId === 'bigint') {
-      filter = filter.applicationID(subscription.appId)
-    }
-    if (subscription.assetId && typeof subscription.assetId === 'bigint') {
-      filter = filter.assetID(subscription.assetId)
-    }
-
-    // Indexer only supports minAmount and maxAmount for non-payments if an asset ID is provided so check
-    //  we are looking for just payments, or we have provided asset ID before adding to pre-filter
-    //  if they aren't added here they will be picked up in the in-memory pre-filter
-    if (subscription.minAmount && (subscription.type === TransactionType.pay || subscription.assetId)) {
-      // Indexer only supports numbers, but even though this is less precise the in-memory indexer pre-filter will remove any false positives
-      filter = filter.currencyGreaterThan(
-        subscription.minAmount > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : Number(subscription.minAmount) - 1,
-      )
-    }
-    if (
-      subscription.maxAmount &&
-      subscription.maxAmount < Number.MAX_SAFE_INTEGER &&
-      // Only let an asset currency max search work when there is also a min > 0 otherwise opt-ins aren't picked up by the pre-filter :(
-      (subscription.type === TransactionType.pay || (subscription.assetId && (subscription?.minAmount ?? 0) > 0))
-    ) {
-      filter = filter.currencyLessThan(Number(subscription.maxAmount) + 1)
-    }
-    return filter.minRound(minRound).maxRound(maxRound)
+): SearchForTransactionsCriteria {
+  // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
+  const criteria: SearchForTransactionsCriteria = {
+    minRound,
+    maxRound,
   }
+
+  if (subscription.sender && typeof subscription.sender === 'string') {
+    criteria.address = subscription.sender
+    criteria.addressRole = 'sender'
+  }
+  if (subscription.receiver && typeof subscription.receiver === 'string') {
+    criteria.address = subscription.receiver
+    criteria.addressRole = 'receiver'
+  }
+  if (subscription.type && typeof subscription.type === 'string') {
+    criteria.txType = subscription.type.toString() as SearchForTransactionsCriteria['txType']
+  }
+  if (subscription.notePrefix) {
+    criteria.notePrefix = Buffer.from(subscription.notePrefix).toString('base64')
+  }
+  if (subscription.appId && typeof subscription.appId === 'bigint') {
+    criteria.applicationId = subscription.appId
+  }
+  if (subscription.assetId && typeof subscription.assetId === 'bigint') {
+    criteria.assetId = subscription.assetId
+  }
+
+  // Indexer only supports minAmount and maxAmount for non-payments if an asset ID is provided so check
+  //  we are looking for just payments, or we have provided asset ID before adding to pre-filter
+  //  if they aren't added here they will be picked up in the in-memory pre-filter
+  if (subscription.minAmount && (subscription.type === TransactionType.Payment || subscription.assetId)) {
+    // Indexer only supports numbers, but even though this is less precise the in-memory indexer pre-filter will remove any false positives
+    criteria.currencyGreaterThan =
+      subscription.minAmount > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : Number(subscription.minAmount) - 1
+  }
+  if (
+    subscription.maxAmount &&
+    subscription.maxAmount < Number.MAX_SAFE_INTEGER &&
+    // Only let an asset currency max search work when there is also a min > 0 otherwise opt-ins aren't picked up by the pre-filter :(
+    (subscription.type === TransactionType.Payment || (subscription.assetId && (subscription?.minAmount ?? 0) > 0))
+  ) {
+    criteria.currencyLessThan = Number(subscription.maxAmount) + 1
+  }
+
+  return criteria
 }
 
 function indexerPreFilterInMemory(subscription: TransactionFilter): (t: SubscribedTransaction) => boolean {
@@ -407,24 +410,24 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Subscrib
     if (subscription.appId) {
       if (typeof subscription.appId === 'bigint') {
         result &&=
-          t.createdApplicationIndex === subscription.appId ||
+          t.createdAppId === subscription.appId ||
           (!!t.applicationTransaction && t.applicationTransaction.applicationId === subscription.appId)
       } else {
         result &&=
-          (t.createdApplicationIndex && subscription.appId.includes(t.createdApplicationIndex)) ||
+          (t.createdAppId && subscription.appId.includes(t.createdAppId)) ||
           (!!t.applicationTransaction && subscription.appId.includes(t.applicationTransaction.applicationId))
       }
     }
     if (subscription.assetId) {
       if (typeof subscription.assetId === 'bigint') {
         result &&=
-          t.createdAssetIndex === subscription.assetId ||
+          t.createdAssetId === subscription.assetId ||
           (!!t.assetConfigTransaction && t.assetConfigTransaction.assetId === subscription.assetId) ||
           (!!t.assetFreezeTransaction && t.assetFreezeTransaction.assetId === subscription.assetId) ||
           (!!t.assetTransferTransaction && t.assetTransferTransaction.assetId === subscription.assetId)
       } else {
         result &&=
-          (t.createdAssetIndex && subscription.assetId.includes(t.createdAssetIndex)) ||
+          (t.createdAssetId && subscription.assetId.includes(t.createdAssetId)) ||
           (!!t.assetConfigTransaction &&
             t.assetConfigTransaction.assetId !== undefined &&
             subscription.assetId.includes(t.assetConfigTransaction.assetId)) ||
@@ -456,14 +459,14 @@ function indexerPostFilter(
   return (t) => {
     let result = true
     if (subscription.assetCreate) {
-      result &&= !!t.createdAssetIndex
+      result &&= !!t.createdAssetId
     } else if (subscription.assetCreate === false) {
-      result &&= !t.createdAssetIndex
+      result &&= !t.createdAssetId
     }
     if (subscription.appCreate) {
-      result &&= !!t.createdApplicationIndex
+      result &&= !!t.createdAppId
     } else if (subscription.appCreate === false) {
-      result &&= !t.createdApplicationIndex
+      result &&= !t.createdAppId
     }
     if (subscription.appOnComplete) {
       result &&=
@@ -494,7 +497,9 @@ function indexerPostFilter(
       }
     }
     if (subscription.appCallArgumentsMatch) {
-      result &&= !!t.applicationTransaction && subscription.appCallArgumentsMatch(t.applicationTransaction.applicationArgs ?? [])
+      result &&= !!t.applicationTransaction && subscription.appCallArgumentsMatch(
+        (t.applicationTransaction.applicationArgs ?? []).map((arg) => Buffer.from(arg, 'base64'))
+      )
     }
     if (subscription.arc28Events) {
       result &&=
@@ -505,7 +510,7 @@ function indexerPostFilter(
           arc28Events,
           arc28EventGroups,
           subscription.arc28Events,
-          t.createdApplicationIndex ?? t.applicationTransaction?.applicationId ?? 0,
+          t.createdAppId ?? t.applicationTransaction?.applicationId ?? 0n,
           () => t,
         )
     }
@@ -560,7 +565,7 @@ function transactionFilter(
       result &&= !!t.note && new TextDecoder().decode(t.note).startsWith(subscription.notePrefix)
     }
     if (subscription.appId) {
-      const appId = t.applicationCall?.appIndex
+      const appId = t.appCall?.appId
       if (typeof subscription.appId === 'bigint') {
         result &&= appId === subscription.appId || createdAppId === subscription.appId
       } else {
@@ -568,7 +573,7 @@ function transactionFilter(
       }
     }
     if (subscription.assetId) {
-      const assetId = t.assetTransfer?.assetIndex ?? t.assetConfig?.assetIndex ?? t.assetFreeze?.assetIndex
+      const assetId = t.assetTransfer?.assetId ?? t.assetConfig?.assetId ?? t.assetFreeze?.assetId
       if (typeof subscription.assetId === 'bigint') {
         result &&= assetId === subscription.assetId || createdAssetId === subscription.assetId
       } else {
@@ -577,12 +582,12 @@ function transactionFilter(
       }
     }
     if (subscription.minAmount) {
-      const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0
-      result &&= [TransactionType.axfer, TransactionType.pay].includes(t.type) && amount >= subscription.minAmount
+      const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0n
+      result &&= [TransactionType.AssetTransfer, TransactionType.Payment].includes(t.type) && amount >= subscription.minAmount
     }
     if (subscription.maxAmount) {
-      const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0
-      result &&= [TransactionType.axfer, TransactionType.pay].includes(t.type) && amount <= subscription.maxAmount
+      const amount = t.payment?.amount ?? t.assetTransfer?.amount ?? 0n
+      result &&= [TransactionType.AssetTransfer, TransactionType.Payment].includes(t.type) && amount <= subscription.maxAmount
     }
     if (subscription.assetCreate) {
       result &&= !!createdAssetId
@@ -597,12 +602,12 @@ function transactionFilter(
     if (subscription.appOnComplete) {
       result &&= (typeof subscription.appOnComplete === 'string' ? [subscription.appOnComplete] : subscription.appOnComplete).includes(
         algodOnCompleteToIndexerOnComplete(
-          t.applicationCall?.onComplete ?? OnApplicationComplete.NoOpOC /* the '0' value comes through as undefined */,
+          t.appCall?.onComplete ?? OnApplicationComplete.NoOp /* the '0' value comes through as undefined */,
         ),
       )
     }
     if (subscription.methodSignature) {
-      const firstAppCallArg = t.applicationCall?.appArgs?.[0]
+      const firstAppCallArg = t.appCall?.args?.[0]
       if (typeof subscription.methodSignature === 'string') {
         result &&=
           !!firstAppCallArg && Buffer.from(firstAppCallArg).toString('base64') === getMethodSelectorBase64(subscription.methodSignature)
@@ -616,19 +621,19 @@ function transactionFilter(
     }
     if (subscription.arc28Events) {
       result &&=
-        t.type === TransactionType.appl &&
+        t.type === TransactionType.AppCall &&
         !!logs &&
         hasEmittedMatchingArc28Event(
           logs,
           arc28Events,
           arc28EventGroups,
           subscription.arc28Events,
-          createdAppId ?? t.applicationCall?.appIndex ?? 0n,
+          createdAppId ?? t.appCall?.appId ?? 0n,
           () => getIndexerTransactionFromAlgodTransaction(txn),
         )
     }
     if (subscription.appCallArgumentsMatch) {
-      result &&= subscription.appCallArgumentsMatch(t.applicationCall?.appArgs)
+      result &&= subscription.appCallArgumentsMatch(t.appCall?.args)
     }
     if (subscription.balanceChanges) {
       const balanceChanges = extractBalanceChangesFromBlockTransaction(txn.signedTxnWithAD)
@@ -668,19 +673,19 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
  * that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through.
  */
 function getFilteredIndexerTransactions(
-  transaction: algosdk.indexerModels.Transaction,
+  transaction: IndexerTransaction,
   filter: NamedTransactionFilter,
 ): SubscribedTransaction[] {
   let rootOffset = 0
   const getRootOffset = () => rootOffset++
 
   const innerTransactions = getIndexerInnerTransactions(transaction, transaction, getRootOffset)
-  const rootTransaction = new SubscribedTransaction({
+  const rootTransaction: SubscribedTransaction = {
     ...transaction,
     id: transaction.id!,
     innerTxns: innerTransactions,
     filtersMatched: [filter.name],
-  })
+  }
 
   const transactions = [rootTransaction, ...innerTransactions] satisfies SubscribedTransaction[]
 
@@ -689,25 +694,25 @@ function getFilteredIndexerTransactions(
 
 /** Return a transaction and its inner transactions as an array of `SubscribedTransaction` objects. */
 function getIndexerInnerTransactions(
-  root: algosdk.indexerModels.Transaction,
-  parent: algosdk.indexerModels.Transaction,
+  root: IndexerTransaction,
+  parent: IndexerTransaction,
   getRootOffset: () => number,
 ): SubscribedTransaction[] {
-  return (parent.innerTxns ?? []).flatMap((t) => {
+  return (parent.innerTxns ?? []).flatMap((t): SubscribedTransaction[] => {
     const rootOffset = getRootOffset() + 1
     const intraRoundOffset = root.intraRoundOffset! + rootOffset
     const transactionId = `${root.id}/inner/${rootOffset}`
 
     const innerTransactions = getIndexerInnerTransactions(root, t, getRootOffset)
 
-    const transaction = new SubscribedTransaction({
+    const transaction: SubscribedTransaction = {
       ...t,
       id: transactionId,
       parentTransactionId: root.id,
       parentIntraRoundOffset: root.intraRoundOffset!,
       intraRoundOffset: intraRoundOffset,
       innerTxns: innerTransactions,
-    })
+    }
 
     return [transaction, ...innerTransactions] satisfies SubscribedTransaction[]
   })
