@@ -1,5 +1,6 @@
 import { Config } from '@algorandfoundation/algokit-utils'
-import algosdk from 'algosdk'
+import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
+import type { IndexerClient } from '@algorandfoundation/algokit-utils/indexer-client'
 import { getSubscribedTransactions } from './subscriptions'
 import { AsyncEventEmitter, AsyncEventListener } from './types/async-event-emitter'
 import type {
@@ -11,15 +12,13 @@ import type {
   TypedAsyncEventListener,
 } from './types/subscription'
 import { race, sleep } from './utils'
-import Algodv2 = algosdk.Algodv2
-import Indexer = algosdk.Indexer
 
 /**
  * Handles the logic for subscribing to the Algorand blockchain and emitting events.
  */
 export class AlgorandSubscriber {
-  private algod: Algodv2
-  private indexer: Indexer | undefined
+  private algod: AlgodClient
+  private indexer: IndexerClient | undefined
   private config: AlgorandSubscriberConfig
   private abortController: AbortController
   private eventEmitter: AsyncEventEmitter
@@ -38,7 +37,7 @@ export class AlgorandSubscriber {
    * @param algod An algod client
    * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
    */
-  constructor(config: AlgorandSubscriberConfig, algod: Algodv2, indexer?: Indexer) {
+  constructor(config: AlgorandSubscriberConfig, algod: AlgodClient, indexer?: IndexerClient) {
     this.algod = algod
     this.indexer = indexer
     this.config = config
@@ -67,7 +66,7 @@ export class AlgorandSubscriber {
   async pollOnce(): Promise<TransactionSubscriptionResult> {
     const watermark = await this.config.watermarkPersistence.get()
 
-    const currentRound = (await this.algod.status().do()).lastRound
+    const currentRound = (await this.algod.getStatus()).lastRound
     await this.eventEmitter.emitAsync('before:poll', {
       watermark,
       currentRound,
@@ -145,7 +144,7 @@ export class AlgorandSubscriber {
           // Despite what the `statusAfterBlock` method description suggests, you need to wait for the round before
           //  the round you are waiting for per the API description:
           //  https://dev.algorand.co/reference/rest-apis/algod/#waitforblock
-          await race(this.algod.statusAfterBlock(result.currentRound).do(), this.abortController.signal)
+          await race(this.algod.statusAfterBlock(Number(result.currentRound)), this.abortController.signal)
           Config.getLogger(suppressLog).info(`Waited for ${(+new Date() - waitStart) / 1000}s until next block`)
         }
       }
