@@ -1,9 +1,8 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import algosdk from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
-import TransactionType = algosdk.TransactionType
 
 if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
@@ -21,7 +20,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
         {
           name: 'usdc',
           filter: {
-            type: TransactionType.axfer,
+            type: TransactionType.AssetTransfer,
             assetId: 31566704n, // MainNet: USDC
             minAmount: 1_000_000n, // $1
           },

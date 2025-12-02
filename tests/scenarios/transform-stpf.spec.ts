@@ -1,5 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { describe, expect, it } from 'vitest'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions } from '../transactions'
@@ -13,7 +13,7 @@ describe('State proof transaction', () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.stpf,
+          type: TransactionType.StateProof,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,
@@ -2107,7 +2107,7 @@ describe('State proof transaction', () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.stpf,
+          type: TransactionType.StateProof,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,

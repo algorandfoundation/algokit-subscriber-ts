@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { Account } from 'algosdk'
+import type { Account } from '@algorandfoundation/algokit-utils/sdk'
 import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig } from '../../src/types'
@@ -240,7 +240,7 @@ describe('AlgorandSubscriber', () => {
 
   test('Waits until transaction appears by default when started', async () => {
     const { algorand, testAccount } = localnet.context
-    const currentRound = (await algorand.client.algod.status().do()).lastRound
+    const currentRound = (await algorand.client.algod.getStatus()).lastRound
     const {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,

@@ -1,5 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { describe, expect, it } from 'vitest'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions } from '../transactions'
@@ -33,7 +33,7 @@ describe('Asset config transaction', () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.acfg,
+          type: TransactionType.AssetConfig,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,
@@ -52,7 +52,7 @@ describe('Asset config transaction', () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.acfg,
+          type: TransactionType.AssetConfig,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,

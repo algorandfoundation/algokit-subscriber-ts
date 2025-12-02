@@ -1,6 +1,7 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account, Transaction } from 'algosdk'
+import type { Account } from '@algorandfoundation/algokit-utils/sdk'
+import type { Transaction } from '@algorandfoundation/algokit-utils/transact'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {
@@ -49,16 +50,12 @@ export const GetSubscribedTransactions = (
   const { roundsToSync, indexerRoundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
 
   if (currentRound !== undefined) {
-    const existingStatus = algorand.client.algod.status
+    const existingGetStatus = algorand.client.algod.getStatus
     Object.assign(algorand.client.algod, {
-      status: vi.fn().mockImplementation(() => {
-        return {
-          do: async () => {
-            const status = await existingStatus.apply(algorand.client.algod).do()
-            status.lastRound = currentRound
-            return status
-          },
-        }
+      getStatus: vi.fn().mockImplementation(async () => {
+        const status = await existingGetStatus.apply(algorand.client.algod)
+        status.lastRound = currentRound
+        return status
       }),
     })
   }
@@ -117,16 +114,16 @@ export function getTransactionInBlockForDiff(transaction: TransactionInBlock) {
 export function getTransactionForDiff(transaction: Transaction) {
   const t = {
     ...transaction,
-    applicationCall: transaction.applicationCall
+    appCall: transaction.appCall
       ? {
-          ...transaction.applicationCall,
-          accounts: transaction.applicationCall?.accounts?.map((a) => a.toString()),
-          appArgs: transaction.applicationCall?.appArgs?.map((a) => Buffer.from(a).toString('base64')),
-          approvalProgram: transaction.applicationCall?.approvalProgram
-            ? Buffer.from(transaction.applicationCall.approvalProgram).toString('base64')
+          ...transaction.appCall,
+          accountReferences: transaction.appCall?.accountReferences?.map((a: { toString: () => string }) => a.toString()),
+          args: transaction.appCall?.args?.map((a: Uint8Array) => Buffer.from(a).toString('base64')),
+          approvalProgram: transaction.appCall?.approvalProgram
+            ? Buffer.from(transaction.appCall.approvalProgram).toString('base64')
             : undefined,
-          clearProgram: transaction.applicationCall?.clearProgram
-            ? Buffer.from(transaction.applicationCall.clearProgram).toString('base64')
+          clearStateProgram: transaction.appCall?.clearStateProgram
+            ? Buffer.from(transaction.appCall.clearStateProgram).toString('base64')
             : undefined,
         }
       : undefined,

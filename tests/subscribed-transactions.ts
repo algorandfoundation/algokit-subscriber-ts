@@ -1,4 +1,4 @@
-import { Address } from 'algosdk'
+import { Address } from '@algorandfoundation/algokit-utils/common'
 import type { SubscribedTransaction } from '../src/types'
 
 // Standardise objects to make them easier to compare
