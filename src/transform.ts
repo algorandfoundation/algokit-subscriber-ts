@@ -4,14 +4,12 @@ import type {
   Block,
   SignedTxnWithAD,
   SignedTxnInBlock,
-  BlockHeader,
 } from '@algorandfoundation/algokit-utils/algod-client'
 import {
   Transaction,
   TransactionType,
   OnApplicationComplete,
   getTransactionId,
-  SignedTransaction,
 } from '@algorandfoundation/algokit-utils/transact'
 import { decodeAddress, ALGORAND_ZERO_ADDRESS_STRING } from '@algorandfoundation/algokit-utils/common'
 import { Buffer } from 'buffer'
@@ -75,8 +73,8 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
     const genesisId = signedTransactionInBlock.hasGenesisId ? block.header.genesisId : undefined
 
     const signedTxnWithAD: SignedTxnWithAD = {
-      signedTxn: signedTransactionInBlock.signedTransaction.signedTxn,
-      applyData: signedTransactionInBlock.signedTransaction.applyData,
+      signedTxn: signedTransactionInBlock.signedTxn.signedTxn,
+      applyData: signedTransactionInBlock.signedTxn.applyData,
     }
 
     const rootTransactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD, genesisHash, genesisId)
@@ -119,8 +117,8 @@ function getBlockInnerTransactions(
   genesisHash?: Buffer,
 ): TransactionInBlock[] {
   const signedTxnWithAD: SignedTxnWithAD = {
-    signedTxn: signedTxnInBlock.signedTransaction.signedTxn,
-    applyData: signedTxnInBlock.signedTransaction.applyData,
+    signedTxn: signedTxnInBlock.signedTxn.signedTxn,
+    applyData: signedTxnInBlock.signedTxn.applyData,
   }
   const transactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD, genesisHash)
   const offset = getParentOffset() + 1
@@ -474,8 +472,8 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
         const innerTransactionId = `${parentTransactionId}/inner/${childIntraRoundOffset - (parentIntraRoundOffset ?? intraRoundOffset)}`
 
         const innerSignedTxnWithAD: SignedTxnWithAD = {
-          signedTxn: innerTxn.signedTransaction.signedTxn,
-          applyData: innerTxn.signedTransaction.applyData,
+          signedTxn: innerTxn.signedTxn.signedTxn,
+          applyData: innerTxn.signedTxn.applyData,
         }
 
         return getIndexerTransactionFromAlgodTransaction({
@@ -684,7 +682,7 @@ export function blockResponseToBlockMetadata(blockResponse: BlockResponse): Bloc
 
 function countAllTransactions(txns: SignedTxnInBlock[]): number {
   return txns.reduce((sum, txn) => {
-    const innerTxns = txn.signedTransaction.applyData?.evalDelta?.innerTxns ?? []
+    const innerTxns = txn.signedTxn.applyData?.evalDelta?.innerTxns ?? []
     return sum + 1 + countAllTransactions(innerTxns)
   }, 0)
 }
