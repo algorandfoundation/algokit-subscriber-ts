@@ -1,7 +1,7 @@
-import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
-import { SendTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
 import type { Account } from '@algorandfoundation/algokit-utils/sdk'
 import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
+import { SendTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
 import { afterEach, beforeAll, beforeEach, describe, test } from 'vitest'
 import { TestingAppFactory } from '../contract/client'
 import { filterFixture } from '../filterFixture'
@@ -405,7 +405,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr.toString(),
-          appId: app1.result.confirmation!.applicationIndex!,
+          appId: app1.result.confirmation!.appId!,
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 3)],
       )
@@ -413,7 +413,7 @@ describe('Subscribing using various filters', () => {
       await subscribeAndVerifyFilter(
         {
           sender: testAccount.addr.toString(),
-          appId: [app1.result.confirmation!.applicationIndex!, app2.result.confirmation!.applicationIndex!],
+          appId: [app1.result.confirmation!.appId!, app2.result.confirmation!.appId!],
         },
         [extractFromGroupResult(txns, 0), extractFromGroupResult(txns, 1), extractFromGroupResult(txns, 3)],
       )
