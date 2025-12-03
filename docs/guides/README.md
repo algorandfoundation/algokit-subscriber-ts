@@ -2,7 +2,21 @@
 
 This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism. It allows you to quickly create Node.js or JavaScript services that follow or subscribe to the Algorand Blockchain.
 
-[Documentation](./index.md)
+## Guides
+
+- [README](README.md)
+- [Subscribers](subscribers.md)
+- [Subscriptions](subscriptions.md)
+- [v3-migration](v3-migration.md)
+
+## API Docs
+
+- [index](../api/index/README.md)
+- [types](../api/types/README.md)
+- [types/arc-28](../api/types/arc-28/README.md)
+- [types/async-event-emitter](../api/types/async-event-emitter/README.md)
+- [types/block](../api/types/block/README.md)
+- [types/subscription](../api/types/subscription/README.md)
 
 ## Install
 
