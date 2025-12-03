@@ -1,5 +1,47 @@
 # Algorand transaction subscription / indexing
 
+This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism. It allows you to quickly create Node.js or JavaScript services that follow or subscribe to the Algorand Blockchain.
+
+## Guides
+
+- [README](README.md)
+- [Subscribers](subscribers.md)
+- [Subscriptions](subscriptions.md)
+- [v3-migration](v3-migration.md)
+
+## API Docs
+
+- [index](../api/index/README.md)
+- [types](../api/types/README.md)
+- [types/arc-28](../api/types/arc-28/README.md)
+- [types/async-event-emitter](../api/types/async-event-emitter/README.md)
+- [types/block](../api/types/block/README.md)
+- [types/subscription](../api/types/subscription/README.md)
+
+## Install
+
+Before installing, you'll need to decide on the version you want to target. Version 2 and 3 have largerly the same feature set, however v2 leverages algosdk@>=2.9.0<3.0, whereas v3 leverages algosdk@>=3.0.0. It is recommended that you aim to target the latest version, however in some circumstances that might not be possible.
+
+Once you've decided on the target version, this library can be installed from NPM using your favourite npm client, e.g.:
+
+To target algosdk@2 and use version 2 of AlgoKit Subscriber, run the below:
+
+```
+npm install algosdk@^2.10.0 @algorandfoundation/algokit-utils@^7.1.0 @algorandfoundation/algokit-subscriber@^2.2.0
+```
+
+To target algosdk@3 and use the latest version of AlgoKit Subscriber, run the below:
+
+```
+npm install algosdk@^3.1.0 @algorandfoundation/algokit-utils @algorandfoundation/algokit-subscriber
+```
+
+## Migration
+
+Whilst we aim to minimise breaking changes, there are situations where they are required.
+
+If you're migrating from an older version to v3, please refer to the [v3 migration guide](./v3-migration.md).
+
 ## Quick start
 
 ```typescript
@@ -42,6 +84,10 @@ subscriber.pollOnce()
 ## Capabilities
 
 - [Algorand transaction subscription / indexing](#algorand-transaction-subscription--indexing)
+  - [Guides](#guides)
+  - [API Docs](#api-docs)
+  - [Install](#install)
+  - [Migration](#migration)
   - [Quick start](#quick-start)
   - [Capabilities](#capabilities)
     - [Notification _and_ indexing](#notification-and-indexing)
