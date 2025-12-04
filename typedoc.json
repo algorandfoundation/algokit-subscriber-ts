@@ -1,7 +1,11 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["src/index.ts", "src/types/*.ts"],
-  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-frontmatter", "@larkiny/algo-docs-sync/dist/plugins/custom-frontmatter.mjs"],
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-frontmatter",
+    "@algorandfoundation/algo-docs-sync/dist/plugins/custom-frontmatter.mjs"
+  ],
   "readmeFrontmatter": {
     "title": "Overview",
     "sidebar": {

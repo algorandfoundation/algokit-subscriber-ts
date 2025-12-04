@@ -8,7 +8,7 @@ title: Arc28EventToProcess
 
 # Interface: Arc28EventToProcess
 
-Defined in: [src/types/arc-28.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/arc-28.ts#L25)
+Defined in: [src/types/arc-28.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L25)
 
 An ARC-28 event to be processed
 
@@ -22,7 +22,7 @@ An ARC-28 event to be processed
 
 > **eventDefinition**: [`Arc28Event`](Arc28Event.md)
 
-Defined in: [src/types/arc-28.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/arc-28.ts#L35)
+Defined in: [src/types/arc-28.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L35)
 
 The ARC-28 definition of the event
 
@@ -32,7 +32,7 @@ The ARC-28 definition of the event
 
 > **eventName**: `string`
 
-Defined in: [src/types/arc-28.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/arc-28.ts#L29)
+Defined in: [src/types/arc-28.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L29)
 
 The name of the ARC-28 event that was triggered
 
@@ -42,7 +42,7 @@ The name of the ARC-28 event that was triggered
 
 > **eventPrefix**: `string`
 
-Defined in: [src/types/arc-28.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/arc-28.ts#L33)
+Defined in: [src/types/arc-28.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L33)
 
 The 4-byte hex prefix for the event
 
@@ -52,7 +52,7 @@ The 4-byte hex prefix for the event
 
 > **eventSignature**: `string`
 
-Defined in: [src/types/arc-28.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/arc-28.ts#L31)
+Defined in: [src/types/arc-28.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L31)
 
 The signature of the event e.g. `EventName(type1,type2)`
 
@@ -62,6 +62,6 @@ The signature of the event e.g. `EventName(type1,type2)`
 
 > **groupName**: `string`
 
-Defined in: [src/types/arc-28.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/arc-28.ts#L27)
+Defined in: [src/types/arc-28.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L27)
 
 The name of the ARC-28 event group the event belongs to
