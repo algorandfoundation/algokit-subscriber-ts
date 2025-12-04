@@ -33,7 +33,7 @@ jobs:
         shell: bash
         run: |
           npm ci --ignore-scripts
-          npm run build-docs
+          npm run algo-docs:build
           # Add untracked files as empty so they come up in diff
           git add -N .
           # Print changed files and error out if there are changes after generating docs
