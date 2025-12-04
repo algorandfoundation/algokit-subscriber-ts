@@ -76,17 +76,9 @@ jobs:
       - name: Install dependencies to get semantic release components and plugins
         run: npm ci --ignore-scripts
 
-      - name: 'Semantic release'
+      - name: "Semantic release"
         run: npx semantic-release
         env:
           # Use the GitHub App token for authentication
           GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  generate-publish-docs:
-    name: Publish docs
-    needs: release
-    if: github.ref_name == 'release'
-    uses: ./.github/workflows/gh-pages.yml
-    secrets:
-      BOT_SK: ${{ secrets.BOT_SK }}

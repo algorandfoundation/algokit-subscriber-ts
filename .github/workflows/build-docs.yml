@@ -1,0 +1,14 @@
+name: Build Documentation
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  docs:
+    permissions:
+      contents: write
+    uses: algorandfoundation/workflows/.github/workflows/algokit-build-docs.yml@main
+    with:
+      docs_branch: docs-dist

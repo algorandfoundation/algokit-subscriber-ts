@@ -1,16 +1,25 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["src/index.ts", "src/types/*.ts"],
-  "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
-  "entryPointStrategy": "expand",
-  "projectDocuments": ["docs/index.md", "docs/README.md", "docs/subscriber.md", "docs/subscriptions.md", "docs/v3-migration.md"],
-  "outputs": [{ "name": "html", "path": "docs/_html" }],
-  "plugin": ["typedoc-plugin-markdown"],
-  "theme": "default",
-  "cleanOutputDir": true,
-  "githubPages": false,
-  "readme": "docs/README.md",
-  "gitRevision": "main",
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-frontmatter",
+    "@algorandfoundation/algo-docs-sync/dist/plugins/custom-frontmatter.mjs"
+  ],
+  "readmeFrontmatter": {
+    "title": "Overview",
+    "sidebar": {
+      "order": 0
+    }
+  },
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "hideGenerator": true,
+  "hideBreadcrumbs": true,
   "tsconfig": "tsconfig.build.json",
-  "highlightLanguages": ["typescript", "python", "json"]
+  "out": "docs/api",
+  "githubPages": false,
+  "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
+  "gitRevision": "main"
 }
