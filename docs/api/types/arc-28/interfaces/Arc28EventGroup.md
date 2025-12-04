@@ -8,7 +8,7 @@ title: Arc28EventGroup
 
 # Interface: Arc28EventGroup
 
-Defined in: [src/types/arc-28.ts:47](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L47)
+Defined in: [src/types/arc-28.ts:47](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L47)
 
 Specifies a group of ARC-28 event definitions along with instructions for when to attempt to process the events.
 
@@ -18,7 +18,7 @@ Specifies a group of ARC-28 event definitions along with instructions for when t
 
 > `optional` **continueOnError**: `boolean`
 
-Defined in: [src/types/arc-28.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L55)
+Defined in: [src/types/arc-28.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L55)
 
 Whether or not to silently (with warning log) continue if an error is encountered processing the ARC-28 event data; default = false
 
@@ -28,7 +28,7 @@ Whether or not to silently (with warning log) continue if an error is encountere
 
 > **events**: [`Arc28Event`](Arc28Event.md)[]
 
-Defined in: [src/types/arc-28.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L57)
+Defined in: [src/types/arc-28.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L57)
 
 The list of ARC-28 event definitions
 
@@ -38,7 +38,7 @@ The list of ARC-28 event definitions
 
 > **groupName**: `string`
 
-Defined in: [src/types/arc-28.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L49)
+Defined in: [src/types/arc-28.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L49)
 
 The name to designate for this group of events.
 
@@ -48,7 +48,7 @@ The name to designate for this group of events.
 
 > `optional` **processForAppIds**: `bigint`[]
 
-Defined in: [src/types/arc-28.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L51)
+Defined in: [src/types/arc-28.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L51)
 
 Optional list of app IDs that this event should apply to
 
@@ -58,7 +58,7 @@ Optional list of app IDs that this event should apply to
 
 > `optional` **processTransaction**: (`transaction`) => `boolean`
 
-Defined in: [src/types/arc-28.ts:53](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/arc-28.ts#L53)
+Defined in: [src/types/arc-28.ts:53](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L53)
 
 Optional predicate to indicate if these ARC-28 events should be processed for the given transaction
 
