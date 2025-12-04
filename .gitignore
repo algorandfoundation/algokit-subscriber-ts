@@ -68,5 +68,5 @@ __pycache__
 
 *.db
 *.db-journal
-docs-build/
+docs/manifest.json
 docs-publish/

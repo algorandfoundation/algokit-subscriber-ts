@@ -8,7 +8,7 @@ title: BlockStateProofTracking
 
 # Interface: BlockStateProofTracking
 
-Defined in: [src/types/subscription.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L101)
+Defined in: [src/types/subscription.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L101)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [src/types/subscription.ts:101](https://github.com/algorandfoundatio
 
 > `optional` **nextRound**: `bigint`
 
-Defined in: [src/types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L105)
+Defined in: [src/types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L105)
 
 (n) Next round for which we will accept a state proof transaction.
 
@@ -26,7 +26,7 @@ Defined in: [src/types/subscription.ts:105](https://github.com/algorandfoundatio
 
 > `optional` **onlineTotalWeight**: `bigint`
 
-Defined in: [src/types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L111)
+Defined in: [src/types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L111)
 
 (t) The total number of microalgos held by the online accounts during the
 StateProof round.
@@ -37,7 +37,7 @@ StateProof round.
 
 > `optional` **type**: `number`
 
-Defined in: [src/types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L116)
+Defined in: [src/types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L116)
 
 State Proof Type. Note the raw object uses map with this as key.
 
@@ -47,7 +47,7 @@ State Proof Type. Note the raw object uses map with this as key.
 
 > `optional` **votersCommitment**: `string`
 
-Defined in: [src/types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L122)
+Defined in: [src/types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L122)
 
 (v) Root of a vector commitment containing online accounts that will help sign
 the proof.

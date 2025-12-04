@@ -8,7 +8,7 @@ title: AlgorandSubscriber
 
 # Class: AlgorandSubscriber
 
-Defined in: [src/subscriber.ts:20](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L20)
+Defined in: [src/subscriber.ts:20](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L20)
 
 Handles the logic for subscribing to the Algorand blockchain and emitting events.
 
@@ -18,7 +18,7 @@ Handles the logic for subscribing to the Algorand blockchain and emitting events
 
 > **new AlgorandSubscriber**(`config`, `algod`, `indexer?`): `AlgorandSubscriber`
 
-Defined in: [src/subscriber.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L41)
+Defined in: [src/subscriber.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L41)
 
 Create a new `AlgorandSubscriber`.
 
@@ -52,7 +52,7 @@ An (optional) indexer client; only needed if `subscription.syncBehaviour` is `ca
 
 > **on**\<`T`\>(`filterName`, `listener`): `AlgorandSubscriber`
 
-Defined in: [src/subscriber.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L191)
+Defined in: [src/subscriber.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L191)
 
 Register an event handler to run on every subscribed transaction matching the given filter name.
 
@@ -101,7 +101,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 > **onBatch**\<`T`\>(`filterName`, `listener`): `AlgorandSubscriber`
 
-Defined in: [src/subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L220)
+Defined in: [src/subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L220)
 
 Register an event handler to run on all subscribed transactions matching the given filter name
 for each subscription poll.
@@ -154,7 +154,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 > **onBeforePoll**(`listener`): `AlgorandSubscriber`
 
-Defined in: [src/subscriber.ts:238](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L238)
+Defined in: [src/subscriber.ts:238](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L238)
 
 Register an event handler to run before every subscription poll.
 
@@ -188,7 +188,7 @@ subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
 
 > **onError**(`listener`): `AlgorandSubscriber`
 
-Defined in: [src/subscriber.ts:292](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L292)
+Defined in: [src/subscriber.ts:292](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L292)
 
 Register an error handler to run if an error is thrown during processing or event handling.
 
@@ -237,7 +237,7 @@ subscriber.onError(async (error) => {
 
 > **onPoll**(`listener`): `AlgorandSubscriber`
 
-Defined in: [src/subscriber.ts:259](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L259)
+Defined in: [src/subscriber.ts:259](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L259)
 
 Register an event handler to run after every subscription poll.
 
@@ -274,7 +274,7 @@ subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTrans
 
 > **pollOnce**(): `Promise`\<[`TransactionSubscriptionResult`](../../types/subscription/interfaces/TransactionSubscriptionResult.md)\>
 
-Defined in: [src/subscriber.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L67)
+Defined in: [src/subscriber.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L67)
 
 Execute a single subscription poll.
 
@@ -293,7 +293,7 @@ The poll result
 
 > **start**(`inspect?`, `suppressLog?`): `void`
 
-Defined in: [src/subscriber.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L113)
+Defined in: [src/subscriber.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L113)
 
 Start the subscriber in a loop until `stop` is called.
 
@@ -323,7 +323,7 @@ An object that contains a promise you can wait for after calling stop
 
 > **stop**(`reason`): `Promise`\<`void`\>
 
-Defined in: [src/subscriber.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/subscriber.ts#L164)
+Defined in: [src/subscriber.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/subscriber.ts#L164)
 
 Stops the subscriber if previously started via `start`.
 

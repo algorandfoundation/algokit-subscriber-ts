@@ -8,7 +8,7 @@ title: AlgorandSubscriberConfig
 
 # Interface: AlgorandSubscriberConfig
 
-Defined in: [src/types/subscription.ts:386](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L386)
+Defined in: [src/types/subscription.ts:386](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L386)
 
 Configuration for an `AlgorandSubscriber`.
 
@@ -22,7 +22,7 @@ Configuration for an `AlgorandSubscriber`.
 
 > `optional` **arc28Events**: [`Arc28EventGroup`](../../arc-28/interfaces/Arc28EventGroup.md)[]
 
-Defined in: [src/types/subscription.ts:260](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L260)
+Defined in: [src/types/subscription.ts:260](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L260)
 
 Any ARC-28 event definitions to process from app call logs
 
@@ -36,7 +36,7 @@ Any ARC-28 event definitions to process from app call logs
 
 > **filters**: [`SubscriberConfigFilter`](SubscriberConfigFilter.md)\<`unknown`\>[]
 
-Defined in: [src/types/subscription.ts:388](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L388)
+Defined in: [src/types/subscription.ts:388](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L388)
 
 The set of filters to subscribe to / emit events for, along with optional data mappers.
 
@@ -50,7 +50,7 @@ The set of filters to subscribe to / emit events for, along with optional data m
 
 > `optional` **frequencyInSeconds**: `number`
 
-Defined in: [src/types/subscription.ts:390](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L390)
+Defined in: [src/types/subscription.ts:390](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L390)
 
 The frequency to poll for new blocks in seconds; defaults to 1s
 
@@ -60,7 +60,7 @@ The frequency to poll for new blocks in seconds; defaults to 1s
 
 > `optional` **maxIndexerRoundsToSync**: `number`
 
-Defined in: [src/types/subscription.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L280)
+Defined in: [src/types/subscription.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L280)
 
 The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
 
@@ -81,7 +81,7 @@ boundary based on the number of rounds specified here.
 
 > `optional` **maxRoundsToSync**: `number`
 
-Defined in: [src/types/subscription.ts:269](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L269)
+Defined in: [src/types/subscription.ts:269](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L269)
 
 The maximum number of rounds to sync from algod for each subscription pull/poll.
 
@@ -101,7 +101,7 @@ your catchup speed when using `sync-oldest`.
 
 > **syncBehaviour**: `"skip-sync-newest"` \| `"sync-oldest"` \| `"sync-oldest-start-now"` \| `"catchup-with-indexer"` \| `"fail"`
 
-Defined in: [src/types/subscription.ts:298](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L298)
+Defined in: [src/types/subscription.ts:298](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L298)
 
 If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
 past `watermark` then how should that be handled:
@@ -130,7 +130,7 @@ past `watermark` then how should that be handled:
 
 > `optional` **waitForBlockWhenAtTip**: `boolean`
 
-Defined in: [src/types/subscription.ts:392](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L392)
+Defined in: [src/types/subscription.ts:392](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L392)
 
 Whether to wait via algod `/status/wait-for-block-after` endpoint when at the tip of the chain; reduces latency of subscription
 
@@ -140,7 +140,7 @@ Whether to wait via algod `/status/wait-for-block-after` endpoint when at the ti
 
 > **watermarkPersistence**: `object`
 
-Defined in: [src/types/subscription.ts:395](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/3e6c3e8af08bc1cedae06a39e26c56d94c235a63/src/types/subscription.ts#L395)
+Defined in: [src/types/subscription.ts:395](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L395)
 
 Methods to retrieve and persist the current watermark so syncing is resilient and maintains
 its position in the chain
