@@ -15,6 +15,7 @@
     "check-types": "tsc --noEmit",
     "audit": "better-npm-audit audit",
     "format": "prettier --write .",
+    "build-docs": "npx algo-docs build",
     "commit-lint": "commitlint --edit -o",
     "semantic-release": "semantic-release",
     "generate:contract-client": "cd tests/contract && poetry run python -m build",
