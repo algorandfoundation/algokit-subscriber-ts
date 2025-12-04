@@ -8,7 +8,7 @@ title: BalanceChange
 
 # Interface: BalanceChange
 
-Defined in: [src/types/subscription.ts:200](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L200)
+Defined in: [src/types/subscription.ts:200](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L200)
 
 Represents a balance change effect for a transaction.
 
@@ -18,7 +18,7 @@ Represents a balance change effect for a transaction.
 
 > **address**: `string`
 
-Defined in: [src/types/subscription.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L202)
+Defined in: [src/types/subscription.ts:202](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L202)
 
 The address that the balance change is for.
 
@@ -28,7 +28,7 @@ The address that the balance change is for.
 
 > **amount**: `bigint`
 
-Defined in: [src/types/subscription.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L206)
+Defined in: [src/types/subscription.ts:206](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L206)
 
 The amount of the balance change in smallest divisible unit or microAlgos.
 
@@ -38,7 +38,7 @@ The amount of the balance change in smallest divisible unit or microAlgos.
 
 > **assetId**: `bigint`
 
-Defined in: [src/types/subscription.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L204)
+Defined in: [src/types/subscription.ts:204](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L204)
 
 The asset ID of the balance change, or 0 for Algos.
 
@@ -48,6 +48,6 @@ The asset ID of the balance change, or 0 for Algos.
 
 > **roles**: [`BalanceChangeRole`](../enumerations/BalanceChangeRole.md)[]
 
-Defined in: [src/types/subscription.ts:208](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L208)
+Defined in: [src/types/subscription.ts:208](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L208)
 
 The roles the account was playing that led to the balance change

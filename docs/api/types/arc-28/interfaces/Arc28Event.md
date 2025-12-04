@@ -8,7 +8,7 @@ title: Arc28Event
 
 # Interface: Arc28Event
 
-Defined in: [src/types/arc-28.ts:8](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L8)
+Defined in: [src/types/arc-28.ts:8](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L8)
 
 The definition of metadata for an ARC-28 event per https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#event.
 
@@ -18,7 +18,7 @@ The definition of metadata for an ARC-28 event per https://github.com/algorandfo
 
 > **args**: `object`[]
 
-Defined in: [src/types/arc-28.ts:14](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L14)
+Defined in: [src/types/arc-28.ts:14](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L14)
 
 The arguments of the event, in order
 
@@ -46,7 +46,7 @@ The type of the argument
 
 > `optional` **desc**: `string`
 
-Defined in: [src/types/arc-28.ts:12](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L12)
+Defined in: [src/types/arc-28.ts:12](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L12)
 
 Optional, user-friendly description for the event
 
@@ -56,6 +56,6 @@ Optional, user-friendly description for the event
 
 > **name**: `string`
 
-Defined in: [src/types/arc-28.ts:10](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/arc-28.ts#L10)
+Defined in: [src/types/arc-28.ts:10](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L10)
 
 The name of the event

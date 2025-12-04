@@ -8,7 +8,7 @@ title: NamedTransactionFilter
 
 # Interface: NamedTransactionFilter
 
-Defined in: [src/types/subscription.ts:302](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L302)
+Defined in: [src/types/subscription.ts:302](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L302)
 
 Specify a named filter to apply to find transactions of interest.
 
@@ -22,7 +22,7 @@ Specify a named filter to apply to find transactions of interest.
 
 > **filter**: [`TransactionFilter`](TransactionFilter.md)
 
-Defined in: [src/types/subscription.ts:306](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L306)
+Defined in: [src/types/subscription.ts:306](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L306)
 
 The filter itself.
 
@@ -32,6 +32,6 @@ The filter itself.
 
 > **name**: `string`
 
-Defined in: [src/types/subscription.ts:304](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L304)
+Defined in: [src/types/subscription.ts:304](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L304)
 
 The name to give the filter.

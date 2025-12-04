@@ -8,7 +8,7 @@ title: BlockStateProofTracking
 
 # Interface: BlockStateProofTracking
 
-Defined in: [src/types/subscription.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L101)
+Defined in: [src/types/subscription.ts:101](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L101)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [src/types/subscription.ts:101](https://github.com/algorandfoundatio
 
 > `optional` **nextRound**: `bigint`
 
-Defined in: [src/types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L105)
+Defined in: [src/types/subscription.ts:105](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L105)
 
 (n) Next round for which we will accept a state proof transaction.
 
@@ -26,7 +26,7 @@ Defined in: [src/types/subscription.ts:105](https://github.com/algorandfoundatio
 
 > `optional` **onlineTotalWeight**: `bigint`
 
-Defined in: [src/types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L111)
+Defined in: [src/types/subscription.ts:111](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L111)
 
 (t) The total number of microalgos held by the online accounts during the
 StateProof round.
@@ -37,7 +37,7 @@ StateProof round.
 
 > `optional` **type**: `number`
 
-Defined in: [src/types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L116)
+Defined in: [src/types/subscription.ts:116](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L116)
 
 State Proof Type. Note the raw object uses map with this as key.
 
@@ -47,7 +47,7 @@ State Proof Type. Note the raw object uses map with this as key.
 
 > `optional` **votersCommitment**: `string`
 
-Defined in: [src/types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L122)
+Defined in: [src/types/subscription.ts:122](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L122)
 
 (v) Root of a vector commitment containing online accounts that will help sign
 the proof.
