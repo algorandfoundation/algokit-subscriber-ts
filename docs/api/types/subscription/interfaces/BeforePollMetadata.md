@@ -8,7 +8,7 @@ title: BeforePollMetadata
 
 # Interface: BeforePollMetadata
 
-Defined in: [src/types/subscription.ts:228](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L228)
+Defined in: [src/types/subscription.ts:228](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L228)
 
 Metadata about an impending subscription poll.
 
@@ -18,7 +18,7 @@ Metadata about an impending subscription poll.
 
 > **currentRound**: `bigint`
 
-Defined in: [src/types/subscription.ts:232](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L232)
+Defined in: [src/types/subscription.ts:232](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L232)
 
 The current round of algod
 
@@ -28,6 +28,6 @@ The current round of algod
 
 > **watermark**: `bigint`
 
-Defined in: [src/types/subscription.ts:230](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L230)
+Defined in: [src/types/subscription.ts:230](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L230)
 
 The current watermark of the subscriber

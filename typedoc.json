@@ -20,5 +20,6 @@
   "tsconfig": "tsconfig.build.json",
   "out": "docs/api",
   "githubPages": false,
-  "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"]
+  "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
+  "gitRevision": "main"
 }

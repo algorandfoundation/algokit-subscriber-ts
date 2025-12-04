@@ -8,7 +8,7 @@ title: BlockRewards
 
 # Interface: BlockRewards
 
-Defined in: [src/types/subscription.ts:73](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L73)
+Defined in: [src/types/subscription.ts:73](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L73)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [src/types/subscription.ts:73](https://github.com/algorandfoundation
 
 > **feeSink**: `string`
 
-Defined in: [src/types/subscription.ts:75](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L75)
+Defined in: [src/types/subscription.ts:75](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L75)
 
 FeeSink is an address that accepts transaction fees, it can only spend to the incentive pool.
 
@@ -26,7 +26,7 @@ FeeSink is an address that accepts transaction fees, it can only spend to the in
 
 > **rewardsCalculationRound**: `bigint`
 
-Defined in: [src/types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L77)
+Defined in: [src/types/subscription.ts:77](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L77)
 
 The number of leftover MicroAlgos after the distribution of rewards-rate MicroAlgos for every reward unit in the next round.
 
@@ -36,7 +36,7 @@ The number of leftover MicroAlgos after the distribution of rewards-rate MicroAl
 
 > **rewardsLevel**: `bigint`
 
-Defined in: [src/types/subscription.ts:79](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L79)
+Defined in: [src/types/subscription.ts:79](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L79)
 
 How many rewards, in MicroAlgos, have been distributed to each RewardUnit of MicroAlgos since genesis.
 
@@ -46,7 +46,7 @@ How many rewards, in MicroAlgos, have been distributed to each RewardUnit of Mic
 
 > **rewardsPool**: `string`
 
-Defined in: [src/types/subscription.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L81)
+Defined in: [src/types/subscription.ts:81](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L81)
 
 RewardsPool is an address that accepts periodic injections from the fee-sink and continually redistributes them as rewards.
 
@@ -56,7 +56,7 @@ RewardsPool is an address that accepts periodic injections from the fee-sink and
 
 > **rewardsRate**: `bigint`
 
-Defined in: [src/types/subscription.ts:83](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L83)
+Defined in: [src/types/subscription.ts:83](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L83)
 
 Number of new MicroAlgos added to the participation stake from rewards at the next round.
 
@@ -66,6 +66,6 @@ Number of new MicroAlgos added to the participation stake from rewards at the ne
 
 > **rewardsResidue**: `bigint`
 
-Defined in: [src/types/subscription.ts:85](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/a1aeb0d8c5c3d9e1622edc98d4eab90c690153dc/src/types/subscription.ts#L85)
+Defined in: [src/types/subscription.ts:85](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/fa75b65cc059ab58b1fe630eb18f0cd695fc8bcc/src/types/subscription.ts#L85)
 
 Number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits MicroAlgos for every reward unit in the next round.
