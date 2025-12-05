@@ -1,8 +1,9 @@
+import { PendingTransactionResponse } from '@algorandfoundation/algokit-utils/algod-client'
+import type { Account } from '@algorandfoundation/algokit-utils/sdk'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
+import { Transaction } from '@algorandfoundation/algokit-utils/transact'
 import { AlgorandFixture, AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
 import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import type { Account } from '@algorandfoundation/algokit-utils/sdk'
-import type { PendingTransactionResponseWrapper, TransactionWrapper } from '@algorandfoundation/algokit-utils/types/transaction'
 import { expect, vitest } from 'vitest'
 import { Arc28EventGroup, SubscribedTransaction, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
 import { GetSubscribedTransactions, SendXTransactions } from './transactions'
@@ -39,8 +40,8 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     groupResult: Omit<SendTransactionComposerResults, 'returns'>,
     index: number,
   ) => {
-    transaction: TransactionWrapper
-    confirmation: PendingTransactionResponseWrapper | undefined
+    transaction: Transaction
+    confirmation: PendingTransactionResponse | undefined
   }
   beforeEach: () => Promise<void>
   beforeAll: () => Promise<void>

@@ -1,17 +1,7 @@
+import { ALGORAND_ZERO_ADDRESS_STRING, decodeAddress } from '@algorandfoundation/algokit-utils'
+import type { Block, BlockResponse, SignedTxnInBlock, SignedTxnWithAD } from '@algorandfoundation/algokit-utils/algod-client'
+import { OnApplicationComplete, Transaction, TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
-import type {
-  BlockResponse,
-  Block,
-  SignedTxnWithAD,
-  SignedTxnInBlock,
-} from '@algorandfoundation/algokit-utils/algod-client'
-import {
-  Transaction,
-  TransactionType,
-  OnApplicationComplete,
-  getTransactionId,
-} from '@algorandfoundation/algokit-utils/transact'
-import { decodeAddress, ALGORAND_ZERO_ADDRESS_STRING } from '@algorandfoundation/algokit-utils/common'
 import { Buffer } from 'buffer'
 import type { TransactionInBlock } from './types/block'
 import { BalanceChange, BalanceChangeRole, BlockMetadata, type SubscribedTransaction } from './types/subscription'
@@ -26,7 +16,7 @@ export const ALGORAND_ZERO_ADDRESS_BYTES = decodeAddress(ALGORAND_ZERO_ADDRESS).
  */
 export function getTransactionFromBlockPayout(block: BlockResponse, getRoundOffset: () => number): TransactionInBlock {
   const header = block.block.header
-  const pay: Transaction = {
+  const pay = new Transaction({
     type: TransactionType.Payment,
     sender: header.feeSink!,
     note: new Uint8Array(Buffer.from(`ProposerPayout for Round ${header.round}`)),
@@ -39,10 +29,10 @@ export function getTransactionFromBlockPayout(block: BlockResponse, getRoundOffs
       receiver: header.proposer!,
       amount: header.proposerPayout!,
     },
-  }
+  })
 
   const txn: TransactionInBlock = {
-    transactionId: getTransactionId(pay),
+    transactionId: pay.txID(),
     roundTimestamp: Number(header.timestamp),
     transaction: pay,
     intraRoundOffset: getRoundOffset(),
@@ -81,7 +71,7 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
 
     const rootTransaction = {
       signedTxnWithAD,
-      transactionId: getTransactionId(rootTransactionData.transaction),
+      transactionId: rootTransactionData.transaction.txID(),
       intraRoundOffset: getRoundOffset(),
       roundNumber: block.header.round!,
       roundTimestamp: Number(block.header.timestamp),
@@ -166,11 +156,11 @@ function extractTransactionDataFromSignedTxnInBlock(
   const txn = signedTxnWithAD.signedTxn.txn
 
   // Normalise the transaction so that the transaction ID is generated correctly
-  const transaction: Transaction = {
-    ...txn,
+  const transaction = new Transaction({
+    ...txn.toParams(),
     genesisHash: genesisHash ?? txn.genesisHash,
     genesisId: genesisId ?? txn.genesisId,
-  }
+  })
 
   return {
     transaction,
@@ -231,7 +221,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
   } = t
 
   if (!transaction.type) {
-    throw new Error(`Received no transaction type for transaction ${getTransactionId(transaction)}`)
+    throw new Error(`Received no transaction type for transaction ${transaction.txID()}`)
   }
 
   let parentOffset = 1
@@ -489,20 +479,20 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
           genesisId,
         })
       }),
-      ...(signedTxnWithAD.signedTxn.signature || signedTxnWithAD.signedTxn.logicSignature || signedTxnWithAD.signedTxn.multiSignature
+      ...(signedTxnWithAD.signedTxn.sig || signedTxnWithAD.signedTxn.lsig || signedTxnWithAD.signedTxn.msig
         ? {
             signature: {
-              sig: signedTxnWithAD.signedTxn.signature,
-              logicsig: signedTxnWithAD.signedTxn.logicSignature
+              sig: signedTxnWithAD.signedTxn.sig,
+              logicsig: signedTxnWithAD.signedTxn.lsig
                 ? {
-                    logic: signedTxnWithAD.signedTxn.logicSignature.logic,
-                    args: signedTxnWithAD.signedTxn.logicSignature.args?.map((a) => Buffer.from(a).toString('base64')),
-                    signature: signedTxnWithAD.signedTxn.logicSignature.signature,
-                    multisigSignature: signedTxnWithAD.signedTxn.logicSignature.multiSignature
+                    logic: signedTxnWithAD.signedTxn.lsig.logic,
+                    args: signedTxnWithAD.signedTxn.lsig.args?.map((a: Uint8Array) => Buffer.from(a).toString('base64')),
+                    signature: signedTxnWithAD.signedTxn.lsig.sig,
+                    multisigSignature: signedTxnWithAD.signedTxn.lsig.msig
                       ? {
-                          version: signedTxnWithAD.signedTxn.logicSignature.multiSignature.version,
-                          threshold: signedTxnWithAD.signedTxn.logicSignature.multiSignature.threshold,
-                          subsignature: signedTxnWithAD.signedTxn.logicSignature.multiSignature.subsignatures.map((s) => ({
+                          version: signedTxnWithAD.signedTxn.lsig.msig.version,
+                          threshold: signedTxnWithAD.signedTxn.lsig.msig.threshold,
+                          subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsignatures.map((s) => ({
                             publicKey: s.address.publicKey,
                             signature: s.signature,
                           })),
@@ -510,11 +500,11 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                       : undefined,
                   }
                 : undefined,
-              multisig: signedTxnWithAD.signedTxn.multiSignature
+              multisig: signedTxnWithAD.signedTxn.msig
                 ? {
-                    version: signedTxnWithAD.signedTxn.multiSignature.version,
-                    threshold: signedTxnWithAD.signedTxn.multiSignature.threshold,
-                    subsignature: signedTxnWithAD.signedTxn.multiSignature.subsignatures.map((s) => ({
+                    version: signedTxnWithAD.signedTxn.msig.version,
+                    threshold: signedTxnWithAD.signedTxn.msig.threshold,
+                    subsignature: signedTxnWithAD.signedTxn.msig.subsignatures.map((s) => ({
                       publicKey: s.address.publicKey,
                       signature: s.signature,
                     })),
@@ -645,12 +635,8 @@ export function blockResponseToBlockMetadata(blockResponse: BlockResponse): Bloc
       nextProtocolVoteBefore: header.nextProtocolVoteBefore,
     },
     txnCounter: header.txnCounter ?? 0n,
-    transactionsRoot: header.transactionsRoot
-      ? Buffer.from(header.transactionsRoot).toString('base64')
-      : '',
-    transactionsRootSha256: header.transactionsRootSha256
-      ? Buffer.from(header.transactionsRootSha256).toString('base64')
-      : '',
+    transactionsRoot: header.transactionsRoot ? Buffer.from(header.transactionsRoot).toString('base64') : '',
+    transactionsRootSha256: header.transactionsRootSha256 ? Buffer.from(header.transactionsRootSha256).toString('base64') : '',
     proposer: header.proposer?.toString(),
     ...(header.upgradeApprove !== undefined || header.upgradeDelay !== undefined || header.upgradePropose !== undefined
       ? {
