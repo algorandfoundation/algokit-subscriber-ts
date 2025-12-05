@@ -4,9 +4,9 @@
  * DO NOT MODIFY IT BY HAND.
  * requires: @algorandfoundation/algokit-utils: ^7
  */
+import { Address, encodeAddress } from '@algorandfoundation/algokit-utils'
 import { Arc56Contract } from '@algorandfoundation/algokit-utils/abi'
 import { SimulateResponse } from '@algorandfoundation/algokit-utils/algod-client'
-import { Address, encodeAddress } from '@algorandfoundation/algokit-utils/common'
 import { OnApplicationComplete, Transaction, TransactionSigner } from '@algorandfoundation/algokit-utils/transact'
 import { type AlgorandClient } from '@algorandfoundation/algokit-utils/types/algorand-client'
 import {

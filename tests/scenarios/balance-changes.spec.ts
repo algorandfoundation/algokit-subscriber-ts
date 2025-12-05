@@ -1,11 +1,10 @@
-import { AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
+import { Address, AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
-import { Address } from '@algorandfoundation/algokit-utils/common'
 import invariant from 'tiny-invariant'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig, BalanceChangeRole } from '../../src/types'
 import { filterFixture } from '../filterFixture'
-import { AlgorandSubscriber } from '../../src'
 
 describe('Subscribing to calls that effect balance changes', () => {
   const {
@@ -881,7 +880,6 @@ describe('Subscribing to calls that effect balance changes', () => {
     }
   }, 30_000)
 
-
   test('Works when filtering for synthetic block payout', async () => {
     const mainnet = AlgorandClient.mainNet()
     const testRound = 46838092n
@@ -894,14 +892,16 @@ describe('Subscribing to calls that effect balance changes', () => {
     const payout = block.header.proposerPayout
 
     const config: AlgorandSubscriberConfig = {
-      filters: [{
-        name: 'payout',
-        filter: {
-          customFilter: (tx) => {
-            return tx.fee === 0n && tx.parentTransactionId === undefined && tx.group === undefined
+      filters: [
+        {
+          name: 'payout',
+          filter: {
+            customFilter: (tx) => {
+              return tx.fee === 0n && tx.parentTransactionId === undefined && tx.group === undefined
+            },
           },
-        }
-      }],
+        },
+      ],
       syncBehaviour: 'sync-oldest',
       watermarkPersistence: {
         get: async () => watermark,
@@ -938,5 +938,4 @@ describe('Subscribing to calls that effect balance changes', () => {
     expect(indexerTxn.id).toEqual(txn.id)
     expect(indexerTxn.intraRoundOffset).toEqual(txn.intraRoundOffset)
   })
-
 })
