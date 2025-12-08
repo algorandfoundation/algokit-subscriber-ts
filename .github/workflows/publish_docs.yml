@@ -30,7 +30,7 @@ jobs:
 
       - name: Genearate bot token for deployment
         uses: actions/create-github-app-token@v1
-        id:: app_token
+        id: app_token
         with:
           app_id: ${{secrets.BOT_ID}}
           private_key: ${{secrets.BOT_SK}}
