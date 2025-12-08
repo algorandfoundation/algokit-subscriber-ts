@@ -89,4 +89,5 @@ jobs:
     needs: release
     uses: ./.github/workflows/publish_docs.yml
     secrets:
+      BOT_ID: ${{ secrets.BOT_ID }}
       BOT_SK: ${{ secrets.BOT_SK }}
