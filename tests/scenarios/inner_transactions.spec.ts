@@ -1,5 +1,5 @@
-import type { Account } from '@algorandfoundation/algokit-utils/sdk'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
 import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
@@ -9,7 +9,7 @@ import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 
 describe('Inner transactions', () => {
   const localnet = algorandFixture()
-  let systemAccount: Account
+  let systemAccount: AddressWithSigners
 
   beforeAll(async () => {
     await localnet.beforeEach()

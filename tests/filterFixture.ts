@@ -1,6 +1,6 @@
 import { PendingTransactionResponse } from '@algorandfoundation/algokit-utils/algod-client'
-import type { Account } from '@algorandfoundation/algokit-utils/sdk'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
 import { Transaction } from '@algorandfoundation/algokit-utils/transact'
 import { AlgorandFixture, AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
 import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
@@ -15,7 +15,7 @@ const syntheticTxnFilter = (t: SubscribedTransaction) => {
 
 export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
   localnet: AlgorandFixture
-  systemAccount: () => Account
+  systemAccount: () => AddressWithSigners
   subscribeAlgod: (
     filter: TransactionFilter,
     result: SendTransactionResult,
@@ -48,7 +48,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
   afterEach: () => Promise<void>
 } {
   const localnet = algorandFixture(fixtureConfig)
-  let systemAccount: Account
+  let systemAccount: AddressWithSigners
 
   const subscribeAlgod = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
     // Run the subscription

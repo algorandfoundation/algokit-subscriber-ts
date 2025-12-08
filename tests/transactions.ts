@@ -1,7 +1,6 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import type { Account } from '@algorandfoundation/algokit-utils/sdk'
-import type { Transaction } from '@algorandfoundation/algokit-utils/transact'
+import type { AddressWithSigners, Transaction } from '@algorandfoundation/algokit-utils/transact'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {
@@ -12,7 +11,7 @@ import type {
   TransactionSubscriptionParams,
 } from '../src/types'
 
-export const SendXTransactions = async (x: number, account: Account, algorand: AlgorandClient) => {
+export const SendXTransactions = async (x: number, account: AddressWithSigners, algorand: AlgorandClient) => {
   const txns: SendTransactionResult[] = []
   for (let i = 0; i < x; i++) {
     algorand.setSignerFromAccount(account)
@@ -82,7 +81,7 @@ export const GetSubscribedTransactionsFromSender = (
     watermark?: bigint
     currentRound?: bigint
   },
-  account: Account | Account[],
+  account: AddressWithSigners | AddressWithSigners[],
   algorand: AlgorandClient,
 ) => {
   return GetSubscribedTransactions(
