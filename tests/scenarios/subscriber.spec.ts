@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import type { Account } from '@algorandfoundation/algokit-utils/sdk'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
 import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig } from '../../src/types'
@@ -18,7 +18,7 @@ describe('AlgorandSubscriber', () => {
   })
 
   const getSubscriber = (
-    config: { testAccount: Account; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: bigint },
+    config: { testAccount: AddressWithSigners; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: bigint },
     algorand: AlgorandClient,
   ) => {
     let watermark = config.initialWatermark ?? 0n

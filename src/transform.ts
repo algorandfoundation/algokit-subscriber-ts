@@ -493,7 +493,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                           version: signedTxnWithAD.signedTxn.lsig.msig.version,
                           threshold: signedTxnWithAD.signedTxn.lsig.msig.threshold,
                           subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsignatures.map((s) => ({
-                            publicKey: s.address.publicKey,
+                            publicKey: s.publicKey,
                             signature: s.signature,
                           })),
                         }
@@ -505,7 +505,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                     version: signedTxnWithAD.signedTxn.msig.version,
                     threshold: signedTxnWithAD.signedTxn.msig.threshold,
                     subsignature: signedTxnWithAD.signedTxn.msig.subsignatures.map((s) => ({
-                      publicKey: s.address.publicKey,
+                      publicKey: s.publicKey,
                       signature: s.signature,
                     })),
                   }

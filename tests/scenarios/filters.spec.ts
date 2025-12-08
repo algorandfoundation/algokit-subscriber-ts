@@ -1,4 +1,4 @@
-import type { Account } from '@algorandfoundation/algokit-utils/sdk'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
 import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { SendTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
@@ -18,7 +18,7 @@ describe('Subscribing using various filters', () => {
   beforeEach(hooks.beforeEach, 10_000)
   afterEach(hooks.afterEach)
 
-  const createAsset = async (creator?: Account) => {
+  const createAsset = async (creator?: AddressWithSigners) => {
     const create = await localnet.algorand
       .newGroup()
       .addTransaction(await createAssetTxn(creator ?? systemAccount()))
@@ -30,7 +30,7 @@ describe('Subscribing using various filters', () => {
     }
   }
 
-  const createAssetTxn = async (creator: Account) => {
+  const createAssetTxn = async (creator: AddressWithSigners) => {
     return await localnet.algorand.createTransaction.assetCreate({
       sender: creator ? creator.addr : systemAccount().addr,
       decimals: 0,
@@ -40,9 +40,9 @@ describe('Subscribing using various filters', () => {
 
   let algoTransfersData:
     | {
-        testAccount: Account
-        account2: Account
-        account3: Account
+        testAccount: AddressWithSigners
+        account2: AddressWithSigners
+        account3: AddressWithSigners
         txns: SendTransactionComposerResults
       }
     | undefined = undefined
@@ -173,7 +173,7 @@ describe('Subscribing using various filters', () => {
     | {
         asset1: Awaited<ReturnType<typeof createAsset>>
         asset2: Awaited<ReturnType<typeof createAsset>>
-        testAccount: Account
+        testAccount: AddressWithSigners
         txns: SendTransactionComposerResults
       }
     | undefined = undefined
@@ -356,7 +356,7 @@ describe('Subscribing using various filters', () => {
     | {
         app1: Awaited<ReturnType<TestingAppFactory['send']['create']['bare']>>
         app2: Awaited<ReturnType<TestingAppFactory['send']['create']['bare']>>
-        testAccount: Account
+        testAccount: AddressWithSigners
         txns: SendTransactionComposerResults
       }
     | undefined = undefined
