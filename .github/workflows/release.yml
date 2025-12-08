@@ -87,6 +87,6 @@ jobs:
   generate-publish-docs:
     name: Publish docs
     needs: release
-    uses: ./.github/workflows/gh-pages.yml
+    uses: ./.github/workflows/publish_docs.yml
     secrets:
       BOT_SK: ${{ secrets.BOT_SK }}
