@@ -93,7 +93,7 @@ jobs:
     # needs: release
     if: github.ref_name == 'release' || github.ref_name == 'ci/automate-docs-minimal' || github.ref_name == 'ci/automate-docs-reusable'
     # Updated to use the remote repository for the reusable workflow
-    uses: p2arthur/reusable-workflows/.github/workflows/publish_docs.yml@main
+    uses: p2arthur/reusable-workflows/.github/workflows/handle-docs.yml@main
     secrets:
       BOT_ID: ${{ secrets.BOT_ID }}
       BOT_SK: ${{ secrets.BOT_SK }}
