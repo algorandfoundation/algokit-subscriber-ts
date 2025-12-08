@@ -1,10 +1,8 @@
-**@algorandfoundation/algokit-subscriber**
-
-***
-
 # Algorand transaction subscription / indexing
 
 This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism. It allows you to quickly create Node.js or JavaScript services that follow or subscribe to the Algorand Blockchain.
+
+[Documentation](./docs/README.md)
 
 ## Install
 
@@ -28,7 +26,7 @@ npm install algosdk@^3.1.0 @algorandfoundation/algokit-utils @algorandfoundation
 
 Whilst we aim to minimise breaking changes, there are situations where they are required.
 
-If you're migrating from an older version to v3, please refer to the [v3 migration guide](documents/v3-migration.md).
+If you're migrating from an older version to v3, please refer to the [v3 migration guide](./docs/v3-migration.md).
 
 ## Quick start
 
@@ -121,7 +119,7 @@ The balance change for an asset destroy transaction will be as below:
 
 The following code, when algod is pointed to TestNet, will find all transactions emitted by the [Data History Museum](https://datahistory.org) since the beginning of time in _seconds_ and then find them in real-time as they emerge on the chain.
 
-The watermark is stored in-memory so this particular example is not resilient to restarts. To change that you can implement proper persistence of the watermark. There is [an example that uses the file system](_media/index.ts) to demonstrate this.
+The watermark is stored in-memory so this particular example is not resilient to restarts. To change that you can implement proper persistence of the watermark. There is [an example that uses the file system](./examples/data-history-museum/) to demonstrate this.
 
 ```typescript
 const algorand = AlgorandClient.fromEnvironment()
