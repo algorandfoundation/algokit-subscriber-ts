@@ -95,7 +95,7 @@ jobs:
       - name: Install dependencies to get semantic release components and plugins
         run: npm ci --ignore-scripts
 
-      - name: 'Semantic release'
+      - name: "Semantic release"
         run: npx semantic-release
         env:
           # Use the GitHub App token for authentication
