@@ -1,9 +1,3 @@
-[**@algorandfoundation/algokit-subscriber**](../README.md)
-
-***
-
-[@algorandfoundation/algokit-subscriber](../modules.md) / v3-migration
-
 # v3 migration
 
 This release updates the subscriber library to support `algosdk@3`. As a result the majority of the changes are to support this.
