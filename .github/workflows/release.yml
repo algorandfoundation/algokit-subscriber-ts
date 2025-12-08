@@ -91,7 +91,7 @@ jobs:
     # However, since you asked to comment, I'll assume it was intended to run after 'release'.
     # If you remove all preceding jobs, you must remove the 'needs' line, or this job will fail.
     # needs: release
-    if: github.ref_name == 'release' || github.ref_name == 'ci/automate-docs-minimal' || github.ref_name == 'ci/automate-docs-reusable''
+    if: github.ref_name == 'release' || github.ref_name == 'ci/automate-docs-minimal' || github.ref_name == 'ci/automate-docs-reusable'
     # Updated to use the remote repository for the reusable workflow
     uses: p2arthur/reusable-workflows/.github/workflows/docs/publish_docs.yml@main
     secrets:
