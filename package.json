@@ -95,7 +95,8 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "js-sha512": "^0.9.0"
+    "js-sha512": "^0.9.0",
+    "tslib": "^2.8.1"
   },
   "peerDependencies": {
     "@algorandfoundation/algokit-utils": "^9.0.0",
