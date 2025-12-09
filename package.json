@@ -117,9 +117,6 @@
       },
       {
         "name": "release"
-      },
-      {
-        "name": "ci/automate-docs-min"
       }
     ],
     "plugins": [

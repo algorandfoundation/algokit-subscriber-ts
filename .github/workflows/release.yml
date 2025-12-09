@@ -34,6 +34,14 @@ jobs:
       build-path: dist
       artifact-name: package
 
+  generate-publish-docs:
+    name: Publish docs
+    needs: build
+    uses: ./.github/workflows/publish_docs.yml
+    secrets:
+      BOT_ID: ${{ secrets.BOT_ID }}
+      BOT_SK: ${{ secrets.BOT_SK }}
+
   release:
     name: Release
     needs: build
@@ -83,12 +91,3 @@ jobs:
           # Use the GitHub App token for authentication
           GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  generate-publish-docs:
-    name: Publish docs
-    needs: release
-    if: github.ref_name == 'release' || github.ref_name == 'ci/automate-docs-min'
-    uses: ./.github/workflows/publish_docs.yml
-    secrets:
-      BOT_ID: ${{ secrets.BOT_ID }}
-      BOT_SK: ${{ secrets.BOT_SK }}
