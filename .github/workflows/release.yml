@@ -1,11 +1,10 @@
-name: On Main Merge
+name: Publish
 
 on:
   push:
     branches:
       - main
       - release
-      - ci/automate-docs-reusable
   workflow_dispatch:
 
 concurrency: release
@@ -43,6 +42,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      # Step to generate the bot token for semantic release
       - name: Generate bot token
         uses: actions/create-github-app-token@v1
         id: app_token
@@ -55,9 +55,11 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
 
+      # Set git user to the GitHub App
       - name: Set Git user as GitHub actions
         run: git config --global user.email "179917785+engineering-ci[bot]@users.noreply.github.com" && git config --global user.name "engineering-ci[bot]"
 
+      # semantic-release needs node 20
       - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
