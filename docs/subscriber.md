@@ -336,6 +336,6 @@ Multiple error listeners can be added, and each will be called one-by-one (and a
 When no error listeners have been registered, a default listener is used to re-throw any exception, so they can be caught by global uncaught exception handlers.
 Once an error listener has been registered, the default listener is removed and it's the responsibility of the registered error listener to perform any error handling.
 
-## Examples
+## Exampless
 
 See the [main README](../README.md#examples).
