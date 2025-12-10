@@ -37,7 +37,9 @@ jobs:
   generate-publish-docs:
     name: Publish docs
     uses: p2arthur/reusable-workflows/.github/workflows/handle-docs.yml@v0.2
-
+    secrets:
+      BOT_ID: ${{ secrets.BOT_ID }}
+      BOT_SK: ${{ secrets.BOT_SK }}
   # release:
   #   name: Release
   #   needs: build
