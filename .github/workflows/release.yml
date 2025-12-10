@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - release
-      - ci/automate-docs-reusable
+      - ci/enforce-docs-config
   workflow_dispatch:
 
 concurrency: release
@@ -36,7 +36,7 @@ jobs:
 
   generate-publish-docs:
     name: Publish docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/handle_docs
+    uses: p2arthur/reusable-workflows/.github/workflows/handle-docs.yml@ci/handle_docs
 
   release:
     name: Release
