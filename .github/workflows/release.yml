@@ -36,7 +36,7 @@ jobs:
 
   generate-publish-docs:
     name: Publish docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/handle_docs-config
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/handle_docs
     secrets:
       BOT_ID: ${{ secrets.BOT_ID }}
       BOT_SK: ${{ secrets.BOT_SK }}
