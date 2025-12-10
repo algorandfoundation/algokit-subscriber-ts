@@ -13,6 +13,7 @@ concurrency: release
 permissions:
   # ... other necessary permissions (e.g., contents: write, pull-requests: write)
   id-token: write # <-- **ADD THIS LINE**
+  pages: write
 
 jobs:
   # ci:
