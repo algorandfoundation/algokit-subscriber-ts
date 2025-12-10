@@ -10,6 +10,10 @@ on:
 
 concurrency: release
 
+permissions:
+  # ... other necessary permissions (e.g., contents: write, pull-requests: write)
+  id-token: write # <-- **ADD THIS LINE**
+
 jobs:
   # ci:
   #   name: Continuous Integration
