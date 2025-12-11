@@ -50,7 +50,7 @@ build/
 coverage
 
 # Website & Code docs generation
-/docs/_html
+docs/_html
 
 # dotenv environment variable files
 .env
