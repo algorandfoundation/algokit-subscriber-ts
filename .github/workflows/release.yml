@@ -11,8 +11,7 @@ on:
 concurrency: release
 
 permissions:
-  # ... other necessary permissions (e.g., contents: write, pull-requests: write)
-  id-token: write # <-- **ADD THIS LINE**
+  id-token: write
   pages: write
 
 jobs:
@@ -41,10 +40,8 @@ jobs:
 
   generate-publish-docs:
     name: Publish docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/enforce_docs_config
-    secrets:
-      BOT_ID: ${{ secrets.BOT_ID }}
-      BOT_SK: ${{ secrets.BOT_SK }}
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@main
+
   # release:
   #   name: Release
   #   needs: build
