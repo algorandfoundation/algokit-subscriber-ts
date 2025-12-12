@@ -15,79 +15,92 @@ permissions:
   pages: write
 
 jobs:
-  ci:
-    name: Continuous Integration
-    uses: makerxstudio/shared-config/.github/workflows/node-ci.yml@main
-    with:
-      node-version: 20.x
-      run-commit-lint: true
-      pre-test-script: |
-        pipx install algokit
-        algokit localnet start
-        npx --yes wait-on tcp:4001 -t 30000
-      audit-script: |
-        npm run audit
+  # ci:
+  #   name: Continuous Integration
+  #   uses: makerxstudio/shared-config/.github/workflows/node-ci.yml@main
+  #   with:
+  #     node-version: 20.x
+  #     run-commit-lint: true
+  #     pre-test-script: |
+  #       pipx install algokit
+  #       algokit localnet start
+  #       npx --yes wait-on tcp:4001 -t 30000
+  #     audit-script: |
+  #       npm run audit
 
-  build:
-    name: Build
-    uses: makerxstudio/shared-config/.github/workflows/node-build-zip.yml@main
-    needs:
-      - ci
-    with:
-      node-version: 20.x
-      build-path: dist
-      artifact-name: package
+  # build:
+  #   name: Build
+  #   uses: makerxstudio/shared-config/.github/workflows/node-build-zip.yml@main
+  #   needs:
+  #     - ci
+  #   with:
+  #     node-version: 20.x
+  #     build-path: dist
+  #     artifact-name: package
+
+  generate-bot-token:
+    - name: Generate bot token
+      uses: actions/create-github-app-token@v1
+      id: app_token
+      outputs:
+        github-token: ${{ steps.app_token.outputs.token }}
+      with:
+        app_id: ${{ secrets.BOT_ID}}
+        private_key: ${{ secrets.BOT_SK }}
 
   generate-publish-docs:
     name: Publish docs
+    needs: generate-bot-token
     uses: p2arthur/reusable-workflows/.github/workflows/handle-docs.yml@v0.3
+    with:
+      github-token: ${{ needs.generate-bot-token.outputs.github-token }}
 
-  release:
-    name: Release
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      # Step to generate the bot token for semantic release
-      - name: Generate bot token
-        uses: actions/create-github-app-token@v1
-        id: app_token
-        with:
-          app_id: ${{ secrets.BOT_ID}}
-          private_key: ${{ secrets.BOT_SK }}
+  # release:
+  #   name: Release
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     # Step to generate the bot token for semantic release
+  #     - name: Generate bot token
+  #       uses: actions/create-github-app-token@v1
+  #       id: app_token
+  #       with:
+  #         app_id: ${{ secrets.BOT_ID}}
+  #         private_key: ${{ secrets.BOT_SK }}
 
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ steps.app_token.outputs.token }}
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #         token: ${{ steps.app_token.outputs.token }}
 
-      # Set git user to the GitHub App
-      - name: Set Git user as GitHub actions
-        run: git config --global user.email "179917785+engineering-ci[bot]@users.noreply.github.com" && git config --global user.name "engineering-ci[bot]"
+  #     # Set git user to the GitHub App
+  #     - name: Set Git user as GitHub actions
+  #       run: git config --global user.email "179917785+engineering-ci[bot]@users.noreply.github.com" && git config --global user.name "engineering-ci[bot]"
 
-      # semantic-release needs node 20
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
+  #     # semantic-release needs node 20
+  #     - name: Use Node.js 20.x
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 20.x
 
-      - name: Download built package
-        uses: actions/download-artifact@v4
-        with:
-          name: package
-          path: artifacts
+  #     - name: Download built package
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: package
+  #         path: artifacts
 
-      - name: Unzip package
-        shell: bash
-        run: |
-          mkdir -p dist
-          unzip -q "artifacts/package.zip" -d dist
+  #     - name: Unzip package
+  #       shell: bash
+  #       run: |
+  #         mkdir -p dist
+  #         unzip -q "artifacts/package.zip" -d dist
 
-      - name: Install dependencies to get semantic release components and plugins
-        run: npm ci --ignore-scripts
+  #     - name: Install dependencies to get semantic release components and plugins
+  #       run: npm ci --ignore-scripts
 
-      - name: 'Semantic release'
-        run: npx semantic-release
-        env:
-          # Use the GitHub App token for authentication
-          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: 'Semantic release'
+  #       run: npx semantic-release
+  #       env:
+  #         # Use the GitHub App token for authentication
+  #         GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
