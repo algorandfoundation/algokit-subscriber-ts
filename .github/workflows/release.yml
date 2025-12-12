@@ -38,26 +38,37 @@ jobs:
       build-path: dist
       artifact-name: package
 
-  generate-publish-docs:
-    name: Publish docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/reusable_docs_generation
-  release:
-    name: Release
-    needs: build
+  generate-bot-token:
+    name: Generate Github App Bot Token
     runs-on: ubuntu-latest
     steps:
-      # Step to generate the bot token for semantic releases
       - name: Generate bot token
         uses: actions/create-github-app-token@v1
         id: app_token
         with:
-          app-id: ${{ secrets.BOT_ID}}
-          private-key: ${{ secrets.BOT_SK }}
+          app_id: ${{ secrets.BOT_ID}}
+          private_key: ${{ secrets.BOT_SK }}
+    outputs:
+      token: ${{ steps.app_token.outputs.token }}
 
+  generate-publish-docs:
+    name: Publish docs
+    needs: generate-bot-token
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/reusable_docs_generation
+    with:
+      github-token: ${{ needs.generate-bot-token.outputs.token }}
+
+  release:
+    name: Release
+    needs:
+      - build
+      - generate-bot-token
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ steps.app_token.outputs.token }}
+          token: ${{ needs.generate-bot-token.outputs.token }}
 
       # Set git user to the GitHub Apps
       - name: Set Git user as GitHub actions
@@ -88,5 +99,5 @@ jobs:
         run: npx semantic-release
         env:
           # Use the GitHub App token for authentication
-          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
+          GITHUB_TOKEN: ${{ needs.generate-bot-token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
