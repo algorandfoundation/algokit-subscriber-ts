@@ -46,7 +46,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      # Step to generate the bot token for semantic release
+      # Step to generate the bot token for semantic releases
       - name: Generate bot token
         uses: actions/create-github-app-token@v1
         id: app_token
