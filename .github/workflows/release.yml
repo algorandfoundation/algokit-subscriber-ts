@@ -40,7 +40,7 @@ jobs:
 
   generate-bot-token:
     name: Generate Github App Bot Token # Add a name (optional, but good practice)
-    runs-on: ubuntu-latest # A job must specify its runner environment
+    runs-on: ubuntu-latest # A job must specify its runner environments
     outputs:
       github-token: ${{ steps.app_token.outputs.token }}
     steps:
