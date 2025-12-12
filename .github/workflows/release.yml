@@ -40,7 +40,7 @@ jobs:
 
   generate-publish-docs:
     name: Publish docs
-    uses: p2arthur/reusable-workflows/.github/workflows/handle-docs.yml@v0.3
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@v0.3
   # release:
   #   name: Release
   #   needs: build
