@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - release
-      - ci/enforce-docs-config
   workflow_dispatch:
 
 concurrency: release
@@ -38,43 +37,33 @@ jobs:
       build-path: dist
       artifact-name: package
 
-  generate-bot-token:
-    name: Generate Github App Bot Token
+  generate-publish-docs:
+    name: Publish docs
+    uses: p2arthur/reusable-workflows/.github/workflows/handle-docs.yml@v0.3
+
+  release:
+    name: Release
+    needs: build
     runs-on: ubuntu-latest
     steps:
+      # Step to generate the bot token for semantic release
       - name: Generate bot token
         uses: actions/create-github-app-token@v1
         id: app_token
         with:
           app_id: ${{ secrets.BOT_ID}}
           private_key: ${{ secrets.BOT_SK }}
-    outputs:
-      token: ${{ steps.app_token.outputs.token }}
 
-  generate-publish-docs:
-    name: Publish docs
-    needs: generate-bot-token
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/reusable_docs_generation
-    with:
-      github_token: ${{ needs.generate-bot-token.outputs.token }}
-
-  release:
-    name: Release
-    needs:
-      - build
-      - generate-bot-token
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ needs.generate-bot-token.outputs.token }}
+          token: ${{ steps.app_token.outputs.token }}
 
-      # Set git user to the GitHub Apps
+      # Set git user to the GitHub App
       - name: Set Git user as GitHub actions
         run: git config --global user.email "179917785+engineering-ci[bot]@users.noreply.github.com" && git config --global user.name "engineering-ci[bot]"
 
-      # semantic-release needs node 20.x
+      # semantic-release needs node 20
       - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
@@ -99,5 +88,5 @@ jobs:
         run: npx semantic-release
         env:
           # Use the GitHub App token for authentication
-          GITHUB_TOKEN: ${{ needs.generate-bot-token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
