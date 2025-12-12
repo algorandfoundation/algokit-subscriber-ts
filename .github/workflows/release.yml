@@ -56,7 +56,7 @@ jobs:
     needs: generate-bot-token
     uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/reusable_docs_generation
     with:
-      github-token: ${{ needs.generate-bot-token.outputs.token }}
+      github_token: ${{ needs.generate-bot-token.outputs.token }}
 
   release:
     name: Release
