@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - release
-      - ci/enforce-docs-config
   workflow_dispatch:
 
 concurrency: release
@@ -38,37 +37,12 @@ jobs:
   #     build-path: dist
   #     artifact-name: package
 
-  generate-bot-token:
-    name: Generate Github App Bot Token # Add a name (optional, but good practice)
-    runs-on: ubuntu-latest # A job must specify its runner environments
-    outputs:
-      github-token: ${{ steps.app_token.outputs.token }}
-    steps:
-      - name: Generate bot token
-        uses: actions/create-github-app-token@v1
-        id: app_token
-        with:
-          app_id: ${{ secrets.BOT_ID}}
-          private_key: ${{ secrets.BOT_SK }}
-
-      - name: Debug Token Status
-        run: |
-          TOKEN="${{ steps.app_token.outputs.token }}"
-
-          if [ -z "$TOKEN" ]; then
-            echo "::error::ERROR: The generated token is EMPTY. Check your BOT_SK format."
-            exit 1
-          else
-            echo "Token successfully generated (length: ${#TOKEN} characters)."
-          fi
-
   generate-publish-docs:
     name: Publish docs
-    needs: generate-bot-token
-    uses: p2arthur/reusable-workflows/.github/workflows/handle-docs.yml@v0.3
-    with:
-      github-token: ${{ needs.generate-bot-token.outputs.github-token }}
-
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@main
+    secrets:
+      BOT_ID: ${{ secrets.BOT_ID }}
+      BOT_SK: ${{ secrets.BOT_SK }}
   # release:
   #   name: Release
   #   needs: build
