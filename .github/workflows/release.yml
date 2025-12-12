@@ -51,6 +51,17 @@ jobs:
           app_id: ${{ secrets.BOT_ID}}
           private_key: ${{ secrets.BOT_SK }}
 
+      - name: Debug Token Status
+        run: |
+          TOKEN="${{ steps.app_token.outputs.token }}"
+
+          if [ -z "$TOKEN" ]; then
+            echo "::error::ERROR: The generated token is EMPTY. Check your BOT_SK format."
+            exit 1
+          else
+            echo "Token successfully generated (length: ${#TOKEN} characters)."
+          fi
+
   generate-publish-docs:
     name: Publish docs
     needs: generate-bot-token
