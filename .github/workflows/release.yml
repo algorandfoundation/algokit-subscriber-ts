@@ -39,14 +39,17 @@ jobs:
   #     artifact-name: package
 
   generate-bot-token:
-    - name: Generate bot token
-      uses: actions/create-github-app-token@v1
-      id: app_token
-      outputs:
-        github-token: ${{ steps.app_token.outputs.token }}
-      with:
-        app_id: ${{ secrets.BOT_ID}}
-        private_key: ${{ secrets.BOT_SK }}
+    name: Generate Github App Bot Token # Add a name (optional, but good practice)
+    runs-on: ubuntu-latest # A job must specify its runner environment
+    outputs:
+      github-token: ${{ steps.app_token.outputs.token }}
+    steps:
+      - name: Generate bot token
+        uses: actions/create-github-app-token@v1
+        id: app_token
+        with:
+          app_id: ${{ secrets.BOT_ID}}
+          private_key: ${{ secrets.BOT_SK }}
 
   generate-publish-docs:
     name: Publish docs
