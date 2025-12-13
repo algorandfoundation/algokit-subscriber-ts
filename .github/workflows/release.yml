@@ -92,6 +92,6 @@ jobs:
       - name: 'Semantic release'
         run: npx semantic-release
         env:
-          # Use the GitHub App token for authentication
+          # Use the GitHub App token for authentications
           GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
