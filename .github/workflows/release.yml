@@ -8,8 +8,6 @@ on:
       - ci/check-docs
   workflow_dispatch:
 
-concurrency: release
-
 permissions:
   id-token: write
   pages: write
