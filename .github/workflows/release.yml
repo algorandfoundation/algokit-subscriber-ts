@@ -28,11 +28,11 @@ jobs:
 
   generate-publish-docs:
     name: Publish docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@ci/reusable_docs_generation
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@main
 
   check-docs:
     name: Check docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@ci/check-docs
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@main
 
   build:
     name: Build
