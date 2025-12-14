@@ -66,8 +66,8 @@ describe('Inner transactions', () => {
     return {
       id:
         innerTransactionIndex !== undefined
-          ? `${groupResult.transactions[index].txID()}/inner/${innerTransactionIndex + 1}`
-          : groupResult.transactions[index].txID(),
+          ? `${groupResult.transactions[index].txId()}/inner/${innerTransactionIndex + 1}`
+          : groupResult.transactions[index].txId(),
       transaction:
         innerTransactionIndex !== undefined
           ? groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn

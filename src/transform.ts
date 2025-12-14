@@ -32,7 +32,7 @@ export function getTransactionFromBlockPayout(block: BlockResponse, getRoundOffs
   })
 
   const txn: TransactionInBlock = {
-    transactionId: pay.txID(),
+    transactionId: pay.txId(),
     roundTimestamp: Number(header.timestamp),
     transaction: pay,
     intraRoundOffset: getRoundOffset(),
@@ -71,7 +71,7 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
 
     const rootTransaction = {
       signedTxnWithAD,
-      transactionId: rootTransactionData.transaction.txID(),
+      transactionId: rootTransactionData.transaction.txId(),
       intraRoundOffset: getRoundOffset(),
       roundNumber: block.header.round!,
       roundTimestamp: Number(block.header.timestamp),
@@ -157,7 +157,7 @@ function extractTransactionDataFromSignedTxnInBlock(
 
   // Normalise the transaction so that the transaction ID is generated correctly
   const transaction = new Transaction({
-    ...txn.toParams(),
+    ...txn,
     genesisHash: genesisHash ?? txn.genesisHash,
     genesisId: genesisId ?? txn.genesisId,
   })
@@ -221,7 +221,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
   } = t
 
   if (!transaction.type) {
-    throw new Error(`Received no transaction type for transaction ${transaction.txID()}`)
+    throw new Error(`Received no transaction type for transaction ${transaction.txId()}`)
   }
 
   let parentOffset = 1
@@ -321,7 +321,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
               approvalProgram: transaction.appCall!.approvalProgram,
               clearStateProgram: transaction.appCall!.clearStateProgram,
               onCompletion: algodOnCompleteToIndexerOnComplete(transaction.appCall!.onComplete),
-              applicationArgs: transaction.appCall!.args?.map((a: Uint8Array) => Buffer.from(a).toString('base64')),
+              applicationArgs: transaction.appCall!.args,
               foreignApps: transaction.appCall!.appReferences?.map((a: bigint) => a),
               foreignAssets: transaction.appCall!.assetReferences?.map((a: bigint) => a),
               ...(transaction.appCall?.globalStateSchema
@@ -486,7 +486,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
               logicsig: signedTxnWithAD.signedTxn.lsig
                 ? {
                     logic: signedTxnWithAD.signedTxn.lsig.logic,
-                    args: signedTxnWithAD.signedTxn.lsig.args?.map((a: Uint8Array) => Buffer.from(a).toString('base64')),
+                    args: signedTxnWithAD.signedTxn.lsig.args,
                     signature: signedTxnWithAD.signedTxn.lsig.sig,
                     multisigSignature: signedTxnWithAD.signedTxn.lsig.msig
                       ? {

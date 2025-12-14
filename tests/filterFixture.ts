@@ -73,7 +73,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     // Ensure there is another transaction so algod subscription can process something
     await SendXTransactions(2, systemAccount, localnet.algorand)
     // Wait for indexer to catch up
-    await localnet.context.waitForIndexerTransaction(result.transaction.txID())
+    await localnet.context.waitForIndexerTransaction(result.transaction.txId())
     const durationInSeconds = (+new Date() - start) / 1000
     // eslint-disable-next-line no-console
     console.debug(`Prepared for subscribing to indexer in ${durationInSeconds} seconds`)
@@ -98,7 +98,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
   const subscribeAndVerify = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
     const subscribed = await subscribeAlgod(filter, result, arc28Events)
     expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(result.transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(result.transaction.txId())
 
     return subscribed
   }
@@ -115,10 +115,10 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     ])
 
     expect(algod.subscribedTransactions.length).toBe(results.length)
-    expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txId()))
 
     expect(indexer.subscribedTransactions.length).toBe(results.length)
-    expect(indexer.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    expect(indexer.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txId()))
 
     return { algod, indexer }
   }

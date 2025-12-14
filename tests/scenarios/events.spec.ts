@@ -176,7 +176,7 @@ describe('Subscribing to app calls that emit events', () => {
           {
             groupName: 'group1',
             events: [swappedEvent],
-            processTransaction: (transaction) => transaction.id === txn.transaction.txID(),
+            processTransaction: (transaction) => transaction.id === txn.transaction.txId(),
           },
         ],
       )
@@ -409,7 +409,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processTransaction: (transaction) => transaction.id === txns.transactions[1].txID(),
+          processTransaction: (transaction) => transaction.id === txns.transactions[1].txId(),
         },
       ],
     )
@@ -435,7 +435,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txID(),
+          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txId(),
         },
       ],
     )
@@ -452,7 +452,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txID(),
+          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txId(),
         },
       ],
     )
@@ -480,7 +480,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txID(),
+          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txId(),
         },
       ],
     )
@@ -497,7 +497,7 @@ describe('Subscribing to app calls that emit events', () => {
         {
           groupName: 'group1',
           events: [swappedEvent],
-          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txID(),
+          processTransaction: (transaction) => transaction.id !== txns.transactions[1].txId(),
         },
       ],
     )

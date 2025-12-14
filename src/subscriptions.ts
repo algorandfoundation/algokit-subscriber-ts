@@ -498,7 +498,7 @@ function indexerPostFilter(
     }
     if (subscription.appCallArgumentsMatch) {
       result &&= !!t.applicationTransaction && subscription.appCallArgumentsMatch(
-        (t.applicationTransaction.applicationArgs ?? []).map((arg) => Buffer.from(arg, 'base64'))
+        (t.applicationTransaction.applicationArgs ?? []).map((arg) => Buffer.from(arg))
       )
     }
     if (subscription.arc28Events) {

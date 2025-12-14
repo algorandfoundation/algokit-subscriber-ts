@@ -369,7 +369,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const transformed = getBlockTransactions(b)
 
     const receivedTxn = transformed[intraRoundOffset]
-    expect(receivedTxn.transaction.txID()).toBe(txnId)
+    expect(receivedTxn.transaction.txId()).toBe(txnId)
 
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/
     expect(getTransactionInBlockForDiff(receivedTxn)).toMatchInlineSnapshot(`
@@ -783,7 +783,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
-    expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
+    expect(transaction.id).toBe(blockTransactions[0].transaction.txId())
   })
 
   it('Produces the correct state deltas in an app call transaction', async () => {
