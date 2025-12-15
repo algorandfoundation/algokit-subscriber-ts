@@ -117,7 +117,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "id": "LSTIW7IBLO4SFPLFAI45WAV3NPXYPX6RWPTZ5KYDL3NX2LTJFXNA",
         "intraRoundOffset": 54,
         "keyregTransaction": {
-          "nonParticipation": false,
           "selectionParticipationKey": "Fsp1QLE/fXpmq5fsk/bWP8P1+H8n30bMD3X7hPdk/GU=",
           "stateProofKey": "Qld9eu3U/OhHohBMF4atWbKbDQB5NGO2vPl5sZ9q9yHssmrbnQIOlhujP3vaSdFXqstnzD77Z85yrlfxJFfu+g==",
           "voteFirstValid": 34300000n,
@@ -126,7 +125,6 @@ describe('Complex transaction with many nested inner transactions', () => {
           "voteParticipationKey": "yUR+nfHtSb2twOaprEXrnYjkhbFMBtmXW9D8x+/ROBg=",
         },
         "lastValid": 34419595n,
-        "note": "",
         "roundTime": 1702579204,
         "sender": "HQQRVWPYAHABKCXNMZRG242Z5GWFTJMRO63HDCLF23ZWCT3IPQXIGQ2KGY",
         "signature": {
@@ -134,6 +132,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         },
         "txType": "keyreg",
       }
-    `)
+      `)
   })
 })

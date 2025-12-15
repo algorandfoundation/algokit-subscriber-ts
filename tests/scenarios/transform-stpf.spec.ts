@@ -48,7 +48,6 @@ describe('State proof transaction', () => {
         "roundTime": 1706392547,
         "sender": "XM6FEYVJ2XDU2IBH4OT6VZGW75YM63CM4TC6AV6BD3JZXFJUIICYTVB5EU",
         "senderRewards": 0n,
-        "signature": {},
         "stateProofTransaction": {
           "message": {
             "blockHeadersCommitment": "rwUJ3x/P5PcGUms8u12f8bI5TaGSjm1xDyvCYzw+bVA=",
@@ -2096,7 +2095,7 @@ describe('State proof transaction', () => {
             },
             "signedWeight": 1430383201665331n,
           },
-          "stateProofType": 0,
+          "stateProofType": 0n,
         },
         "txType": "stpf",
       }
@@ -2134,7 +2133,6 @@ describe('State proof transaction', () => {
         "id": "G2U5DWQRQV7EGQDAHH62EDY22VYPP4VWM3V2S5BLDNXNWFNKRXMQ",
         "intraRoundOffset": 1,
         "lastValid": 35601002n,
-        "note": "",
         "roundTime": 1706392547,
         "sender": "XM6FEYVJ2XDU2IBH4OT6VZGW75YM63CM4TC6AV6BD3JZXFJUIICYTVB5EU",
         "stateProofTransaction": {
@@ -4184,7 +4182,7 @@ describe('State proof transaction', () => {
             },
             "signedWeight": 1430383201665331n,
           },
-          "stateProofType": 0,
+          "stateProofType": 0n,
         },
         "txType": "stpf",
       }
