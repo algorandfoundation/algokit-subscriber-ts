@@ -327,16 +327,16 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
               ...(transaction.appCall?.globalStateSchema
                 ? {
                     globalStateSchema: {
-                      numByteSlice: transaction.appCall.globalStateSchema.numByteSlices,
-                      numUint: transaction.appCall.globalStateSchema.numUints,
+                      numByteSlices: transaction.appCall.globalStateSchema.numByteSlices,
+                      numUints: transaction.appCall.globalStateSchema.numUints,
                     },
                   }
                 : undefined),
               ...(transaction.appCall?.localStateSchema
                 ? {
                     localStateSchema: {
-                      numByteSlice: transaction.appCall.localStateSchema.numByteSlices,
-                      numUint: transaction.appCall.localStateSchema.numUints,
+                      numByteSlices: transaction.appCall.localStateSchema.numByteSlices,
+                      numUints: transaction.appCall.localStateSchema.numUints,
                     },
                   }
                 : undefined),
@@ -438,8 +438,8 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
             },
           }
         : undefined),
-      firstValid: Number(transaction.firstValid),
-      lastValid: Number(transaction.lastValid),
+      firstValid: transaction.firstValid,
+      lastValid: transaction.lastValid,
       txType: transactionTypeToIndexerTxType(transaction.type),
       fee: transaction.fee ?? 0n,
       sender: transaction.sender.toString(),
