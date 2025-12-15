@@ -8,10 +8,6 @@
 
 - [BalanceChangeRole](../enums/types_subscription.BalanceChangeRole.md)
 
-### Classes
-
-- [SubscribedTransaction](../classes/types_subscription.SubscribedTransaction.md)
-
 ### Interfaces
 
 - [AlgorandSubscriberConfig](../interfaces/types_subscription.AlgorandSubscriberConfig.md)
@@ -25,6 +21,7 @@
 - [CoreTransactionSubscriptionParams](../interfaces/types_subscription.CoreTransactionSubscriptionParams.md)
 - [NamedTransactionFilter](../interfaces/types_subscription.NamedTransactionFilter.md)
 - [ParticipationUpdates](../interfaces/types_subscription.ParticipationUpdates.md)
+- [SubscribedTransaction](../interfaces/types_subscription.SubscribedTransaction.md)
 - [SubscriberConfigFilter](../interfaces/types_subscription.SubscriberConfigFilter.md)
 - [TransactionFilter](../interfaces/types_subscription.TransactionFilter.md)
 - [TransactionSubscriptionParams](../interfaces/types_subscription.TransactionSubscriptionParams.md)
@@ -47,8 +44,8 @@
 
 ##### Parameters
 
-| Name    | Type      |
-| :------ | :-------- |
+| Name | Type |
+| :------ | :------ |
 | `error` | `unknown` |
 
 ##### Returns
@@ -57,9 +54,9 @@
 
 #### Defined in
 
-[src/types/subscription.ts:416](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L416)
+[src/types/subscription.ts:397](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L397)
 
----
+___
 
 ### TypedAsyncEventListener
 
@@ -68,8 +65,8 @@
 #### Type parameters
 
 | Name |
-| :--- |
-| `T`  |
+| :------ |
+| `T` |
 
 #### Type declaration
 
@@ -77,9 +74,9 @@
 
 ##### Parameters
 
-| Name        | Type                 |
-| :---------- | :------------------- |
-| `event`     | `T`                  |
+| Name | Type |
+| :------ | :------ |
+| `event` | `T` |
 | `eventName` | `string` \| `symbol` |
 
 ##### Returns
@@ -88,4 +85,4 @@
 
 #### Defined in
 
-[src/types/subscription.ts:414](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L414)
+[src/types/subscription.ts:395](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L395)

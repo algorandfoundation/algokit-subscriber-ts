@@ -49,7 +49,7 @@ const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: Subscribe
  * blockchain for the given subscription context.
  * @param subscription The subscription context.
  * @param algod An Algod client.
- * @param indexer An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`.
+ * @param indexerClient An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`.
  * @returns The result of this subscription pull/poll.
  */
 export async function getSubscribedTransactions(
