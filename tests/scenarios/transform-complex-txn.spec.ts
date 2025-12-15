@@ -559,7 +559,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6/
     expect(getTransactionInBlockForDiff(transformed[intraRoundOffset + 6])).toMatchInlineSnapshot(`
-     {
+      {
         "assetCloseAmount": undefined,
         "closeAmount": undefined,
         "createdAppId": undefined,
