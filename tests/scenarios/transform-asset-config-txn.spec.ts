@@ -16,7 +16,6 @@ describe('Asset config transaction', () => {
       decimals: 6,
       total: 2000000000000000n,
       clawback: 'ATPVJYGEGP5H6GCZ4T6CG4PK7LH5OMWXHLXZHDPGO7RO6T3EHWTF6UUY6E',
-      defaultFrozen: false,
       freeze: 'ATPVJYGEGP5H6GCZ4T6CG4PK7LH5OMWXHLXZHDPGO7RO6T3EHWTF6UUY6E',
       manager: 'ATPVJYGEGP5H6GCZ4T6CG4PK7LH5OMWXHLXZHDPGO7RO6T3EHWTF6UUY6E',
       name: 'Fry Node',
