@@ -23,11 +23,11 @@ blockchain for the given subscription context.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `subscription` | [`TransactionSubscriptionParams`](../interfaces/types_subscription.TransactionSubscriptionParams.md) | The subscription context. |
-| `algod` | `AlgodClient` | An Algod client. |
-| `indexer?` | `IndexerClient` | An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`. |
+| Name           | Type                                                                                                 | Description                                                                           |
+| :------------- | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| `subscription` | [`TransactionSubscriptionParams`](../interfaces/types_subscription.TransactionSubscriptionParams.md) | The subscription context.                                                             |
+| `algod`        | `AlgodClient`                                                                                        | An Algod client.                                                                      |
+| `indexer?`     | `IndexerClient`                                                                                      | An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`. |
 
 #### Returns
 

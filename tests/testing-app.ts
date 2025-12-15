@@ -9,7 +9,12 @@ export async function app(params: {
   creator: AddressWithSigners
   note?: string
 }): ReturnType<TestingAppFactory['send']['create']['bare']>
-export async function app(params: { create: false; algorand: AlgorandClient; creator: AddressWithSigners; note?: string }): Promise<Transaction>
+export async function app(params: {
+  create: false
+  algorand: AlgorandClient
+  creator: AddressWithSigners
+  note?: string
+}): Promise<Transaction>
 export async function app(params: { create: boolean; algorand: AlgorandClient; creator: AddressWithSigners; note?: string }) {
   params.algorand.setSignerFromAccount(params.creator)
   const factory = new TestingAppFactory({

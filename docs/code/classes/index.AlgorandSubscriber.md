@@ -46,11 +46,11 @@ Create a new `AlgorandSubscriber`.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `config` | [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md) | The subscriber configuration |
-| `algod` | `AlgodClient` | An algod client |
-| `indexer?` | `IndexerClient` | An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer` |
+| Name       | Type                                                                                       | Description                                                                                         |
+| :--------- | :----------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `config`   | [`AlgorandSubscriberConfig`](../interfaces/types_subscription.AlgorandSubscriberConfig.md) | The subscriber configuration                                                                        |
+| `algod`    | `AlgodClient`                                                                              | An algod client                                                                                     |
+| `indexer?` | `IndexerClient`                                                                            | An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer` |
 
 #### Returns
 
@@ -70,7 +70,7 @@ Create a new `AlgorandSubscriber`.
 
 [src/subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
 
-___
+---
 
 ### algod
 
@@ -80,7 +80,7 @@ ___
 
 [src/subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
 
-___
+---
 
 ### config
 
@@ -90,17 +90,17 @@ ___
 
 [src/subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
 
-___
+---
 
 ### errorEventName
 
-• `Private` `Readonly` **errorEventName**: ``"error"``
+• `Private` `Readonly` **errorEventName**: `"error"`
 
 #### Defined in
 
 [src/subscriber.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
 
-___
+---
 
 ### eventEmitter
 
@@ -110,7 +110,7 @@ ___
 
 [src/subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
 
-___
+---
 
 ### filterNames
 
@@ -120,7 +120,7 @@ ___
 
 [src/subscriber.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L28)
 
-___
+---
 
 ### indexer
 
@@ -130,7 +130,7 @@ ___
 
 [src/subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
 
-___
+---
 
 ### startPromise
 
@@ -140,7 +140,7 @@ ___
 
 [src/subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
 
-___
+---
 
 ### started
 
@@ -158,8 +158,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type      |
+| :------ | :-------- |
 | `error` | `unknown` |
 
 #### Returns
@@ -170,7 +170,7 @@ ___
 
 [src/subscriber.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L31)
 
-___
+---
 
 ### on
 
@@ -182,16 +182,16 @@ The listener can be async and it will be awaited if so.
 
 #### Type parameters
 
-| Name | Type |
-| :------ | :------ |
-| `T` | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md) |
+| Name | Type                                                                   |
+| :--- | :--------------------------------------------------------------------- |
+| `T`  | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md) |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `filterName` | `string` | The name of the filter to subscribe to |
-| `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`\> | The listener function to invoke with the subscribed event |
+| Name         | Type                                                                                         | Description                                               |
+| :----------- | :------------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
+| `filterName` | `string`                                                                                     | The name of the filter to subscribe to                    |
+| `listener`   | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`\> | The listener function to invoke with the subscribed event |
 
 #### Returns
 
@@ -202,7 +202,9 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.on('my-filter', async (transaction) => { console.log(transaction.id) })
+subscriber.on('my-filter', async (transaction) => {
+  console.log(transaction.id)
+})
 ```
 
 **`Example`**
@@ -216,7 +218,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 [src/subscriber.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L191)
 
-___
+---
 
 ### onBatch
 
@@ -232,16 +234,16 @@ The listener can be async and it will be awaited if so.
 
 #### Type parameters
 
-| Name | Type |
-| :------ | :------ |
-| `T` | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md) |
+| Name | Type                                                                   |
+| :--- | :--------------------------------------------------------------------- |
+| `T`  | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md) |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `filterName` | `string` | The name of the filter to subscribe to |
-| `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`[]\> | The listener function to invoke with the subscribed events |
+| Name         | Type                                                                                           | Description                                                |
+| :----------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
+| `filterName` | `string`                                                                                       | The name of the filter to subscribe to                     |
+| `listener`   | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<`T`[]\> | The listener function to invoke with the subscribed events |
 
 #### Returns
 
@@ -252,7 +254,9 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onBatch('my-filter', async (transactions) => { console.log(transactions.length) })
+subscriber.onBatch('my-filter', async (transactions) => {
+  console.log(transactions.length)
+})
 ```
 
 **`Example`**
@@ -266,7 +270,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 [src/subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
 
-___
+---
 
 ### onBeforePoll
 
@@ -280,8 +284,8 @@ The listener can be async and it will be awaited if so.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name       | Type                                                                                                                                                                    | Description                                                |
+| :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
 | `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<[`BeforePollMetadata`](../interfaces/types_subscription.BeforePollMetadata.md)\> | The listener function to invoke with the pre-poll metadata |
 
 #### Returns
@@ -293,14 +297,16 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
+subscriber.onBeforePoll(async (metadata) => {
+  console.log(metadata.watermark)
+})
 ```
 
 #### Defined in
 
 [src/subscriber.ts:238](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L238)
 
-___
+---
 
 ### onError
 
@@ -314,8 +320,8 @@ The listener can be async and it will be awaited if so.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name       | Type                                                              | Description                                                    |
+| :--------- | :---------------------------------------------------------------- | :------------------------------------------------------------- |
 | `listener` | [`ErrorListener`](../modules/types_subscription.md#errorlistener) | The listener function to invoke with the error that was thrown |
 
 #### Returns
@@ -327,7 +333,9 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onError((error) => { console.error(error) })
+subscriber.onError((error) => {
+  console.error(error)
+})
 ```
 
 **`Example`**
@@ -351,7 +359,7 @@ subscriber.onError(async (error) => {
 
 [src/subscriber.ts:292](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L292)
 
-___
+---
 
 ### onPoll
 
@@ -368,8 +376,8 @@ The listener can be async and it will be awaited if so.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name       | Type                                                                                                                                                                                          | Description                                          |
+| :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
 | `listener` | [`TypedAsyncEventListener`](../modules/types_subscription.md#typedasynceventlistener)\<[`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)\> | The listener function to invoke with the poll result |
 
 #### Returns
@@ -381,14 +389,16 @@ The subscriber so `on*` calls can be chained
 **`Example`**
 
 ```typescript
-subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange) })
+subscriber.onPoll(async (pollResult) => {
+  console.log(pollResult.subscribedTransactions.length, pollResult.syncedRoundRange)
+})
 ```
 
 #### Defined in
 
 [src/subscriber.ts:259](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L259)
 
-___
+---
 
 ### pollOnce
 
@@ -409,7 +419,7 @@ The poll result
 
 [src/subscriber.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L67)
 
-___
+---
 
 ### start
 
@@ -421,10 +431,10 @@ This is useful when running in the context of a long-running process / container
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `inspect?` | (`pollResult`: [`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)) => `void` | A function that is called for each poll so the inner workings can be inspected / logged / etc. |
-| `suppressLog?` | `boolean` | - |
+| Name           | Type                                                                                                                           | Description                                                                                    |
+| :------------- | :----------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| `inspect?`     | (`pollResult`: [`TransactionSubscriptionResult`](../interfaces/types_subscription.TransactionSubscriptionResult.md)) => `void` | A function that is called for each poll so the inner workings can be inspected / logged / etc. |
+| `suppressLog?` | `boolean`                                                                                                                      | -                                                                                              |
 
 #### Returns
 
@@ -436,7 +446,7 @@ An object that contains a promise you can wait for after calling stop
 
 [src/subscriber.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L113)
 
-___
+---
 
 ### stop
 
@@ -446,8 +456,8 @@ Stops the subscriber if previously started via `start`.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name     | Type      | Description                                |
+| :------- | :-------- | :----------------------------------------- |
 | `reason` | `unknown` | The reason the subscriber is being stopped |
 
 #### Returns

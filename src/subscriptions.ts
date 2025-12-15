@@ -1,8 +1,8 @@
 import { Config, indexer } from '@algorandfoundation/algokit-utils'
+import { ABITupleType, type ABIValue } from '@algorandfoundation/algokit-utils/abi'
 import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
 import type { IndexerClient, Transaction as IndexerTransaction } from '@algorandfoundation/algokit-utils/indexer-client'
-import { ABITupleType, type ABIValue } from '@algorandfoundation/algokit-utils/abi'
-import { TransactionType, OnApplicationComplete } from '@algorandfoundation/algokit-utils/transact'
+import { OnApplicationComplete, TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { Buffer } from 'buffer'
 import sha512, { sha512_256 } from 'js-sha512'
 import { getBlocksBulk } from './block'
@@ -19,9 +19,9 @@ import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './
 import type { TransactionInBlock } from './types/block'
 import {
   BlockMetadata,
-  type SubscribedTransaction,
   type BalanceChange,
   type NamedTransactionFilter,
+  type SubscribedTransaction,
   type TransactionFilter,
   type TransactionSubscriptionParams,
   type TransactionSubscriptionResult,
@@ -148,7 +148,9 @@ export async function getSubscribedTransactions(
                 // For each filter
                 chunkedFilters.map(async (f) =>
                   // Retrieve all pre-filtered transactions from the indexer
-                  (await indexer.searchTransactions(indexerClient, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
+                  (
+                    await indexer.searchTransactions(indexerClient, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))
+                  ).transactions
                     // Re-run the pre-filter in-memory so we properly extract inner transactions
                     .flatMap((t) => getFilteredIndexerTransactions(t, f))
                     // Run the post-filter so we get the final list of matching transactions
@@ -326,11 +328,7 @@ function extractArc28Events(
     .filter((e) => !!e) as EmittedArc28Event[]
 }
 
-function indexerPreFilter(
-  subscription: TransactionFilter,
-  minRound: bigint,
-  maxRound: bigint,
-): SearchForTransactionsCriteria {
+function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, maxRound: bigint): SearchForTransactionsCriteria {
   // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
   const criteria: SearchForTransactionsCriteria = {
     minRound,
@@ -497,9 +495,9 @@ function indexerPostFilter(
       }
     }
     if (subscription.appCallArgumentsMatch) {
-      result &&= !!t.applicationTransaction && subscription.appCallArgumentsMatch(
-        (t.applicationTransaction.applicationArgs ?? []).map((arg) => Buffer.from(arg))
-      )
+      result &&=
+        !!t.applicationTransaction &&
+        subscription.appCallArgumentsMatch((t.applicationTransaction.applicationArgs ?? []).map((arg) => Buffer.from(arg)))
     }
     if (subscription.arc28Events) {
       result &&=
@@ -672,10 +670,7 @@ function hasBalanceChangeMatch(transactionBalanceChanges: BalanceChange[], filte
 /** Process an indexer transaction and return that transaction or any of it's inner transactions
  * that meet the indexer pre-filter requirements; patching up transaction ID and intra-round-offset on the way through.
  */
-function getFilteredIndexerTransactions(
-  transaction: IndexerTransaction,
-  filter: NamedTransactionFilter,
-): SubscribedTransaction[] {
+function getFilteredIndexerTransactions(transaction: IndexerTransaction, filter: NamedTransactionFilter): SubscribedTransaction[] {
   let rootOffset = 0
   const getRootOffset = () => rootOffset++
 
