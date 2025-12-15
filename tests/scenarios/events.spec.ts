@@ -245,9 +245,9 @@ describe('Subscribing to app calls that emit events', () => {
     expect(subscription.arc28Events[0].groupName).toBe('group1')
 
     expect(subscription.arc28Events[1].args.length).toEqual(2)
-    expect(subscription.arc28Events[1].args[0]).toEqual([1n, 2n, 3n])
+    expect(subscription.arc28Events[1].args[0]).toEqual([1, 2, 3])
     expect(subscription.arc28Events[1].args[1]).toEqual(2n)
-    expect(subscription.arc28Events[1].argsByName).toEqual({ array: [1n, 2n, 3n], int: 2n })
+    expect(subscription.arc28Events[1].argsByName).toEqual({ array: [1, 2, 3], int: 2n })
     expect(subscription.arc28Events[1].eventName).toBe('Complex')
     expect(subscription.arc28Events[1].eventPrefix).toBe('18da5ea7')
     expect(subscription.arc28Events[1].eventSignature).toBe('Complex(uint32[],uint64)')
