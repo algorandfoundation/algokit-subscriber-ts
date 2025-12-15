@@ -45,12 +45,12 @@ describe('Complex transaction with many nested inner transactions', () => {
             1390638935n,
           ],
           "globalStateSchema": {
-            "numByteSlice": 0,
-            "numUint": 0,
+            "numByteSlices": 0,
+            "numUints": 0,
           },
           "localStateSchema": {
-            "numByteSlice": 0,
-            "numUint": 0,
+            "numByteSlices": 0,
+            "numUints": 0,
           },
           "onCompletion": "noop",
         },
