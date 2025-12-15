@@ -28,7 +28,7 @@ async function getXGovSubscriber() {
   })
   const votingRoundState = await appClient.state.global.getAll()
   const votingRoundMetadata = (await (
-    await fetch(`https://ipfs.algonode.xyz/ipfs/${votingRoundState.metadataIpfsCid!.asString()}`)
+    await fetch(`https://api.voting.algorand.foundation/ipfs/${votingRoundState.metadataIpfsCid!.asString()}`)
   ).json()) as VotingRoundMetadata
 
   const answerIndexMetadata = votingRoundMetadata.questions.flatMap((q) =>
@@ -143,9 +143,8 @@ async function getXGovSubscriber() {
 
         const casts = await p.voteCast.createMany({
           data: poll.subscribedTransactions.flatMap((t) => {
-            return answerArrayType
-              .decode(t!.applicationTransaction!.applicationArgs![answerAppArgsIndex])
-              .map((v: ABIValue, i: number) => {
+            return (answerArrayType.decode(t!.applicationTransaction!.applicationArgs![answerAppArgsIndex]) as ABIValue[]).map(
+              (v: ABIValue, i: number) => {
                 if (!useWeighting) {
                   const questionIndex = i
                   const answerIndex = parseInt(v.toString())
@@ -167,7 +166,8 @@ async function getXGovSubscriber() {
                   voteId: t.id,
                   voteWeight: v.toString(),
                 }
-              })
+              },
+            )
           }),
         })
 
