@@ -29,7 +29,6 @@ export interface TransactionSubscriptionResult {
   blockMetadata?: BlockMetadata[]
 }
 
-// TODO: PD - can we use the type from algod?
 /** Metadata about a block that was retrieved from algod. */
 export interface BlockMetadata {
   /** The base64 block hash. */

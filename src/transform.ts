@@ -230,7 +230,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
         ? {
             assetConfigTransaction: {
               // Set assetId to undefined if it's an asset create txn
-              assetId: createdAssetId ? undefined : transaction.assetConfig.assetId,
+              assetId: transaction.assetConfig.assetId,
               params: createdAssetId
                 ? {
                     creator: transaction.sender.toString(),
@@ -406,7 +406,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
         : undefined),
       firstValid: transaction.firstValid,
       lastValid: transaction.lastValid,
-      txType: transactionTypeToIndexerTxType(transaction.type),
+      txType: transaction.type as SubscribedTransaction['txType'],
       fee: transaction.fee ?? 0n,
       sender: transaction.sender.toString(),
       confirmedRound: roundNumber,
@@ -544,18 +544,16 @@ function getHashFromBlockCert(cert: unknown | undefined): string | undefined {
   if (!cert) {
     return undefined
   }
-  // TODO: PD - confirm getHashFromBlockCert
-  if (!(cert instanceof Map) && typeof cert !== 'object') {
+
+  if (typeof cert !== 'object') {
     return undefined
   }
-  const certData = cert instanceof Map ? cert : (cert as Record<string, unknown>)
-  const prop = certData instanceof Map ? certData.get('prop') : (certData as Record<string, unknown>)['prop']
-  if (!prop || (!(prop instanceof Map) && typeof prop !== 'object')) {
+  const prop = (cert as Record<string, unknown>)['prop']
+  if (!prop || typeof prop !== 'object') {
     return undefined
   }
 
-  const propData = prop instanceof Map ? prop : (prop as Record<string, unknown>)
-  const dig = propData instanceof Map ? propData.get('dig') : (propData as Record<string, unknown>)['dig']
+  const dig = (prop as Record<string, unknown>)['dig']
   if (!(dig instanceof Uint8Array)) {
     return undefined
   }
@@ -879,50 +877,4 @@ export function extractBalanceChangesFromIndexerTransaction(transaction: Subscri
     }
     return changes
   }, [] as BalanceChange[])
-}
-
-export function getTransactionType(type: string): TransactionType {
-  switch (type) {
-    case 'pay':
-      return TransactionType.Payment
-    case 'keyreg':
-      return TransactionType.KeyRegistration
-    case 'acfg':
-      return TransactionType.AssetConfig
-    case 'axfer':
-      return TransactionType.AssetTransfer
-    case 'afrz':
-      return TransactionType.AssetFreeze
-    case 'appl':
-      return TransactionType.AppCall
-    case 'stpf':
-      return TransactionType.StateProof
-    case 'hb':
-      return TransactionType.Heartbeat
-    default:
-      throw new Error(`Unknown transaction type: ${type}`)
-  }
-}
-
-function transactionTypeToIndexerTxType(type: TransactionType): 'pay' | 'keyreg' | 'acfg' | 'axfer' | 'afrz' | 'appl' | 'stpf' | 'hb' {
-  switch (type) {
-    case TransactionType.Payment:
-      return 'pay'
-    case TransactionType.KeyRegistration:
-      return 'keyreg'
-    case TransactionType.AssetConfig:
-      return 'acfg'
-    case TransactionType.AssetTransfer:
-      return 'axfer'
-    case TransactionType.AssetFreeze:
-      return 'afrz'
-    case TransactionType.AppCall:
-      return 'appl'
-    case TransactionType.StateProof:
-      return 'stpf'
-    case TransactionType.Heartbeat:
-      return 'hb'
-    default:
-      throw new Error(`Unknown transaction type: ${type}`)
-  }
 }

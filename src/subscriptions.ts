@@ -13,7 +13,6 @@ import {
   extractBalanceChangesFromIndexerTransaction,
   getBlockTransactions,
   getIndexerTransactionFromAlgodTransaction,
-  getTransactionType,
 } from './transform'
 import type { Arc28EventGroup, Arc28EventToProcess, EmittedArc28Event } from './types/arc-28'
 import type { TransactionInBlock } from './types/block'
@@ -400,7 +399,7 @@ function indexerPreFilterInMemory(subscription: TransactionFilter): (t: Subscrib
       }
     }
     if (subscription.type) {
-      result &&= !!t.txType && subscription.type.includes(getTransactionType(t.txType))
+      result &&= !!t.txType && subscription.type.includes(t.txType as TransactionType)
     }
     if (subscription.notePrefix) {
       result &&= t.note ? Buffer.from(t.note).toString('utf-8').startsWith(subscription.notePrefix) : false
