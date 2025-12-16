@@ -5,10 +5,10 @@ on:
     branches:
       - main
       - release
-      - ci/check-docs
   workflow_dispatch:
 
 permissions:
+  # We give write permissions for the publish docs workflow
   id-token: write
   pages: write
 
@@ -26,19 +26,33 @@ jobs:
       audit-script: |
         npm run audit
 
+  check_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Check docs are up to date
+        shell: bash
+        run: |
+          npm ci --ignore-scripts
+          npm run generate:code-docs
+          # Add untracked files as empty so they come up in diff
+          git add -N .
+          # Print changed files and error out if there are changes after generating docs
+          git diff --exit-code --name-only
+
   generate-publish-docs:
     name: Publish docs
     uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@main
-
-  check-docs:
-    name: Check docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@main
 
   build:
     name: Build
     uses: makerxstudio/shared-config/.github/workflows/node-build-zip.yml@main
     needs:
       - ci
+      - check-docs
     with:
       node-version: 20.x
       build-path: dist
