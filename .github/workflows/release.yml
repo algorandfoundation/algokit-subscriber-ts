@@ -46,7 +46,7 @@ jobs:
 
   generate-publish-docs:
     name: Publish docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/handle-docs.yml@main
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/build-and-publish-docs.yml@main
 
   build:
     name: Build
