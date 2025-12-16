@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - release
-      - ci/enforce-docs-config
   workflow_dispatch:
 
 permissions:
@@ -45,6 +44,7 @@ jobs:
           git diff --exit-code --name-only
 
   generate-publish-docs:
+    needs: check_docs
     name: Publish docs
     uses: algorandfoundation/algokit-shared-config/.github/workflows/build-and-publish-docs.yml@main
 
