@@ -1,5 +1,5 @@
 import { ALGORAND_ZERO_ADDRESS_STRING, decodeAddress } from '@algorandfoundation/algokit-utils'
-import type { Block, BlockResponse, SignedTxnInBlock, SignedTxnWithAD } from '@algorandfoundation/algokit-utils/algod-client'
+import type { Block, BlockResponse, SignedTxnWithAD } from '@algorandfoundation/algokit-utils/algod-client'
 import { OnApplicationComplete, Transaction, TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { Buffer } from 'buffer'
@@ -57,20 +57,15 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
   let roundOffset = 0
   const getRoundOffset = () => roundOffset++
 
-  const txns = (block.payset ?? []).flatMap((signedTransactionInBlock: SignedTxnInBlock) => {
+  const txns = (block.payset ?? []).flatMap((signedTransactionInBlock) => {
     // Assume that Consensus.RequireGenesisHash is true, we always copy the genesis hash from the block to the transaction
     const genesisHash = block.header.genesisHash ? Buffer.from(block.header.genesisHash) : undefined
     const genesisId = signedTransactionInBlock.hasGenesisId ? block.header.genesisId : undefined
 
-    const signedTxnWithAD: SignedTxnWithAD = {
-      signedTxn: signedTransactionInBlock.signedTxn.signedTxn,
-      applyData: signedTransactionInBlock.signedTxn.applyData,
-    }
-
-    const rootTransactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD, genesisHash, genesisId)
+    const rootTransactionData = extractTransactionDataFromSignedTxnInBlock(signedTransactionInBlock.signedTxn, genesisHash, genesisId)
 
     const rootTransaction = {
-      signedTxnWithAD,
+      signedTxnWithAD: signedTransactionInBlock.signedTxn,
       transactionId: rootTransactionData.transaction.txId(),
       intraRoundOffset: getRoundOffset(),
       roundNumber: block.header.round!,
@@ -85,7 +80,7 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
 
     return [
       rootTransaction,
-      ...(signedTxnWithAD.applyData?.evalDelta?.innerTxns ?? []).flatMap((innerTransaction: SignedTxnInBlock) =>
+      ...(signedTransactionInBlock.signedTxn.applyData?.evalDelta?.innerTxns ?? []).flatMap((innerTransaction) =>
         getBlockInnerTransactions(innerTransaction, block, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
       ),
     ]
@@ -99,17 +94,13 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
 }
 
 function getBlockInnerTransactions(
-  signedTxnInBlock: SignedTxnInBlock,
+  signedTxnWithAD: SignedTxnWithAD,
   block: Block,
   rootTransaction: TransactionInBlock,
   getRoundOffset: () => number,
   getParentOffset: () => number,
   genesisHash?: Buffer,
 ): TransactionInBlock[] {
-  const signedTxnWithAD: SignedTxnWithAD = {
-    signedTxn: signedTxnInBlock.signedTxn.signedTxn,
-    applyData: signedTxnInBlock.signedTxn.applyData,
-  }
   const transactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD, genesisHash)
   const offset = getParentOffset() + 1
   const transactionId = `${rootTransaction.transactionId}/inner/${offset}`
@@ -128,7 +119,7 @@ function getBlockInnerTransactions(
 
   return [
     transaction,
-    ...(signedTxnWithAD.applyData?.evalDelta?.innerTxns ?? []).flatMap((innerInnerTransaction: SignedTxnInBlock) =>
+    ...(signedTxnWithAD.applyData?.evalDelta?.innerTxns ?? []).flatMap((innerInnerTransaction) =>
       getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
     ),
   ]
@@ -158,8 +149,8 @@ function extractTransactionDataFromSignedTxnInBlock(
   // Normalise the transaction so that the transaction ID is generated correctly
   const transaction = new Transaction({
     ...txn,
-    genesisHash: genesisHash ?? txn.genesisHash,
-    genesisId: genesisId ?? txn.genesisId,
+    genesisHash,
+    genesisId,
   })
 
   return {
@@ -238,7 +229,8 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       ...(transaction.type === TransactionType.AssetConfig && transaction.assetConfig
         ? {
             assetConfigTransaction: {
-              assetId: transaction.assetConfig.assetId,
+              // Set assetId to undefined if it's an asset create txn
+              assetId: createdAssetId ? undefined : transaction.assetConfig.assetId,
               params: createdAssetId
                 ? {
                     creator: transaction.sender.toString(),
@@ -269,8 +261,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                     clawback: transaction.assetConfig.clawback?.toString(),
                     freeze: transaction.assetConfig.freeze?.toString(),
                   }
-                : // In algosdk, transaction.assetConfig is always defined, even if it's an asset destroy transaction
-                  // If any field is truthy, it's an asset update, otherwise, it's an asset destroy
+                : // If any field is truthy, it's an asset update, otherwise, it's an asset destroy
                   transaction.assetConfig.manager ||
                     transaction.assetConfig.reserve ||
                     transaction.assetConfig.clawback ||
@@ -322,24 +313,10 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
               clearStateProgram: transaction.appCall!.clearStateProgram,
               onCompletion: algodOnCompleteToIndexerOnComplete(transaction.appCall!.onComplete),
               applicationArgs: transaction.appCall!.args,
-              foreignApps: transaction.appCall!.appReferences?.map((a: bigint) => a),
-              foreignAssets: transaction.appCall!.assetReferences?.map((a: bigint) => a),
-              ...(transaction.appCall?.globalStateSchema
-                ? {
-                    globalStateSchema: {
-                      numByteSlices: transaction.appCall.globalStateSchema.numByteSlices,
-                      numUints: transaction.appCall.globalStateSchema.numUints,
-                    },
-                  }
-                : undefined),
-              ...(transaction.appCall?.localStateSchema
-                ? {
-                    localStateSchema: {
-                      numByteSlices: transaction.appCall.localStateSchema.numByteSlices,
-                      numUints: transaction.appCall.localStateSchema.numUints,
-                    },
-                  }
-                : undefined),
+              foreignApps: transaction.appCall!.appReferences,
+              foreignAssets: transaction.appCall!.assetReferences,
+              globalStateSchema: transaction.appCall!.globalStateSchema,
+              localStateSchema: transaction.appCall!.localStateSchema,
               accounts: transaction.appCall!.accountReferences,
               extraProgramPages: transaction.appCall!.extraProgramPages,
             },
@@ -398,25 +375,14 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                             position: position,
                             participant: {
                               weight: reveal.participant.weight,
-                              verifier: {
-                                keyLifetime: reveal.participant.verifier.keyLifetime,
-                                commitment: reveal.participant.verifier.commitment,
-                              },
+                              verifier: reveal.participant.verifier,
                             },
                           }
                         })
                       : undefined,
                   }
                 : undefined,
-              message: transaction.stateProof!.message
-                ? {
-                    blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
-                    firstAttestedRound: transaction.stateProof!.message!.firstAttestedRound,
-                    latestAttestedRound: transaction.stateProof!.message!.lastAttestedRound,
-                    lnProvenWeight: transaction.stateProof!.message!.lnProvenWeight,
-                    votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
-                  }
-                : undefined,
+              message: transaction.stateProof!.message,
               stateProofType: BigInt(transaction.stateProof!.stateProofType ?? 0),
             },
           }
@@ -456,20 +422,15 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       closingAmount: closeAmount,
       createdAppId: createdAppId,
       authAddr: signedTxnWithAD.signedTxn.authAddress,
-      innerTxns: signedTxnWithAD.applyData?.evalDelta?.innerTxns?.map((innerTxn: SignedTxnInBlock) => {
+      innerTxns: signedTxnWithAD.applyData?.evalDelta?.innerTxns?.map((innerTxn) => {
         const offset = getParentOffset()
         const childIntraRoundOffset = intraRoundOffset + offset
         const innerTransactionId = `${parentTransactionId}/inner/${childIntraRoundOffset - (parentIntraRoundOffset ?? intraRoundOffset)}`
 
-        const innerSignedTxnWithAD: SignedTxnWithAD = {
-          signedTxn: innerTxn.signedTxn.signedTxn,
-          applyData: innerTxn.signedTxn.applyData,
-        }
-
         return getIndexerTransactionFromAlgodTransaction({
-          signedTxnWithAD: innerSignedTxnWithAD,
+          signedTxnWithAD: innerTxn,
           intraRoundOffset: childIntraRoundOffset,
-          ...extractTransactionDataFromSignedTxnInBlock(innerSignedTxnWithAD, genesisHash, genesisId),
+          ...extractTransactionDataFromSignedTxnInBlock(innerTxn, genesisHash, genesisId),
           transactionId: innerTransactionId,
           parentTransactionId: parentTransactionId,
           parentIntraRoundOffset: parentIntraRoundOffset,
@@ -537,7 +498,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
         ? Array.from(signedTxnWithAD.applyData.evalDelta.localDeltas.entries()).map(([addressIndex, delta]) => {
             const addresses = [transaction.sender.toString(), ...(transaction.appCall?.accountReferences?.map((a) => a.toString()) || [])]
             return {
-              address: addresses[Number(addressIndex)],
+              address: addresses[addressIndex],
               delta: Array.from(delta.entries()).map(([key, value]) => ({
                 key: Buffer.from(key).toString('base64'),
                 value: {
@@ -583,6 +544,7 @@ function getHashFromBlockCert(cert: unknown | undefined): string | undefined {
   if (!cert) {
     return undefined
   }
+  // TODO: PD - confirm getHashFromBlockCert
   if (!(cert instanceof Map) && typeof cert !== 'object') {
     return undefined
   }
@@ -618,7 +580,7 @@ export function blockResponseToBlockMetadata(blockResponse: BlockResponse): Bloc
     previousBlockHash: header.previousBlockHash ? Buffer.from(header.previousBlockHash).toString('base64') : undefined,
     seed: header.seed ? Buffer.from(header.seed).toString('base64') : '',
     parentTransactionCount: block.payset?.length ?? 0,
-    fullTransactionCount: countAllTransactions(block.payset ?? []),
+    fullTransactionCount: countAllTransactions(block.payset?.map((s) => s.signedTxn) ?? []),
     rewards: {
       feeSink: header.feeSink?.toString() ?? '',
       rewardsPool: header.rewardsPool?.toString() ?? '',
@@ -650,8 +612,8 @@ export function blockResponseToBlockMetadata(blockResponse: BlockResponse): Bloc
     ...(header.participationUpdates
       ? {
           participationUpdates: {
-            absentParticipationAccounts: header.participationUpdates.absentParticipationAccounts?.map((addr: string) => addr) ?? [],
-            expiredParticipationAccounts: header.participationUpdates.expiredParticipationAccounts?.map((addr: string) => addr) ?? [],
+            absentParticipationAccounts: header.participationUpdates.absentParticipationAccounts ?? [],
+            expiredParticipationAccounts: header.participationUpdates.expiredParticipationAccounts ?? [],
           },
         }
       : undefined),
@@ -666,9 +628,9 @@ export function blockResponseToBlockMetadata(blockResponse: BlockResponse): Bloc
   }
 }
 
-function countAllTransactions(txns: SignedTxnInBlock[]): number {
+function countAllTransactions(txns: SignedTxnWithAD[]): number {
   return txns.reduce((sum, txn) => {
-    const innerTxns = txn.signedTxn.applyData?.evalDelta?.innerTxns ?? []
+    const innerTxns = txn.applyData?.evalDelta?.innerTxns ?? []
     return sum + 1 + countAllTransactions(innerTxns)
   }, 0)
 }

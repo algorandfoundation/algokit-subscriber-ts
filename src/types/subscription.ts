@@ -1,6 +1,6 @@
-import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import type { Transaction as IndexerTransaction } from '@algorandfoundation/algokit-utils/indexer-client'
 import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { Arc28EventGroup, EmittedArc28Event } from './arc-28'
 
 /** The result of a single subscription pull/poll. */
@@ -29,6 +29,7 @@ export interface TransactionSubscriptionResult {
   blockMetadata?: BlockMetadata[]
 }
 
+// TODO: PD - can we use the type from algod?
 /** Metadata about a block that was retrieved from algod. */
 export interface BlockMetadata {
   /** The base64 block hash. */

@@ -252,7 +252,7 @@ function processExtraFields(
     ),
     balanceChanges: extractBalanceChangesFromIndexerTransaction(transaction),
     innerTxns: transaction.innerTxns?.map((inner) => processExtraFields(inner, arc28Events, arc28Groups)),
-  }
+  } satisfies SubscribedTransaction
 }
 
 function hasEmittedMatchingArc28Event(
