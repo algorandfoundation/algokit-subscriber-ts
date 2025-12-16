@@ -53,7 +53,7 @@ jobs:
     uses: makerxstudio/shared-config/.github/workflows/node-build-zip.yml@main
     needs:
       - ci
-      - check-docs
+      - check_docs
     with:
       node-version: 20.x
       build-path: dist
