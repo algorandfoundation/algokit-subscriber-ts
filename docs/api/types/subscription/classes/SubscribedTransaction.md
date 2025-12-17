@@ -6,7 +6,7 @@
 
 # Class: SubscribedTransaction
 
-Defined in: [src/types/subscription.ts:163](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L163)
+Defined in: [src/types/subscription.ts:163](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L163)
 
 The common model used to expose a transaction that is returned from a subscription.
 
@@ -30,7 +30,7 @@ Substantively, based on the Indexer  [`TransactionResult` model](https://dev.alg
 
 > **new SubscribedTransaction**(`__namedParameters`): `SubscribedTransaction`
 
-Defined in: [src/types/subscription.ts:178](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L178)
+Defined in: [src/types/subscription.ts:178](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L178)
 
 #### Parameters
 
@@ -68,7 +68,7 @@ data/transactions/application.go : ApplicationCallTxnFields
 
 > `optional` **arc28Events**: [`EmittedArc28Event`](../../arc-28/interfaces/EmittedArc28Event.md)[]
 
-Defined in: [src/types/subscription.ts:172](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L172)
+Defined in: [src/types/subscription.ts:172](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L172)
 
 Any ARC-28 events emitted from an app call.
 
@@ -144,7 +144,7 @@ to the accounts auth addr.
 
 > `optional` **balanceChanges**: [`BalanceChange`](../interfaces/BalanceChange.md)[]
 
-Defined in: [src/types/subscription.ts:176](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L176)
+Defined in: [src/types/subscription.ts:176](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L176)
 
 The balance changes in the transaction.
 
@@ -239,7 +239,7 @@ Defined in: node\_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts
 
 > `optional` **filtersMatched**: `string`[]
 
-Defined in: [src/types/subscription.ts:174](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L174)
+Defined in: [src/types/subscription.ts:174](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L174)
 
 The names of any filters that matched the given transaction to result in it being 'subscribed'.
 
@@ -338,7 +338,7 @@ data/transactions/heartbeat.go : HeartbeatTxnFields
 
 > **id**: `string`
 
-Defined in: [src/types/subscription.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L164)
+Defined in: [src/types/subscription.ts:164](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L164)
 
 Transaction ID
 
@@ -352,7 +352,7 @@ Transaction ID
 
 > `optional` **innerTxns**: `SubscribedTransaction`[]
 
-Defined in: [src/types/subscription.ts:170](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L170)
+Defined in: [src/types/subscription.ts:170](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L170)
 
 Inner transactions produced by application execution.
 
@@ -471,7 +471,7 @@ Defined in: node\_modules/algosdk/dist/types/client/v2/indexer/models/types.d.ts
 
 > `optional` **parentIntraRoundOffset**: `number`
 
-Defined in: [src/types/subscription.ts:166](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L166)
+Defined in: [src/types/subscription.ts:166](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L166)
 
 The intra-round offset of the parent of this transaction (if it's an inner transaction).
 
@@ -481,7 +481,7 @@ The intra-round offset of the parent of this transaction (if it's an inner trans
 
 > `optional` **parentTransactionId**: `string`
 
-Defined in: [src/types/subscription.ts:168](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L168)
+Defined in: [src/types/subscription.ts:168](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L168)
 
 The transaction ID of the parent of this transaction (if it's an inner transaction).
 

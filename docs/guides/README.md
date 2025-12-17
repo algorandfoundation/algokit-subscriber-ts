@@ -117,7 +117,7 @@ The balance change for an asset destroy transaction will be as below:
 
 The following code, when algod is pointed to TestNet, will find all transactions emitted by the [Data History Museum](https://datahistory.org) since the beginning of time in _seconds_ and then find them in real-time as they emerge on the chain.
 
-The watermark is stored in-memory so this particular example is not resilient to restarts. To change that you can implement proper persistence of the watermark. There is [an example that uses the file system](../examples/data-history-museum/index.ts) to demonstrate this.
+The watermark is stored in-memory so this particular example is not resilient to restarts. To change that you can implement proper persistence of the watermark. There is [an example that uses the file system](../../examples/data-history-museum/index.ts) to demonstrate this.
 
 ```typescript
 const algorand = AlgorandClient.fromEnvironment()

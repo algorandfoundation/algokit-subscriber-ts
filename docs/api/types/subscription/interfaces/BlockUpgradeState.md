@@ -6,7 +6,7 @@
 
 # Interface: BlockUpgradeState
 
-Defined in: [src/types/subscription.ts:88](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L88)
+Defined in: [src/types/subscription.ts:88](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L88)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/types/subscription.ts:88](https://github.com/algorandfoundation
 
 > **currentProtocol**: `string`
 
-Defined in: [src/types/subscription.ts:90](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L90)
+Defined in: [src/types/subscription.ts:90](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L90)
 
 Current protocol version
 
@@ -24,7 +24,7 @@ Current protocol version
 
 > `optional` **nextProtocol**: `string`
 
-Defined in: [src/types/subscription.ts:92](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L92)
+Defined in: [src/types/subscription.ts:92](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L92)
 
 The next proposed protocol version.
 
@@ -34,7 +34,7 @@ The next proposed protocol version.
 
 > `optional` **nextProtocolApprovals**: `bigint`
 
-Defined in: [src/types/subscription.ts:94](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L94)
+Defined in: [src/types/subscription.ts:94](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L94)
 
 Number of blocks which approved the protocol upgrade.
 
@@ -44,7 +44,7 @@ Number of blocks which approved the protocol upgrade.
 
 > `optional` **nextProtocolSwitchOn**: `bigint`
 
-Defined in: [src/types/subscription.ts:98](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L98)
+Defined in: [src/types/subscription.ts:98](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L98)
 
 Round on which the protocol upgrade will take effect.
 
@@ -54,6 +54,6 @@ Round on which the protocol upgrade will take effect.
 
 > `optional` **nextProtocolVoteBefore**: `bigint`
 
-Defined in: [src/types/subscription.ts:96](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L96)
+Defined in: [src/types/subscription.ts:96](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L96)
 
 Deadline round for this protocol upgrade (No votes will be consider after this round).

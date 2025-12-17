@@ -8,7 +8,7 @@
 
 > **TypedAsyncEventListener**\<`T`\> = (`event`, `eventName`) => `Promise`\<`void`\> \| `void`
 
-Defined in: [src/types/subscription.ts:414](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L414)
+Defined in: [src/types/subscription.ts:414](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L414)
 
 ## Type Parameters
 

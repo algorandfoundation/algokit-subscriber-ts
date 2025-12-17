@@ -6,7 +6,7 @@
 
 # Interface: CoreTransactionSubscriptionParams
 
-Defined in: [src/types/subscription.ts:236](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L236)
+Defined in: [src/types/subscription.ts:236](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L236)
 
 Common parameters to control a single subscription pull/poll for both `AlgorandSubscriber` and `getSubscribedTransactions`.
 
@@ -25,7 +25,7 @@ Common parameters to control a single subscription pull/poll for both `AlgorandS
 
 > `optional` **arc28Events**: [`Arc28EventGroup`](../../arc-28/interfaces/Arc28EventGroup.md)[]
 
-Defined in: [src/types/subscription.ts:260](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L260)
+Defined in: [src/types/subscription.ts:260](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L260)
 
 Any ARC-28 event definitions to process from app call logs
 
@@ -35,7 +35,7 @@ Any ARC-28 event definitions to process from app call logs
 
 > **filters**: [`NamedTransactionFilter`](NamedTransactionFilter.md)[]
 
-Defined in: [src/types/subscription.ts:258](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L258)
+Defined in: [src/types/subscription.ts:258](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L258)
 
 The filter(s) to apply to find transactions of interest.
 A list of filters with corresponding names.
@@ -64,7 +64,7 @@ A list of filters with corresponding names.
 
 > `optional` **maxIndexerRoundsToSync**: `number`
 
-Defined in: [src/types/subscription.ts:280](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L280)
+Defined in: [src/types/subscription.ts:280](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L280)
 
 The maximum number of rounds to sync from indexer when using `syncBehaviour: 'catchup-with-indexer'.
 
@@ -81,7 +81,7 @@ boundary based on the number of rounds specified here.
 
 > `optional` **maxRoundsToSync**: `number`
 
-Defined in: [src/types/subscription.ts:269](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L269)
+Defined in: [src/types/subscription.ts:269](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L269)
 
 The maximum number of rounds to sync from algod for each subscription pull/poll.
 
@@ -97,7 +97,7 @@ your catchup speed when using `sync-oldest`.
 
 > **syncBehaviour**: `"skip-sync-newest"` \| `"sync-oldest"` \| `"sync-oldest-start-now"` \| `"catchup-with-indexer"` \| `"fail"`
 
-Defined in: [src/types/subscription.ts:298](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L298)
+Defined in: [src/types/subscription.ts:298](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L298)
 
 If the current tip of the configured Algorand blockchain is more than `maxRoundsToSync`
 past `watermark` then how should that be handled:

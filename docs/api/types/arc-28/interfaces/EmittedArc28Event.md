@@ -6,7 +6,7 @@
 
 # Interface: EmittedArc28Event
 
-Defined in: [src/types/arc-28.ts:39](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L39)
+Defined in: [src/types/arc-28.ts:39](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L39)
 
 An emitted ARC-28 event extracted from an app call log.
 
@@ -24,7 +24,7 @@ An emitted ARC-28 event extracted from an app call log.
 
 > **args**: `ABIValue`[]
 
-Defined in: [src/types/arc-28.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L41)
+Defined in: [src/types/arc-28.ts:41](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L41)
 
 The ordered arguments extracted from the event that was emitted
 
@@ -34,7 +34,7 @@ The ordered arguments extracted from the event that was emitted
 
 > **argsByName**: `Record`\<`string`, `ABIValue`\>
 
-Defined in: [src/types/arc-28.ts:43](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L43)
+Defined in: [src/types/arc-28.ts:43](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L43)
 
 The named arguments extracted from the event that was emitted (where the arguments had a name defined)
 
@@ -44,7 +44,7 @@ The named arguments extracted from the event that was emitted (where the argumen
 
 > **eventDefinition**: [`Arc28Event`](Arc28Event.md)
 
-Defined in: [src/types/arc-28.ts:35](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L35)
+Defined in: [src/types/arc-28.ts:35](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L35)
 
 The ARC-28 definition of the event
 
@@ -58,7 +58,7 @@ The ARC-28 definition of the event
 
 > **eventName**: `string`
 
-Defined in: [src/types/arc-28.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L29)
+Defined in: [src/types/arc-28.ts:29](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L29)
 
 The name of the ARC-28 event that was triggered
 
@@ -72,7 +72,7 @@ The name of the ARC-28 event that was triggered
 
 > **eventPrefix**: `string`
 
-Defined in: [src/types/arc-28.ts:33](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L33)
+Defined in: [src/types/arc-28.ts:33](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L33)
 
 The 4-byte hex prefix for the event
 
@@ -86,7 +86,7 @@ The 4-byte hex prefix for the event
 
 > **eventSignature**: `string`
 
-Defined in: [src/types/arc-28.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L31)
+Defined in: [src/types/arc-28.ts:31](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L31)
 
 The signature of the event e.g. `EventName(type1,type2)`
 
@@ -100,7 +100,7 @@ The signature of the event e.g. `EventName(type1,type2)`
 
 > **groupName**: `string`
 
-Defined in: [src/types/arc-28.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L27)
+Defined in: [src/types/arc-28.ts:27](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/arc-28.ts#L27)
 
 The name of the ARC-28 event group the event belongs to
 

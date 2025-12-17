@@ -8,7 +8,7 @@
 
 > **AsyncEventListener** = (`event`, `eventName`) => `Promise`\<`void`\> \| `void`
 
-Defined in: [src/types/async-event-emitter.ts:4](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/async-event-emitter.ts#L4)
+Defined in: [src/types/async-event-emitter.ts:4](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/async-event-emitter.ts#L4)
 
 An asynchronous event listener
 
