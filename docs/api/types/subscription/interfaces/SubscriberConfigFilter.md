@@ -6,7 +6,7 @@
 
 # Interface: SubscriberConfigFilter\<T\>
 
-Defined in: [src/types/subscription.ts:404](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L404)
+Defined in: [src/types/subscription.ts:404](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L404)
 
 A single event to subscribe to / emit.
 
@@ -30,7 +30,7 @@ A single event to subscribe to / emit.
 
 > **filter**: [`TransactionFilter`](TransactionFilter.md)
 
-Defined in: [src/types/subscription.ts:306](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L306)
+Defined in: [src/types/subscription.ts:306](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L306)
 
 The filter itself.
 
@@ -44,7 +44,7 @@ The filter itself.
 
 > `optional` **mapper**: (`transaction`) => `Promise`\<`T`[]\>
 
-Defined in: [src/types/subscription.ts:411](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L411)
+Defined in: [src/types/subscription.ts:411](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L411)
 
 An optional data mapper if you want the event data to take a certain shape when subscribing to events with this filter name.
 
@@ -68,7 +68,7 @@ Note: if you provide multiple filters with the same name then only the mapper of
 
 > **name**: `string`
 
-Defined in: [src/types/subscription.ts:304](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L304)
+Defined in: [src/types/subscription.ts:304](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L304)
 
 The name to give the filter.
 

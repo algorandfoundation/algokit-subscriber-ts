@@ -8,7 +8,7 @@
 
 > **getSubscribedTransactions**(`subscription`, `algod`, `indexer?`): `Promise`\<[`TransactionSubscriptionResult`](../../types/subscription/interfaces/TransactionSubscriptionResult.md)\>
 
-Defined in: [src/subscriptions.ts:56](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/subscriptions.ts#L56)
+Defined in: [src/subscriptions.ts:56](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L56)
 
 Executes a single pull/poll to subscribe to transactions on the configured Algorand
 blockchain for the given subscription context.

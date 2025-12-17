@@ -53,6 +53,7 @@ coverage
 docs/_html/
 docs/api/documents/
 docs/api/_media/
+docs/.nojekyll
 
 # dotenv environment variable files
 .env

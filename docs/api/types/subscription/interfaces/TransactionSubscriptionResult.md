@@ -6,7 +6,7 @@
 
 # Interface: TransactionSubscriptionResult
 
-Defined in: [src/types/subscription.ts:7](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L7)
+Defined in: [src/types/subscription.ts:7](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L7)
 
 The result of a single subscription pull/poll.
 
@@ -16,7 +16,7 @@ The result of a single subscription pull/poll.
 
 > `optional` **blockMetadata**: [`BlockMetadata`](BlockMetadata.md)[]
 
-Defined in: [src/types/subscription.ts:29](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L29)
+Defined in: [src/types/subscription.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L29)
 
 The metadata about any blocks that were retrieved from algod as part
 of the subscription poll.
@@ -27,7 +27,7 @@ of the subscription poll.
 
 > **currentRound**: `bigint`
 
-Defined in: [src/types/subscription.ts:11](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L11)
+Defined in: [src/types/subscription.ts:11](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L11)
 
 The current detected tip of the configured Algorand blockchain.
 
@@ -37,7 +37,7 @@ The current detected tip of the configured Algorand blockchain.
 
 > **newWatermark**: `bigint`
 
-Defined in: [src/types/subscription.ts:19](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L19)
+Defined in: [src/types/subscription.ts:19](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L19)
 
 The new watermark value to persist for the next call to
 `getSubscribedTransactions` to continue the sync.
@@ -51,7 +51,7 @@ subscribed transactions to keep it reliable.
 
 > **startingWatermark**: `bigint`
 
-Defined in: [src/types/subscription.ts:13](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L13)
+Defined in: [src/types/subscription.ts:13](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L13)
 
 The watermark value that was retrieved at the start of the subscription poll.
 
@@ -61,7 +61,7 @@ The watermark value that was retrieved at the start of the subscription poll.
 
 > **subscribedTransactions**: [`SubscribedTransaction`](../classes/SubscribedTransaction.md)[]
 
-Defined in: [src/types/subscription.ts:25](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L25)
+Defined in: [src/types/subscription.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L25)
 
 Any transactions that matched the given filter within
 the synced round range. This substantively uses the [indexer transaction
@@ -74,6 +74,6 @@ to represent the data with some additional fields.
 
 > **syncedRoundRange**: \[`bigint`, `bigint`\]
 
-Defined in: [src/types/subscription.ts:9](https://github.com/p2arthur/algokit-subscriber-ts-forked/blob/main/src/types/subscription.ts#L9)
+Defined in: [src/types/subscription.ts:9](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L9)
 
 The round range that was synced from/to
