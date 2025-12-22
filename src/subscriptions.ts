@@ -27,8 +27,6 @@ import {
 } from './types/subscription'
 import { chunkArray } from './utils'
 
-type SearchForTransactionsCriteria = Parameters<typeof indexer.searchTransactions>[1]
-
 const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: SubscribedTransaction[], t: SubscribedTransaction) => {
   const existing = dedupedTransactions.find((e) => e.id === t.id)
   if (existing) {
@@ -327,9 +325,9 @@ function extractArc28Events(
     .filter((e) => !!e) as EmittedArc28Event[]
 }
 
-function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, maxRound: bigint): SearchForTransactionsCriteria {
+function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, maxRound: bigint): indexer.SearchForTransactionsCriteria {
   // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
-  const criteria: SearchForTransactionsCriteria = {
+  const criteria: indexer.SearchForTransactionsCriteria = {
     minRound,
     maxRound,
   }
@@ -343,7 +341,7 @@ function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, max
     criteria.addressRole = 'receiver'
   }
   if (subscription.type && typeof subscription.type === 'string') {
-    criteria.txType = subscription.type.toString() as SearchForTransactionsCriteria['txType']
+    criteria.txType = subscription.type.toString() as indexer.SearchForTransactionsCriteria['txType']
   }
   if (subscription.notePrefix) {
     criteria.notePrefix = Buffer.from(subscription.notePrefix).toString('base64')
