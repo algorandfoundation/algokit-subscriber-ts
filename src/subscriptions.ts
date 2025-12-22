@@ -1,4 +1,4 @@
-import { Config, indexer } from '@algorandfoundation/algokit-utils'
+import { Config, indexer as utilsIndexer } from '@algorandfoundation/algokit-utils'
 import { ABITupleType, type ABIValue } from '@algorandfoundation/algokit-utils/abi'
 import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
 import type { IndexerClient, Transaction as IndexerTransaction } from '@algorandfoundation/algokit-utils/indexer-client'
@@ -46,13 +46,13 @@ const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: Subscribe
  * blockchain for the given subscription context.
  * @param subscription The subscription context.
  * @param algod An Algod client.
- * @param indexerClient An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`.
+ * @param indexer An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`.
  * @returns The result of this subscription pull/poll.
  */
 export async function getSubscribedTransactions(
   subscription: TransactionSubscriptionParams,
   algod: AlgodClient,
-  indexerClient?: IndexerClient,
+  indexer?: IndexerClient,
 ): Promise<TransactionSubscriptionResult> {
   const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds, currentRound: _currentRound } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
@@ -119,7 +119,7 @@ export async function getSubscribedTransactions(
         }
         break
       case 'catchup-with-indexer':
-        if (!indexerClient) {
+        if (!indexer) {
           throw new Error("Can't catch up using indexer since it's not provided")
         }
 
@@ -146,7 +146,7 @@ export async function getSubscribedTransactions(
                 chunkedFilters.map(async (f) =>
                   // Retrieve all pre-filtered transactions from the indexer
                   (
-                    await indexer.searchTransactions(indexerClient, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))
+                    await utilsIndexer.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))
                   ).transactions
                     // Re-run the pre-filter in-memory so we properly extract inner transactions
                     .flatMap((t) => getFilteredIndexerTransactions(t, f))
@@ -325,9 +325,9 @@ function extractArc28Events(
     .filter((e) => !!e) as EmittedArc28Event[]
 }
 
-function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, maxRound: bigint): indexer.SearchForTransactionsCriteria {
+function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, maxRound: bigint): utilsIndexer.SearchForTransactionsCriteria {
   // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
-  const criteria: indexer.SearchForTransactionsCriteria = {
+  const criteria: utilsIndexer.SearchForTransactionsCriteria = {
     minRound,
     maxRound,
   }
@@ -341,7 +341,7 @@ function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, max
     criteria.addressRole = 'receiver'
   }
   if (subscription.type && typeof subscription.type === 'string') {
-    criteria.txType = subscription.type.toString() as indexer.SearchForTransactionsCriteria['txType']
+    criteria.txType = subscription.type.toString() as utilsIndexer.SearchForTransactionsCriteria['txType']
   }
   if (subscription.notePrefix) {
     criteria.notePrefix = Buffer.from(subscription.notePrefix).toString('base64')
