@@ -884,10 +884,10 @@ describe('Subscribing to calls that effect balance changes', () => {
     const mainnet = AlgorandClient.mainNet()
     const testRound = 46838092n
     let watermark = testRound - 1n
-    const blockResponse = await mainnet.client.algod.getBlock(Number(testRound))
+    const blockResponse = await mainnet.client.algod.block(testRound)
     const block = blockResponse.block
 
-    const feeSink = block.header.feeSink!
+    const feeSink = block.header.rewardState.feeSink!
     const proposer = block.header.proposer!
     const payout = block.header.proposerPayout
 

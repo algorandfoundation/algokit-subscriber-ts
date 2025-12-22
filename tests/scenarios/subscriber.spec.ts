@@ -240,7 +240,7 @@ describe('AlgorandSubscriber', () => {
 
   test('Waits until transaction appears by default when started', async () => {
     const { algorand, testAccount } = localnet.context
-    const currentRound = (await algorand.client.algod.getStatus()).lastRound
+    const currentRound = (await algorand.client.algod.status()).lastRound
     const {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,

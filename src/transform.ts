@@ -18,7 +18,7 @@ export function getTransactionFromBlockPayout(block: BlockResponse, getRoundOffs
   const header = block.block.header
   const pay = new Transaction({
     type: TransactionType.Payment,
-    sender: header.feeSink!,
+    sender: header.rewardState.feeSink!,
     note: new Uint8Array(Buffer.from(`ProposerPayout for Round ${header.round}`)),
     firstValid: header.round!,
     lastValid: header.round!,
@@ -453,9 +453,9 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                       ? {
                           version: signedTxnWithAD.signedTxn.lsig.msig.version,
                           threshold: signedTxnWithAD.signedTxn.lsig.msig.threshold,
-                          subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsignatures.map((s) => ({
+                          subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsigs.map((s) => ({
                             publicKey: s.publicKey,
-                            signature: s.signature,
+                            signature: s.sig,
                           })),
                         }
                       : undefined,
@@ -465,9 +465,9 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                 ? {
                     version: signedTxnWithAD.signedTxn.msig.version,
                     threshold: signedTxnWithAD.signedTxn.msig.threshold,
-                    subsignature: signedTxnWithAD.signedTxn.msig.subsignatures.map((s) => ({
+                    subsignature: signedTxnWithAD.signedTxn.msig.subsigs.map((s) => ({
                       publicKey: s.publicKey,
-                      signature: s.signature,
+                      signature: s.sig,
                     })),
                   }
                 : undefined,
@@ -480,7 +480,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
       senderRewards: senderRewards,
       globalStateDelta: signedTxnWithAD.applyData?.evalDelta?.globalDelta
         ? Array.from(signedTxnWithAD.applyData.evalDelta.globalDelta.entries()).map(([key, value]) => ({
-            key: Buffer.from(key).toString('base64'),
+            key: key,
             value: {
               action: value.action,
               ...(value.action === 2
@@ -488,7 +488,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                     uint: value.uint,
                   }
                 : {
-                    bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
+                    bytes: value.bytes,
                     uint: value.uint,
                   }),
             },
@@ -500,7 +500,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
             return {
               address: addresses[addressIndex],
               delta: Array.from(delta.entries()).map(([key, value]) => ({
-                key: Buffer.from(key).toString('base64'),
+                key: key,
                 value: {
                   action: value.action,
                   ...(value.action === 2
@@ -508,7 +508,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                         uint: value.uint,
                       }
                     : {
-                        bytes: value.bytes ? Buffer.from(value.bytes).toString('base64') : undefined,
+                        bytes: value.bytes,
                         uint: value.uint,
                       }),
                 },
@@ -580,30 +580,36 @@ export function blockResponseToBlockMetadata(blockResponse: BlockResponse): Bloc
     parentTransactionCount: block.payset?.length ?? 0,
     fullTransactionCount: countAllTransactions(block.payset?.map((s) => s.signedTxn) ?? []),
     rewards: {
-      feeSink: header.feeSink?.toString() ?? '',
-      rewardsPool: header.rewardsPool?.toString() ?? '',
-      rewardsLevel: header.rewardsLevel ?? 0n,
-      rewardsResidue: header.rewardsResidue ?? 0n,
-      rewardsRate: header.rewardsRate ?? 0n,
-      rewardsCalculationRound: header.rewardsRecalculationRound ?? 0n,
+      feeSink: header.rewardState.feeSink?.toString() ?? '',
+      rewardsPool: header.rewardState.rewardsPool?.toString() ?? '',
+      rewardsLevel: header.rewardState.rewardsLevel ?? 0n,
+      rewardsResidue: header.rewardState.rewardsResidue ?? 0n,
+      rewardsRate: header.rewardState.rewardsRate ?? 0n,
+      rewardsCalculationRound: header.rewardState.rewardsRecalculationRound ?? 0n,
     },
     upgradeState: {
-      currentProtocol: header.currentProtocol ?? '',
-      nextProtocol: header.nextProtocol,
-      nextProtocolApprovals: header.nextProtocolApprovals,
-      nextProtocolSwitchOn: header.nextProtocolSwitchOn,
-      nextProtocolVoteBefore: header.nextProtocolVoteBefore,
+      currentProtocol: header.upgradeState.currentProtocol ?? '',
+      nextProtocol: header.upgradeState.nextProtocol,
+      nextProtocolApprovals: header.upgradeState.nextProtocolApprovals,
+      nextProtocolSwitchOn: header.upgradeState.nextProtocolSwitchOn,
+      nextProtocolVoteBefore: header.upgradeState.nextProtocolVoteBefore,
     },
     txnCounter: header.txnCounter ?? 0n,
-    transactionsRoot: header.transactionsRoot ? Buffer.from(header.transactionsRoot).toString('base64') : '',
-    transactionsRootSha256: header.transactionsRootSha256 ? Buffer.from(header.transactionsRootSha256).toString('base64') : '',
+    transactionsRoot: header.txnCommitments.nativeSha512_256Commitment
+      ? Buffer.from(header.txnCommitments.nativeSha512_256Commitment).toString('base64')
+      : '',
+    transactionsRootSha256: header.txnCommitments.sha256Commitment
+      ? Buffer.from(header.txnCommitments.sha256Commitment).toString('base64')
+      : '',
     proposer: header.proposer?.toString(),
-    ...(header.upgradeApprove !== undefined || header.upgradeDelay !== undefined || header.upgradePropose !== undefined
+    ...(header.upgradeVote.upgradeApprove !== undefined ||
+    header.upgradeVote.upgradeDelay !== undefined ||
+    header.upgradeVote.upgradePropose !== undefined
       ? {
           upgradeVote: {
-            upgradeApprove: header.upgradeApprove,
-            upgradeDelay: header.upgradeDelay,
-            upgradePropose: header.upgradePropose,
+            upgradeApprove: header.upgradeVote.upgradeApprove,
+            upgradeDelay: header.upgradeVote.upgradeDelay,
+            upgradePropose: header.upgradeVote.upgradePropose,
           },
         }
       : undefined),

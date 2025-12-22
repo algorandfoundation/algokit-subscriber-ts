@@ -18,7 +18,7 @@ export async function getBlocksBulk(context: { startRound: bigint; maxRound: big
     blocks = blocks.concat(
       await Promise.all(
         chunk.map(async (round) => {
-          return await client.getBlock(round)
+          return await client.block(round)
         }),
       ),
     )

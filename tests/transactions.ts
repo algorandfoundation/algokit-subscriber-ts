@@ -49,12 +49,12 @@ export const GetSubscribedTransactions = (
   const { roundsToSync, indexerRoundsToSync, syncBehaviour, watermark, currentRound, filters, arc28Events } = subscription
 
   if (currentRound !== undefined) {
-    const existingGetStatus = algorand.client.algod.getStatus
+    const existingStatus = algorand.client.algod.status
     Object.assign(algorand.client.algod, {
-      getStatus: vi.fn().mockImplementation(async () => {
-        const status = await existingGetStatus.apply(algorand.client.algod)
-        status.lastRound = currentRound
-        return status
+      status: vi.fn().mockImplementation(async () => {
+        const statusResult = await existingStatus.apply(algorand.client.algod)
+        statusResult.lastRound = currentRound
+        return statusResult
       }),
     })
   }

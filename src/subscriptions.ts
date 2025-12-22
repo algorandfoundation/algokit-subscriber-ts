@@ -58,7 +58,7 @@ export async function getSubscribedTransactions(
 ): Promise<TransactionSubscriptionResult> {
   const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds, currentRound: _currentRound } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
-  const currentRound = _currentRound ?? (await algod.getStatus()).lastRound
+  const currentRound = _currentRound ?? (await algod.status()).lastRound
   let blockMetadata: BlockMetadata[] | undefined
 
   // Pre-calculate a flat list of all ARC-28 events to process
