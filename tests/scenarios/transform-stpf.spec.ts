@@ -2139,7 +2139,7 @@ describe('State proof transaction', () => {
           "message": {
             "blockHeadersCommitment": "rwUJ3x/P5PcGUms8u12f8bI5TaGSjm1xDyvCYzw+bVA=",
             "firstAttestedRound": 35599617n,
-            "lastAttestedRound": 35599872n,
+            "latestAttestedRound": 35599872n,
             "lnProvenWeight": 2208503n,
             "votersCommitment": "cugunBkBEEy7tJ9XmisnU8q9vKjkEjpZD2Pj5znXlNicmDjSVJlVIqgDFTT8DiOlRGRj7WdHKICa7u377awnOg==",
           },

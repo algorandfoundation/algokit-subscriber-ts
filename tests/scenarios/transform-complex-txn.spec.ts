@@ -1,7 +1,7 @@
-import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { ALGORAND_ZERO_ADDRESS_STRING, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
-import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
+import { getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions, getTransactionInBlockForDiff } from '../transactions'
 
@@ -299,6 +299,10 @@ describe('Complex transaction with many nested inner transactions', () => {
           "genesisId": "mainnet-v1.0",
           "hash": "EOq+HX242/G/ADonU6q5lfimxX7twuFKEwtG4rDt+kI=",
           "parentTransactionCount": 55,
+          "participationUpdates": {
+            "absentParticipationAccounts": [],
+            "expiredParticipationAccounts": [],
+          },
           "previousBlockHash": "8ReLxqOPxmuKuBfACtllRRr13n2E2r01f8wXt3vFYW0=",
           "proposer": undefined,
           "rewards": {
@@ -712,7 +716,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(30)
-    expect(blockTransactions[5].transaction.assetTransfer?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
+    expect(blockTransactions[5].transaction.assetTransfer?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS_STRING)
   })
 
   it('Transforms pay without a rcv address', async () => {
@@ -720,7 +724,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(486)
-    expect(blockTransactions[371].transaction.payment?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
+    expect(blockTransactions[371].transaction.payment?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS_STRING)
   })
 
   it('Produces the correct txID for a non hgi transaction', async () => {

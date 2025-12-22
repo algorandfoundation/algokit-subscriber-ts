@@ -6,8 +6,7 @@ import { Buffer } from 'buffer'
 import type { TransactionInBlock } from './types/block'
 import { BalanceChange, BalanceChangeRole, BlockMetadata, type SubscribedTransaction } from './types/subscription'
 
-export const ALGORAND_ZERO_ADDRESS = ALGORAND_ZERO_ADDRESS_STRING
-export const ALGORAND_ZERO_ADDRESS_BYTES = decodeAddress(ALGORAND_ZERO_ADDRESS).publicKey
+export const ALGORAND_ZERO_ADDRESS_BYTES = decodeAddress(ALGORAND_ZERO_ADDRESS_STRING).publicKey
 
 /**
  * Gets the synthetic transaction for the block payout as defined in the indexer
@@ -58,20 +57,16 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
   const getRoundOffset = () => roundOffset++
 
   const txns = (block.payset ?? []).flatMap((signedTransactionInBlock) => {
-    // Assume that Consensus.RequireGenesisHash is true, we always copy the genesis hash from the block to the transaction
-    const genesisHash = block.header.genesisHash ? Buffer.from(block.header.genesisHash) : undefined
-    const genesisId = signedTransactionInBlock.hasGenesisId ? block.header.genesisId : undefined
-
-    const rootTransactionData = extractTransactionDataFromSignedTxnInBlock(signedTransactionInBlock.signedTxn, genesisHash, genesisId)
+    const rootTransactionData = extractTransactionDataFromSignedTxnInBlock(signedTransactionInBlock.signedTxn)
 
     const rootTransaction = {
       signedTxnWithAD: signedTransactionInBlock.signedTxn,
       transactionId: rootTransactionData.transaction.txId(),
       intraRoundOffset: getRoundOffset(),
-      roundNumber: block.header.round!,
+      roundNumber: block.header.round,
       roundTimestamp: Number(block.header.timestamp),
       genesisId: block.header.genesisId,
-      genesisHash: genesisHash,
+      genesisHash: block.header.genesisHash ? Buffer.from(block.header.genesisHash) : undefined,
       ...rootTransactionData,
     } satisfies TransactionInBlock
 
@@ -81,7 +76,7 @@ export function getBlockTransactions(blockResponse: BlockResponse): TransactionI
     return [
       rootTransaction,
       ...(signedTransactionInBlock.signedTxn.applyData?.evalDelta?.innerTxns ?? []).flatMap((innerTransaction) =>
-        getBlockInnerTransactions(innerTransaction, block, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
+        getBlockInnerTransactions(innerTransaction, block, rootTransaction, getRoundOffset, getParentOffset),
       ),
     ]
   })
@@ -99,9 +94,14 @@ function getBlockInnerTransactions(
   rootTransaction: TransactionInBlock,
   getRoundOffset: () => number,
   getParentOffset: () => number,
-  genesisHash?: Buffer,
 ): TransactionInBlock[] {
-  const transactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD, genesisHash)
+  // Ensure the inner transaction have the genesis hash from the block
+  signedTxnWithAD.signedTxn.txn = new Transaction({
+    ...signedTxnWithAD.signedTxn.txn,
+    genesisHash: block.header.genesisHash,
+  })
+
+  const transactionData = extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD)
   const offset = getParentOffset() + 1
   const transactionId = `${rootTransaction.transactionId}/inner/${offset}`
 
@@ -110,7 +110,7 @@ function getBlockInnerTransactions(
     roundNumber: block.header.round!,
     roundTimestamp: Number(block.header.timestamp),
     transactionId,
-    genesisHash,
+    genesisHash: signedTxnWithAD.signedTxn.txn.genesisHash,
     intraRoundOffset: getRoundOffset(),
     parentIntraRoundOffset: rootTransaction.intraRoundOffset,
     parentTransactionId: rootTransaction.transactionId,
@@ -120,7 +120,7 @@ function getBlockInnerTransactions(
   return [
     transaction,
     ...(signedTxnWithAD.applyData?.evalDelta?.innerTxns ?? []).flatMap((innerInnerTransaction) =>
-      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, getRoundOffset, getParentOffset, genesisHash),
+      getBlockInnerTransactions(innerInnerTransaction, block, rootTransaction, getRoundOffset, getParentOffset),
     ),
   ]
 }
@@ -131,11 +131,7 @@ function getBlockInnerTransactions(
  * @param signedTxnWithAD The signed transaction with apply data from a block
  * @returns The `Transaction` object along with key secondary information from the block.
  */
-function extractTransactionDataFromSignedTxnInBlock(
-  signedTxnWithAD: SignedTxnWithAD,
-  genesisHash?: Buffer,
-  genesisId?: string,
-): {
+function extractTransactionDataFromSignedTxnInBlock(signedTxnWithAD: SignedTxnWithAD): {
   transaction: Transaction
   createdAssetId?: bigint
   createdAppId?: bigint
@@ -143,18 +139,8 @@ function extractTransactionDataFromSignedTxnInBlock(
   closeAmount?: bigint
   logs?: Uint8Array[]
 } {
-  // Get the transaction from the signed transaction
-  const txn = signedTxnWithAD.signedTxn.txn
-
-  // Normalise the transaction so that the transaction ID is generated correctly
-  const transaction = new Transaction({
-    ...txn,
-    genesisHash,
-    genesisId,
-  })
-
   return {
-    transaction,
+    transaction: signedTxnWithAD.signedTxn.txn,
     createdAssetId: signedTxnWithAD.applyData?.configAsset,
     createdAppId: signedTxnWithAD.applyData?.applicationId,
     assetCloseAmount: signedTxnWithAD.applyData?.assetClosingAmount,
@@ -382,7 +368,15 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                       : undefined,
                   }
                 : undefined,
-              message: transaction.stateProof!.message,
+              message: transaction.stateProof!.message
+                ? {
+                    blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
+                    firstAttestedRound: transaction.stateProof!.message!.firstAttestedRound,
+                    latestAttestedRound: transaction.stateProof!.message!.lastAttestedRound,
+                    lnProvenWeight: transaction.stateProof!.message!.lnProvenWeight,
+                    votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
+                  }
+                : undefined,
               stateProofType: BigInt(transaction.stateProof!.stateProofType ?? 0),
             },
           }
@@ -430,7 +424,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
         return getIndexerTransactionFromAlgodTransaction({
           signedTxnWithAD: innerTxn,
           intraRoundOffset: childIntraRoundOffset,
-          ...extractTransactionDataFromSignedTxnInBlock(innerTxn, genesisHash, genesisId),
+          ...extractTransactionDataFromSignedTxnInBlock(innerTxn),
           transactionId: innerTransactionId,
           parentTransactionId: parentTransactionId,
           parentIntraRoundOffset: parentIntraRoundOffset,
@@ -602,9 +596,9 @@ export function blockResponseToBlockMetadata(blockResponse: BlockResponse): Bloc
       ? Buffer.from(header.txnCommitments.sha256Commitment).toString('base64')
       : '',
     proposer: header.proposer?.toString(),
-    ...(header.upgradeVote.upgradeApprove !== undefined ||
-    header.upgradeVote.upgradeDelay !== undefined ||
-    header.upgradeVote.upgradePropose !== undefined
+    ...(header.upgradeVote?.upgradeApprove !== undefined ||
+    header.upgradeVote?.upgradeDelay !== undefined ||
+    header.upgradeVote?.upgradePropose !== undefined
       ? {
           upgradeVote: {
             upgradeApprove: header.upgradeVote.upgradeApprove,

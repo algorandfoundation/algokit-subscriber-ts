@@ -494,9 +494,7 @@ function indexerPostFilter(
       }
     }
     if (subscription.appCallArgumentsMatch) {
-      result &&=
-        !!t.applicationTransaction &&
-        subscription.appCallArgumentsMatch((t.applicationTransaction.applicationArgs ?? []).map((arg) => Buffer.from(arg)))
+      result &&= !!t.applicationTransaction && subscription.appCallArgumentsMatch(t.applicationTransaction.applicationArgs ?? [])
     }
     if (subscription.arc28Events) {
       result &&=

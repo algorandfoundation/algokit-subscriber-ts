@@ -37,4 +37,4 @@ The result of this subscription pull/poll.
 
 #### Defined in
 
-[src/subscriptions.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L55)
+[src/subscriptions.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriptions.ts#L54)

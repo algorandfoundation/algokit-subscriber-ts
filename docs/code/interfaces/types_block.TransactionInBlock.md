@@ -94,7 +94,7 @@ ___
 
 ### genesisHash
 
-• `Optional` **genesisHash**: `Buffer`
+• `Optional` **genesisHash**: `Uint8Array`
 
 The binary genesis hash of the network the transaction is within.
 
