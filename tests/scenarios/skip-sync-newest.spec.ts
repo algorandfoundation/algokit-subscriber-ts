@@ -25,7 +25,7 @@ describe('Subscribing using skip-sync-newest', () => {
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([lastTxnRound, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txId())
   })
 
   test('Only processes the latest transaction when starting from an earlier round with other transactions', async () => {
@@ -44,7 +44,7 @@ describe('Subscribing using skip-sync-newest', () => {
     expect(subscribed.newWatermark).toBe(currentRound)
     expect(subscribed.syncedRoundRange).toEqual([currentRound, currentRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txId())
   })
 
   test('Process multiple transactions', async () => {
@@ -62,7 +62,7 @@ describe('Subscribing using skip-sync-newest', () => {
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([rounds[1], lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(2)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txID())
-    expect(subscribed.subscribedTransactions[1].id).toBe(txns[2].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txId())
+    expect(subscribed.subscribedTransactions[1].id).toBe(txns[2].transaction.txId())
   })
 })

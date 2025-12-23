@@ -1,7 +1,7 @@
-import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { ALGORAND_ZERO_ADDRESS_STRING, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { describe, expect, it } from 'vitest'
 import { getBlocksBulk } from '../../src/block'
-import { ALGORAND_ZERO_ADDRESS, getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
+import { getBlockTransactions, getIndexerTransactionFromAlgodTransaction } from '../../src/transform'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions, getTransactionInBlockForDiff } from '../transactions'
 
@@ -32,6 +32,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "applicationTransaction": {
+          "access": [],
           "accounts": [],
           "applicationArgs": [
             "AA==",
@@ -40,17 +41,18 @@ describe('Complex transaction with many nested inner transactions', () => {
             "BAAAAAAABgTFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           ],
           "applicationId": 1390675395n,
+          "boxReferences": [],
           "foreignApps": [],
           "foreignAssets": [
             1390638935n,
           ],
           "globalStateSchema": {
-            "numByteSlice": 0,
-            "numUint": 0,
+            "numByteSlices": 0,
+            "numUints": 0,
           },
           "localStateSchema": {
-            "numByteSlice": 0,
-            "numUint": 0,
+            "numByteSlices": 0,
+            "numUints": 0,
           },
           "onCompletion": "noop",
         },
@@ -181,7 +183,6 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "applicationTransaction": {
-          "accounts": [],
           "applicationArgs": [
             "AA==",
             "Aw==",
@@ -189,21 +190,9 @@ describe('Complex transaction with many nested inner transactions', () => {
             "BAAAAAAABgTFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           ],
           "applicationId": 1390675395n,
-          "approvalProgram": "",
-          "clearStateProgram": "",
-          "extraProgramPages": 0,
-          "foreignApps": [],
           "foreignAssets": [
             1390638935n,
           ],
-          "globalStateSchema": {
-            "numByteSlice": 0,
-            "numUint": 0,
-          },
-          "localStateSchema": {
-            "numByteSlice": 0,
-            "numUint": 0,
-          },
           "onCompletion": "noop",
         },
         "balanceChanges": [
@@ -229,7 +218,6 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "AAAAAAAAAAQAAAAAAhlUHw==",
-              "uint": 0n,
             },
           },
           {
@@ -237,7 +225,6 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "YC4Bj8ZCXdiWg6+eYEL5yV0gvi3ucnEckrGx2BQXDDIAAAAAUuN3VwAAAAAOsZeDAQAAAABS43dXAAAAAFLkB4YAAAAAAAAAAAAAAAAAAAAA/////5S/nq4AAAAAa0BhUQAAAA91+xl0AAAAAALtZZ8AAAAAAwsGTgAAAAAAAA==",
-              "uint": 0n,
             },
           },
           {
@@ -245,7 +232,6 @@ describe('Complex transaction with many nested inner transactions', () => {
             "value": {
               "action": 1,
               "bytes": "h2MAAAAAAAAABQAAAAAAAAAZAAAAAAAAAB6KqC3yOXMVr2XD4nTi43RC3Rv0AGIvri+ssClC+HVNQgAAAAAAAAAAAA==",
-              "uint": 0n,
             },
           },
         ],
@@ -283,7 +269,6 @@ describe('Complex transaction with many nested inner transactions', () => {
             "id": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
             "intraRoundOffset": 148,
             "lastValid": 35214369n,
-            "note": "",
             "parentIntraRoundOffset": 142,
             "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
             "roundTime": 1705252440,
@@ -293,13 +278,11 @@ describe('Complex transaction with many nested inner transactions', () => {
         ],
         "intraRoundOffset": 147,
         "lastValid": 35214369n,
-        "localStateDelta": [],
         "logs": [
           "R2hHHwQAAAAAAAYExQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
           "AAAAAAAAYaAAAAAAH/LmTQAAAAAAAAAA",
           "PNZU+gAEIaZlfCPaQTne/tLHvhC5yf/+JYJqpN1uNQLOFg2mAAAAAAAAAAAAAAAAAAYExQAAAAAf8uZNAAAAAAAAAAAAAAAPdfsZdAAAAAAC7WWf",
         ],
-        "note": "",
         "parentIntraRoundOffset": 142,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "roundTime": 1705252440,
@@ -321,7 +304,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "expiredParticipationAccounts": [],
           },
           "previousBlockHash": "8ReLxqOPxmuKuBfACtllRRr13n2E2r01f8wXt3vFYW0=",
-          "proposer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+          "proposer": undefined,
           "rewards": {
             "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
             "rewardsCalculationRound": 35500000n,
@@ -351,25 +334,20 @@ describe('Complex transaction with many nested inner transactions', () => {
             "nextProtocolSwitchOn": 35275315n,
             "nextProtocolVoteBefore": 35125315n,
           },
-          "upgradeVote": {
-            "upgradeApprove": false,
-            "upgradeDelay": 0n,
-            "upgradePropose": "",
-          },
         },
       ]
     `)
   })
 
   it('Can be processed correctly from algod raw block', async () => {
-    const txn = await algorand.client.indexer.lookupTransactionByID(txnId).do()
+    const txn = await algorand.client.indexer.lookupTransactionById(txnId)
     const b = (await getBlocksBulk({ startRound: roundNumber, maxRound: roundNumber }, algorand.client.algod))[0]
     const intraRoundOffset = txn.transaction.intraRoundOffset!
 
     const transformed = getBlockTransactions(b)
 
     const receivedTxn = transformed[intraRoundOffset]
-    expect(receivedTxn.transaction.txID()).toBe(txnId)
+    expect(receivedTxn.transaction.txId()).toBe(txnId)
 
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/
     expect(getTransactionInBlockForDiff(receivedTxn)).toMatchInlineSnapshot(`
@@ -382,12 +360,17 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentIntraRoundOffset": undefined,
         "parentTransactionId": undefined,
         "transaction": {
-          "applicationCall": {
-            "accounts": [
+          "appCall": {
+            "accountReferences": [
               "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
               "QDNLKZLNM6ZUD4ZI24RSY6O4QHWF3RHDQIYDV7S5AAHKFZSV2MSSULCE4U",
             ],
-            "appArgs": [
+            "appId": 1201559522n,
+            "appReferences": [
+              1002541853n,
+              1390675395n,
+            ],
+            "args": [
               "AAAAAAAXe90=",
               "AAAAAAAAAAA=",
               "//8=",
@@ -395,29 +378,16 @@ describe('Complex transaction with many nested inner transactions', () => {
               "BAABAAI=",
               "AP//AAEAAQ==",
             ],
-            "appIndex": 1201559522n,
-            "approvalProgram": "",
-            "boxes": [],
-            "clearProgram": "",
-            "extraPages": 0,
-            "foreignApps": [
-              1002541853n,
-              1390675395n,
-            ],
-            "foreignAssets": [
+            "assetReferences": [
               246519683n,
               1390638935n,
             ],
-            "numGlobalByteSlices": 0,
-            "numGlobalInts": 0,
-            "numLocalByteSlices": 0,
-            "numLocalInts": 0,
             "onComplete": 0,
           },
           "fee": 1000n,
           "firstValid": 35214365n,
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-          "genesisID": "mainnet-v1.0",
+          "genesisId": "mainnet-v1.0",
           "group": "cHiEEvBCRGnUhz9409gHl/vn00lYDZnJoppC3YexRr0=",
           "lastValid": 35214369n,
           "lease": "G/BcDWMoEGKAU7T9/w0NETqkoDB/xtSwSSUQIxVFKIM=",
@@ -425,6 +395,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "rekeyTo": "GEAW6VVQY2QPYKEI6HAHAH3MNQNMXYOVKYVVI3B7X72CPW74HRVYXWGITU",
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "appl",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
       }
@@ -452,6 +423,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "pay",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/1",
       }
@@ -468,28 +440,19 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentIntraRoundOffset": 142,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
-          "applicationCall": {
-            "accounts": [
+          "appCall": {
+            "accountReferences": [
               "QDNLKZLNM6ZUD4ZI24RSY6O4QHWF3RHDQIYDV7S5AAHKFZSV2MSSULCE4U",
             ],
-            "appArgs": [
+            "appId": 1002541853n,
+            "args": [
               "c3dhcA==",
               "Zml4ZWQtaW5wdXQ=",
               "AAAAAAAAAAA=",
             ],
-            "appIndex": 1002541853n,
-            "approvalProgram": "",
-            "boxes": [],
-            "clearProgram": "",
-            "extraPages": 0,
-            "foreignApps": [],
-            "foreignAssets": [
+            "assetReferences": [
               246519683n,
             ],
-            "numGlobalByteSlices": 0,
-            "numGlobalInts": 0,
-            "numLocalByteSlices": 0,
-            "numLocalInts": 0,
             "onComplete": 0,
           },
           "fee": 2000n,
@@ -499,6 +462,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "lastValid": 35214369n,
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "appl",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/2",
       }
@@ -517,19 +481,19 @@ describe('Complex transaction with many nested inner transactions', () => {
         "transaction": {
           "assetTransfer": {
             "amount": 394437n,
-            "assetIndex": 246519683n,
+            "assetId": 246519683n,
             "receiver": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           },
-          "fee": 0n,
           "firstValid": 35214365n,
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
           "lastValid": 35214369n,
           "sender": "QDNLKZLNM6ZUD4ZI24RSY6O4QHWF3RHDQIYDV7S5AAHKFZSV2MSSULCE4U",
           "type": "axfer",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/3",
       }
-    `)
+      `)
 
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4/
     expect(getTransactionInBlockForDiff(transformed[intraRoundOffset + 4])).toMatchInlineSnapshot(`
@@ -544,7 +508,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "transaction": {
           "assetTransfer": {
             "amount": 394437n,
-            "assetIndex": 246519683n,
+            "assetId": 246519683n,
             "receiver": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
           },
           "fee": 1000n,
@@ -554,6 +518,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "lastValid": 35214369n,
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "axfer",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/4",
       }
@@ -570,27 +535,17 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentIntraRoundOffset": 142,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
-          "applicationCall": {
-            "accounts": [],
-            "appArgs": [
+          "appCall": {
+            "appId": 1390675395n,
+            "args": [
               "AA==",
               "Aw==",
               "AAAAAAAAAAA=",
               "BAAAAAAABgTFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             ],
-            "appIndex": 1390675395n,
-            "approvalProgram": "",
-            "boxes": [],
-            "clearProgram": "",
-            "extraPages": 0,
-            "foreignApps": [],
-            "foreignAssets": [
+            "assetReferences": [
               1390638935n,
             ],
-            "numGlobalByteSlices": 0,
-            "numGlobalInts": 0,
-            "numLocalByteSlices": 0,
-            "numLocalInts": 0,
             "onComplete": 0,
           },
           "fee": 2000n,
@@ -600,6 +555,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "lastValid": 35214369n,
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "appl",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/5",
       }
@@ -618,15 +574,15 @@ describe('Complex transaction with many nested inner transactions', () => {
         "transaction": {
           "assetTransfer": {
             "amount": 536012365n,
-            "assetIndex": 1390638935n,
+            "assetId": 1390638935n,
             "receiver": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           },
-          "fee": 0n,
           "firstValid": 35214365n,
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
           "lastValid": 35214369n,
           "sender": "RS7QNBEPRRIBGI5COVRWFCRUS5NC5NX7UABZSTSFXQ6F74EP3CNLT4CNAM",
           "type": "axfer",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/6",
       }
@@ -645,7 +601,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "transaction": {
           "assetTransfer": {
             "amount": 536012365n,
-            "assetIndex": 1390638935n,
+            "assetId": 1390638935n,
             "receiver": "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
           },
           "fee": 1000n,
@@ -655,6 +611,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "lastValid": 35214369n,
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "axfer",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/7",
       }
@@ -671,28 +628,19 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentIntraRoundOffset": 142,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
-          "applicationCall": {
-            "accounts": [
+          "appCall": {
+            "accountReferences": [
               "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
             ],
-            "appArgs": [
+            "appId": 1002541853n,
+            "args": [
               "c3dhcA==",
               "Zml4ZWQtaW5wdXQ=",
               "AAAAAAAAAAA=",
             ],
-            "appIndex": 1002541853n,
-            "approvalProgram": "",
-            "boxes": [],
-            "clearProgram": "",
-            "extraPages": 0,
-            "foreignApps": [],
-            "foreignAssets": [
+            "assetReferences": [
               1390638935n,
             ],
-            "numGlobalByteSlices": 0,
-            "numGlobalInts": 0,
-            "numLocalByteSlices": 0,
-            "numLocalInts": 0,
             "onComplete": 0,
           },
           "fee": 2000n,
@@ -702,10 +650,11 @@ describe('Complex transaction with many nested inner transactions', () => {
           "lastValid": 35214369n,
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "appl",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/8",
       }
-    `)
+      `)
 
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/9/
     expect(getTransactionInBlockForDiff(transformed[intraRoundOffset + 9])).toMatchInlineSnapshot(`
@@ -718,7 +667,6 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentIntraRoundOffset": 142,
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
-          "fee": 0n,
           "firstValid": 35214365n,
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
           "lastValid": 35214369n,
@@ -728,6 +676,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           },
           "sender": "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
           "type": "pay",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/9",
       }
@@ -755,6 +704,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "rekeyTo": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "sender": "AACCDJTFPQR5UQJZ337NFR56CC44T776EWBGVJG5NY2QFTQWBWTALTEN4A",
           "type": "pay",
+          Symbol(algokit_transact:Transaction): true,
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/10",
       }
@@ -766,7 +716,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(30)
-    expect(blockTransactions[5].transaction.assetTransfer?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
+    expect(blockTransactions[5].transaction.assetTransfer?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS_STRING)
   })
 
   it('Transforms pay without a rcv address', async () => {
@@ -774,7 +724,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     const blockTransactions = blocks.flatMap((b) => getBlockTransactions(b))
 
     expect(blockTransactions.length).toBe(486)
-    expect(blockTransactions[371].transaction.payment?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS)
+    expect(blockTransactions[371].transaction.payment?.receiver.toString()).toBe(ALGORAND_ZERO_ADDRESS_STRING)
   })
 
   it('Produces the correct txID for a non hgi transaction', async () => {
@@ -783,7 +733,7 @@ describe('Complex transaction with many nested inner transactions', () => {
 
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTransactions[0])
     expect(transaction.id).toBe('HHQHASIF2YLCSUYIPE6LIMLSNLCVMQBQHF3X46SKTX6F7ZSFKFCQ')
-    expect(transaction.id).toBe(blockTransactions[0].transaction.txID())
+    expect(transaction.id).toBe(blockTransactions[0].transaction.txId())
   })
 
   it('Produces the correct state deltas in an app call transaction', async () => {
@@ -860,24 +810,143 @@ describe('Complex transaction with many nested inner transactions', () => {
     const transaction = getIndexerTransactionFromAlgodTransaction(txn)
     const globalStateDelta = transaction.globalStateDelta
     expect(globalStateDelta).toMatchInlineSnapshot(`
-      [
-        EvalDeltaKeyValue {
-          "key": "cg==",
-          "value": EvalDelta {
-            "action": 2,
-            "bytes": undefined,
-            "uint": 6311n,
-          },
+    [
+      {
+        "key": Uint8Array [
+          114,
+        ],
+        "value": {
+          "action": 2,
+          "uint": 6311n,
         },
-        EvalDeltaKeyValue {
-          "key": "cmk=",
-          "value": EvalDelta {
-            "action": 1,
-            "bytes": "gfOn0O9iF4/OGJ6kRsOFfbp/zhAedEwoZL/escO+M+QAAAAAQ/9CAQAAAAACsUi5AwAkCj8UAphDyseTKWeF7KZFZuNK8zA9rbqocWk+NJ5CpMtNsCSq7S8AAAAAAAAAJxAAAABi6BgWCgAAAAAAAAAA",
-            "uint": 0n,
-          },
+      },
+      {
+        "key": Uint8Array [
+          114,
+          105,
+        ],
+        "value": {
+          "action": 1,
+          "bytes": Uint8Array [
+            129,
+            243,
+            167,
+            208,
+            239,
+            98,
+            23,
+            143,
+            206,
+            24,
+            158,
+            164,
+            70,
+            195,
+            133,
+            125,
+            186,
+            127,
+            206,
+            16,
+            30,
+            116,
+            76,
+            40,
+            100,
+            191,
+            222,
+            177,
+            195,
+            190,
+            51,
+            228,
+            0,
+            0,
+            0,
+            0,
+            67,
+            255,
+            66,
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            177,
+            72,
+            185,
+            3,
+            0,
+            36,
+            10,
+            63,
+            20,
+            2,
+            152,
+            67,
+            202,
+            199,
+            147,
+            41,
+            103,
+            133,
+            236,
+            166,
+            69,
+            102,
+            227,
+            74,
+            243,
+            48,
+            61,
+            173,
+            186,
+            168,
+            113,
+            105,
+            62,
+            52,
+            158,
+            66,
+            164,
+            203,
+            77,
+            176,
+            36,
+            170,
+            237,
+            47,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            39,
+            16,
+            0,
+            0,
+            0,
+            98,
+            232,
+            24,
+            22,
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+          ],
+          "uint": undefined,
         },
-      ]
+      },
+    ]
     `)
   })
 })

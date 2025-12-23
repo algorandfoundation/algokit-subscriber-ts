@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { Account } from 'algosdk'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
 import { afterEach, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig } from '../../src/types'
@@ -18,7 +18,7 @@ describe('AlgorandSubscriber', () => {
   })
 
   const getSubscriber = (
-    config: { testAccount: Account; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: bigint },
+    config: { testAccount: AddressWithSigners; configOverrides?: Partial<AlgorandSubscriberConfig>; initialWatermark?: bigint },
     algorand: AlgorandClient,
   ) => {
     let watermark = config.initialWatermark ?? 0n
@@ -240,7 +240,7 @@ describe('AlgorandSubscriber', () => {
 
   test('Waits until transaction appears by default when started', async () => {
     const { algorand, testAccount } = localnet.context
-    const currentRound = (await algorand.client.algod.status().do()).lastRound
+    const currentRound = (await algorand.client.algod.status()).lastRound
     const {
       subscriber,
       subscribedTestAccountTxns: subscribedTxns,

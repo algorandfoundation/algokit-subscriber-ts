@@ -26,7 +26,7 @@ Whether or not to silently (with warning log) continue if an error is encountere
 
 #### Defined in
 
-[src/types/arc-28.ts:55](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L55)
+[src/types/arc-28.ts:54](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L54)
 
 ___
 
@@ -38,7 +38,7 @@ The list of ARC-28 event definitions
 
 #### Defined in
 
-[src/types/arc-28.ts:57](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L57)
+[src/types/arc-28.ts:56](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L56)
 
 ___
 
@@ -50,7 +50,7 @@ The name to designate for this group of events.
 
 #### Defined in
 
-[src/types/arc-28.ts:49](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L49)
+[src/types/arc-28.ts:48](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L48)
 
 ___
 
@@ -62,13 +62,13 @@ Optional list of app IDs that this event should apply to
 
 #### Defined in
 
-[src/types/arc-28.ts:51](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L51)
+[src/types/arc-28.ts:50](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L50)
 
 ___
 
 ### processTransaction
 
-• `Optional` **processTransaction**: (`transaction`: [`SubscribedTransaction`](../classes/types_subscription.SubscribedTransaction.md)) => `boolean`
+• `Optional` **processTransaction**: (`transaction`: [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md)) => `boolean`
 
 Optional predicate to indicate if these ARC-28 events should be processed for the given transaction
 
@@ -80,7 +80,7 @@ Optional predicate to indicate if these ARC-28 events should be processed for th
 
 | Name | Type |
 | :------ | :------ |
-| `transaction` | [`SubscribedTransaction`](../classes/types_subscription.SubscribedTransaction.md) |
+| `transaction` | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md) |
 
 ##### Returns
 
@@ -88,4 +88,4 @@ Optional predicate to indicate if these ARC-28 events should be processed for th
 
 #### Defined in
 
-[src/types/arc-28.ts:53](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L53)
+[src/types/arc-28.ts:52](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/arc-28.ts#L52)

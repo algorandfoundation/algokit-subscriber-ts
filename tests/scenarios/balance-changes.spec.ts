@@ -1,11 +1,10 @@
-import { AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
+import { Address, AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
-import { Address } from 'algosdk'
 import invariant from 'tiny-invariant'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { AlgorandSubscriber } from '../../src'
 import { AlgorandSubscriberConfig, BalanceChangeRole } from '../../src/types'
 import { filterFixture } from '../filterFixture'
-import { AlgorandSubscriber } from '../../src'
 
 describe('Subscribing to calls that effect balance changes', () => {
   const {
@@ -79,7 +78,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       .newGroup()
       .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 100_000_000n))
       .send()
-    const asset = txns.confirmations![0].assetIndex!
+    const asset = txns.confirmations![0].assetId!
 
     const subscription = await subscribeAndVerify(
       {
@@ -113,7 +112,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       .newGroup()
       .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 100_000_000n))
       .send()
-    const asset = createAssetTxns.confirmations![0].assetIndex!
+    const asset = createAssetTxns.confirmations![0].assetId!
 
     const txns = await localnet.algorand
       .newGroup()
@@ -153,7 +152,7 @@ describe('Subscribing to calls that effect balance changes', () => {
       .newGroup()
       .addTransaction(await acfgCreate(testAccount.addr, microAlgo(2000), 135_640_597_783_270_612n)) // this is > Number.MAX_SAFE_INTEGER
       .send()
-    const asset = txns.confirmations![0].assetIndex!
+    const asset = txns.confirmations![0].assetId!
     const axferTxns = await localnet.algorand
       .newGroup()
       .addTransaction(await axfer(asset, 0n, random.addr, random.addr, microAlgo(2000))) // Opt-in
@@ -560,14 +559,14 @@ describe('Subscribing to calls that effect balance changes', () => {
           .newGroup()
           .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1000)))
           .send()
-      ).confirmations![0].assetIndex!
+      ).confirmations![0].assetId!
 
       const asset2 = (
         await algorand
           .newGroup()
           .addTransaction(await acfgCreate(testAccount.addr, microAlgo(1001)))
           .send()
-      ).confirmations![0].assetIndex!
+      ).confirmations![0].assetId!
 
       // eslint-disable-next-line no-console
       console.log(
@@ -881,26 +880,28 @@ describe('Subscribing to calls that effect balance changes', () => {
     }
   }, 30_000)
 
-
   test('Works when filtering for synthetic block payout', async () => {
     const mainnet = AlgorandClient.mainNet()
     const testRound = 46838092n
     let watermark = testRound - 1n
-    const block = (await mainnet.client.algod.block(testRound).do()).block
+    const blockResponse = await mainnet.client.algod.block(testRound)
+    const block = blockResponse.block
 
-    const feeSink = block.header.rewardState.feeSink
-    const proposer = block.header.proposer
+    const feeSink = block.header.rewardState.feeSink!
+    const proposer = block.header.proposer!
     const payout = block.header.proposerPayout
 
     const config: AlgorandSubscriberConfig = {
-      filters: [{
-        name: 'payout',
-        filter: {
-          customFilter: (tx) => {
-            return tx.fee === 0n && tx.parentTransactionId === undefined && tx.group === undefined
+      filters: [
+        {
+          name: 'payout',
+          filter: {
+            customFilter: (tx) => {
+              return tx.fee === 0n && tx.parentTransactionId === undefined && tx.group === undefined
+            },
           },
-        }
-      }],
+        },
+      ],
       syncBehaviour: 'sync-oldest',
       watermarkPersistence: {
         get: async () => watermark,
@@ -937,5 +938,4 @@ describe('Subscribing to calls that effect balance changes', () => {
     expect(indexerTxn.id).toEqual(txn.id)
     expect(indexerTxn.intraRoundOffset).toEqual(txn.intraRoundOffset)
   })
-
 })

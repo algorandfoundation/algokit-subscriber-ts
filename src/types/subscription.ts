@@ -1,7 +1,7 @@
+import type { Transaction as IndexerTransaction } from '@algorandfoundation/algokit-utils/indexer-client'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
-import algosdk from 'algosdk'
 import { Arc28EventGroup, EmittedArc28Event } from './arc-28'
-import TransactionType = algosdk.TransactionType
 
 /** The result of a single subscription pull/poll. */
 export interface TransactionSubscriptionResult {
@@ -160,7 +160,8 @@ export interface ParticipationUpdates {
  * * Add emitted ARC-28 events via `arc28Events`
  * * Balance changes in algo or assets
  */
-export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
+export interface SubscribedTransaction extends IndexerTransaction {
+  /** Transaction ID */
   id: string
   /** The intra-round offset of the parent of this transaction (if it's an inner transaction). */
   parentIntraRoundOffset?: number
@@ -174,26 +175,6 @@ export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
   filtersMatched?: string[]
   /** The balance changes in the transaction. */
   balanceChanges?: BalanceChange[]
-
-  constructor({
-    id,
-    parentIntraRoundOffset,
-    parentTransactionId,
-    innerTxns,
-    arc28Events,
-    filtersMatched,
-    balanceChanges,
-    ...rest
-  }: Omit<SubscribedTransaction, 'getEncodingSchema' | 'toEncodingData'>) {
-    super(rest)
-    this.id = id
-    this.parentIntraRoundOffset = parentIntraRoundOffset
-    this.parentTransactionId = parentTransactionId
-    this.innerTxns = innerTxns
-    this.arc28Events = arc28Events
-    this.filtersMatched = filtersMatched
-    this.balanceChanges = balanceChanges
-  }
 }
 
 /** Represents a balance change effect for a transaction. */

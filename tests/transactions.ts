@@ -1,6 +1,6 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account, Transaction } from 'algosdk'
+import type { AddressWithSigners, Transaction } from '@algorandfoundation/algokit-utils/transact'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {
@@ -11,7 +11,7 @@ import type {
   TransactionSubscriptionParams,
 } from '../src/types'
 
-export const SendXTransactions = async (x: number, account: Account, algorand: AlgorandClient) => {
+export const SendXTransactions = async (x: number, account: AddressWithSigners, algorand: AlgorandClient) => {
   const txns: SendTransactionResult[] = []
   for (let i = 0; i < x; i++) {
     algorand.setSignerFromAccount(account)
@@ -28,7 +28,7 @@ export const SendXTransactions = async (x: number, account: Account, algorand: A
 
   return {
     txns,
-    txIds: txns.map((t) => t.transaction.txID()),
+    txIds: txns.map((t) => t.transaction.txId()),
     lastTxnRound,
     rounds: txns.map((t) => t.confirmation!.confirmedRound!),
   }
@@ -51,14 +51,10 @@ export const GetSubscribedTransactions = (
   if (currentRound !== undefined) {
     const existingStatus = algorand.client.algod.status
     Object.assign(algorand.client.algod, {
-      status: vi.fn().mockImplementation(() => {
-        return {
-          do: async () => {
-            const status = await existingStatus.apply(algorand.client.algod).do()
-            status.lastRound = currentRound
-            return status
-          },
-        }
+      status: vi.fn().mockImplementation(async () => {
+        const statusResult = await existingStatus.apply(algorand.client.algod)
+        statusResult.lastRound = currentRound
+        return statusResult
       }),
     })
   }
@@ -85,7 +81,7 @@ export const GetSubscribedTransactionsFromSender = (
     watermark?: bigint
     currentRound?: bigint
   },
-  account: Account | Account[],
+  account: AddressWithSigners | AddressWithSigners[],
   algorand: AlgorandClient,
 ) => {
   return GetSubscribedTransactions(
@@ -117,16 +113,16 @@ export function getTransactionInBlockForDiff(transaction: TransactionInBlock) {
 export function getTransactionForDiff(transaction: Transaction) {
   const t = {
     ...transaction,
-    applicationCall: transaction.applicationCall
+    appCall: transaction.appCall
       ? {
-          ...transaction.applicationCall,
-          accounts: transaction.applicationCall?.accounts?.map((a) => a.toString()),
-          appArgs: transaction.applicationCall?.appArgs?.map((a) => Buffer.from(a).toString('base64')),
-          approvalProgram: transaction.applicationCall?.approvalProgram
-            ? Buffer.from(transaction.applicationCall.approvalProgram).toString('base64')
+          ...transaction.appCall,
+          accountReferences: transaction.appCall?.accountReferences?.map((a: { toString: () => string }) => a.toString()),
+          args: transaction.appCall?.args?.map((a: Uint8Array) => Buffer.from(a).toString('base64')),
+          approvalProgram: transaction.appCall?.approvalProgram
+            ? Buffer.from(transaction.appCall.approvalProgram).toString('base64')
             : undefined,
-          clearProgram: transaction.applicationCall?.clearProgram
-            ? Buffer.from(transaction.applicationCall.clearProgram).toString('base64')
+          clearStateProgram: transaction.appCall?.clearStateProgram
+            ? Buffer.from(transaction.appCall.clearStateProgram).toString('base64')
             : undefined,
         }
       : undefined,

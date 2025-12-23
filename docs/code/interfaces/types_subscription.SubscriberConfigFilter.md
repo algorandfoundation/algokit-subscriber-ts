@@ -40,13 +40,13 @@ The filter itself.
 
 #### Defined in
 
-[src/types/subscription.ts:306](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L306)
+[src/types/subscription.ts:287](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L287)
 
 ___
 
 ### mapper
 
-• `Optional` **mapper**: (`transaction`: [`SubscribedTransaction`](../classes/types_subscription.SubscribedTransaction.md)[]) => `Promise`\<`T`[]\>
+• `Optional` **mapper**: (`transaction`: [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md)[]) => `Promise`\<`T`[]\>
 
 An optional data mapper if you want the event data to take a certain shape when subscribing to events with this filter name.
 
@@ -62,7 +62,7 @@ Note: if you provide multiple filters with the same name then only the mapper of
 
 | Name | Type |
 | :------ | :------ |
-| `transaction` | [`SubscribedTransaction`](../classes/types_subscription.SubscribedTransaction.md)[] |
+| `transaction` | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md)[] |
 
 ##### Returns
 
@@ -70,7 +70,7 @@ Note: if you provide multiple filters with the same name then only the mapper of
 
 #### Defined in
 
-[src/types/subscription.ts:411](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L411)
+[src/types/subscription.ts:392](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L392)
 
 ___
 
@@ -86,4 +86,4 @@ The name to give the filter.
 
 #### Defined in
 
-[src/types/subscription.ts:304](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L304)
+[src/types/subscription.ts:285](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/types/subscription.ts#L285)

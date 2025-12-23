@@ -1,14 +1,12 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { ABIArrayDynamicType, ABIUintType, ABIValue } from '@algorandfoundation/algokit-utils/abi'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { Prisma, PrismaClient } from '@prisma/client'
-import algosdk from 'algosdk'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
 import { VotingRoundAppClient } from './types/voting-app-client'
 import { VoteType, VotingRoundMetadata } from './types/voting-round'
-import ABIArrayDynamicType = algosdk.ABIArrayDynamicType
-import ABIUintType = algosdk.ABIUintType
-import TransactionType = algosdk.TransactionType
 
 if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALGOD_SERVER) {
   // eslint-disable-next-line no-console
@@ -30,7 +28,7 @@ async function getXGovSubscriber() {
   })
   const votingRoundState = await appClient.state.global.getAll()
   const votingRoundMetadata = (await (
-    await fetch(`https://ipfs.algonode.xyz/ipfs/${votingRoundState.metadataIpfsCid!.asString()}`)
+    await fetch(`https://api.voting.algorand.foundation/ipfs/${votingRoundState.metadataIpfsCid!.asString()}`)
   ).json()) as VotingRoundMetadata
 
   const answerIndexMetadata = votingRoundMetadata.questions.flatMap((q) =>
@@ -82,7 +80,7 @@ async function getXGovSubscriber() {
         {
           name: 'xgov-vote',
           filter: {
-            type: TransactionType.appl,
+            type: TransactionType.AppCall,
             appId: votingRoundId,
             methodSignature: 'vote(pay,byte[],uint64,uint8[],uint64[],application)void',
           },
@@ -145,9 +143,8 @@ async function getXGovSubscriber() {
 
         const casts = await p.voteCast.createMany({
           data: poll.subscribedTransactions.flatMap((t) => {
-            return answerArrayType
-              .decode(t!.applicationTransaction!.applicationArgs![answerAppArgsIndex])
-              .map((v: algosdk.ABIValue, i: number) => {
+            return (answerArrayType.decode(t!.applicationTransaction!.applicationArgs![answerAppArgsIndex]) as ABIValue[]).map(
+              (v: ABIValue, i: number) => {
                 if (!useWeighting) {
                   const questionIndex = i
                   const answerIndex = parseInt(v.toString())
@@ -169,7 +166,8 @@ async function getXGovSubscriber() {
                   voteId: t.id,
                   voteWeight: v.toString(),
                 }
-              })
+              },
+            )
           }),
         })
 

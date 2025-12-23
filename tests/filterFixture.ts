@@ -1,8 +1,9 @@
+import { PendingTransactionResponse } from '@algorandfoundation/algokit-utils/algod-client'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
+import { Transaction } from '@algorandfoundation/algokit-utils/transact'
 import { AlgorandFixture, AlgorandFixtureConfig } from '@algorandfoundation/algokit-utils/types/testing'
-import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import type { Account, Transaction } from 'algosdk'
-import algosdk from 'algosdk'
+import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { expect, vitest } from 'vitest'
 import { Arc28EventGroup, SubscribedTransaction, TransactionFilter, TransactionSubscriptionResult } from '../src/types'
 import { GetSubscribedTransactions, SendXTransactions } from './transactions'
@@ -14,7 +15,7 @@ const syntheticTxnFilter = (t: SubscribedTransaction) => {
 
 export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
   localnet: AlgorandFixture
-  systemAccount: () => Account
+  systemAccount: () => AddressWithSigners
   subscribeAlgod: (
     filter: TransactionFilter,
     result: SendTransactionResult,
@@ -36,18 +37,18 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     arc28Events?: Arc28EventGroup[],
   ) => Promise<{ algod: TransactionSubscriptionResult; indexer: TransactionSubscriptionResult }>
   extractFromGroupResult: (
-    groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>,
+    groupResult: Omit<SendTransactionComposerResults, 'returns'>,
     index: number,
   ) => {
     transaction: Transaction
-    confirmation: algosdk.modelsv2.PendingTransactionResponse
+    confirmation: PendingTransactionResponse | undefined
   }
   beforeEach: () => Promise<void>
   beforeAll: () => Promise<void>
   afterEach: () => Promise<void>
 } {
   const localnet = algorandFixture(fixtureConfig)
-  let systemAccount: Account
+  let systemAccount: AddressWithSigners
 
   const subscribeAlgod = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
     // Run the subscription
@@ -72,7 +73,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     // Ensure there is another transaction so algod subscription can process something
     await SendXTransactions(2, systemAccount, localnet.algorand)
     // Wait for indexer to catch up
-    await localnet.context.waitForIndexerTransaction(result.transaction.txID())
+    await localnet.context.waitForIndexerTransaction(result.transaction.txId())
     const durationInSeconds = (+new Date() - start) / 1000
     // eslint-disable-next-line no-console
     console.debug(`Prepared for subscribing to indexer in ${durationInSeconds} seconds`)
@@ -97,7 +98,7 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
   const subscribeAndVerify = async (filter: TransactionFilter, result: SendTransactionResult, arc28Events?: Arc28EventGroup[]) => {
     const subscribed = await subscribeAlgod(filter, result, arc28Events)
     expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(result.transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(result.transaction.txId())
 
     return subscribed
   }
@@ -114,15 +115,15 @@ export function filterFixture(fixtureConfig?: AlgorandFixtureConfig): {
     ])
 
     expect(algod.subscribedTransactions.length).toBe(results.length)
-    expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    expect(algod.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txId()))
 
     expect(indexer.subscribedTransactions.length).toBe(results.length)
-    expect(indexer.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txID()))
+    expect(indexer.subscribedTransactions.map((s) => s.id)).toEqual(results.map((r) => r.transaction.txId()))
 
     return { algod, indexer }
   }
 
-  const extractFromGroupResult = (groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>, index: number) => {
+  const extractFromGroupResult = (groupResult: Omit<SendTransactionComposerResults, 'returns'>, index: number) => {
     return {
       transaction: groupResult.transactions[index],
       confirmation: groupResult.confirmations?.[index],
