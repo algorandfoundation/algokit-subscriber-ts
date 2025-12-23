@@ -1,5 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { describe, expect, it } from 'vitest'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions } from '../transactions'
@@ -36,7 +36,7 @@ describe('Heartbeat transaction', () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.hb,
+          type: TransactionType.Heartbeat,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,
@@ -56,7 +56,7 @@ describe('Heartbeat transaction', () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.hb,
+          type: TransactionType.Heartbeat,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,

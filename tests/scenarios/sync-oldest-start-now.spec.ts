@@ -25,7 +25,7 @@ describe('Subscribing using sync-oldest-start-now', () => {
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([lastTxnRound, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txId())
   })
 
   test('Only processes the first transaction after watermark when starting from an earlier round with other transactions', async () => {
@@ -44,7 +44,7 @@ describe('Subscribing using sync-oldest-start-now', () => {
     expect(subscribed.newWatermark).toBe(olderTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([olderTxnRound, olderTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txId())
   })
 
   test('Process multiple transactions', async () => {
@@ -67,7 +67,7 @@ describe('Subscribing using sync-oldest-start-now', () => {
     expect(subscribed.newWatermark).toBe(rounds[1])
     expect(subscribed.syncedRoundRange).toEqual([rounds[0], rounds[1]])
     expect(subscribed.subscribedTransactions.length).toBe(2)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
-    expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txId())
+    expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txId())
   })
 })

@@ -14,7 +14,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     // Ensure that if we are at round 0 there is a different transaction that won't be synced
     await SendXTransactions(1, await generateAccount({ initialFunds: (3).algos() }), algorand)
     const { lastTxnRound, txns } = await SendXTransactions(1, testAccount, algorand)
-    await waitForIndexerTransaction(txns[0].transaction.txID())
+    await waitForIndexerTransaction(txns[0].transaction.txId())
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: 0n, currentRound: lastTxnRound },
@@ -27,7 +27,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([1n, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(1)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txId())
   })
 
   test('Limits the number of synced transactions to maxIndexerRoundsToSync', async () => {
@@ -58,8 +58,8 @@ describe('Subscribing using catchup-with-indexer', () => {
     expect(subscribed.newWatermark).toBe(expectedNewWatermark)
     expect(subscribed.syncedRoundRange).toEqual([initialWatermark + 1n, expectedNewWatermark])
     expect(subscribed.subscribedTransactions.length).toBe(2)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
-    expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txId())
+    expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txId())
   })
 
   // Same behaviour as sync-oldest
@@ -67,7 +67,7 @@ describe('Subscribing using catchup-with-indexer', () => {
     const { algorand, testAccount, waitForIndexerTransaction } = localnet.context
     const { txns, lastTxnRound: olderTxnRound } = await SendXTransactions(2, testAccount, algorand)
     const { lastTxnRound: currentRound, txns: lastTxns } = await SendXTransactions(1, testAccount, algorand)
-    await waitForIndexerTransaction(lastTxns[0].transaction.txID())
+    await waitForIndexerTransaction(lastTxns[0].transaction.txId())
 
     const subscribed = await GetSubscribedTransactionsFromSender(
       { roundsToSync: 1, syncBehaviour: 'catchup-with-indexer', watermark: olderTxnRound - 1n, currentRound },
@@ -80,8 +80,8 @@ describe('Subscribing using catchup-with-indexer', () => {
     expect(subscribed.newWatermark).toBe(currentRound)
     expect(subscribed.syncedRoundRange).toEqual([olderTxnRound, currentRound])
     expect(subscribed.subscribedTransactions.length).toBe(2)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txID())
-    expect(subscribed.subscribedTransactions[1].id).toBe(lastTxns[0].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[1].transaction.txId())
+    expect(subscribed.subscribedTransactions[1].id).toBe(lastTxns[0].transaction.txId())
   })
 
   test('Process multiple historic transactions using indexer and blends them in with algod transaction', async () => {
@@ -100,8 +100,8 @@ describe('Subscribing using catchup-with-indexer', () => {
     expect(subscribed.newWatermark).toBe(lastTxnRound)
     expect(subscribed.syncedRoundRange).toEqual([1n, lastTxnRound])
     expect(subscribed.subscribedTransactions.length).toBe(3)
-    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txID())
-    expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txID())
-    expect(subscribed.subscribedTransactions[2].id).toBe(txns[2].transaction.txID())
+    expect(subscribed.subscribedTransactions[0].id).toBe(txns[0].transaction.txId())
+    expect(subscribed.subscribedTransactions[1].id).toBe(txns[1].transaction.txId())
+    expect(subscribed.subscribedTransactions[2].id).toBe(txns[2].transaction.txId())
   })
 })

@@ -1,6 +1,7 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { SendAtomicTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Account, TransactionType } from 'algosdk'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { TransactionFilter } from '../../src/types'
 import { app } from '../testing-app'
@@ -8,7 +9,7 @@ import { GetSubscribedTransactions, SendXTransactions } from '../transactions'
 
 describe('Inner transactions', () => {
   const localnet = algorandFixture()
-  let systemAccount: Account
+  let systemAccount: AddressWithSigners
 
   beforeAll(async () => {
     await localnet.beforeEach()
@@ -58,15 +59,15 @@ describe('Inner transactions', () => {
   }
 
   const extractFromGroupResult = (
-    groupResult: Omit<SendAtomicTransactionComposerResults, 'returns'>,
+    groupResult: Omit<SendTransactionComposerResults, 'returns'>,
     index: number,
     innerTransactionIndex?: number,
   ) => {
     return {
       id:
         innerTransactionIndex !== undefined
-          ? `${groupResult.transactions[index].txID()}/inner/${innerTransactionIndex + 1}`
-          : groupResult.transactions[index].txID(),
+          ? `${groupResult.transactions[index].txId()}/inner/${innerTransactionIndex + 1}`
+          : groupResult.transactions[index].txId(),
       transaction:
         innerTransactionIndex !== undefined
           ? groupResult.confirmations![index].innerTxns![innerTransactionIndex].txn.txn
@@ -102,7 +103,7 @@ describe('Inner transactions', () => {
 
     await subscribeAndVerifyFilter(
       {
-        type: TransactionType.pay,
+        type: TransactionType.Payment,
         receiver: testAccount.addr.toString(),
         maxAmount: 1,
       },

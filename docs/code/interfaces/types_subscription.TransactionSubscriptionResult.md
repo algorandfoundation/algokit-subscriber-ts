@@ -74,7 +74,7 @@ ___
 
 ### subscribedTransactions
 
-• **subscribedTransactions**: [`SubscribedTransaction`](../classes/types_subscription.SubscribedTransaction.md)[]
+• **subscribedTransactions**: [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md)[]
 
 Any transactions that matched the given filter within
 the synced round range. This substantively uses the [indexer transaction

@@ -1,5 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import fs from 'fs'
 import path from 'path'
 import { AlgorandSubscriber } from '../../src/subscriber'
@@ -30,7 +30,7 @@ async function getDHMSubscriber() {
         {
           name: 'dhm-asset',
           filter: {
-            type: TransactionType.acfg,
+            type: TransactionType.AssetConfig,
             // Data History Museum creator accounts
             sender: (await algorand.client.isTestNet())
               ? 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU'
@@ -76,9 +76,9 @@ async function saveDHMTransactions(transactions: SubscribedTransaction[]) {
   const assets = await getSavedTransactions<DHMAsset>('dhm-assets.json')
 
   for (const t of transactions) {
-    if (t.createdAssetIndex) {
+    if (t.createdAssetId) {
       assets.push({
-        id: t.createdAssetIndex.toString(),
+        id: t.createdAssetId.toString(),
         name: t.assetConfigTransaction!.params!.name!,
         unit: t.assetConfigTransaction!.params!.unitName!,
         mediaUrl: t.assetConfigTransaction!.params!.url!,

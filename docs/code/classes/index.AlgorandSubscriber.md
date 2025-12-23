@@ -58,7 +58,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[src/subscriber.ts:41](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L41)
+[src/subscriber.ts:40](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L40)
 
 ## Properties
 
@@ -68,7 +68,7 @@ Create a new `AlgorandSubscriber`.
 
 #### Defined in
 
-[src/subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
+[src/subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
+[src/subscriber.ts:20](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L20)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:23](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L23)
+[src/subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
+[src/subscriber.ts:29](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L29)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
+[src/subscriber.ts:24](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L24)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:28](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L28)
+[src/subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:22](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L22)
+[src/subscriber.ts:21](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L21)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:27](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L27)
+[src/subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:26](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L26)
+[src/subscriber.ts:25](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L25)
 
 ## Methods
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[src/subscriber.ts:31](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L31)
+[src/subscriber.ts:30](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L30)
 
 ___
 
@@ -184,7 +184,7 @@ The listener can be async and it will be awaited if so.
 
 | Name | Type |
 | :------ | :------ |
-| `T` | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md) |
+| `T` | [`SubscribedTransaction`](../interfaces/types_subscription.SubscribedTransaction.md) |
 
 #### Parameters
 
@@ -214,7 +214,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[src/subscriber.ts:191](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L191)
+[src/subscriber.ts:190](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L190)
 
 ___
 
@@ -234,7 +234,7 @@ The listener can be async and it will be awaited if so.
 
 | Name | Type |
 | :------ | :------ |
-| `T` | [`SubscribedTransaction`](types_subscription.SubscribedTransaction.md) |
+| `T` | [`SubscribedTransaction`](../interfaces/types_subscription.SubscribedTransaction.md) |
 
 #### Parameters
 
@@ -264,7 +264,7 @@ new AlgorandSubscriber({filters: [{name: 'my-filter', filter: {...}, mapper: (t)
 
 #### Defined in
 
-[src/subscriber.ts:220](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L220)
+[src/subscriber.ts:219](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L219)
 
 ___
 
@@ -298,7 +298,7 @@ subscriber.onBeforePoll(async (metadata) => { console.log(metadata.watermark) })
 
 #### Defined in
 
-[src/subscriber.ts:238](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L238)
+[src/subscriber.ts:237](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L237)
 
 ___
 
@@ -349,7 +349,7 @@ subscriber.onError(async (error) => {
 
 #### Defined in
 
-[src/subscriber.ts:292](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L292)
+[src/subscriber.ts:291](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L291)
 
 ___
 
@@ -386,7 +386,7 @@ subscriber.onPoll(async (pollResult) => { console.log(pollResult.subscribedTrans
 
 #### Defined in
 
-[src/subscriber.ts:259](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L259)
+[src/subscriber.ts:258](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L258)
 
 ___
 
@@ -407,7 +407,7 @@ The poll result
 
 #### Defined in
 
-[src/subscriber.ts:67](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L67)
+[src/subscriber.ts:66](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L66)
 
 ___
 
@@ -434,7 +434,7 @@ An object that contains a promise you can wait for after calling stop
 
 #### Defined in
 
-[src/subscriber.ts:113](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L113)
+[src/subscriber.ts:112](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L112)
 
 ___
 
@@ -458,4 +458,4 @@ A promise that can be awaited to ensure the subscriber has finished stopping
 
 #### Defined in
 
-[src/subscriber.ts:164](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L164)
+[src/subscriber.ts:163](https://github.com/algorandfoundation/algokit-subscriber-ts/blob/main/src/subscriber.ts#L163)

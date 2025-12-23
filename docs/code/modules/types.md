@@ -151,7 +151,7 @@ ___
 
 ### SubscribedTransaction
 
-Re-exports [SubscribedTransaction](../classes/types_subscription.SubscribedTransaction.md)
+Re-exports [SubscribedTransaction](../interfaces/types_subscription.SubscribedTransaction.md)
 
 ___
 
