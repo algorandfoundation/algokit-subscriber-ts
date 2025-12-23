@@ -116,6 +116,10 @@
         "prerelease": "beta"
       },
       {
+        "name": "alpha",
+        "prerelease": "alpha"
+      },
+      {
         "name": "release"
       }
     ],
