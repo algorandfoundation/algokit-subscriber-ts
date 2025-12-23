@@ -50,8 +50,10 @@ build/
 coverage
 
 # Website & Code docs generation
-code-docs/
-out/
+docs/_html/
+docs/api/documents/
+docs/api/_media/
+docs/.nojekyll
 
 # dotenv environment variable files
 .env

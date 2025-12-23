@@ -3,13 +3,19 @@
   "entryPoints": ["src/index.ts", "src/types/*.ts"],
   "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
   "entryPointStrategy": "expand",
-  "out": "docs/code",
+  "outputs": [
+    { "name": "html", "path": "docs/_html" },
+    { "name": "markdown", "path": "docs/api" }
+  ],
   "plugin": ["typedoc-plugin-markdown"],
   "theme": "default",
   "cleanOutputDir": true,
-  "githubPages": false,
-  "readme": "none",
-  "entryDocument": "README.md",
+  "githubPages": true,
+  "readme": "docs/guides/README.md",
+  "projectDocuments": ["docs/guides/*.md"],
   "gitRevision": "main",
-  "tsconfig": "tsconfig.build.json"
+  "tsconfig": "tsconfig.build.json",
+  "highlightLanguages": ["typescript", "python", "json", "bash", "js", "yaml"],
+  "excludeReferences": true,
+  "includeHierarchySummary": true
 }
