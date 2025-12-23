@@ -370,11 +370,11 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                 : undefined,
               message: transaction.stateProof!.message
                 ? {
-                    blockHeadersCommitment: Buffer.from(transaction.stateProof!.message!.blockHeadersCommitment),
+                    blockHeadersCommitment: transaction.stateProof!.message!.blockHeadersCommitment,
                     firstAttestedRound: transaction.stateProof!.message!.firstAttestedRound,
                     latestAttestedRound: transaction.stateProof!.message!.lastAttestedRound,
                     lnProvenWeight: transaction.stateProof!.message!.lnProvenWeight,
-                    votersCommitment: Buffer.from(transaction.stateProof!.message!.votersCommitment),
+                    votersCommitment: transaction.stateProof!.message!.votersCommitment,
                   }
                 : undefined,
               stateProofType: BigInt(transaction.stateProof!.stateProofType ?? 0),
