@@ -1,7 +1,12 @@
-import { Config, indexer as utilsIndexer } from '@algorandfoundation/algokit-utils'
+import { Config } from '@algorandfoundation/algokit-utils'
 import { ABITupleType, type ABIValue } from '@algorandfoundation/algokit-utils/abi'
 import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
-import type { IndexerClient, Transaction as IndexerTransaction } from '@algorandfoundation/algokit-utils/indexer-client'
+import {
+  SearchForTransactionsCriteria,
+  searchTransactions,
+  type IndexerClient,
+  type Transaction as IndexerTransaction,
+} from '@algorandfoundation/algokit-utils/indexer-client'
 import { OnApplicationComplete, TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { Buffer } from 'buffer'
 import sha512, { sha512_256 } from 'js-sha512'
@@ -145,9 +150,7 @@ export async function getSubscribedTransactions(
                 // For each filter
                 chunkedFilters.map(async (f) =>
                   // Retrieve all pre-filtered transactions from the indexer
-                  (
-                    await utilsIndexer.searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))
-                  ).transactions
+                  (await searchTransactions(indexer, indexerPreFilter(f.filter, startRound, indexerSyncToRoundNumber))).transactions
                     // Re-run the pre-filter in-memory so we properly extract inner transactions
                     .flatMap((t) => getFilteredIndexerTransactions(t, f))
                     // Run the post-filter so we get the final list of matching transactions
@@ -325,9 +328,9 @@ function extractArc28Events(
     .filter((e) => !!e) as EmittedArc28Event[]
 }
 
-function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, maxRound: bigint): utilsIndexer.SearchForTransactionsCriteria {
+function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, maxRound: bigint): SearchForTransactionsCriteria {
   // NOTE: everything in this method needs to be mirrored to `indexerPreFilterInMemory` below
-  const criteria: utilsIndexer.SearchForTransactionsCriteria = {
+  const criteria: SearchForTransactionsCriteria = {
     minRound,
     maxRound,
   }
@@ -341,7 +344,7 @@ function indexerPreFilter(subscription: TransactionFilter, minRound: bigint, max
     criteria.addressRole = 'receiver'
   }
   if (subscription.type && typeof subscription.type === 'string') {
-    criteria.txType = subscription.type.toString() as utilsIndexer.SearchForTransactionsCriteria['txType']
+    criteria.txType = subscription.type.toString() as SearchForTransactionsCriteria['txType']
   }
   if (subscription.notePrefix) {
     criteria.notePrefix = Buffer.from(subscription.notePrefix).toString('base64')
