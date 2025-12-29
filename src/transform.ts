@@ -270,84 +270,84 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
             },
           }
         : undefined),
-      ...(transaction.type === TransactionType.AssetTransfer
+      ...(transaction.type === TransactionType.AssetTransfer && transaction.assetTransfer
         ? {
             assetTransferTransaction: {
-              assetId: transaction.assetTransfer!.assetId,
-              amount: transaction.assetTransfer!.amount,
-              receiver: transaction.assetTransfer!.receiver.toString(),
-              sender: transaction.assetTransfer!.assetSender ? transaction.assetTransfer!.assetSender.toString() : undefined,
+              assetId: transaction.assetTransfer.assetId,
+              amount: transaction.assetTransfer.amount,
+              receiver: transaction.assetTransfer.receiver.toString(),
+              sender: transaction.assetTransfer.assetSender ? transaction.assetTransfer.assetSender.toString() : undefined,
               closeAmount: assetCloseAmount,
-              closeTo: transaction.assetTransfer!.closeRemainderTo ? transaction.assetTransfer!.closeRemainderTo.toString() : undefined,
+              closeTo: transaction.assetTransfer.closeRemainderTo ? transaction.assetTransfer.closeRemainderTo.toString() : undefined,
             },
           }
         : undefined),
-      ...(transaction.type === TransactionType.AssetFreeze
+      ...(transaction.type === TransactionType.AssetFreeze && transaction.assetFreeze
         ? {
             assetFreezeTransaction: {
-              assetId: transaction.assetFreeze!.assetId,
-              newFreezeStatus: transaction.assetFreeze!.frozen,
-              address: transaction.assetFreeze!.freezeTarget.toString(),
+              assetId: transaction.assetFreeze.assetId,
+              newFreezeStatus: transaction.assetFreeze.frozen,
+              address: transaction.assetFreeze.freezeTarget.toString(),
             },
           }
         : undefined),
-      ...(transaction.type === TransactionType.AppCall
+      ...(transaction.type === TransactionType.AppCall && transaction.appCall
         ? {
             applicationTransaction: {
-              applicationId: transaction.appCall!.appId ?? 0n,
-              approvalProgram: transaction.appCall!.approvalProgram,
-              clearStateProgram: transaction.appCall!.clearStateProgram,
-              onCompletion: algodOnCompleteToIndexerOnComplete(transaction.appCall!.onComplete),
-              applicationArgs: transaction.appCall!.args,
-              foreignApps: transaction.appCall!.appReferences,
-              foreignAssets: transaction.appCall!.assetReferences,
-              globalStateSchema: transaction.appCall!.globalStateSchema,
-              localStateSchema: transaction.appCall!.localStateSchema,
-              accounts: transaction.appCall!.accountReferences,
-              extraProgramPages: transaction.appCall!.extraProgramPages,
+              applicationId: transaction.appCall.appId ?? 0n,
+              approvalProgram: transaction.appCall.approvalProgram,
+              clearStateProgram: transaction.appCall.clearStateProgram,
+              onCompletion: algodOnCompleteToIndexerOnComplete(transaction.appCall.onComplete),
+              applicationArgs: transaction.appCall.args,
+              foreignApps: transaction.appCall.appReferences,
+              foreignAssets: transaction.appCall.assetReferences,
+              globalStateSchema: transaction.appCall.globalStateSchema,
+              localStateSchema: transaction.appCall.localStateSchema,
+              accounts: transaction.appCall.accountReferences,
+              extraProgramPages: transaction.appCall.extraProgramPages,
             },
           }
         : undefined),
-      ...(transaction.type === TransactionType.Payment
+      ...(transaction.type === TransactionType.Payment && transaction.payment
         ? {
             paymentTransaction: {
-              amount: transaction.payment!.amount,
-              receiver: transaction.payment!.receiver.toString(),
+              amount: transaction.payment.amount,
+              receiver: transaction.payment.receiver.toString(),
               closeAmount: closeAmount,
-              closeRemainderTo: transaction.payment!.closeRemainderTo?.toString(),
+              closeRemainderTo: transaction.payment.closeRemainderTo?.toString(),
             },
           }
         : undefined),
-      ...(transaction.type === TransactionType.KeyRegistration
+      ...(transaction.type === TransactionType.KeyRegistration && transaction.keyRegistration
         ? {
             keyregTransaction: {
-              nonParticipation: transaction.keyRegistration!.nonParticipation,
-              selectionParticipationKey: transaction.keyRegistration!.selectionKey,
-              stateProofKey: transaction.keyRegistration!.stateProofKey,
-              voteFirstValid: transaction.keyRegistration!.voteFirst,
-              voteKeyDilution: transaction.keyRegistration!.voteKeyDilution,
-              voteLastValid: transaction.keyRegistration!.voteLast,
-              voteParticipationKey: transaction.keyRegistration!.voteKey,
+              nonParticipation: transaction.keyRegistration.nonParticipation,
+              selectionParticipationKey: transaction.keyRegistration.selectionKey,
+              stateProofKey: transaction.keyRegistration.stateProofKey,
+              voteFirstValid: transaction.keyRegistration.voteFirst,
+              voteKeyDilution: transaction.keyRegistration.voteKeyDilution,
+              voteLastValid: transaction.keyRegistration.voteLast,
+              voteParticipationKey: transaction.keyRegistration.voteKey,
             },
           }
         : undefined),
-      ...(transaction.type === TransactionType.StateProof
+      ...(transaction.type === TransactionType.StateProof && transaction.stateProof
         ? {
             stateProofTransaction: {
-              stateProof: transaction.stateProof!.stateProof
+              stateProof: transaction.stateProof.stateProof
                 ? {
-                    partProofs: transaction.stateProof!.stateProof?.partProofs
-                      ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.partProofs)
+                    partProofs: transaction.stateProof.stateProof?.partProofs
+                      ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof.stateProof.partProofs)
                       : undefined,
-                    positionsToReveal: transaction.stateProof!.stateProof?.positionsToReveal,
-                    saltVersion: transaction.stateProof!.stateProof?.merkleSignatureSaltVersion,
-                    sigCommit: transaction.stateProof!.stateProof?.sigCommit,
-                    sigProofs: transaction.stateProof!.stateProof?.sigProofs
-                      ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof!.stateProof.sigProofs)
+                    positionsToReveal: transaction.stateProof.stateProof?.positionsToReveal,
+                    saltVersion: transaction.stateProof.stateProof?.merkleSignatureSaltVersion,
+                    sigCommit: transaction.stateProof.stateProof?.sigCommit,
+                    sigProofs: transaction.stateProof.stateProof?.sigProofs
+                      ? algodMerkleArrayProofToIndexerMerkleArrayProof(transaction.stateProof.stateProof.sigProofs)
                       : undefined,
-                    signedWeight: transaction.stateProof!.stateProof?.signedWeight,
-                    reveals: transaction.stateProof!.stateProof?.reveals
-                      ? Array.from(transaction.stateProof!.stateProof?.reveals.entries()).map(([position, reveal]) => {
+                    signedWeight: transaction.stateProof.stateProof?.signedWeight,
+                    reveals: transaction.stateProof.stateProof?.reveals
+                      ? Array.from(transaction.stateProof.stateProof?.reveals.entries()).map(([position, reveal]) => {
                           return {
                             sigSlot: {
                               lowerSigWeight: reveal.sigslot.lowerSigWeight,
@@ -368,16 +368,16 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                       : undefined,
                   }
                 : undefined,
-              message: transaction.stateProof!.message
+              message: transaction.stateProof.message
                 ? {
-                    blockHeadersCommitment: transaction.stateProof!.message!.blockHeadersCommitment,
-                    firstAttestedRound: transaction.stateProof!.message!.firstAttestedRound,
-                    latestAttestedRound: transaction.stateProof!.message!.lastAttestedRound,
-                    lnProvenWeight: transaction.stateProof!.message!.lnProvenWeight,
-                    votersCommitment: transaction.stateProof!.message!.votersCommitment,
+                    blockHeadersCommitment: transaction.stateProof.message.blockHeadersCommitment,
+                    firstAttestedRound: transaction.stateProof.message.firstAttestedRound,
+                    latestAttestedRound: transaction.stateProof.message.lastAttestedRound,
+                    lnProvenWeight: transaction.stateProof.message.lnProvenWeight,
+                    votersCommitment: transaction.stateProof.message.votersCommitment,
                   }
                 : undefined,
-              stateProofType: BigInt(transaction.stateProof!.stateProofType ?? 0),
+              stateProofType: BigInt(transaction.stateProof.stateProofType ?? 0),
             },
           }
         : undefined),
@@ -692,31 +692,31 @@ export function extractBalanceChangesFromBlockTransaction(signedTxnWithAD: Signe
     balanceChanges.push(
       {
         address: transaction.sender.toString(),
-        assetId: transaction.assetTransfer!.assetId,
-        amount: -1n * (transaction.assetTransfer!.amount ?? 0n),
+        assetId: transaction.assetTransfer.assetId,
+        amount: -1n * (transaction.assetTransfer.amount ?? 0n),
         roles: [BalanceChangeRole.Sender],
       },
-      ...(transaction.assetTransfer!.receiver
+      ...(transaction.assetTransfer.receiver
         ? [
             {
-              address: transaction.assetTransfer!.receiver.toString(),
-              assetId: transaction.assetTransfer!.assetId,
-              amount: transaction.assetTransfer!.amount,
+              address: transaction.assetTransfer.receiver.toString(),
+              assetId: transaction.assetTransfer.assetId,
+              amount: transaction.assetTransfer.amount,
               roles: [BalanceChangeRole.Receiver],
             },
           ]
         : []),
-      ...(transaction.assetTransfer!.closeRemainderTo
+      ...(transaction.assetTransfer.closeRemainderTo
         ? [
             {
-              address: transaction.assetTransfer!.closeRemainderTo.toString(),
-              assetId: transaction.assetTransfer!.assetId,
+              address: transaction.assetTransfer.closeRemainderTo.toString(),
+              assetId: transaction.assetTransfer.assetId,
               amount: signedTxnWithAD.applyData?.assetClosingAmount ?? 0n,
               roles: [BalanceChangeRole.CloseTo],
             },
             {
               address: transaction.sender.toString(),
-              assetId: transaction.assetTransfer!.assetId,
+              assetId: transaction.assetTransfer.assetId,
               amount: -1n * (signedTxnWithAD.applyData?.assetClosingAmount ?? 0n),
               roles: [BalanceChangeRole.Sender],
             },
