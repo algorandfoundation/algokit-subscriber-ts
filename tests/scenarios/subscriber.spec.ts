@@ -291,7 +291,7 @@ describe('AlgorandSubscriber', () => {
     let pollComplete = false
     const { subscriber } = getSubscriber(
       {
-        testAccount: localnet.algorand.account.random().account,
+        testAccount: localnet.algorand.account.random(),
         initialWatermark,
         configOverrides: {
           maxRoundsToSync: 100,
@@ -367,7 +367,7 @@ describe('AlgorandSubscriber', () => {
     const expectedError = new Error('BOOM')
     const { subscriber } = getSubscriber(
       {
-        testAccount: localnet.algorand.account.random().account,
+        testAccount: localnet.algorand.account.random(),
         initialWatermark,
         configOverrides: {
           maxRoundsToSync: 100,

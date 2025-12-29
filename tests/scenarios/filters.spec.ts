@@ -50,7 +50,7 @@ describe('Subscribing using various filters', () => {
     const { generateAccount } = localnet.context
     const testAccount = await generateAccount({ initialFunds: (10).algos() })
     const account2 = await generateAccount({ initialFunds: (3).algos() })
-    const account3 = localnet.algorand.account.random().account
+    const account3 = localnet.algorand.account.random()
     const txns = await localnet.algorand
       .newGroup()
       .addPayment({
