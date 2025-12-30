@@ -2095,7 +2095,7 @@ describe('State proof transaction', () => {
             },
             "signedWeight": 1430383201665331n,
           },
-          "stateProofType": 0n,
+          "stateProofType": 0,
         },
         "txType": "stpf",
       }
@@ -4182,7 +4182,7 @@ describe('State proof transaction', () => {
             },
             "signedWeight": 1430383201665331n,
           },
-          "stateProofType": 0n,
+          "stateProofType": 0,
         },
         "txType": "stpf",
       }
