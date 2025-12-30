@@ -377,7 +377,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                     votersCommitment: transaction.stateProof.message.votersCommitment,
                   }
                 : undefined,
-              stateProofType: BigInt(transaction.stateProof.stateProofType ?? 0),
+              stateProofType: transaction.stateProof.stateProofType ?? 0,
             },
           }
         : undefined),
