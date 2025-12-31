@@ -317,6 +317,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                 app: ref.appId,
                 name: ref.name,
               })),
+              rejectVersion: transaction.appCall.rejectVersion,
             },
           }
         : undefined),
