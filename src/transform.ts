@@ -465,6 +465,16 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                           })),
                         }
                       : undefined,
+                    logicMultisigSignature: signedTxnWithAD.signedTxn.lsig.lmsig
+                      ? {
+                          version: signedTxnWithAD.signedTxn.lsig.lmsig.version,
+                          threshold: signedTxnWithAD.signedTxn.lsig.lmsig.threshold,
+                          subsignature: signedTxnWithAD.signedTxn.lsig.lmsig.subsigs.map((s) => ({
+                            publicKey: s.publicKey,
+                            signature: s.sig,
+                          })),
+                        }
+                      : undefined,
                   }
                 : undefined,
               multisig: signedTxnWithAD.signedTxn.msig
