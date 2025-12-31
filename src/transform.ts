@@ -305,6 +305,18 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
               localStateSchema: transaction.appCall.localStateSchema,
               accounts: transaction.appCall.accountReferences,
               extraProgramPages: transaction.appCall.extraProgramPages,
+              access: transaction.appCall.accessReferences?.map((ref) => ({
+                address: ref.address,
+                applicationId: ref.appId,
+                assetId: ref.assetId,
+                box: ref.box ? { app: ref.box.appId, name: ref.box.name } : undefined,
+                holding: ref.holding ? { address: ref.holding.address, asset: ref.holding.assetId } : undefined,
+                local: ref.locals ? { address: ref.locals.address, app: ref.locals.appId } : undefined,
+              })),
+              boxReferences: transaction.appCall.boxReferences?.map((ref) => ({
+                app: ref.appId,
+                name: ref.name,
+              })),
             },
           }
         : undefined),
