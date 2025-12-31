@@ -150,5 +150,7 @@ describe('Payment transaction', () => {
         },
       ],
     })
+    expect(transaction.signature?.logicsig?.logic).toEqual(new Uint8Array([1, 32, 1, 1, 34]))
+    expect(transaction.signature?.logicsig?.args).toEqual([new Uint8Array([1]), new Uint8Array([2, 3])])
   })
 })

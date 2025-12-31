@@ -101,78 +101,28 @@ describe('Application transaction', () => {
     const transaction = getIndexerTransactionFromAlgodTransaction(blockTxn)
 
     expect(transaction.applicationTransaction?.access).toEqual([
+      { applicationId: 123n },
+      { address: sender },
+      { assetId: 54n },
       {
-        address: undefined,
-        applicationId: 123n,
-        assetId: undefined,
-        box: undefined,
-        holding: undefined,
-        local: undefined,
-      },
-      {
-        address: sender,
-        applicationId: undefined,
-        assetId: undefined,
-        box: undefined,
-        holding: undefined,
-        local: undefined,
-      },
-      {
-        address: undefined,
-        applicationId: undefined,
-        assetId: 54n,
-        box: undefined,
-        holding: undefined,
-        local: undefined,
-      },
-      {
-        address: undefined,
-        applicationId: undefined,
-        assetId: undefined,
-        box: undefined,
         holding: {
           address: sender,
           asset: 54n,
         },
-        local: undefined,
       },
+      { applicationId: 432n },
       {
-        address: undefined,
-        applicationId: 432n,
-        assetId: undefined,
-        box: undefined,
-        holding: undefined,
-        local: undefined,
-      },
-      {
-        address: undefined,
-        applicationId: undefined,
-        assetId: undefined,
-        box: undefined,
-        holding: undefined,
         local: {
           address: sender,
           app: 432n,
         },
       },
+      { applicationId: 678n },
       {
-        address: undefined,
-        applicationId: 678n,
-        assetId: undefined,
-        box: undefined,
-        holding: undefined,
-        local: undefined,
-      },
-      {
-        address: undefined,
-        applicationId: undefined,
-        assetId: undefined,
         box: {
           app: 678n,
           name: new Uint8Array([1, 2, 3]),
         },
-        holding: undefined,
-        local: undefined,
       },
     ])
   })
