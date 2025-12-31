@@ -427,10 +427,13 @@ describe('Subscribing to calls that effect balance changes', () => {
         extractFromGroupResult(txns, 6),
       )
 
+      // Use address filter to avoid matching transactions from parallel test files
+      // that may create large balance changes (e.g., generateAccount funding transactions)
       await subscribeAndVerifyFilter(
         {
           balanceChanges: [
             {
+              address: account.addr.toString(),
               minAmount: 196_000n,
             },
           ],
@@ -451,10 +454,12 @@ describe('Subscribing to calls that effect balance changes', () => {
         extractFromGroupResult(txns, 8),
       )
 
+      // Use address filter to avoid matching transactions from parallel test files
       await subscribeAndVerifyFilter(
         {
           balanceChanges: [
             {
+              address: account2.addr.toString(),
               minAbsoluteAmount: 297_000n,
             },
           ],
@@ -462,10 +467,12 @@ describe('Subscribing to calls that effect balance changes', () => {
         extractFromGroupResult(txns, 7),
       )
 
+      // Use address filter to avoid matching transactions from parallel test files
       await subscribeAndVerifyFilter(
         {
           balanceChanges: [
             {
+              address: account2.addr.toString(),
               maxAmount: -297_000n,
             },
           ],

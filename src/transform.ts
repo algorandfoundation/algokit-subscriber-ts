@@ -305,6 +305,19 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
               localStateSchema: transaction.appCall.localStateSchema,
               accounts: transaction.appCall.accountReferences,
               extraProgramPages: transaction.appCall.extraProgramPages,
+              access: transaction.appCall.accessReferences?.map((ref) => ({
+                address: ref.address,
+                applicationId: ref.appId,
+                assetId: ref.assetId,
+                box: ref.box ? { app: ref.box.appId, name: ref.box.name } : undefined,
+                holding: ref.holding ? { address: ref.holding.address, asset: ref.holding.assetId } : undefined,
+                local: ref.locals ? { address: ref.locals.address, app: ref.locals.appId } : undefined,
+              })),
+              boxReferences: transaction.appCall.boxReferences?.map((ref) => ({
+                app: ref.appId,
+                name: ref.name,
+              })),
+              rejectVersion: transaction.appCall.rejectVersion,
             },
           }
         : undefined),
@@ -448,6 +461,16 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                           version: signedTxnWithAD.signedTxn.lsig.msig.version,
                           threshold: signedTxnWithAD.signedTxn.lsig.msig.threshold,
                           subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsigs.map((s) => ({
+                            publicKey: s.publicKey,
+                            signature: s.sig,
+                          })),
+                        }
+                      : undefined,
+                    logicMultisigSignature: signedTxnWithAD.signedTxn.lsig.lmsig
+                      ? {
+                          version: signedTxnWithAD.signedTxn.lsig.lmsig.version,
+                          threshold: signedTxnWithAD.signedTxn.lsig.lmsig.threshold,
+                          subsignature: signedTxnWithAD.signedTxn.lsig.lmsig.subsigs.map((s) => ({
                             publicKey: s.publicKey,
                             signature: s.sig,
                           })),
