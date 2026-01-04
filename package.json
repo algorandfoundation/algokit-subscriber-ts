@@ -97,7 +97,7 @@
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
-    "@algorandfoundation/algokit-utils": "^10.0.0-alpha.28"
+    "@algorandfoundation/algokit-utils": "^10.0.0-alpha.29"
   },
   "publishConfig": {
     "access": "public"
