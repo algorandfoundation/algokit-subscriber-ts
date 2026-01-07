@@ -6,7 +6,8 @@
 
 ## Modules
 
-- [index](index/README.md)
+- [subscriber](subscriber/README.md)
+- [subscriptions](subscriptions/README.md)
 - [types](types/README.md)
 - [types/arc-28](types/arc-28/README.md)
 - [types/async-event-emitter](types/async-event-emitter/README.md)

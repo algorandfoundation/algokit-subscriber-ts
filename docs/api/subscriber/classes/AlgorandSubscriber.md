@@ -2,7 +2,7 @@
 
 ***
 
-[@algorandfoundation/algokit-subscriber](../../modules.md) / [index](../README.md) / AlgorandSubscriber
+[@algorandfoundation/algokit-subscriber](../../modules.md) / [subscriber](../README.md) / AlgorandSubscriber
 
 # Class: AlgorandSubscriber
 

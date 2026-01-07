@@ -2,13 +2,9 @@
 
 ***
 
-[@algorandfoundation/algokit-subscriber](../modules.md) / index
+[@algorandfoundation/algokit-subscriber](../modules.md) / subscriptions
 
-# index
-
-## Classes
-
-- [AlgorandSubscriber](classes/AlgorandSubscriber.md)
+# subscriptions
 
 ## Functions
 
