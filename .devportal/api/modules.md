@@ -1,5 +1,5 @@
 ---
-title: "@algorandfoundation/algokit-subscriber"
+title: AlgokitSubscriber
 ---
 
 # @algorandfoundation/algokit-subscriber

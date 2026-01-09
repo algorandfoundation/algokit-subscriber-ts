@@ -1,5 +1,5 @@
 ---
-title: types
+title: Types
 ---
 
 # types

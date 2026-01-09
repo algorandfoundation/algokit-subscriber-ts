@@ -1,5 +1,5 @@
 ---
-title: "@algorandfoundation/algokit-subscriber"
+title: AlgokitSubscriber
 ---
 
 # Algorand transaction subscription / indexing

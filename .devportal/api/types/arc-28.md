@@ -1,5 +1,5 @@
 ---
-title: types/arc-28
+title: Arc28
 ---
 
 # types/arc-28

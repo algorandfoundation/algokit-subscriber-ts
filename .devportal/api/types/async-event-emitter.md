@@ -1,5 +1,5 @@
 ---
-title: types/async-event-emitter
+title: AsyncEventEmitter
 ---
 
 # types/async-event-emitter

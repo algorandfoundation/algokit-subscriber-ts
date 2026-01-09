@@ -20,7 +20,7 @@
   "hidePageHeader": true,
   "pageTitleTemplates": {
     "index": "{projectName}",
-    "member": "{group} - `{rawName}`",
+    "member": "{name}",
     "module": "{name}"
   }
 }

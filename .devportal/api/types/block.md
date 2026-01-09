@@ -1,5 +1,5 @@
 ---
-title: types/block
+title: Block
 ---
 
 # types/block

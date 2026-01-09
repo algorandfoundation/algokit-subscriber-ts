@@ -1,5 +1,5 @@
 ---
-title: types/subscription
+title: Subscription
 ---
 
 # types/subscription

@@ -1,5 +1,5 @@
 ---
-title: subscriber
+title: Subscriber
 ---
 
 # subscriber
