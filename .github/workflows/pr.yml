@@ -1,4 +1,4 @@
-name: Pull Request
+name: On Pull Request
 
 on:
   pull_request:
@@ -24,6 +24,7 @@ jobs:
         npx --yes wait-on tcp:4001 -t 30000
       audit-script: |
         npm run audit
+
   check_docs:
     runs-on: ubuntu-latest
     steps:
@@ -31,6 +32,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
       - name: Check docs are up to date
         shell: bash
         run: |
