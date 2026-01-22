@@ -31,6 +31,10 @@
   },
   "author": "Algorand Foundation",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/algorandfoundation/algokit-subscriber-ts"
+  },
   "engines": {
     "node": ">=20.0"
   },
