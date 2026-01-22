@@ -10,6 +10,9 @@ on:
 
 concurrency: release
 
+permissions:
+  id-token: write
+
 jobs:
   ci:
     name: Continuous Integration
@@ -100,4 +103,3 @@ jobs:
         env:
           # Use the GitHub App token for authentication
           GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
