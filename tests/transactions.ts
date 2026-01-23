@@ -1,6 +1,6 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
 import type { AddressWithSigners, Transaction } from '@algorandfoundation/algokit-utils/transact'
+import { SendTransactionResult } from '@algorandfoundation/algokit-utils/transaction'
 import { vi } from 'vitest'
 import { getSubscribedTransactions } from '../src'
 import type {

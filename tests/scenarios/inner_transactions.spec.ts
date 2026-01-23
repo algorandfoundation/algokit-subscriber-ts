@@ -1,7 +1,7 @@
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
 import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
-import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
+import { SendTransactionComposerResults, SendTransactionResult } from '@algorandfoundation/algokit-utils/transaction'
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vitest } from 'vitest'
 import { TransactionFilter } from '../../src/types'
 import { app } from '../testing-app'
