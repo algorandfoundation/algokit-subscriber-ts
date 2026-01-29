@@ -1,5 +1,5 @@
 {
-  "1112153": {
+  "1112496": {
     "active": true,
     "notes": "@semantic-release/npm with patched undici version not available yet",
     "expiry": "2026-02-15"

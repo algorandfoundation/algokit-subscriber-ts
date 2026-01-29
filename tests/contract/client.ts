@@ -7,8 +7,7 @@
 import { Address, encodeAddress } from '@algorandfoundation/algokit-utils'
 import { Arc56Contract } from '@algorandfoundation/algokit-utils/abi'
 import { SimulateResponse } from '@algorandfoundation/algokit-utils/algod-client'
-import { OnApplicationComplete, Transaction, TransactionSigner } from '@algorandfoundation/algokit-utils/transact'
-import { type AlgorandClient } from '@algorandfoundation/algokit-utils/types/algorand-client'
+import { type AlgorandClient } from '@algorandfoundation/algokit-utils/algorand-client'
 import {
   AppClient as _AppClient,
   AppClientBareCallParams,
@@ -19,7 +18,7 @@ import {
   CloneAppClientParams,
   ResolveAppClientByCreatorAndName,
   ResolveAppClientByNetwork,
-} from '@algorandfoundation/algokit-utils/types/app-client'
+} from '@algorandfoundation/algokit-utils/app-client'
 import {
   AppFactory as _AppFactory,
   AppFactoryAppClientParams,
@@ -27,14 +26,15 @@ import {
   AppFactoryParams,
   AppFactoryResolveAppClientByCreatorAndNameParams,
   CreateSchema,
-} from '@algorandfoundation/algokit-utils/types/app-factory'
+} from '@algorandfoundation/algokit-utils/app-factory'
 import {
   RawSimulateOptions,
   SimulateOptions,
   SkipSignaturesSimulateOptions,
   TransactionComposer,
-} from '@algorandfoundation/algokit-utils/types/composer'
-import { SendParams, SendTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
+} from '@algorandfoundation/algokit-utils/composer'
+import { OnApplicationComplete, Transaction, TransactionSigner } from '@algorandfoundation/algokit-utils/transact'
+import { SendParams, SendTransactionComposerResults } from '@algorandfoundation/algokit-utils/transaction'
 
 export const APP_SPEC: Arc56Contract = {
   name: 'TestingApp',

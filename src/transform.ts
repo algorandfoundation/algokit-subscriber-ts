@@ -1,7 +1,7 @@
 import { ALGORAND_ZERO_ADDRESS_STRING, decodeAddress } from '@algorandfoundation/algokit-utils'
 import type { Block, BlockResponse, SignedTxnWithAD } from '@algorandfoundation/algokit-utils/algod-client'
+import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/indexer'
 import { OnApplicationComplete, Transaction, TransactionType } from '@algorandfoundation/algokit-utils/transact'
-import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/types/indexer'
 import { Buffer } from 'buffer'
 import type { TransactionInBlock } from './types/block'
 import { BalanceChange, BalanceChangeRole, BlockMetadata, type SubscribedTransaction } from './types/subscription'
