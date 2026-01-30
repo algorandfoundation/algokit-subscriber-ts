@@ -3,7 +3,7 @@ name: Pull Request
 on:
   push:
     branches:
-      - feat/pr-workflow
+      - ci/reusable-pull-request
   pull_request:
     branches:
       - main
