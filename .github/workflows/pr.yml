@@ -28,6 +28,7 @@ jobs:
         npx --yes wait-on tcp:4001 -t 30000
       audit-script: |
         npm run audit
+      project-type: node
 
 
   ## Do we need to check docs here??
