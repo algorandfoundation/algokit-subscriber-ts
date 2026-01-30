@@ -1,6 +1,9 @@
 name: Pull Request
 
 on:
+  push:
+    branches:
+      - feat/pr-workflow
   pull_request:
     branches:
       - main
@@ -13,7 +16,7 @@ permissions:
 
 jobs:
   pull_request:
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/on-pull-request.yml@main
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/on-pull-request.yml@feat/pr-workflow
     with:
       node-version: 20.x
       working-directory: ./
