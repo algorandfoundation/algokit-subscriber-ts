@@ -21,7 +21,7 @@ jobs:
       project-type: node
       node-version: 20.x
       working-directory: .
-      audit-level: moderate
+      audit-level: low
       pre-test-script: |
         pipx install algokit
         algokit localnet start
