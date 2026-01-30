@@ -18,17 +18,15 @@ jobs:
   pull_request:
     uses: algorandfoundation/algokit-shared-config/.github/workflows/on-pull-request.yml@feat/pr-workflow
     with:
+      project-type: node
       node-version: 20.x
-      working-directory: ./
-      run-commit-lint: true
-      run-build: true
+      working-directory: .
+      audit-level: moderate
       pre-test-script: |
         pipx install algokit
         algokit localnet start
         npx --yes wait-on tcp:4001 -t 30000
-      audit-script: |
-        npm run audit
-      project-type: node
+      skip-commit-lint: false
 
 
   ## Do we need to check docs here??
