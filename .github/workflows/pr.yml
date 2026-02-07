@@ -26,6 +26,7 @@ jobs:
         npx --yes wait-on tcp:4001 -t 30000
       
       run-commit-lint: true
-  # Reusable check docs
+ 
+   # Reusable check docs
   check_docs:
     uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@chore/pnpm-ci
