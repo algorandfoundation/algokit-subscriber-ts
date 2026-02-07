@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   pull_request:
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/on-pull-request.yml@feat/pr-workflow
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/on-pull-request.yml@chore/pnpm-ci
     with:
       project-type: node
       node-version: 20.x
@@ -27,6 +27,6 @@ jobs:
         algokit localnet start
         npx --yes wait-on tcp:4001 -t 30000
       skip-commit-lint: false
-
-
-  ## Do we need to check docs here??
+  
+  check_docs:
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@chore/pnpm-ci
