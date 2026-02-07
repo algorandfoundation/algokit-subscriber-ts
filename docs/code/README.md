@@ -1,14 +1,14 @@
-@algorandfoundation/algokit-subscriber
+**@algorandfoundation/algokit-subscriber**
+
+***
 
 # @algorandfoundation/algokit-subscriber
 
-## Table of contents
+## Modules
 
-### Modules
-
-- [index](modules/index.md)
-- [types](modules/types.md)
-- [types/arc-28](modules/types_arc_28.md)
-- [types/async-event-emitter](modules/types_async_event_emitter.md)
-- [types/block](modules/types_block.md)
-- [types/subscription](modules/types_subscription.md)
+- [index](index/README.md)
+- [types](types/README.md)
+- [types/arc-28](types/arc-28/README.md)
+- [types/async-event-emitter](types/async-event-emitter/README.md)
+- [types/block](types/block/README.md)
+- [types/subscription](types/subscription/README.md)
