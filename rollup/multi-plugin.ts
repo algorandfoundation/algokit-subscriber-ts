@@ -43,7 +43,7 @@ export const multiInput = (options: MultiInputOptions = defaultOptions): Plugin 
       const others = inputs.filter((value) => !isString(value))
       const normalizedGlobs = globs.map((glob) => glob.replace(/\\/g, '/'))
       // get files from the globs strings and return as a Rollup entries Object
-      const entries = fastGlob.sync(normalizedGlobs, globOptions).map((name) => {
+      const entries = fastGlob.sync(normalizedGlobs, globOptions).map((name: string) => {
         const filePath = path.relative(relative, name)
         const isRelative = !filePath.startsWith(`..${path.sep}`)
         const relativeFilePath = isRelative ? filePath : path.relative(`.${path.sep}`, name)

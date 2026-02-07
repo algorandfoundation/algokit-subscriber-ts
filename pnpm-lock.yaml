@@ -63,6 +63,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.2(eslint@9.39.2(jiti@2.6.1))
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.3
       npm-run-all2:
         specifier: ^8.0.4
         version: 8.0.4
