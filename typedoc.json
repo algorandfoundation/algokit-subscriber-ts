@@ -1,5 +1,5 @@
 {
-  "$schema": "https://typedoc.org/schema.json",
+  "$schema": "https://typedoc-plugin-markdown.org/schema.json",
   "entryPoints": ["src/index.ts", "src/types/*.ts"],
   "exclude": ["src/**/*.spec.ts", "tests/**/*.*", "examples/**/*.*"],
   "entryPointStrategy": "expand",
@@ -9,7 +9,7 @@
   "cleanOutputDir": true,
   "githubPages": false,
   "readme": "none",
-  "entryDocument": "README.md",
+  "entryFileName": "README.md",
   "gitRevision": "main",
   "tsconfig": "tsconfig.build.json"
 }
