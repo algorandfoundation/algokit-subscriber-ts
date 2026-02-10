@@ -27,6 +27,6 @@ jobs:
 
       run-commit-lint: true
 
-    # Reusable check docss
+    # Reusable check docsss
   check_docs:
     uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@chore/pnpm-ci
