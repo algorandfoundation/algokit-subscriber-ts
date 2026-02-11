@@ -1,11 +1,6 @@
 name: Pull Request
 
 on:
-  push:
-    branches:
-      - main
-      - alpha
-      - ci/pr-workflow-to-main
   pull_request:
     branches:
       - main
@@ -29,6 +24,6 @@ jobs:
         npx --yes wait-on tcp:4001 -t 30000
       audit-script: |
         npm run audit
-  # comment for testing
+
   check_docs:
     uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@main
