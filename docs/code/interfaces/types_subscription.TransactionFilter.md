@@ -31,7 +31,7 @@ Specify a filter to apply to find transactions of interest.
 
 ### appCallArgumentsMatch
 
-• `Optional` **appCallArgumentsMatch**: (`appCallArguments?`: readonly `Uint8Array`[]) => `boolean`
+• `Optional` **appCallArgumentsMatch**: (`appCallArguments?`: readonly `Uint8Array`\<`ArrayBufferLike`\>[]) => `boolean`
 
 Filter to app transactions that meet the given app arguments predicate.
 
@@ -43,7 +43,7 @@ Filter to app transactions that meet the given app arguments predicate.
 
 | Name | Type |
 | :------ | :------ |
-| `appCallArguments?` | readonly `Uint8Array`[] |
+| `appCallArguments?` | readonly `Uint8Array`\<`ArrayBufferLike`\>[] |
 
 ##### Returns
 
