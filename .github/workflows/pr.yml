@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - alpha
-      - ci/reusable-workflow
+      - ci/reusable-pr
   pull_request:
     branches:
       - main
