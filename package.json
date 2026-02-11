@@ -1,6 +1,7 @@
 {
   "name": "@algorandfoundation/algokit-subscriber",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.29.2",
   "private": false,
   "scripts": {
     "build": "run-s build:*",
@@ -12,7 +13,7 @@
     "test:watch": "vitest watch --coverage --passWithNoTests",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
-    "check-types": "tsc --noEmit",
+    "check-types": "prisma generate && tsc --noEmit",
     "audit": "better-npm-audit audit",
     "format": "prettier --write .",
     "commit-lint": "commitlint --edit -o",
@@ -95,6 +96,9 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@types/node": "^25.2.3",
+    "eslint": "^10.0.0",
+    "fast-glob": "^3.3.3",
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
