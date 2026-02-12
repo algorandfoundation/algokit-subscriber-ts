@@ -10,13 +10,16 @@ description: A class that allows you to easily subscribe to the Algorand Blockch
 To create an `AlgorandSubscriber` you can use the constructor:
 
 ```typescript
-  /**
-   * Create a new `AlgorandSubscriber`.
-   * @param config The subscriber configuration
-   * @param algod An algod client
-   * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
-   */
-  constructor(config: AlgorandSubscriberConfig, algod: Algodv2, indexer?: Indexer)
+import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
+import type { IndexerClient } from '@algorandfoundation/algokit-utils/indexer-client'
+
+/**
+ * Create a new `AlgorandSubscriber`.
+ * @param config The subscriber configuration
+ * @param algod An algod client
+ * @param indexer An (optional) indexer client; only needed if `subscription.syncBehaviour` is `catchup-with-indexer`
+ */
+constructor(config: AlgorandSubscriberConfig, algod: AlgodClient, indexer?: IndexerClient)
 ```
 
 The key configuration is the `AlgorandSubscriberConfig` interface:

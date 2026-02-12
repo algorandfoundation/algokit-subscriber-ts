@@ -10,6 +10,9 @@ This is a lower level building block, you likely don't want to use it directly, 
 You can use this method to orchestrate everything from an index of all relevant data from the start of the chain through to simply subscribing to relevant transactions as they emerge at the tip of the chain. It allows you to have reliable at least once delivery even if your code has outages through the use of watermarking.
 
 ```typescript
+import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
+import type { IndexerClient } from '@algorandfoundation/algokit-utils/indexer-client'
+
 /**
  * Executes a single pull/poll to subscribe to transactions on the configured Algorand
  * blockchain for the given subscription context.
@@ -20,8 +23,8 @@ You can use this method to orchestrate everything from an index of all relevant 
  */
 export async function getSubscribedTransactions(
   subscription: TransactionSubscriptionParams,
-  algod: Algodv2,
-  indexer?: Indexer,
+  algod: AlgodClient,
+  indexer?: IndexerClient,
 ): Promise<TransactionSubscriptionResult>
 ```
 
@@ -292,7 +295,7 @@ The common model used to expose a transaction that is returned from a subscripti
 import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types'
 ```
 
-This type is substantively, based on the `algosdk.indexerModels.Transaction`. While the indexer type is used, the subscriber itself doesn't have to use indexer - any transactions it retrieves from algod are transformed to this common model type. Beyond the indexer type it has some modifications to:
+This type is substantively based on the indexer transaction model structure. While this structure is used, the subscriber itself doesn't have to use indexer - any transactions it retrieves from algod are transformed to this common model type. Beyond the base indexer structure it has some modifications to:
 
 - Make `id` required
 - Add the `parentTransactionId` field so inner transactions have a reference to their parent
@@ -304,7 +307,9 @@ This type is substantively, based on the `algosdk.indexerModels.Transaction`. Wh
 The definition of the type is:
 
 ```typescript
-export class SubscribedTransaction extends algosdk.indexerModels.Transaction {
+import type { Transaction } from '@algorandfoundation/algokit-utils/indexer-client'
+
+export class SubscribedTransaction extends Transaction {
   id: string
   /** The intra-round offset of the parent of this transaction (if it's an inner transaction). */
   parentIntraRoundOffset?: number

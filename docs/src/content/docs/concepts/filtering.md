@@ -8,6 +8,8 @@ This library has extensive filtering options available to you so you can have fi
 There is a core type that is used to specify the filters [`TransactionFilter`](/algokit-subscriber-ts/guide/subscriptions/#transactionfilter):
 
 ```typescript
+import { TransactionType, OnApplicationComplete } from '@algorandfoundation/algokit-utils/transact'
+
 const subscriber = new AlgorandSubscriber({filters: [{name: 'filterName', filter: {/* Filter properties */}}], ...}, ...)
 // or:
 getSubscribedTransactions({filters: [{name: 'filterName', filter: {/* Filter properties */}}], ... }, ...)
@@ -22,7 +24,7 @@ Currently this allows you filter based on any combination (AND logic) of:
 
   - ID e.g. `filter: { appId: 54321 }` or `filter: { appId: [54321, 12345] }`
   - Creation e.g. `filter: { appCreate: true }`
-  - Call on-complete(s) e.g. `filter: { appOnComplete: ApplicationOnComplete.optin }` or `filter: { appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop] }`
+  - Call on-complete(s) e.g. `filter: { appOnComplete: OnApplicationComplete.OptIn }` or `filter: { appOnComplete: [OnApplicationComplete.OptIn, OnApplicationComplete.NoOp] }`
   - ARC4 method signature(s) e.g. `filter: { methodSignature: "MyMethod(uint64,string)" }` or `filter: { methodSignature: ["MyMethod(uint64,string)uint64", "MyMethod2(unit64)"] }`
   - Call arguments e.g.
     ```typescript

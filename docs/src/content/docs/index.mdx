@@ -40,7 +40,7 @@ import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
 
 ```typescript
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 
 const subscriber = new AlgorandSubscriber(
   {
