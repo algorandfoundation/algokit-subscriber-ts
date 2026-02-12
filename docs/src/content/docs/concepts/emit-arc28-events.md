@@ -27,46 +27,42 @@ def emit_swapped(self, a: arc4.String, b: arc4.UInt64) -> None:
     arc4.emit(MyEvent(a, b))
 ```
 
-## TealScript
+## Algorand TypeScript
+
+Algorand TypeScript uses the same Puya compiler as Algorand Python and has similar syntax for emitting ARC-28 events:
 
 ```typescript
-MyEvent = new EventLogger<{
-  stringField: string
-  intField: uint64
-}>();
+import { Contract, arc4, emit } from '@algorandfoundation/algorand-typescript'
 
-// ...
+class MyEvent extends arc4.Struct {
+  a: arc4.String
+  b: arc4.UInt64
+}
 
-this.MyEvent.log({
-  stringField: "a"
-  intField: 2
-})
+class MyContract extends Contract {
+  @arc4.abimethod()
+  emitSwapped(a: arc4.String, b: arc4.UInt64): void {
+    emit(new MyEvent({ a, b }))
+  }
+}
 ```
 
-## PyTEAL
+OR with explicit event signature:
 
-```python
-class MyEvent(pt.abi.NamedTuple):
-    stringField: pt.abi.Field[pt.abi.String]
-    intField: pt.abi.Field[pt.abi.Uint64]
-
-# ...
-
-@app.external()
-def myMethod(a: pt.abi.String, b: pt.abi.Uint64) -> pt.Expr:
-    # ...
-    return pt.Seq(
-        # ...
-        (event := MyEvent()).set(a, b),
-        pt.Log(pt.Concat(pt.MethodSignature("MyEvent(byte[],uint64)"), event._stored_value.load())),
-        pt.Approve(),
-    )
+```typescript
+@arc4.abimethod()
+emitSwapped(a: arc4.UInt64, b: arc4.UInt64): void {
+  emit('MyEvent(uint64,uint64)', a, b)
+}
 ```
 
-Note: if your event doesn't have any dynamic ARC-4 types in it then you can simplify that to something like this:
+OR with inferred types:
 
-```python
-pt.Log(pt.Concat(pt.MethodSignature("MyEvent(byte[],uint64)"), a.get(), pt.Itob(b.get()))),
+```typescript
+@arc4.abimethod()
+emitSwapped(a: arc4.UInt64, b: arc4.UInt64): void {
+  emit('MyEvent', a, b)
+}
 ```
 
 ## TEAL
