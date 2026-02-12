@@ -1,0 +1,85 @@
+# TEMPORARY WORKFLOW - This workflow is for previewing documentation changes during PR review.
+# It will be removed before this PR is merged. The permanent documentation publishing
+# happens in release.yml on the release branch only.
+
+name: PR Documentation Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+      - alpha
+      - release
+      - docs/update-docs-to-starlight
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  pull-requests: write
+
+# Allow only one concurrent deployment per PR
+concurrency:
+  group: pages-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview_docs:
+    name: Deploy PR Documentation Preview
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Build and upload documentation
+        uses: ./.github/actions/publish-docs
+        with:
+          deployment-type: pr-preview
+          pr-number: ${{ github.event.pull_request.number }}
+
+      - name: Deploy to GitHub Pages (PR Preview)
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Comment PR with preview link
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const previewUrl = '${{ steps.deployment.outputs.page_url }}';
+
+            const comment = `## 📚 Documentation Preview
+
+            Your documentation preview is ready!
+
+            🔗 **Preview URL:** ${previewUrl}
+
+            This preview will be updated automatically when you push new commits to this PR.`;
+
+            // Check if we already commented
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('📚 Documentation Preview')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: comment
+              });
+            }
