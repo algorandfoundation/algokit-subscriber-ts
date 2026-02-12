@@ -2,7 +2,7 @@
 
 This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism. It allows you to quickly create Node.js or JavaScript services that follow or subscribe to the Algorand Blockchain.
 
-[Documentation](./docs/README.md)
+[Documentation](https://algorandfoundation.github.io/algokit-subscriber-ts/)
 
 ## Install
 
@@ -26,7 +26,7 @@ npm install algosdk@^3.1.0 @algorandfoundation/algokit-utils @algorandfoundation
 
 Whilst we aim to minimise breaking changes, there are situations where they are required.
 
-If you're migrating from an older version to v3, please refer to the [v3 migration guide](./docs/v3-migration.md).
+If you're migrating from an older version to v3, please refer to the [v3 migration guide](https://algorandfoundation.github.io/algokit-subscriber-ts/migration/v3-migration/).
 
 ## Quick start
 
