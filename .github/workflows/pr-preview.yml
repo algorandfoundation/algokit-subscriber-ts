@@ -31,6 +31,9 @@ jobs:
       name: github-pages-preview
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build and upload documentation
         uses: ./.github/actions/publish-docs
         with:
