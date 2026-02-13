@@ -8,7 +8,7 @@ This release updates the subscriber library to support `@algorandfoundation/algo
 ## What Changed
 
 1. **Client Types**: The constructor now expects `AlgodClient` and `IndexerClient` from `@algorandfoundation/algokit-utils` instead of `Algodv2` and `Indexer` from algosdk
-2. **Import Paths**: Types like `TransactionType` and `OnApplicationComplete` now come from algokit-utils subpath imports
+2. **Import Paths**: Types like `TransactionType` and `ApplicationOnComplete` (renamed from `OnApplicationComplete`) now come from algokit-utils subpath imports
 3. **No Configuration Changes**: All subscriber configuration options, filters, and event handling remain unchanged
 
 ## Migration Steps
@@ -63,7 +63,8 @@ const subscriber = new AlgorandSubscriber(
 )
 
 /**** After ****/
-import { TransactionType, OnApplicationComplete } from '@algorandfoundation/algokit-utils/transact'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/indexer'
 
 // Using in filters (same as before)
 const subscriber = new AlgorandSubscriber(
@@ -84,7 +85,7 @@ const subscriber = new AlgorandSubscriber(
 | Before (algosdk) | After (algokit-utils) |
 |------------------|----------------------|
 | `import { TransactionType } from 'algosdk'` | `import { TransactionType } from '@algorandfoundation/algokit-utils/transact'` |
-| `import { OnApplicationComplete } from 'algosdk'` | `import { OnApplicationComplete } from '@algorandfoundation/algokit-utils/transact'` |
+| `import { OnApplicationComplete } from 'algosdk'` | `import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/indexer'` |
 | `import algosdk from 'algosdk'; const algod = new algosdk.Algodv2(...)` | `import { AlgorandClient } from '@algorandfoundation/algokit-utils'; const algorand = AlgorandClient.testNet()` |
 
 ### Step 3 - No Other Changes Required

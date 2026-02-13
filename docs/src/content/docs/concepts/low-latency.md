@@ -16,10 +16,10 @@ subscriber.start()
 
 If you are using [`getSubscribedTransactions`](/algokit-subscriber-ts/guide/subscriptions/) or the `pollOnce` method on `AlgorandSubscriber` then you can use your infrastructure and/or surrounding orchestration code to take control of the polling duration.
 
-If you want to manually run code that waits for a given round to become available you can execute the following algosdk code:
+If you want to manually run code that waits for a given round to become available you can execute the following code:
 
 ```typescript
-await algod.statusAfterBlock(roundNumberToWaitFor).do()
+await algod.statusAfterBlock(roundNumberToWaitFor)
 ```
 
 It's worth noting special care has been placed in the subscriber library to properly handle abort signalling. All asynchronous operations including algod polls and polling waits have abort signal handling in place so if you call `subscriber.stop()` at any point in time it should almost immediately, cleanly, exit and if you want to wait for the stop to finish you can `await subscriber.stop()`.

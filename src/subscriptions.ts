@@ -51,7 +51,7 @@ const deduplicateSubscribedTransactionsReducer = (dedupedTransactions: Subscribe
  * blockchain for the given subscription context.
  * @param subscription The subscription context.
  * @param algod An Algod client.
- * @param indexer An optional indexer client, only needed when `onMaxRounds` is `catchup-with-indexer`.
+ * @param indexer An optional indexer client, only needed when `syncBehaviour` is `catchup-with-indexer`.
  * @returns The result of this subscription pull/poll.
  */
 export async function getSubscribedTransactions(
@@ -59,7 +59,7 @@ export async function getSubscribedTransactions(
   algod: AlgodClient,
   indexer?: IndexerClient,
 ): Promise<TransactionSubscriptionResult> {
-  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour: onMaxRounds, currentRound: _currentRound } = subscription
+  const { watermark, filters, maxRoundsToSync: _maxRoundsToSync, syncBehaviour, currentRound: _currentRound } = subscription
   const maxRoundsToSync = _maxRoundsToSync ?? 500
   const currentRound = _currentRound ?? (await algod.status()).lastRound
   let blockMetadata: BlockMetadata[] | undefined
@@ -103,7 +103,7 @@ export async function getSubscribedTransactions(
 
   // If we are less than `maxRoundsToSync` from the tip of the chain then we consult the `syncBehaviour` to determine what to do
   if (currentRound - watermark > maxRoundsToSync) {
-    switch (onMaxRounds) {
+    switch (syncBehaviour) {
       case 'fail':
         throw new Error(`Invalid round number to subscribe from ${algodSyncFromRoundNumber}; current round number is ${currentRound}`)
       case 'skip-sync-newest':

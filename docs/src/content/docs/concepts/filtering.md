@@ -8,7 +8,8 @@ This library has extensive filtering options available to you so you can have fi
 There is a core type that is used to specify the filters [`TransactionFilter`](/algokit-subscriber-ts/guide/subscriptions/#transactionfilter):
 
 ```typescript
-import { TransactionType, OnApplicationComplete } from '@algorandfoundation/algokit-utils/transact'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/indexer'
 
 const subscriber = new AlgorandSubscriber({filters: [{name: 'filterName', filter: {/* Filter properties */}}], ...}, ...)
 // or:
@@ -22,9 +23,9 @@ Currently this allows you filter based on any combination (AND logic) of:
 - Note prefix e.g. `filter: { notePrefix: "xyz" }`
 - Apps
 
-  - ID e.g. `filter: { appId: 54321 }` or `filter: { appId: [54321, 12345] }`
+  - ID e.g. `filter: { appId: 54321n }` or `filter: { appId: [54321n, 12345n] }`
   - Creation e.g. `filter: { appCreate: true }`
-  - Call on-complete(s) e.g. `filter: { appOnComplete: OnApplicationComplete.OptIn }` or `filter: { appOnComplete: [OnApplicationComplete.OptIn, OnApplicationComplete.NoOp] }`
+  - Call on-complete(s) e.g. `filter: { appOnComplete: ApplicationOnComplete.optin }` or `filter: { appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop] }`
   - ARC4 method signature(s) e.g. `filter: { methodSignature: "MyMethod(uint64,string)" }` or `filter: { methodSignature: ["MyMethod(uint64,string)uint64", "MyMethod2(unit64)"] }`
   - Call arguments e.g.
     ```typescript
@@ -47,9 +48,9 @@ Currently this allows you filter based on any combination (AND logic) of:
   - ID e.g. `filter: { assetId: 123456n }` or `filter: { assetId: [123456n, 456789n] }`
   - Creation e.g. `filter: { assetCreate: true }`
   - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
-  - Balance changes (asset ID, sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{assetId: [15345n, 36234n], roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
+  - Balance changes (asset ID, sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{assetId: [15345n, 36234n], role: [BalanceChangeRole.Sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
 - Algo transfers (pay transactions)
   - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
-  - Balance changes (sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{roles: [BalanceChangeRole.sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
+  - Balance changes (sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{role: [BalanceChangeRole.Sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
 
 You can supply multiple, named filters via the [`NamedTransactionFilter`](/algokit-subscriber-ts/guide/subscriptions/#namedtransactionfilter) type. When subscribed transactions are returned each transaction will have a `filtersMatched` property that will have an array of any filter(s) that caused that transaction to be returned. When using [`AlgorandSubscriber`](/algokit-subscriber-ts/guide/subscriber/), you can subscribe to events that are emitted with the filter name.

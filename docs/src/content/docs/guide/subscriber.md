@@ -205,7 +205,7 @@ You can do this via the `on`, `onBatch` and `onPoll` methods:
    * @param listener The listener function to invoke with the pre-poll metadata
    * @returns The subscriber so `on*` calls can be chained
    */
-  onBeforePoll(listener: TypedAsyncEventListener<TransactionSubscriptionResult>) {}
+  onBeforePoll(listener: TypedAsyncEventListener<BeforePollMetadata>) {}
 
   /**
    * Register an event handler to run after every subscription poll.
