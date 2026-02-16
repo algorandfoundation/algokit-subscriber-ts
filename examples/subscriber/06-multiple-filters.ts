@@ -1,0 +1,214 @@
+/**
+ * Example: Multiple Named Filters
+ *
+ * This example demonstrates multiple named filters with deduplication.
+ * - Define multiple filters on a single subscriber
+ * - Verify transactions are deduplicated across filters
+ * - Inspect filtersMatched on each transaction
+ *
+ * Prerequisites:
+ * - LocalNet running (via `algokit localnet start`)
+ */
+import { algo, AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
+import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
+import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatMicroAlgo } from './shared/utils.js'
+import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
+
+async function main() {
+  printHeader('06 — Multiple Named Filters')
+
+  // Step 1: Connect to LocalNet
+  printStep(1, 'Connect to LocalNet')
+  const algorand = AlgorandClient.fromConfig({
+    algodConfig: ALGOD_CONFIG,
+    kmdConfig: KMD_CONFIG,
+  })
+  const status = await algorand.client.algod.status()
+  printInfo(`Current round: ${status.lastRound.toString()}`)
+  printSuccess('Connected to LocalNet')
+
+  // Step 2: Create accounts
+  printStep(2, 'Create and fund accounts (Alice, Bob)')
+  const alice = await algorand.account.fromEnvironment('MULTI_ALICE', algo(100))
+  const bob = await algorand.account.fromEnvironment('MULTI_BOB', algo(100))
+  const aliceAddr = alice.addr.toString()
+  const bobAddr = bob.addr.toString()
+  printInfo(`Alice: ${shortenAddress(aliceAddr)}`)
+  printInfo(`Bob: ${shortenAddress(bobAddr)}`)
+  printSuccess('Accounts created and funded')
+
+  // Step 3: Send transactions designed to match different filter combinations
+  // Filter plan:
+  //   'from-alice'   — sender = alice
+  //   'to-bob'       — receiver = bob
+  //   'large-txns'   — minAmount = 3_000_000 microAlgo
+  //
+  // Txn 1: Alice -> Bob, 5 ALGO, note "multi-01"   => matches ALL 3 filters
+  // Txn 2: Alice -> Alice, 1 ALGO, note "multi-02"  => matches 'from-alice' only (1 filter)
+  // Txn 3: Bob -> Alice, 4 ALGO, note "multi-03"     => matches 'large-txns' only (1 filter)
+  // Txn 4: Alice -> Bob, 1 ALGO, note "multi-04"    => matches 'from-alice' + 'to-bob' (2 filters)
+  // Txn 5: Bob -> Alice, 0.5 ALGO, note "multi-05"  => matches NO filters
+
+  printStep(3, 'Send 5 transactions with varying filter overlap')
+
+  const txnSpecs = [
+    { sender: alice, receiver: bob.addr, amount: microAlgo(5_000_000), note: 'multi-01', desc: 'Alice->Bob 5A (all 3)' },
+    { sender: alice, receiver: alice.addr, amount: microAlgo(1_000_000), note: 'multi-02', desc: 'Alice->Alice 1A (from-alice)' },
+    { sender: bob, receiver: alice.addr, amount: microAlgo(4_000_000), note: 'multi-03', desc: 'Bob->Alice 4A (large-txns)' },
+    { sender: alice, receiver: bob.addr, amount: microAlgo(1_000_000), note: 'multi-04', desc: 'Alice->Bob 1A (from-alice + to-bob)' },
+    { sender: bob, receiver: alice.addr, amount: microAlgo(500_000), note: 'multi-05', desc: 'Bob->Alice 0.5A (none)' },
+  ]
+
+  const txnResults = []
+  for (const [i, spec] of txnSpecs.entries()) {
+    const result = await algorand.send.payment({
+      sender: spec.sender.addr,
+      receiver: spec.receiver,
+      amount: spec.amount,
+      note: spec.note,
+    })
+    txnResults.push(result)
+    printInfo(`Txn ${i + 1}: ${spec.desc}`)
+  }
+  printSuccess(`Sent ${txnSpecs.length} transactions`)
+
+  // Step 4: Create subscriber with 3 named filters on a single instance
+  printStep(4, 'Create subscriber with 3 named filters')
+  const watermarkBefore = txnResults[0].confirmation!.confirmedRound! - 1n
+  let watermark = watermarkBefore
+
+  const subscriber = new AlgorandSubscriber(
+    {
+      filters: [
+        {
+          name: 'from-alice',
+          filter: { sender: aliceAddr },
+        },
+        {
+          name: 'to-bob',
+          filter: { receiver: bobAddr },
+        },
+        {
+          name: 'large-txns',
+          filter: { minAmount: 3_000_000 },
+        },
+      ],
+      syncBehaviour: 'sync-oldest',
+      maxRoundsToSync: 100,
+      watermarkPersistence: {
+        get: async () => watermark,
+        set: async (w: bigint) => {
+          watermark = w
+        },
+      },
+    },
+    algorand.client.algod as any,
+  )
+  printInfo(`Filter 1: 'from-alice'  — sender = Alice`)
+  printInfo(`Filter 2: 'to-bob'      — receiver = Bob`)
+  printInfo(`Filter 3: 'large-txns'  — minAmount = 3,000,000 microAlgo`)
+  printSuccess('Subscriber created with 3 named filters')
+
+  // Step 5: Poll once and inspect results
+  printStep(5, 'Poll once and inspect deduplicated results')
+  const result = await subscriber.pollOnce()
+  const txns = result.subscribedTransactions
+
+  printInfo(`Total subscribed transactions: ${txns.length.toString()}`)
+
+  // Step 6: Show filtersMatched on each transaction
+  printStep(6, 'Inspect filtersMatched per transaction')
+  for (const txn of txns) {
+    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
+    const amount = txn.paymentTransaction?.amount ?? 0
+    printInfo(
+      `${note}: ${formatMicroAlgo(amount)} | filtersMatched: [${(txn.filtersMatched ?? []).join(', ')}]`,
+    )
+  }
+
+  // Step 7: Verify deduplication — txn 1 matches all 3 filters but appears once
+  printStep(7, 'Verify deduplication')
+  const txn1Note = 'multi-01'
+  const txn1Matches = txns.filter((t) => {
+    const note = t.note ? Buffer.from(t.note).toString('utf-8') : ''
+    return note === txn1Note
+  })
+  if (txn1Matches.length !== 1) {
+    throw new Error(`Dedup failed: txn "${txn1Note}" appears ${txn1Matches.length} times, expected 1`)
+  }
+  printInfo(`Txn "multi-01": appears ${txn1Matches.length} time (matched ${txn1Matches[0].filtersMatched?.length} filters)`)
+  printSuccess('Transaction appears once even though it matched all 3 filters')
+
+  // Step 8: Verify filtersMatched contents
+  printStep(8, 'Verify filtersMatched accuracy')
+
+  // Expected: multi-01 matches all 3 filters
+  const txn1Filters = txn1Matches[0].filtersMatched ?? []
+  if (!txn1Filters.includes('from-alice') || !txn1Filters.includes('to-bob') || !txn1Filters.includes('large-txns')) {
+    throw new Error(`multi-01 expected all 3 filters, got: [${txn1Filters.join(', ')}]`)
+  }
+  printSuccess('multi-01 matched: from-alice, to-bob, large-txns')
+
+  // Expected: multi-02 matches from-alice only
+  const txn2Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-02')!
+  const txn2Filters = txn2Match.filtersMatched ?? []
+  if (txn2Filters.length !== 1 || !txn2Filters.includes('from-alice')) {
+    throw new Error(`multi-02 expected [from-alice], got: [${txn2Filters.join(', ')}]`)
+  }
+  printSuccess('multi-02 matched: from-alice')
+
+  // Expected: multi-03 matches large-txns only
+  const txn3Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-03')!
+  const txn3Filters = txn3Match.filtersMatched ?? []
+  if (txn3Filters.length !== 1 || !txn3Filters.includes('large-txns')) {
+    throw new Error(`multi-03 expected [large-txns], got: [${txn3Filters.join(', ')}]`)
+  }
+  printSuccess('multi-03 matched: large-txns')
+
+  // Expected: multi-04 matches from-alice + to-bob (2 filters)
+  const txn4Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-04')!
+  const txn4Filters = txn4Match.filtersMatched ?? []
+  if (txn4Filters.length !== 2 || !txn4Filters.includes('from-alice') || !txn4Filters.includes('to-bob')) {
+    throw new Error(`multi-04 expected [from-alice, to-bob], got: [${txn4Filters.join(', ')}]`)
+  }
+  printSuccess('multi-04 matched: from-alice, to-bob')
+
+  // Expected: multi-05 matches NO filters (should not appear)
+  const txn5Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-05')
+  if (txn5Match) {
+    throw new Error(`multi-05 should not match any filter but appeared with: [${txn5Match.filtersMatched?.join(', ')}]`)
+  }
+  printSuccess('multi-05 correctly excluded (matched no filters)')
+
+  // Expected total: 4 deduplicated transactions (txns 1-4 match at least one filter; txn 5 matches none)
+  if (txns.length !== 4) {
+    throw new Error(`Expected 4 deduplicated transactions, got ${txns.length}`)
+  }
+  printSuccess('Exactly 4 deduplicated transactions returned')
+
+  // Step 9: Summary table
+  printStep(9, 'Summary table')
+  console.log()
+  console.log('  ┌────────────┬─────────────────────────┬───────────────────────────────────────┐')
+  console.log('  │ Note       │ Amount                  │ Filters Matched                       │')
+  console.log('  ├────────────┼─────────────────────────┼───────────────────────────────────────┤')
+  for (const txn of txns) {
+    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
+    const amount = txn.paymentTransaction?.amount ?? 0
+    const filters = (txn.filtersMatched ?? []).join(', ')
+    console.log(
+      `  │ ${note.padEnd(10)} │ ${formatMicroAlgo(amount).padEnd(23)} │ ${filters.padEnd(37)} │`,
+    )
+  }
+  console.log('  ├────────────┼─────────────────────────┼───────────────────────────────────────┤')
+  console.log(`  │ ${'multi-05'.padEnd(10)} │ ${'500000 microALGO'.padEnd(23)} │ ${'(no match — excluded)'.padEnd(37)} │`)
+  console.log('  └────────────┴─────────────────────────┴───────────────────────────────────────┘')
+  console.log()
+
+  printHeader('Example complete')
+}
+
+main().catch((err) => {
+  printError(err.message)
+  process.exit(1)
+})

@@ -1,0 +1,22 @@
+{
+  "name": "subscriber-examples",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0"
+  },
+  "scripts": {
+    "example": "node scripts/run-example.mjs",
+    "typecheck": "tsc --noEmit",
+    "verify-all": "./verify-all.sh"
+  },
+  "dependencies": {
+    "@algorandfoundation/algokit-subscriber": "file:../../dist",
+    "@algorandfoundation/algokit-utils": "10.0.0-alpha.38"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.4.5"
+  }
+}
