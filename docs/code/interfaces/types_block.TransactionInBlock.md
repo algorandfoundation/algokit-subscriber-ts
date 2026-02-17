@@ -94,7 +94,7 @@ ___
 
 ### genesisHash
 
-• `Optional` **genesisHash**: `Buffer`
+• `Optional` **genesisHash**: `Buffer`\<`ArrayBufferLike`\>
 
 The binary genesis hash of the network the transaction is within.
 
@@ -141,7 +141,7 @@ ___
 
 ### logs
 
-• `Optional` **logs**: `Uint8Array`[]
+• `Optional` **logs**: `Uint8Array`\<`ArrayBufferLike`\>[]
 
 Any logs that were issued as a result of this transaction.
 
