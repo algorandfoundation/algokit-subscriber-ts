@@ -1,7 +1,12 @@
 {
-  "1112496": {
+  "1112954": {
     "active": true,
-    "notes": "@semantic-release/npm with patched undici version not available yet",
-    "expiry": "2026-02-15"
+    "notes": "@isaacs/brace-expansion via npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-03-17"
+  },
+  "1112659": {
+    "active": true,
+    "notes": "tar via npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-03-17"
   }
 }
