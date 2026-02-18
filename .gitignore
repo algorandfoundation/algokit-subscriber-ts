@@ -53,6 +53,12 @@ coverage
 code-docs/
 out/
 
+# Docs (Astro Starlight)
+docs/dist/
+docs/.astro/
+docs/node_modules/
+docs/src/content/docs/api/
+
 # dotenv environment variable files
 .env
 .env.development.local
