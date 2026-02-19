@@ -52,17 +52,17 @@ async function main() {
   printStep(3, 'Send 5 transactions with varying filter overlap')
 
   const txnSpecs = [
-    { sender: alice, receiver: bob.addr, amount: microAlgo(5_000_000), note: 'multi-01', desc: 'Alice->Bob 5A (all 3)' },
-    { sender: alice, receiver: alice.addr, amount: microAlgo(1_000_000), note: 'multi-02', desc: 'Alice->Alice 1A (from-alice)' },
-    { sender: bob, receiver: alice.addr, amount: microAlgo(4_000_000), note: 'multi-03', desc: 'Bob->Alice 4A (large-txns)' },
-    { sender: alice, receiver: bob.addr, amount: microAlgo(1_000_000), note: 'multi-04', desc: 'Alice->Bob 1A (from-alice + to-bob)' },
-    { sender: bob, receiver: alice.addr, amount: microAlgo(500_000), note: 'multi-05', desc: 'Bob->Alice 0.5A (none)' },
+    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(5_000_000), note: 'multi-01', desc: 'Alice->Bob 5A (all 3)' },
+    { sender: alice.addr, receiver: alice.addr, amount: microAlgo(1_000_000), note: 'multi-02', desc: 'Alice->Alice 1A (from-alice)' },
+    { sender: bob.addr, receiver: alice.addr, amount: microAlgo(4_000_000), note: 'multi-03', desc: 'Bob->Alice 4A (large-txns)' },
+    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(1_000_000), note: 'multi-04', desc: 'Alice->Bob 1A (from-alice + to-bob)' },
+    { sender: bob.addr, receiver: alice.addr, amount: microAlgo(500_000), note: 'multi-05', desc: 'Bob->Alice 0.5A (none)' },
   ]
 
   const txnResults = []
   for (const [i, spec] of txnSpecs.entries()) {
     const result = await algorand.send.payment({
-      sender: spec.sender.addr,
+      sender: spec.sender,
       receiver: spec.receiver,
       amount: spec.amount,
       note: spec.note,

@@ -43,24 +43,24 @@ async function main() {
   printStep(3, 'Send 5 payments with varying parameters')
 
   const payments = [
-    { sender: accountA, receiver: accountB.addr, amount: microAlgo(1_000_000), note: 'invoice-001' },
-    { sender: accountA, receiver: accountC.addr, amount: microAlgo(5_000_000), note: 'invoice-002' },
-    { sender: accountB, receiver: accountA.addr, amount: microAlgo(2_000_000), note: 'receipt-001' },
-    { sender: accountC, receiver: accountB.addr, amount: microAlgo(3_000_000), note: 'invoice-003' },
-    { sender: accountA, receiver: accountB.addr, amount: microAlgo(500_000), note: 'receipt-002' },
+    { sender: accountA.addr, receiver: accountB.addr, amount: microAlgo(1_000_000), note: 'invoice-001' },
+    { sender: accountA.addr, receiver: accountC.addr, amount: microAlgo(5_000_000), note: 'invoice-002' },
+    { sender: accountB.addr, receiver: accountA.addr, amount: microAlgo(2_000_000), note: 'receipt-001' },
+    { sender: accountC.addr, receiver: accountB.addr, amount: microAlgo(3_000_000), note: 'invoice-003' },
+    { sender: accountA.addr, receiver: accountB.addr, amount: microAlgo(500_000), note: 'receipt-002' },
   ]
 
   const txnResults = []
   for (const [i, p] of payments.entries()) {
     const result = await algorand.send.payment({
-      sender: p.sender.addr,
+      sender: p.sender,
       receiver: p.receiver,
       amount: p.amount,
       note: p.note,
     })
     txnResults.push(result)
     printInfo(
-      `Txn ${i + 1}: ${shortenAddress(p.sender.addr.toString())} -> ${shortenAddress(p.receiver.toString())} | ${formatMicroAlgo(p.amount.microAlgo)} | note: "${p.note}"`,
+      `Txn ${i + 1}: ${shortenAddress(p.sender.toString())} -> ${shortenAddress(p.receiver.toString())} | ${formatMicroAlgo(p.amount.microAlgo)} | note: "${p.note}"`,
     )
   }
   printSuccess(`Sent ${payments.length} payments`)

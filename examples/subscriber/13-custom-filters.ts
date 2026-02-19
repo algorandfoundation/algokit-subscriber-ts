@@ -48,30 +48,30 @@ async function main() {
 
   const payments = [
     // Txn 1: Alice->Bob, 5 ALGO, "transfer-urgent"   => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: alice, receiver: bob.addr, amount: microAlgo(5_000_000), note: 'transfer-urgent' },
+    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(5_000_000), note: 'transfer-urgent' },
     // Txn 2: Alice->Charlie, 1 ALGO, "transfer-low"   => FAIL (amount < 2 ALGO)
-    { sender: alice, receiver: charlie.addr, amount: microAlgo(1_000_000), note: 'transfer-low' },
+    { sender: alice.addr, receiver: charlie.addr, amount: microAlgo(1_000_000), note: 'transfer-low' },
     // Txn 3: Bob->Alice, 3 ALGO, "transfer-normal"    => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: bob, receiver: alice.addr, amount: microAlgo(3_000_000), note: 'transfer-normal' },
+    { sender: bob.addr, receiver: alice.addr, amount: microAlgo(3_000_000), note: 'transfer-normal' },
     // Txn 4: Charlie->Bob, 4 ALGO, "transfer-big"     => FAIL (Charlie not in allowlist)
-    { sender: charlie, receiver: bob.addr, amount: microAlgo(4_000_000), note: 'transfer-big' },
+    { sender: charlie.addr, receiver: bob.addr, amount: microAlgo(4_000_000), note: 'transfer-big' },
     // Txn 5: Alice->Bob, 2 ALGO, "payment-misc"       => FAIL (note doesn't contain "transfer")
-    { sender: alice, receiver: bob.addr, amount: microAlgo(2_000_000), note: 'payment-misc' },
+    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(2_000_000), note: 'payment-misc' },
     // Txn 6: Bob->Charlie, 10 ALGO, "transfer-final"  => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: bob, receiver: charlie.addr, amount: microAlgo(10_000_000), note: 'transfer-final' },
+    { sender: bob.addr, receiver: charlie.addr, amount: microAlgo(10_000_000), note: 'transfer-final' },
   ]
 
   const txnResults = []
   for (const [i, p] of payments.entries()) {
     const result = await algorand.send.payment({
-      sender: p.sender.addr,
+      sender: p.sender,
       receiver: p.receiver,
       amount: p.amount,
       note: p.note,
     })
     txnResults.push(result)
     printInfo(
-      `Txn ${i + 1}: ${shortenAddress(p.sender.addr.toString())} -> ${shortenAddress(p.receiver.toString())} | ${formatMicroAlgo(p.amount.microAlgo)} | note: "${p.note}"`,
+      `Txn ${i + 1}: ${shortenAddress(p.sender.toString())} -> ${shortenAddress(p.receiver.toString())} | ${formatMicroAlgo(p.amount.microAlgo)} | note: "${p.note}"`,
     )
   }
   printSuccess(`Sent ${payments.length} payments`)
@@ -127,7 +127,7 @@ async function main() {
   for (const [i, p] of payments.entries()) {
     const amount = BigInt(p.amount.microAlgo)
     const note = p.note
-    const sender = p.sender.addr.toString()
+    const sender = p.sender.toString()
 
     const amountOk = amount >= THRESHOLD
     const noteOk = note.includes('transfer')
