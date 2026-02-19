@@ -1,18 +1,13 @@
 {
-  "1112496": {
+  "1112954": {
     "active": true,
-    "notes": "undici is bundled inside @actions/http-client and npm - overrides cannot fix bundled deps, waiting for upstream fix",
-    "expiry": "2026-03-01"
+    "notes": "@isaacs/brace-expansion via npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-03-17"
   },
   "1112659": {
     "active": true,
-    "notes": "tar is bundled inside npm (used by @semantic-release/npm) - overrides cannot fix bundled deps, waiting for upstream fix",
-    "expiry": "2026-03-01"
-  },
-  "1112954": {
-    "active": true,
-    "notes": "@isaacs/brace-expansion is bundled inside npm - overrides cannot fix bundled deps, waiting for upstream fix",
-    "expiry": "2026-03-01"
+    "notes": "tar via npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-03-17"
   },
   "1113214": {
     "active": true,
@@ -22,6 +17,11 @@
   "1113249": {
     "active": true,
     "notes": "tar is bundled inside npm - overrides cannot fix bundled deps, waiting for upstream fix",
+    "expiry": "2026-06-01"
+  },
+  "1113296": {
+    "active": true,
+    "notes": "minimatch ReDoS via glob, test-exclude, typescript-eslint, eslint v8, npm — requires eslint v9 + vitest v4 migration or upstream fix",
     "expiry": "2026-06-01"
   }
 }

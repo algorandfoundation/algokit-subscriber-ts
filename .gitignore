@@ -69,6 +69,11 @@ docs/src/content/docs/api/
 watermark.txt
 examples/**/*.json
 !examples/**/*.arc32.json
+!examples/**/*.arc56.json
+!examples/subscriber/package.json
+!examples/subscriber/package-lock.json
+!examples/subscriber/tsconfig.json
+!examples/subscriber/tsconfig.run.json
 
 __pycache__
 
