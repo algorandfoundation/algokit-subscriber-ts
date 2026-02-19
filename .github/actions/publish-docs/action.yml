@@ -4,7 +4,7 @@ inputs:
   node-version:
     description: 'Node.js version to use'
     required: false
-    default: '20.x'
+    default: '22.x'
   deployment-type:
     description: 'Type of deployment: "release" or "pr-preview"'
     required: true

@@ -3,7 +3,7 @@ title: Fast Catchup
 description: Use indexer to catch up to the tip of the chain in seconds rather than days.
 ---
 
-When [subscribing to the chain](/algokit-subscriber-ts/concepts/sync-behaviour/) for the purposes of building an index you often will want to start at the beginning of the chain or a substantial time in the past when the given solution you are subscribing for started.
+When [subscribing to the chain](../sync-behaviour/) for the purposes of building an index you often will want to start at the beginning of the chain or a substantial time in the past when the given solution you are subscribing for started.
 
 This kind of catch up takes days to process since algod only lets you retrieve a single block at a time and retrieving a block takes 0.5-1s. Given there are millions of blocks in MainNet it doesn't take long to do the math to see why it takes so long to catch up.
 
@@ -11,9 +11,9 @@ This subscriber library has a unique, optional indexer catch up mode that allows
 
 This is really handy when you are doing local development or spinning up a new environment and don't want to wait for days.
 
-To make use of this feature, you need to set the `syncBehaviour` config to `catchup-with-indexer` and ensure that you pass `indexer` in to the [entry point](/algokit-subscriber-ts/tutorials/quick-start/#entry-points) along with `algod`.
+To make use of this feature, you need to set the `syncBehaviour` config to `catchup-with-indexer` and ensure that you pass `indexer` in to the [entry point](../../tutorials/quick-start/#entry-points) along with `algod`.
 
-Any [filter](/algokit-subscriber-ts/concepts/filtering/) you apply will be seamlessly translated to indexer searches to get the historic transactions in the most efficient way possible based on the apis indexer exposes. Once the subscriber is within `maxRoundsToSync` of the tip of the chain it will switch to subscribing using `algod`.
+Any [filter](../filtering/) you apply will be seamlessly translated to indexer searches to get the historic transactions in the most efficient way possible based on the apis indexer exposes. Once the subscriber is within `maxRoundsToSync` of the tip of the chain it will switch to subscribing using `algod`.
 
 To see this in action, you can run the Data History Museum example in this repository against MainNet and see it sync millions of rounds in seconds.
 

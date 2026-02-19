@@ -8,6 +8,7 @@ import remarkGithubAlerts from 'remark-github-alerts';
 export default defineConfig({
   site: 'https://algorandfoundation.github.io',
   base: '/algokit-subscriber-ts/',
+  trailingSlash: 'always',
   markdown: {
     remarkPlugins: [remarkGithubAlerts],
   },

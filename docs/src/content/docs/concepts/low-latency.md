@@ -3,7 +3,7 @@ title: Low Latency Processing
 description: Configure polling semantics for minimal latency when processing new blocks.
 ---
 
-You can control the polling semantics of the library when using the [`AlgorandSubscriber`](/algokit-subscriber-ts/guide/subscriber/) by either specifying the `frequencyInSeconds` parameter to control the duration between polls or you can use the `waitForBlockWhenAtTip` parameter to indicate the subscriber should [call algod to ask it to inform the subscriber when a new round is available](https://dev.algorand.co/reference/rest-apis/algod/#waitforblock) so the subscriber can immediately process that round with a much lower-latency. When this mode is set, the subscriber intelligently uses this option only when it's caught up to the tip of the chain, but otherwise uses `frequencyInSeconds` while catching up to the tip of the chain.
+You can control the polling semantics of the library when using the [`AlgorandSubscriber`](../../guide/subscriber/) by either specifying the `frequencyInSeconds` parameter to control the duration between polls or you can use the `waitForBlockWhenAtTip` parameter to indicate the subscriber should [call algod to ask it to inform the subscriber when a new round is available](https://dev.algorand.co/reference/rest-apis/algod/#waitforblock) so the subscriber can immediately process that round with a much lower-latency. When this mode is set, the subscriber intelligently uses this option only when it's caught up to the tip of the chain, but otherwise uses `frequencyInSeconds` while catching up to the tip of the chain.
 
 e.g.
 
@@ -14,7 +14,7 @@ const subscriber = new AlgorandSubscriber({frequencyInSeconds: 1, waitForBlockWh
 subscriber.start()
 ```
 
-If you are using [`getSubscribedTransactions`](/algokit-subscriber-ts/guide/subscriptions/) or the `pollOnce` method on `AlgorandSubscriber` then you can use your infrastructure and/or surrounding orchestration code to take control of the polling duration.
+If you are using [`getSubscribedTransactions`](../../guide/subscriptions/) or the `pollOnce` method on `AlgorandSubscriber` then you can use your infrastructure and/or surrounding orchestration code to take control of the polling duration.
 
 If you want to manually run code that waits for a given round to become available you can execute the following code:
 

@@ -5,7 +5,7 @@ description: The core building block for enacting a single subscription poll of 
 
 `getSubscribedTransactions` is the core building block at the centre of this library. It's a simple, but flexible mechanism that allows you to enact a single subscription "poll" of the Algorand blockchain.
 
-This is a lower level building block, you likely don't want to use it directly, but instead use the [`AlgorandSubscriber` class](/algokit-subscriber-ts/guide/subscriber/).
+This is a lower level building block, you likely don't want to use it directly, but instead use the [`AlgorandSubscriber` class](../subscriber/).
 
 You can use this method to orchestrate everything from an index of all relevant data from the start of the chain through to simply subscribing to relevant transactions as they emerge at the tip of the chain. It allows you to have reliable at least once delivery even if your code has outages through the use of watermarking.
 

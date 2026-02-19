@@ -111,6 +111,9 @@ jobs:
     needs: check_docs
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/release'
+    concurrency:
+      group: deploy-docs
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write

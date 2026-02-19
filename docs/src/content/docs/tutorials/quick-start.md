@@ -14,6 +14,12 @@ npm install @algorandfoundation/algokit-subscriber
 ## Quick start
 
 ```typescript
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+
+const algorand = AlgorandClient.testNet()
+
 // Create subscriber
 const subscriber = new AlgorandSubscriber(
   {
@@ -26,10 +32,13 @@ const subscriber = new AlgorandSubscriber(
         },
       },
     ],
-    /* ... other options (use intellisense to explore) */
+    watermarkPersistence: {
+      get: async () => 0n,
+      set: async (watermark) => { /* save watermark */ },
+    },
   },
-  algod,
-  optionalIndexer,
+  algorand.client.algod,
+  algorand.client.indexer,
 )
 
 // Set up subscription(s)
@@ -54,8 +63,8 @@ subscriber.pollOnce()
 
 There are two entry points into the subscriber functionality:
 
-- The lower level [`getSubscribedTransactions`](/algokit-subscriber-ts/guide/subscriptions/) method that contains the raw subscription logic for a single "poll"
-- The [`AlgorandSubscriber`](/algokit-subscriber-ts/guide/subscriber/) class that provides a higher level interface that is easier to use and takes care of a lot more orchestration logic for you (particularly around the ability to continuously poll)
+- The lower level [`getSubscribedTransactions`](../../guide/subscriptions/) method that contains the raw subscription logic for a single "poll"
+- The [`AlgorandSubscriber`](../../guide/subscriber/) class that provides a higher level interface that is easier to use and takes care of a lot more orchestration logic for you (particularly around the ability to continuously poll)
 
 Both are first-class supported ways of using this library, but we generally recommend starting with the `AlgorandSubscriber` since it's easier to use and will cover the majority of use cases.
 
@@ -65,7 +74,7 @@ This library is easy to use and consume through easy to use, type-safe TypeScrip
 
 Furthermore, the `AlgorandSubscriber` class has a familiar programming model based on the [Node.js EventEmitter](https://nodejs.org/en/learn/asynchronous-work/the-nodejs-event-emitter), but with async methods.
 
-For more examples of how to use it see the [AlgorandSubscriber guide](/algokit-subscriber-ts/guide/subscriber/).
+For more examples of how to use it see the [AlgorandSubscriber guide](../../guide/subscriber/).
 
 ## Easy to deploy
 

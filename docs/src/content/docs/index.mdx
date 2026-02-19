@@ -7,10 +7,10 @@ hero:
   tagline: Subscribe to the Algorand blockchain with a simple, flexible TypeScript library
   actions:
     - text: Get Started
-      link: /algokit-subscriber-ts/tutorials/quick-start
+      link: tutorials/quick-start/
       icon: right-arrow
     - text: API Reference
-      link: /algokit-subscriber-ts/api/
+      link: api/
       variant: minimal
 ---
 
@@ -39,8 +39,11 @@ import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
 ## Quick Example
 
 ```typescript
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+
+const algorand = AlgorandClient.testNet()
 
 const subscriber = new AlgorandSubscriber(
   {
@@ -53,10 +56,13 @@ const subscriber = new AlgorandSubscriber(
         },
       },
     ],
-    /* ... other options (use intellisense to explore) */
+    watermarkPersistence: {
+      get: async () => 0n,
+      set: async (watermark) => { /* save watermark */ },
+    },
   },
-  algod,
-  optionalIndexer,
+  algorand.client.algod,
+  algorand.client.indexer,
 )
 
 // Set up subscription(s)
