@@ -2,7 +2,7 @@
  * Example: Balance Change Tracking
  *
  * This example demonstrates balance change filtering for ALGO and ASA transfers.
- * - Filter by assetId, role, and minAbsoluteAmount
+ * - Filter by assetId, role, minAbsoluteAmount, and address
  * - Inspect balanceChanges array on matched transactions
  * - Explore BalanceChangeRole enum values
  *
@@ -173,8 +173,49 @@ async function main() {
   }
   printSuccess('ASA Receiver filter matched expected transactions')
 
-  // Step 7: Inspect balanceChanges array on matched transactions
-  printStep(7, 'Inspect balanceChanges array on matched transactions')
+  // Step 7: Subscribe with balanceChanges filter — Address (any role)
+  printStep(7, 'Filter: All balance changes for a specific address')
+  let watermark3 = watermarkBefore
+
+  const addressSub = new AlgorandSubscriber(
+    {
+      filters: [
+        {
+          name: 'address-changes',
+          filter: {
+            balanceChanges: [
+              {
+                address: senderAddr,
+              },
+            ],
+          },
+        },
+      ],
+      syncBehaviour: 'sync-oldest',
+      maxRoundsToSync: 100,
+      watermarkPersistence: {
+        get: async () => watermark3,
+        set: async (w: bigint) => { watermark3 = w },
+      },
+    },
+    algorand.client.algod,
+  )
+
+  const addressResult = await addressSub.pollOnce()
+  const addressTxns = addressResult.subscribedTransactions
+  printInfo(`Matched transactions: ${addressTxns.length.toString()}`)
+
+  for (const txn of addressTxns) {
+    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
+    printInfo(`  ${note}: id=${txn.id.slice(0, 12)}...`)
+  }
+  if (addressTxns.length < 3) {
+    throw new Error(`Expected at least 3 address-filtered transactions, got ${addressTxns.length}`)
+  }
+  printSuccess('Address filter matched expected transactions')
+
+  // Step 8: Inspect balanceChanges array on matched transactions
+  printStep(8, 'Inspect balanceChanges array on matched transactions')
 
   // Collect all unique transactions from both polls
   const allTxns = [...algoSenderTxns, ...asaReceiverTxns]
@@ -201,8 +242,8 @@ async function main() {
     }
   }
 
-  // Step 8: Demonstrate BalanceChangeRole enum values
-  printStep(8, 'BalanceChangeRole enum values')
+  // Step 9: Demonstrate BalanceChangeRole enum values
+  printStep(9, 'BalanceChangeRole enum values')
   printInfo(`Sender: ${BalanceChangeRole.Sender}`)
   printInfo(`Receiver: ${BalanceChangeRole.Receiver}`)
   printInfo(`CloseTo: ${BalanceChangeRole.CloseTo}`)
@@ -210,14 +251,15 @@ async function main() {
   printInfo(`AssetDestroyer: ${BalanceChangeRole.AssetDestroyer}`)
   printSuccess('All BalanceChangeRole values demonstrated')
 
-  // Step 9: Summary
-  printStep(9, 'Summary')
+  // Step 10: Summary
+  printStep(10, 'Summary')
   console.log()
   console.log('  ┌──────────────────┬──────────────────────────────────────────────────┐')
   console.log('  │ Filter           │ Description                                      │')
   console.log('  ├──────────────────┼──────────────────────────────────────────────────┤')
   console.log('  │ algo-sender      │ assetId=0, role=Sender, minAbsoluteAmount=2M     │')
   console.log('  │ asa-receiver     │ assetId=ASA, role=Receiver                        │')
+  console.log('  │ address          │ address=Sender (any role, any asset)              │')
   console.log('  └──────────────────┴──────────────────────────────────────────────────┘')
   console.log()
 
