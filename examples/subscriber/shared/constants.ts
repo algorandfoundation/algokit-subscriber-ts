@@ -1,4 +1,4 @@
-import type { AlgoClientConfig } from '@algorandfoundation/algokit-utils/types/network-client'
+import type { AlgoClientConfig } from '@algorandfoundation/algokit-utils/network-client'
 
 // ============================================================
 // Individual Constants
