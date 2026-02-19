@@ -9,8 +9,10 @@
  * - LocalNet running (via `algokit localnet start`)
  */
 import { algo, AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
-import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
-import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatMicroAlgo } from './shared/utils.js'
+import {
+  printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatMicroAlgo,
+  createFilterTester, type SubscribedTransaction,
+} from './shared/utils.js'
 import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
@@ -68,84 +70,42 @@ async function main() {
   // Record watermark before first txn
   const watermarkBefore = txnResults[0].confirmation!.confirmedRound! - 1n
 
-  // Helper: create a subscriber, poll once, return matched transactions
-  async function pollWithFilter(name: string, filter: Record<string, unknown>) {
-    let watermark = watermarkBefore
-    const subscriber = new AlgorandSubscriber(
-      {
-        filters: [{ name, filter }],
-        syncBehaviour: 'sync-oldest',
-        maxRoundsToSync: 100,
-        watermarkPersistence: {
-          get: async () => watermark,
-          set: async (w: bigint) => {
-            watermark = w
-          },
-        },
-      },
-      algorand.client.algod as any,
-    )
-    const result = await subscriber.pollOnce()
-    return result.subscribedTransactions
+  const testFilter = createFilterTester(algorand.client.algod as any, watermarkBefore)
+  const formatPayment = (txn: SubscribedTransaction) => {
+    const amount = txn.paymentTransaction?.amount ?? 0
+    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
+    printInfo(`  Matched: ${txn.id} | amount: ${formatMicroAlgo(amount)} | note: "${note}"`)
   }
 
   // Step 4: Filter by sender (A only)
   printStep(4, 'Filter: sender = A')
-  const senderATxns = await pollWithFilter('sender-a', { sender: addrA })
-  printInfo(`Matched count: ${senderATxns.length.toString()}`)
-  for (const txn of senderATxns) {
-    const amount = txn.paymentTransaction?.amount ?? 0
-    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
-    printInfo(`  Matched: ${txn.id} | amount: ${formatMicroAlgo(amount)} | note: "${note}"`)
-  }
-  if (senderATxns.length !== 3) {
-    throw new Error(`Sender filter: expected 3 matches (A sent 3 txns), got ${senderATxns.length}`)
-  }
-  printSuccess('Sender filter matched 3 payments from A')
+  const senderATxns = await testFilter(
+    'sender-a', { sender: addrA }, 3,
+    'Sender filter matched 3 payments from A', formatPayment,
+  )
 
   // Step 5: Filter by receiver (B only)
   printStep(5, 'Filter: receiver = B')
-  const receiverBTxns = await pollWithFilter('receiver-b', { receiver: addrB })
-  printInfo(`Matched count: ${receiverBTxns.length.toString()}`)
-  for (const txn of receiverBTxns) {
-    const amount = txn.paymentTransaction?.amount ?? 0
-    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
-    printInfo(`  Matched: ${txn.id} | amount: ${formatMicroAlgo(amount)} | note: "${note}"`)
-  }
-  if (receiverBTxns.length !== 3) {
-    throw new Error(`Receiver filter: expected 3 matches (B received 3 txns), got ${receiverBTxns.length}`)
-  }
-  printSuccess('Receiver filter matched 3 payments to B')
+  const receiverBTxns = await testFilter(
+    'receiver-b', { receiver: addrB }, 3,
+    'Receiver filter matched 3 payments to B', formatPayment,
+  )
 
   // Step 6: Filter by minAmount/maxAmount range (1_000_000 to 3_000_000 microAlgo)
   printStep(6, 'Filter: minAmount=1000000, maxAmount=3000000')
-  const rangeTxns = await pollWithFilter('amount-range', { minAmount: 1_000_000, maxAmount: 3_000_000 })
-  printInfo(`Matched count: ${rangeTxns.length.toString()}`)
-  for (const txn of rangeTxns) {
-    const amount = txn.paymentTransaction?.amount ?? 0
-    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
-    printInfo(`  Matched: ${txn.id} | amount: ${formatMicroAlgo(amount)} | note: "${note}"`)
-  }
   // Payments in range [1M, 3M]: txn1 (1M), txn3 (2M), txn4 (3M) = 3
-  if (rangeTxns.length !== 3) {
-    throw new Error(`Amount range filter: expected 3 matches, got ${rangeTxns.length}`)
-  }
-  printSuccess('Amount range filter matched 3 payments in [1M, 3M] microAlgo')
+  const rangeTxns = await testFilter(
+    'amount-range', { minAmount: 1_000_000, maxAmount: 3_000_000 }, 3,
+    'Amount range filter matched 3 payments in [1M, 3M] microAlgo', formatPayment,
+  )
 
   // Step 7: Filter by notePrefix ("invoice")
   printStep(7, 'Filter: notePrefix = "invoice"')
-  const invoiceTxns = await pollWithFilter('note-prefix', { notePrefix: 'invoice' })
-  printInfo(`Matched count: ${invoiceTxns.length.toString()}`)
-  for (const txn of invoiceTxns) {
-    const amount = txn.paymentTransaction?.amount ?? 0
-    const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
-    printInfo(`  Matched: ${txn.id} | amount: ${formatMicroAlgo(amount)} | note: "${note}"`)
-  }
   // Txns with "invoice" prefix: txn1, txn2, txn4 = 3
-  if (invoiceTxns.length !== 3) {
-    throw new Error(`Note prefix filter: expected 3 matches (3 "invoice-*" notes), got ${invoiceTxns.length}`)
-  }
-  printSuccess('Note prefix filter matched 3 payments with "invoice" prefix')
+  const invoiceTxns = await testFilter(
+    'note-prefix', { notePrefix: 'invoice' }, 3,
+    'Note prefix filter matched 3 payments with "invoice" prefix', formatPayment,
+  )
 
   // Step 8: Summary
   printStep(8, 'Summary')

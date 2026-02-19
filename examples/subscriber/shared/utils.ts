@@ -1,4 +1,8 @@
 import { AlgoAmount } from '@algorandfoundation/algokit-utils'
+import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
+
+export type { SubscribedTransaction }
 
 // ============================================================
 // Console Output Helpers
@@ -52,4 +56,51 @@ export function formatMicroAlgo(microAlgos: number | bigint): string {
 export function shortenAddress(address: string, prefixLength = 6, suffixLength = 4): string {
   if (address.length <= prefixLength + suffixLength) return address
   return `${address.slice(0, prefixLength)}...${address.slice(-suffixLength)}`
+}
+
+// ============================================================
+// Filter Testing Helper
+// ============================================================
+
+/** Create a filter-testing function bound to an algod client and watermark */
+export function createFilterTester(algod: ConstructorParameters<typeof AlgorandSubscriber>[1], watermarkBefore: bigint) {
+  return async function testFilter(
+    name: string,
+    filter: Record<string, unknown>,
+    expected?: number,
+    successMsg?: string,
+    formatTxn?: (txn: SubscribedTransaction) => void,
+  ): Promise<SubscribedTransaction[]> {
+    let watermark = watermarkBefore
+    const subscriber = new AlgorandSubscriber(
+      {
+        filters: [{ name, filter }],
+        syncBehaviour: 'sync-oldest',
+        maxRoundsToSync: 100,
+        watermarkPersistence: {
+          get: async () => watermark,
+          set: async (w: bigint) => {
+            watermark = w
+          },
+        },
+      },
+      algod,
+    )
+    const result = await subscriber.pollOnce()
+    const txns = result.subscribedTransactions
+
+    printInfo(`Matched count: ${txns.length.toString()}`)
+    if (formatTxn) {
+      for (const txn of txns) {
+        formatTxn(txn)
+      }
+    }
+    if (expected !== undefined && txns.length !== expected) {
+      throw new Error(`${name} filter: expected ${expected} matches, got ${txns.length}`)
+    }
+    if (successMsg) {
+      printSuccess(successMsg)
+    }
+    return txns
+  }
 }

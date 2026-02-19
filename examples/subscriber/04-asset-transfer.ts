@@ -10,8 +10,7 @@
  * - LocalNet running (via `algokit localnet start`)
  */
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
-import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress } from './shared/utils.js'
+import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, createFilterTester } from './shared/utils.js'
 import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
@@ -75,56 +74,28 @@ async function main() {
   // Watermark: just before the asset creation round
   const watermarkBefore = createRound - 1n
 
-  // Helper: create a subscriber, poll once, return matched transactions
-  async function pollWithFilter(name: string, filter: Record<string, unknown>) {
-    let watermark = watermarkBefore
-    const subscriber = new AlgorandSubscriber(
-      {
-        filters: [{ name, filter }],
-        syncBehaviour: 'sync-oldest',
-        maxRoundsToSync: 100,
-        watermarkPersistence: {
-          get: async () => watermark,
-          set: async (w: bigint) => {
-            watermark = w
-          },
-        },
-      },
-      algorand.client.algod as any,
-    )
-    const result = await subscriber.pollOnce()
-    return result.subscribedTransactions
-  }
+  const testFilter = createFilterTester(algorand.client.algod as any, watermarkBefore)
 
   // Step 6: Subscribe with assetCreate filter — matches the creation transaction
   printStep(6, 'Filter: assetCreate = true')
-  const createTxns = await pollWithFilter('asset-create', { assetCreate: true })
-  printInfo(`Matched count: ${createTxns.length.toString()}`)
-  for (const txn of createTxns) {
-    printInfo(`  Created asset: ${txn.createdAssetId} | txn: ${txn.id}`)
-  }
-  if (createTxns.length !== 1) {
-    throw new Error(`assetCreate filter: expected 1 match, got ${createTxns.length}`)
-  }
-  printSuccess('assetCreate filter matched 1 creation transaction')
+  const createTxns = await testFilter(
+    'asset-create', { assetCreate: true }, 1,
+    'assetCreate filter matched 1 creation transaction',
+    (txn) => printInfo(`  Created asset: ${txn.createdAssetId} | txn: ${txn.id}`),
+  )
 
   // Step 7: Subscribe with type=axfer + assetId filter — matches opt-in and transfer
   printStep(7, 'Filter: type = axfer, assetId = created asset')
-  const axferTxns = await pollWithFilter('asset-transfers', {
-    type: 'axfer',
-    assetId: assetId,
-  })
-  printInfo(`Matched count: ${axferTxns.length.toString()}`)
-  for (const txn of axferTxns) {
-    const axfer = txn.assetTransferTransaction!
-    printInfo(
-      `  Transfer: ${shortenAddress(txn.sender)} -> ${shortenAddress(axfer.receiver)} | amount: ${axfer.amount} | txn: ${txn.id}`,
-    )
-  }
-  if (axferTxns.length !== 2) {
-    throw new Error(`axfer filter: expected 2 matches (opt-in + transfer), got ${axferTxns.length}`)
-  }
-  printSuccess('axfer filter matched 2 transactions (opt-in + transfer)')
+  const axferTxns = await testFilter(
+    'asset-transfers', { type: 'axfer', assetId: assetId }, 2,
+    'axfer filter matched 2 transactions (opt-in + transfer)',
+    (txn) => {
+      const axfer = txn.assetTransferTransaction!
+      printInfo(
+        `  Transfer: ${shortenAddress(txn.sender)} -> ${shortenAddress(axfer.receiver)} | amount: ${axfer.amount} | txn: ${txn.id}`,
+      )
+    },
+  )
 
   // Step 8: Summary
   printStep(8, 'Summary')

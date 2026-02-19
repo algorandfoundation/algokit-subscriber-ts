@@ -14,8 +14,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { algo, AlgorandClient, AppFactory } from '@algorandfoundation/algokit-utils'
-import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
-import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress } from './shared/utils.js'
+import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, createFilterTester } from './shared/utils.js'
 import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -91,102 +90,73 @@ async function main() {
   // Watermark: just before the app creation round
   const watermarkBefore = createRound - 1n
 
-  // Helper: create a subscriber, poll once, return matched transactions
-  async function pollWithFilter(name: string, filter: Record<string, unknown>) {
-    let watermark = watermarkBefore
-    const subscriber = new AlgorandSubscriber(
-      {
-        filters: [{ name, filter }],
-        syncBehaviour: 'sync-oldest',
-        maxRoundsToSync: 100,
-        watermarkPersistence: {
-          get: async () => watermark,
-          set: async (w: bigint) => {
-            watermark = w
-          },
-        },
-      },
-      algorand.client.algod as any,
-    )
-    const result = await subscriber.pollOnce()
-    return result.subscribedTransactions
-  }
+  const testFilter = createFilterTester(algorand.client.algod as any, watermarkBefore)
 
   // Step 5: Subscribe with appCreate: true — matches app creation
   printStep(5, 'Filter: appCreate = true')
-  const createTxns = await pollWithFilter('app-create', { appCreate: true })
-  printInfo(`Matched count: ${createTxns.length.toString()}`)
-  for (const txn of createTxns) {
-    const appTxn = txn.applicationTransaction
-    printInfo(`  Created app: ${txn.createdAppId} | onComplete: ${appTxn?.onCompletion} | txn: ${txn.id}`)
-  }
-  if (createTxns.length !== 1) {
-    throw new Error(`appCreate filter: expected 1 match, got ${createTxns.length}`)
-  }
-  printSuccess('appCreate filter matched 1 app creation transaction')
+  const createTxns = await testFilter(
+    'app-create', { appCreate: true }, 1,
+    'appCreate filter matched 1 app creation transaction',
+    (txn) => {
+      const appTxn = txn.applicationTransaction
+      printInfo(`  Created app: ${txn.createdAppId} | onComplete: ${appTxn?.onCompletion} | txn: ${txn.id}`)
+    },
+  )
 
   // Step 6: Subscribe with appId + methodSignature — matches specific ABI method calls
   printStep(6, 'Filter: appId + methodSignature = set_global')
-  const methodTxns = await pollWithFilter('set-global-method', {
-    appId: appId,
-    methodSignature: 'set_global(uint64,uint64,string,byte[4])void',
-  })
-  printInfo(`Matched count: ${methodTxns.length.toString()}`)
-  for (const txn of methodTxns) {
-    const appArgs = txn.applicationTransaction?.applicationArgs
-    const selectorHex = appArgs && appArgs.length > 0 ? Buffer.from(appArgs[0].slice(0, 4)).toString('hex') : 'N/A'
-    printInfo(
-      `  Method call: selector: 0x${selectorHex} | filters: [${txn.filtersMatched?.join(', ')}] | txn: ${txn.id}`,
-    )
-  }
-  if (methodTxns.length !== 1) {
-    throw new Error(`methodSignature filter: expected 1 match, got ${methodTxns.length}`)
-  }
-  printSuccess('methodSignature filter matched 1 set_global call')
+  const methodTxns = await testFilter(
+    'set-global-method', {
+      appId: appId,
+      methodSignature: 'set_global(uint64,uint64,string,byte[4])void',
+    }, 1,
+    'methodSignature filter matched 1 set_global call',
+    (txn) => {
+      const appArgs = txn.applicationTransaction?.applicationArgs
+      const selectorHex = appArgs && appArgs.length > 0 ? Buffer.from(appArgs[0].slice(0, 4)).toString('hex') : 'N/A'
+      printInfo(
+        `  Method call: selector: 0x${selectorHex} | filters: [${txn.filtersMatched?.join(', ')}] | txn: ${txn.id}`,
+      )
+    },
+  )
 
   // Step 7: Subscribe with appOnComplete filter — matches by on-complete type
   printStep(7, 'Filter: appOnComplete = optin')
-  const optInTxns = await pollWithFilter('optin-calls', {
-    appOnComplete: 'optin',
-  })
-  printInfo(`Matched count: ${optInTxns.length.toString()}`)
-  for (const txn of optInTxns) {
-    const appTxn = txn.applicationTransaction
-    printInfo(
-      `  OptIn call: app: ${appTxn?.applicationId} | onComplete: ${appTxn?.onCompletion} | filters: [${txn.filtersMatched?.join(', ')}] | txn: ${txn.id}`,
-    )
-  }
-  if (optInTxns.length !== 1) {
-    throw new Error(`appOnComplete filter: expected 1 match, got ${optInTxns.length}`)
-  }
-  printSuccess('appOnComplete filter matched 1 opt-in transaction')
+  const optInTxns = await testFilter(
+    'optin-calls', { appOnComplete: 'optin' }, 1,
+    'appOnComplete filter matched 1 opt-in transaction',
+    (txn) => {
+      const appTxn = txn.applicationTransaction
+      printInfo(
+        `  OptIn call: app: ${appTxn?.applicationId} | onComplete: ${appTxn?.onCompletion} | filters: [${txn.filtersMatched?.join(', ')}] | txn: ${txn.id}`,
+      )
+    },
+  )
 
   // Step 8: Demonstrate appCallArgumentsMatch predicate — custom arg inspection
   // Match emitSwapped calls by checking the method selector in the first app arg
   printStep(8, 'Filter: appCallArgumentsMatch predicate')
   const emitSwappedSelector = 'd43cee5d' // method selector for emitSwapped(uint64,uint64)void
-  const argMatchTxns = await pollWithFilter('arg-match', {
-    appId: appId,
-    appCallArgumentsMatch: (args?: readonly Uint8Array[]) => {
-      if (!args || args.length === 0) return false
-      const selectorHex = Buffer.from(args[0].slice(0, 4)).toString('hex')
-      return selectorHex === emitSwappedSelector
+  const argMatchTxns = await testFilter(
+    'arg-match', {
+      appId: appId,
+      appCallArgumentsMatch: (args?: readonly Uint8Array[]) => {
+        if (!args || args.length === 0) return false
+        const selectorHex = Buffer.from(args[0].slice(0, 4)).toString('hex')
+        return selectorHex === emitSwappedSelector
+      },
+    }, 1,
+    'appCallArgumentsMatch predicate matched 1 emitSwapped call',
+    (txn) => {
+      const appArgs = txn.applicationTransaction?.applicationArgs
+      if (appArgs && appArgs.length > 0) {
+        const selectorHex = Buffer.from(appArgs[0].slice(0, 4)).toString('hex')
+        printInfo(
+          `  Arg match: selector: 0x${selectorHex} | filters: [${txn.filtersMatched?.join(', ')}] | txn: ${txn.id}`,
+        )
+      }
     },
-  })
-  printInfo(`Matched count: ${argMatchTxns.length.toString()}`)
-  for (const txn of argMatchTxns) {
-    const appArgs = txn.applicationTransaction?.applicationArgs
-    if (appArgs && appArgs.length > 0) {
-      const selectorHex = Buffer.from(appArgs[0].slice(0, 4)).toString('hex')
-      printInfo(
-        `  Arg match: selector: 0x${selectorHex} | filters: [${txn.filtersMatched?.join(', ')}] | txn: ${txn.id}`,
-      )
-    }
-  }
-  if (argMatchTxns.length !== 1) {
-    throw new Error(`appCallArgumentsMatch filter: expected 1 match, got ${argMatchTxns.length}`)
-  }
-  printSuccess('appCallArgumentsMatch predicate matched 1 emitSwapped call')
+  )
 
   // Step 9: Summary
   printStep(9, 'Summary')
