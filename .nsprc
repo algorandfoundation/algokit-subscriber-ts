@@ -8,5 +8,15 @@
     "active": true,
     "notes": "tar via npm in @semantic-release/npm - waiting for upstream fix",
     "expiry": "2026-03-17"
+  },
+  "1113214": {
+    "active": true,
+    "notes": "ajv v6 is a peer dependency of eslint v8 (via typescript-eslint) - requires eslint v9 migration to resolve",
+    "expiry": "2026-06-01"
+  },
+  "1113249": {
+    "active": true,
+    "notes": "tar is bundled inside npm - overrides cannot fix bundled deps, waiting for upstream fix",
+    "expiry": "2026-06-01"
   }
 }

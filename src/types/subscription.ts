@@ -353,7 +353,7 @@ export interface TransactionSubscriptionParams extends CoreTransactionSubscripti
    * Syncing will start from `watermark + 1`.
    *
    * Start from 0 if you want to start from the beginning of time, noting that
-   * will be slow if `onMaxRounds` is `sync-oldest`.
+   * will be slow if `syncBehaviour` is `sync-oldest`.
    **/
   watermark: bigint
 
