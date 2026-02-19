@@ -29,37 +29,37 @@ async function main() {
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
 
-  // Step 2: Create 3 accounts (Alice, Bob, Charlie)
+  // Step 2: Create 3 accounts (sender, receiver, outsider)
   printStep(2, 'Create and fund 3 accounts')
-  const alice = await algorand.account.fromEnvironment('CUSTOM_ALICE', algo(100))
-  const bob = await algorand.account.fromEnvironment('CUSTOM_BOB', algo(100))
-  const charlie = await algorand.account.fromEnvironment('CUSTOM_CHARLIE', algo(100))
-  const aliceAddr = alice.addr.toString()
-  const bobAddr = bob.addr.toString()
-  const charlieAddr = charlie.addr.toString()
-  printInfo(`Alice: ${shortenAddress(aliceAddr)}`)
-  printInfo(`Bob: ${shortenAddress(bobAddr)}`)
-  printInfo(`Charlie: ${shortenAddress(charlieAddr)}`)
+  const sender = await algorand.account.fromEnvironment('CUSTOM_SENDER', algo(100))
+  const receiver = await algorand.account.fromEnvironment('CUSTOM_RECEIVER', algo(100))
+  const outsider = await algorand.account.fromEnvironment('CUSTOM_OUTSIDER', algo(100))
+  const senderAddr = sender.addr.toString()
+  const receiverAddr = receiver.addr.toString()
+  const outsiderAddr = outsider.addr.toString()
+  printInfo(`Sender: ${shortenAddress(senderAddr)}`)
+  printInfo(`Receiver: ${shortenAddress(receiverAddr)}`)
+  printInfo(`Outsider: ${shortenAddress(outsiderAddr)}`)
   printSuccess('3 accounts created and funded')
 
   // Step 3: Send 6 payments with varying amounts, notes, and senders
   printStep(3, 'Send 6 payments with varying senders, amounts, and notes')
 
-  const allowlist = new Set([aliceAddr, bobAddr])
+  const allowlist = new Set([senderAddr, receiverAddr])
 
   const payments = [
-    // Txn 1: Alice->Bob, 5 ALGO, "transfer-urgent"   => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(5_000_000), note: 'transfer-urgent' },
-    // Txn 2: Alice->Charlie, 1 ALGO, "transfer-low"   => FAIL (amount < 2 ALGO)
-    { sender: alice.addr, receiver: charlie.addr, amount: microAlgo(1_000_000), note: 'transfer-low' },
-    // Txn 3: Bob->Alice, 3 ALGO, "transfer-normal"    => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: bob.addr, receiver: alice.addr, amount: microAlgo(3_000_000), note: 'transfer-normal' },
-    // Txn 4: Charlie->Bob, 4 ALGO, "transfer-big"     => FAIL (Charlie not in allowlist)
-    { sender: charlie.addr, receiver: bob.addr, amount: microAlgo(4_000_000), note: 'transfer-big' },
-    // Txn 5: Alice->Bob, 2 ALGO, "payment-misc"       => FAIL (note doesn't contain "transfer")
-    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(2_000_000), note: 'payment-misc' },
-    // Txn 6: Bob->Charlie, 10 ALGO, "transfer-final"  => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: bob.addr, receiver: charlie.addr, amount: microAlgo(10_000_000), note: 'transfer-final' },
+    // Txn 1: sender->receiver, 5 ALGO, "transfer-urgent"   => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
+    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(5_000_000), note: 'transfer-urgent' },
+    // Txn 2: sender->outsider, 1 ALGO, "transfer-low"      => FAIL (amount < 2 ALGO)
+    { sender: sender.addr, receiver: outsider.addr, amount: microAlgo(1_000_000), note: 'transfer-low' },
+    // Txn 3: receiver->sender, 3 ALGO, "transfer-normal"   => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
+    { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(3_000_000), note: 'transfer-normal' },
+    // Txn 4: outsider->receiver, 4 ALGO, "transfer-big"    => FAIL (outsider not in allowlist)
+    { sender: outsider.addr, receiver: receiver.addr, amount: microAlgo(4_000_000), note: 'transfer-big' },
+    // Txn 5: sender->receiver, 2 ALGO, "payment-misc"      => FAIL (note doesn't contain "transfer")
+    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(2_000_000), note: 'payment-misc' },
+    // Txn 6: receiver->outsider, 10 ALGO, "transfer-final" => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
+    { sender: receiver.addr, receiver: outsider.addr, amount: microAlgo(10_000_000), note: 'transfer-final' },
   ]
 
   const txnResults = []
@@ -110,17 +110,17 @@ async function main() {
   for (const [i, p] of payments.entries()) {
     const amount = BigInt(p.amount.microAlgo)
     const note = p.note
-    const sender = p.sender.toString()
+    const senderStr = p.sender.toString()
 
     const amountOk = amount >= THRESHOLD
     const noteOk = note.includes('transfer')
-    const senderOk = allowlist.has(sender)
+    const senderOk = allowlist.has(senderStr)
     const passed = amountOk && noteOk && senderOk
 
     const reasons = []
     if (!amountOk) reasons.push(`amount ${formatMicroAlgo(amount)} < ${formatMicroAlgo(THRESHOLD)}`)
     if (!noteOk) reasons.push(`note "${note}" missing "transfer"`)
-    if (!senderOk) reasons.push(`sender ${shortenAddress(sender)} not in allowlist`)
+    if (!senderOk) reasons.push(`sender ${shortenAddress(senderStr)} not in allowlist`)
 
     const status = passed ? 'PASS' : 'FAIL'
     const detail = passed ? 'all conditions met' : reasons.join(', ')
@@ -128,18 +128,18 @@ async function main() {
   }
 
   // Step 5: Combine customFilter with standard filter fields
-  printStep(5, 'Composition: sender=Alice (standard) + customFilter (amount >= 2 ALGO AND note contains "transfer")')
+  printStep(5, 'Composition: sender=sender account (standard) + customFilter (amount >= 2 ALGO AND note contains "transfer")')
 
-  // Alice sent txns 1, 2, 5. Of those, only txn 1 has amount >= 2 ALGO AND "transfer" in note
+  // Sender sent txns 1, 2, 5. Of those, only txn 1 has amount >= 2 ALGO AND "transfer" in note
   const composedTxns = await testFilter(
     'composed', {
-      sender: aliceAddr,
+      sender: senderAddr,
       customFilter: (txn: SubscribedTransaction) => {
         const amount = txn.paymentTransaction?.amount ?? 0n
         const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
         return amount >= THRESHOLD && note.includes('transfer')
       },
-    }, 1, 'Composed filter matched 1 transaction (txn 1: Alice, 5 ALGO, "transfer-urgent")',
+    }, 1, 'Composed filter matched 1 transaction (txn 1: sender, 5 ALGO, "transfer-urgent")',
     (txn) => {
       const amount = txn.paymentTransaction?.amount ?? 0n
       const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''

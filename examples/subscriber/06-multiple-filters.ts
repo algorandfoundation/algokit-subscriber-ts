@@ -28,35 +28,35 @@ async function main() {
   printSuccess('Connected to LocalNet')
 
   // Step 2: Create accounts
-  printStep(2, 'Create and fund accounts (Alice, Bob)')
-  const alice = await algorand.account.fromEnvironment('MULTI_ALICE', algo(100))
-  const bob = await algorand.account.fromEnvironment('MULTI_BOB', algo(100))
-  const aliceAddr = alice.addr.toString()
-  const bobAddr = bob.addr.toString()
-  printInfo(`Alice: ${shortenAddress(aliceAddr)}`)
-  printInfo(`Bob: ${shortenAddress(bobAddr)}`)
+  printStep(2, 'Create and fund accounts (sender, receiver)')
+  const sender = await algorand.account.fromEnvironment('MULTI_SENDER', algo(100))
+  const receiver = await algorand.account.fromEnvironment('MULTI_RECEIVER', algo(100))
+  const senderAddr = sender.addr.toString()
+  const receiverAddr = receiver.addr.toString()
+  printInfo(`Sender: ${shortenAddress(senderAddr)}`)
+  printInfo(`Receiver: ${shortenAddress(receiverAddr)}`)
   printSuccess('Accounts created and funded')
 
   // Step 3: Send transactions designed to match different filter combinations
   // Filter plan:
-  //   'from-alice'   — sender = alice
-  //   'to-bob'       — receiver = bob
+  //   'from-sender'  — sender = sender account
+  //   'to-receiver'  — receiver = receiver account
   //   'large-txns'   — minAmount = 3_000_000 microAlgo
   //
-  // Txn 1: Alice -> Bob, 5 ALGO, note "multi-01"   => matches ALL 3 filters
-  // Txn 2: Alice -> Alice, 1 ALGO, note "multi-02"  => matches 'from-alice' only (1 filter)
-  // Txn 3: Bob -> Alice, 4 ALGO, note "multi-03"     => matches 'large-txns' only (1 filter)
-  // Txn 4: Alice -> Bob, 1 ALGO, note "multi-04"    => matches 'from-alice' + 'to-bob' (2 filters)
-  // Txn 5: Bob -> Alice, 0.5 ALGO, note "multi-05"  => matches NO filters
+  // Txn 1: sender -> receiver, 5 ALGO, note "multi-01"    => matches ALL 3 filters
+  // Txn 2: sender -> sender, 1 ALGO, note "multi-02"      => matches 'from-sender' only (1 filter)
+  // Txn 3: receiver -> sender, 4 ALGO, note "multi-03"    => matches 'large-txns' only (1 filter)
+  // Txn 4: sender -> receiver, 1 ALGO, note "multi-04"    => matches 'from-sender' + 'to-receiver' (2 filters)
+  // Txn 5: receiver -> sender, 0.5 ALGO, note "multi-05"  => matches NO filters
 
   printStep(3, 'Send 5 transactions with varying filter overlap')
 
   const txnSpecs = [
-    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(5_000_000), note: 'multi-01', desc: 'Alice->Bob 5A (all 3)' },
-    { sender: alice.addr, receiver: alice.addr, amount: microAlgo(1_000_000), note: 'multi-02', desc: 'Alice->Alice 1A (from-alice)' },
-    { sender: bob.addr, receiver: alice.addr, amount: microAlgo(4_000_000), note: 'multi-03', desc: 'Bob->Alice 4A (large-txns)' },
-    { sender: alice.addr, receiver: bob.addr, amount: microAlgo(1_000_000), note: 'multi-04', desc: 'Alice->Bob 1A (from-alice + to-bob)' },
-    { sender: bob.addr, receiver: alice.addr, amount: microAlgo(500_000), note: 'multi-05', desc: 'Bob->Alice 0.5A (none)' },
+    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(5_000_000), note: 'multi-01', desc: 'sender->receiver 5A (all 3)' },
+    { sender: sender.addr, receiver: sender.addr, amount: microAlgo(1_000_000), note: 'multi-02', desc: 'sender->sender 1A (from-sender)' },
+    { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(4_000_000), note: 'multi-03', desc: 'receiver->sender 4A (large-txns)' },
+    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(1_000_000), note: 'multi-04', desc: 'sender->receiver 1A (from-sender + to-receiver)' },
+    { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(500_000), note: 'multi-05', desc: 'receiver->sender 0.5A (none)' },
   ]
 
   const txnResults = []
@@ -81,12 +81,12 @@ async function main() {
     {
       filters: [
         {
-          name: 'from-alice',
-          filter: { sender: aliceAddr },
+          name: 'from-sender',
+          filter: { sender: senderAddr },
         },
         {
-          name: 'to-bob',
-          filter: { receiver: bobAddr },
+          name: 'to-receiver',
+          filter: { receiver: receiverAddr },
         },
         {
           name: 'large-txns',
@@ -104,8 +104,8 @@ async function main() {
     },
     algorand.client.algod,
   )
-  printInfo(`Filter 1: 'from-alice'  — sender = Alice`)
-  printInfo(`Filter 2: 'to-bob'      — receiver = Bob`)
+  printInfo(`Filter 1: 'from-sender' — sender = sender account`)
+  printInfo(`Filter 2: 'to-receiver' — receiver = receiver account`)
   printInfo(`Filter 3: 'large-txns'  — minAmount = 3,000,000 microAlgo`)
   printSuccess('Subscriber created with 3 named filters')
 
@@ -144,18 +144,18 @@ async function main() {
 
   // Expected: multi-01 matches all 3 filters
   const txn1Filters = txn1Matches[0].filtersMatched ?? []
-  if (!txn1Filters.includes('from-alice') || !txn1Filters.includes('to-bob') || !txn1Filters.includes('large-txns')) {
+  if (!txn1Filters.includes('from-sender') || !txn1Filters.includes('to-receiver') || !txn1Filters.includes('large-txns')) {
     throw new Error(`multi-01 expected all 3 filters, got: [${txn1Filters.join(', ')}]`)
   }
-  printSuccess('multi-01 matched: from-alice, to-bob, large-txns')
+  printSuccess('multi-01 matched: from-sender, to-receiver, large-txns')
 
-  // Expected: multi-02 matches from-alice only
+  // Expected: multi-02 matches from-sender only
   const txn2Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-02')!
   const txn2Filters = txn2Match.filtersMatched ?? []
-  if (txn2Filters.length !== 1 || !txn2Filters.includes('from-alice')) {
-    throw new Error(`multi-02 expected [from-alice], got: [${txn2Filters.join(', ')}]`)
+  if (txn2Filters.length !== 1 || !txn2Filters.includes('from-sender')) {
+    throw new Error(`multi-02 expected [from-sender], got: [${txn2Filters.join(', ')}]`)
   }
-  printSuccess('multi-02 matched: from-alice')
+  printSuccess('multi-02 matched: from-sender')
 
   // Expected: multi-03 matches large-txns only
   const txn3Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-03')!
@@ -165,13 +165,13 @@ async function main() {
   }
   printSuccess('multi-03 matched: large-txns')
 
-  // Expected: multi-04 matches from-alice + to-bob (2 filters)
+  // Expected: multi-04 matches from-sender + to-receiver (2 filters)
   const txn4Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-04')!
   const txn4Filters = txn4Match.filtersMatched ?? []
-  if (txn4Filters.length !== 2 || !txn4Filters.includes('from-alice') || !txn4Filters.includes('to-bob')) {
-    throw new Error(`multi-04 expected [from-alice, to-bob], got: [${txn4Filters.join(', ')}]`)
+  if (txn4Filters.length !== 2 || !txn4Filters.includes('from-sender') || !txn4Filters.includes('to-receiver')) {
+    throw new Error(`multi-04 expected [from-sender, to-receiver], got: [${txn4Filters.join(', ')}]`)
   }
-  printSuccess('multi-04 matched: from-alice, to-bob')
+  printSuccess('multi-04 matched: from-sender, to-receiver')
 
   // Expected: multi-05 matches NO filters (should not appear)
   const txn5Match = txns.find((t) => t.note && Buffer.from(t.note).toString('utf-8') === 'multi-05')

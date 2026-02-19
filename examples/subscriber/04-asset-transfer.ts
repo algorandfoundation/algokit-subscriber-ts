@@ -26,20 +26,20 @@ async function main() {
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
 
-  // Step 2: Create 2 accounts (A = creator, B = receiver)
-  printStep(2, 'Create and fund 2 accounts (A, B)')
-  const accountA = await algorand.account.fromEnvironment('ASSET_A', algo(100))
-  const accountB = await algorand.account.fromEnvironment('ASSET_B', algo(100))
-  const addrA = accountA.addr.toString()
-  const addrB = accountB.addr.toString()
-  printInfo(`Account A (creator): ${shortenAddress(addrA)}`)
-  printInfo(`Account B (receiver): ${shortenAddress(addrB)}`)
+  // Step 2: Create 2 accounts (creator, receiver)
+  printStep(2, 'Create and fund 2 accounts (creator, receiver)')
+  const creator = await algorand.account.fromEnvironment('ASSET_CREATOR', algo(100))
+  const receiver = await algorand.account.fromEnvironment('ASSET_RECEIVER', algo(100))
+  const creatorAddr = creator.addr.toString()
+  const receiverAddr = receiver.addr.toString()
+  printInfo(`Creator: ${shortenAddress(creatorAddr)}`)
+  printInfo(`Receiver: ${shortenAddress(receiverAddr)}`)
   printSuccess('2 accounts created and funded')
 
-  // Step 3: Create an ASA (fungible token) from account A
-  printStep(3, 'Create ASA from account A')
+  // Step 3: Create an ASA (fungible token) from creator account
+  printStep(3, 'Create ASA from creator account')
   const createResult = await algorand.send.assetCreate({
-    sender: accountA.addr,
+    sender: creator.addr,
     total: 1_000_000n,
     decimals: 0,
     assetName: 'TestToken',
@@ -51,20 +51,20 @@ async function main() {
   printInfo(`Confirmed round: ${createRound.toString()}`)
   printSuccess('ASA created')
 
-  // Step 4: Account B opts in to the asset
-  printStep(4, 'Account B opts in to asset')
+  // Step 4: Receiver opts in to the asset
+  printStep(4, 'Receiver opts in to asset')
   const optInResult = await algorand.send.assetOptIn({
-    sender: accountB.addr,
+    sender: receiver.addr,
     assetId,
   })
   printInfo(`Opt-in txn ID: ${optInResult.txIds[0]}`)
-  printSuccess('Account B opted in')
+  printSuccess('Receiver opted in')
 
-  // Step 5: A transfers tokens to B
-  printStep(5, 'Transfer 500 tokens from A to B')
+  // Step 5: Creator transfers tokens to receiver
+  printStep(5, 'Transfer 500 tokens from creator to receiver')
   const transferResult = await algorand.send.assetTransfer({
-    sender: accountA.addr,
-    receiver: accountB.addr,
+    sender: creator.addr,
+    receiver: receiver.addr,
     assetId,
     amount: 500n,
   })

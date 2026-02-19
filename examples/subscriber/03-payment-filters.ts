@@ -28,28 +28,28 @@ async function main() {
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
 
-  // Step 2: Create 3 accounts (A, B, C)
-  printStep(2, 'Create and fund 3 accounts (A, B, C)')
-  const accountA = await algorand.account.fromEnvironment('FILTER_A', algo(100))
-  const accountB = await algorand.account.fromEnvironment('FILTER_B', algo(100))
-  const accountC = await algorand.account.fromEnvironment('FILTER_C', algo(100))
-  const addrA = accountA.addr.toString()
-  const addrB = accountB.addr.toString()
-  const addrC = accountC.addr.toString()
-  printInfo(`Account A: ${shortenAddress(addrA)}`)
-  printInfo(`Account B: ${shortenAddress(addrB)}`)
-  printInfo(`Account C: ${shortenAddress(addrC)}`)
+  // Step 2: Create 3 accounts (sender, receiver, thirdParty)
+  printStep(2, 'Create and fund 3 accounts (sender, receiver, thirdParty)')
+  const sender = await algorand.account.fromEnvironment('FILTER_SENDER', algo(100))
+  const receiver = await algorand.account.fromEnvironment('FILTER_RECEIVER', algo(100))
+  const thirdParty = await algorand.account.fromEnvironment('FILTER_THIRD_PARTY', algo(100))
+  const senderAddr = sender.addr.toString()
+  const receiverAddr = receiver.addr.toString()
+  const thirdPartyAddr = thirdParty.addr.toString()
+  printInfo(`Sender: ${shortenAddress(senderAddr)}`)
+  printInfo(`Receiver: ${shortenAddress(receiverAddr)}`)
+  printInfo(`Third party: ${shortenAddress(thirdPartyAddr)}`)
   printSuccess('3 accounts created and funded')
 
   // Step 3: Send 5 payments with varying senders, receivers, amounts, and notes
   printStep(3, 'Send 5 payments with varying parameters')
 
   const payments = [
-    { sender: accountA.addr, receiver: accountB.addr, amount: microAlgo(1_000_000), note: 'invoice-001' },
-    { sender: accountA.addr, receiver: accountC.addr, amount: microAlgo(5_000_000), note: 'invoice-002' },
-    { sender: accountB.addr, receiver: accountA.addr, amount: microAlgo(2_000_000), note: 'receipt-001' },
-    { sender: accountC.addr, receiver: accountB.addr, amount: microAlgo(3_000_000), note: 'invoice-003' },
-    { sender: accountA.addr, receiver: accountB.addr, amount: microAlgo(500_000), note: 'receipt-002' },
+    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(1_000_000), note: 'invoice-001' },
+    { sender: sender.addr, receiver: thirdParty.addr, amount: microAlgo(5_000_000), note: 'invoice-002' },
+    { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(2_000_000), note: 'receipt-001' },
+    { sender: thirdParty.addr, receiver: receiver.addr, amount: microAlgo(3_000_000), note: 'invoice-003' },
+    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(500_000), note: 'receipt-002' },
   ]
 
   const txnResults = []
@@ -77,18 +77,18 @@ async function main() {
     printInfo(`  Matched: ${txn.id} | amount: ${formatMicroAlgo(amount)} | note: "${note}"`)
   }
 
-  // Step 4: Filter by sender (A only)
-  printStep(4, 'Filter: sender = A')
-  const senderATxns = await testFilter(
-    'sender-a', { sender: addrA }, 3,
-    'Sender filter matched 3 payments from A', formatPayment,
+  // Step 4: Filter by sender (sender account only)
+  printStep(4, 'Filter: sender = sender account')
+  const senderTxns = await testFilter(
+    'sender-filter', { sender: senderAddr }, 3,
+    'Sender filter matched 3 payments from sender', formatPayment,
   )
 
-  // Step 5: Filter by receiver (B only)
-  printStep(5, 'Filter: receiver = B')
-  const receiverBTxns = await testFilter(
-    'receiver-b', { receiver: addrB }, 3,
-    'Receiver filter matched 3 payments to B', formatPayment,
+  // Step 5: Filter by receiver (receiver account only)
+  printStep(5, 'Filter: receiver = receiver account')
+  const receiverTxns = await testFilter(
+    'receiver-filter', { receiver: receiverAddr }, 3,
+    'Receiver filter matched 3 payments to receiver', formatPayment,
   )
 
   // Step 6: Filter by minAmount/maxAmount range (1_000_000 to 3_000_000 microAlgo)
@@ -109,8 +109,8 @@ async function main() {
 
   // Step 8: Summary
   printStep(8, 'Summary')
-  printInfo(`Sender=A filter: ${senderATxns.length} matched`)
-  printInfo(`Receiver=B filter: ${receiverBTxns.length} matched`)
+  printInfo(`Sender filter: ${senderTxns.length} matched`)
+  printInfo(`Receiver filter: ${receiverTxns.length} matched`)
   printInfo(`Amount [1M,3M] filter: ${rangeTxns.length} matched`)
   printInfo(`notePrefix="invoice" filter: ${invoiceTxns.length} matched`)
 
