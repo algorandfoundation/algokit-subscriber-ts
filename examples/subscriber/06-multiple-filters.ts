@@ -102,7 +102,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
   printInfo(`Filter 1: 'from-alice'  — sender = Alice`)
   printInfo(`Filter 2: 'to-bob'      — receiver = Bob`)

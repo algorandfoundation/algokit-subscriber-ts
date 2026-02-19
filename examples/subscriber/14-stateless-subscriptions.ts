@@ -10,6 +10,7 @@
  * - LocalNet running (via `algokit localnet start`)
  */
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
+import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
 import { getSubscribedTransactions } from '@algorandfoundation/algokit-subscriber'
 import type { TransactionSubscriptionParams } from '@algorandfoundation/algokit-subscriber/types/subscription'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatAlgo } from './shared/utils.js'
@@ -20,7 +21,7 @@ import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
  * calls getSubscribedTransactions, and returns results + new watermark.
  */
 async function statelessPoll(
-  algod: ReturnType<AlgorandClient['client']['algod']['status']> extends Promise<infer _> ? AlgorandClient['client']['algod'] : never,
+  algod: AlgodClient,
   watermark: bigint,
   senderAddr: string,
 ): Promise<{ transactions: string[]; newWatermark: bigint; roundRange: [bigint, bigint] }> {
@@ -38,7 +39,7 @@ async function statelessPoll(
     maxRoundsToSync: 100,
   }
 
-  const result = await getSubscribedTransactions(params, algod as any)
+  const result = await getSubscribedTransactions(params, algod)
 
   return {
     transactions: result.subscribedTransactions.map((txn) => txn.id),

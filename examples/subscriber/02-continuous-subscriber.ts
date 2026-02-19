@@ -58,7 +58,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
   printInfo(`frequencyInSeconds: 1`)
   printInfo(`waitForBlockWhenAtTip: true`)

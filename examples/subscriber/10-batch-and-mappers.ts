@@ -116,7 +116,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   // Register onBatch handler — receives the full array of mapped items per poll

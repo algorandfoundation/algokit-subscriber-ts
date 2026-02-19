@@ -78,7 +78,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
   printInfo(`Sync behaviour: sync-oldest`)
   printInfo(`Initial watermark: ${watermarkBefore.toString()}`)

@@ -80,7 +80,7 @@ async function main() {
   // Record watermark before first txn
   const watermarkBefore = txnResults[0].confirmation!.confirmedRound! - 1n
 
-  const testFilter = createFilterTester(algorand.client.algod as any, watermarkBefore)
+  const testFilter = createFilterTester(algorand.client.algod, watermarkBefore)
 
   // Step 4: customFilter only — multi-condition logic
   printStep(4, 'Custom filter: amount >= 2 ALGO AND note contains "transfer" AND sender in allowlist')

@@ -90,7 +90,7 @@ async function main() {
   // Watermark: just before the app creation round
   const watermarkBefore = createRound - 1n
 
-  const testFilter = createFilterTester(algorand.client.algod as any, watermarkBefore)
+  const testFilter = createFilterTester(algorand.client.algod, watermarkBefore)
 
   // Step 5: Subscribe with appCreate: true — matches app creation
   printStep(5, 'Filter: appCreate = true')

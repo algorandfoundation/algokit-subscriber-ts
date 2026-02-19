@@ -70,7 +70,7 @@ async function main() {
   // Record watermark before first txn
   const watermarkBefore = txnResults[0].confirmation!.confirmedRound! - 1n
 
-  const testFilter = createFilterTester(algorand.client.algod as any, watermarkBefore)
+  const testFilter = createFilterTester(algorand.client.algod, watermarkBefore)
   const formatPayment = (txn: SubscribedTransaction) => {
     const amount = txn.paymentTransaction?.amount ?? 0
     const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''

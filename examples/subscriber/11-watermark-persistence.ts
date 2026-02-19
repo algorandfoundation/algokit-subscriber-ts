@@ -108,7 +108,7 @@ async function main() {
         maxRoundsToSync: 100,
         watermarkPersistence,
       },
-      algorand.client.algod as any,
+      algorand.client.algod,
     )
   }
 

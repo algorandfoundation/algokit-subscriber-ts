@@ -113,7 +113,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   const result = await subscriber.pollOnce()
@@ -174,7 +174,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   const parentResult = await parentSubscriber.pollOnce()

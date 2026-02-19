@@ -113,7 +113,7 @@ async function main() {
         set: async (w: bigint) => { watermark1 = w },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   const algoSenderResult = await algoSenderSub.pollOnce()
@@ -157,7 +157,7 @@ async function main() {
         set: async (w: bigint) => { watermark2 = w },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   const asaReceiverResult = await asaReceiverSub.pollOnce()

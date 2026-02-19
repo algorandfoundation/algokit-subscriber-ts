@@ -30,7 +30,7 @@ async function pollWithBehaviour(
   algod: AlgorandClient['client']['algod'],
   senderAddr: string,
   watermark: bigint,
-  syncBehaviour: 'sync-oldest' | 'skip-sync-newest' | 'sync-oldest-start-now',
+  syncBehaviour: 'sync-oldest' | 'skip-sync-newest' | 'sync-oldest-start-now' | 'fail',
   maxRoundsToSync: number,
 ): Promise<TransactionSubscriptionResult> {
   let wm = watermark
@@ -51,7 +51,7 @@ async function pollWithBehaviour(
         },
       },
     },
-    algod as any,
+    algod,
   )
   return subscriber.pollOnce()
 }
@@ -184,7 +184,7 @@ async function main() {
   printStep(7, 'fail — throws when gap between watermark and tip exceeds maxRoundsToSync')
   let failError: Error | null = null
   try {
-    await pollWithBehaviour(algorand.client.algod, senderAddr, oldWatermark, 'fail' as any, smallMax)
+    await pollWithBehaviour(algorand.client.algod, senderAddr, oldWatermark, 'fail', smallMax)
   } catch (err) {
     failError = err as Error
   }

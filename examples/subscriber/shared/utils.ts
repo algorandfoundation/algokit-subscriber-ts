@@ -1,4 +1,5 @@
 import { AlgoAmount } from '@algorandfoundation/algokit-utils'
+import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
 
@@ -63,7 +64,7 @@ export function shortenAddress(address: string, prefixLength = 6, suffixLength =
 // ============================================================
 
 /** Create a filter-testing function bound to an algod client and watermark */
-export function createFilterTester(algod: ConstructorParameters<typeof AlgorandSubscriber>[1], watermarkBefore: bigint) {
+export function createFilterTester(algod: AlgodClient, watermarkBefore: bigint) {
   return async function testFilter(
     name: string,
     filter: Record<string, unknown>,

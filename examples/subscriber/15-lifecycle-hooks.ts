@@ -69,7 +69,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   // Register lifecycle hooks
@@ -151,7 +151,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   subscriberB.onBeforePoll((metadata) => {
@@ -232,7 +232,7 @@ async function main() {
         },
       },
     },
-    algorand.client.algod as any,
+    algorand.client.algod,
   )
 
   subscriberC.onBeforePoll(() => {
