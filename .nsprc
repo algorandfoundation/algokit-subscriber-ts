@@ -18,5 +18,10 @@
     "active": true,
     "notes": "tar is bundled inside npm - overrides cannot fix bundled deps, waiting for upstream fix",
     "expiry": "2026-06-01"
+  },
+  "1113296": {
+    "active": true,
+    "notes": "minimatch ReDoS via glob, test-exclude, typescript-eslint, eslint v8, npm — requires eslint v9 + vitest v4 migration or upstream fix",
+    "expiry": "2026-06-01"
   }
 }
