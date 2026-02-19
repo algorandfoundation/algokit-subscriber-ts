@@ -9,22 +9,18 @@
  * Prerequisites:
  * - LocalNet running (via `algokit localnet start`)
  */
-import { algo, AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
+import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import {
   printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatMicroAlgo,
   createFilterTester, type SubscribedTransaction,
 } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
   printHeader('13 — Custom Filters')
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -49,17 +45,17 @@ async function main() {
 
   const payments = [
     // Txn 1: sender->receiver, 5 ALGO, "transfer-urgent"   => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(5_000_000), note: 'transfer-urgent' },
+    { sender: sender.addr, receiver: receiver.addr, amount: algo(5), note: 'transfer-urgent' },
     // Txn 2: sender->outsider, 1 ALGO, "transfer-low"      => FAIL (amount < 2 ALGO)
-    { sender: sender.addr, receiver: outsider.addr, amount: microAlgo(1_000_000), note: 'transfer-low' },
+    { sender: sender.addr, receiver: outsider.addr, amount: algo(1), note: 'transfer-low' },
     // Txn 3: receiver->sender, 3 ALGO, "transfer-normal"   => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(3_000_000), note: 'transfer-normal' },
+    { sender: receiver.addr, receiver: sender.addr, amount: algo(3), note: 'transfer-normal' },
     // Txn 4: outsider->receiver, 4 ALGO, "transfer-big"    => FAIL (outsider not in allowlist)
-    { sender: outsider.addr, receiver: receiver.addr, amount: microAlgo(4_000_000), note: 'transfer-big' },
+    { sender: outsider.addr, receiver: receiver.addr, amount: algo(4), note: 'transfer-big' },
     // Txn 5: sender->receiver, 2 ALGO, "payment-misc"      => FAIL (note doesn't contain "transfer")
-    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(2_000_000), note: 'payment-misc' },
+    { sender: sender.addr, receiver: receiver.addr, amount: algo(2), note: 'payment-misc' },
     // Txn 6: receiver->outsider, 10 ALGO, "transfer-final" => PASS (allowlisted, >=2 ALGO, "transfer" keyword)
-    { sender: receiver.addr, receiver: outsider.addr, amount: microAlgo(10_000_000), note: 'transfer-final' },
+    { sender: receiver.addr, receiver: outsider.addr, amount: algo(10), note: 'transfer-final' },
   ]
 
   const txnResults = []

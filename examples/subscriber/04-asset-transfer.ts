@@ -11,17 +11,13 @@
  */
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, createFilterTester } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
   printHeader('04 — Asset Transfer Subscription')
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -57,7 +53,7 @@ async function main() {
     sender: receiver.addr,
     assetId,
   })
-  printInfo(`Opt-in txn ID: ${optInResult.txIds[0]}`)
+  printInfo(`Opt-in txn ID: ${optInResult.txIds.at(-1)}`)
   printSuccess('Receiver opted in')
 
   // Step 5: Creator transfers tokens to receiver
@@ -68,7 +64,7 @@ async function main() {
     assetId,
     amount: 500n,
   })
-  printInfo(`Transfer txn ID: ${transferResult.txIds[0]}`)
+  printInfo(`Transfer txn ID: ${transferResult.txIds.at(-1)}`)
   printSuccess('Transferred 500 tokens')
 
   // Watermark: just before the asset creation round

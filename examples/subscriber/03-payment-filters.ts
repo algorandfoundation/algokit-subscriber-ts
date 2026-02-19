@@ -13,17 +13,13 @@ import {
   printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatMicroAlgo,
   createFilterTester, type SubscribedTransaction,
 } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
   printHeader('03 — Payment Filters')
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -45,10 +41,10 @@ async function main() {
   printStep(3, 'Send 5 payments with varying parameters')
 
   const payments = [
-    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(1_000_000), note: 'invoice-001' },
-    { sender: sender.addr, receiver: thirdParty.addr, amount: microAlgo(5_000_000), note: 'invoice-002' },
-    { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(2_000_000), note: 'receipt-001' },
-    { sender: thirdParty.addr, receiver: receiver.addr, amount: microAlgo(3_000_000), note: 'invoice-003' },
+    { sender: sender.addr, receiver: receiver.addr, amount: algo(1), note: 'invoice-001' },
+    { sender: sender.addr, receiver: thirdParty.addr, amount: algo(5), note: 'invoice-002' },
+    { sender: receiver.addr, receiver: sender.addr, amount: algo(2), note: 'receipt-001' },
+    { sender: thirdParty.addr, receiver: receiver.addr, amount: algo(3), note: 'invoice-003' },
     { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(500_000), note: 'receipt-002' },
   ]
 
@@ -72,7 +68,7 @@ async function main() {
 
   const testFilter = createFilterTester(algorand.client.algod, watermarkBefore)
   const formatPayment = (txn: SubscribedTransaction) => {
-    const amount = txn.paymentTransaction?.amount ?? 0
+    const amount = txn.paymentTransaction?.amount ?? 0n
     const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
     printInfo(`  Matched: ${txn.id} | amount: ${formatMicroAlgo(amount)} | note: "${note}"`)
   }

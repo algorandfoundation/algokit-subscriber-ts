@@ -15,7 +15,6 @@ import { dirname, join } from 'node:path'
 import { algo, AlgorandClient, AppFactory } from '@algorandfoundation/algokit-utils'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatAlgo } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -25,10 +24,7 @@ async function main() {
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -80,7 +76,7 @@ async function main() {
     sender: caller.addr,
     extraFee: algo(0.001),  // Cover the inner transaction fee
   })
-  const appCallTxnId = issueResult.txIds[0]
+  const appCallTxnId = issueResult.txIds.at(-1)
   const appCallRound = issueResult.confirmation.confirmedRound!
   printInfo(`App call txn: ${appCallTxnId}`)
   printInfo(`Confirmed round: ${appCallRound.toString()}`)

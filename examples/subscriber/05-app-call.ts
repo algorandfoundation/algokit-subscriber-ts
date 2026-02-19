@@ -15,7 +15,6 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { algo, AlgorandClient, AppFactory } from '@algorandfoundation/algokit-utils'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, createFilterTester } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -25,10 +24,7 @@ async function main() {
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -68,7 +64,7 @@ async function main() {
     args: [1n, 2n, 'test', new Uint8Array([0, 1, 2, 3])],
     sender: creator.addr,
   })
-  printInfo(`set_global txn: ${setGlobalResult.txIds[0]}`)
+  printInfo(`set_global txn: ${setGlobalResult.txIds.at(-1)}`)
 
   // emitSwapped(uint64,uint64)void — NoOp (emits ARC-28 event)
   const emitResult = await appClient.send.call({
@@ -76,7 +72,7 @@ async function main() {
     args: [42n, 99n],
     sender: creator.addr,
   })
-  printInfo(`emitSwapped txn: ${emitResult.txIds[0]}`)
+  printInfo(`emitSwapped txn: ${emitResult.txIds.at(-1)}`)
 
   // opt_in()void — OptIn on-complete
   const optInResult = await appClient.send.optIn({
@@ -84,7 +80,7 @@ async function main() {
     args: [],
     sender: creator.addr,
   })
-  printInfo(`opt_in txn: ${optInResult.txIds[0]}`)
+  printInfo(`opt_in txn: ${optInResult.txIds.at(-1)}`)
   printSuccess('3 ABI method calls sent')
 
   // Watermark: just before the app creation round

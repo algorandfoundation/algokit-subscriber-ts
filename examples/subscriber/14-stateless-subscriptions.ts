@@ -14,7 +14,6 @@ import type { AlgodClient } from '@algorandfoundation/algokit-utils/algod-client
 import { getSubscribedTransactions } from '@algorandfoundation/algokit-subscriber'
 import type { TransactionSubscriptionParams } from '@algorandfoundation/algokit-subscriber/types/subscription'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatAlgo } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 /**
  * Simulates a serverless/cron handler that receives a watermark,
@@ -53,10 +52,7 @@ async function main() {
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const algod = algorand.client.algod
   const status = await algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
@@ -76,7 +72,7 @@ async function main() {
     amount: algo(1),
     note: 'stateless batch-1 txn-1',
   })
-  printInfo(`Txn 1 ID: ${txn1.transaction.txId()}`)
+  printInfo(`Txn 1 ID: ${txn1.txIds.at(-1)}`)
   printInfo(`Txn 1 round: ${txn1.confirmation!.confirmedRound!.toString()}`)
 
   const txn2 = await algorand.send.payment({
@@ -85,7 +81,7 @@ async function main() {
     amount: algo(2),
     note: 'stateless batch-1 txn-2',
   })
-  printInfo(`Txn 2 ID: ${txn2.transaction.txId()}`)
+  printInfo(`Txn 2 ID: ${txn2.txIds.at(-1)}`)
   printInfo(`Txn 2 round: ${txn2.confirmation!.confirmedRound!.toString()}`)
   printSuccess('Sent 2 payments')
 
@@ -117,7 +113,7 @@ async function main() {
     amount: algo(3),
     note: 'stateless batch-2 txn-3',
   })
-  printInfo(`Txn 3 ID: ${txn3.transaction.txId()}`)
+  printInfo(`Txn 3 ID: ${txn3.txIds.at(-1)}`)
   printInfo(`Txn 3 round: ${txn3.confirmation!.confirmedRound!.toString()}`)
 
   const txn4 = await algorand.send.payment({
@@ -126,7 +122,7 @@ async function main() {
     amount: algo(4),
     note: 'stateless batch-2 txn-4',
   })
-  printInfo(`Txn 4 ID: ${txn4.transaction.txId()}`)
+  printInfo(`Txn 4 ID: ${txn4.txIds.at(-1)}`)
   printInfo(`Txn 4 round: ${txn4.confirmation!.confirmedRound!.toString()}`)
   printSuccess('Sent 2 more payments')
 

@@ -12,17 +12,13 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
   printHeader('01 — Basic Poll Once')
 
   // Step 1: Set up AlgorandClient for LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -41,7 +37,7 @@ async function main() {
     amount: algo(1),
     note: 'poll-once txn 1',
   })
-  printInfo(`Txn 1 ID: ${txn1.transaction.txId()}`)
+  printInfo(`Txn 1 ID: ${txn1.txIds.at(-1)}`)
   printInfo(`Txn 1 round: ${txn1.confirmation!.confirmedRound!.toString()}`)
 
   const txn2 = await algorand.send.payment({
@@ -50,7 +46,7 @@ async function main() {
     amount: algo(1),
     note: 'poll-once txn 2',
   })
-  printInfo(`Txn 2 ID: ${txn2.transaction.txId()}`)
+  printInfo(`Txn 2 ID: ${txn2.txIds.at(-1)}`)
   printInfo(`Txn 2 round: ${txn2.confirmation!.confirmedRound!.toString()}`)
   printSuccess('Sent 2 payment transactions')
 

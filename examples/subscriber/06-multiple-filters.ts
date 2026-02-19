@@ -12,17 +12,13 @@
 import { algo, AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatMicroAlgo } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
   printHeader('06 — Multiple Named Filters')
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -52,10 +48,10 @@ async function main() {
   printStep(3, 'Send 5 transactions with varying filter overlap')
 
   const txnSpecs = [
-    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(5_000_000), note: 'multi-01', desc: 'sender->receiver 5A (all 3)' },
-    { sender: sender.addr, receiver: sender.addr, amount: microAlgo(1_000_000), note: 'multi-02', desc: 'sender->sender 1A (from-sender)' },
-    { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(4_000_000), note: 'multi-03', desc: 'receiver->sender 4A (large-txns)' },
-    { sender: sender.addr, receiver: receiver.addr, amount: microAlgo(1_000_000), note: 'multi-04', desc: 'sender->receiver 1A (from-sender + to-receiver)' },
+    { sender: sender.addr, receiver: receiver.addr, amount: algo(5), note: 'multi-01', desc: 'sender->receiver 5A (all 3)' },
+    { sender: sender.addr, receiver: sender.addr, amount: algo(1), note: 'multi-02', desc: 'sender->sender 1A (from-sender)' },
+    { sender: receiver.addr, receiver: sender.addr, amount: algo(4), note: 'multi-03', desc: 'receiver->sender 4A (large-txns)' },
+    { sender: sender.addr, receiver: receiver.addr, amount: algo(1), note: 'multi-04', desc: 'sender->receiver 1A (from-sender + to-receiver)' },
     { sender: receiver.addr, receiver: sender.addr, amount: microAlgo(500_000), note: 'multi-05', desc: 'receiver->sender 0.5A (none)' },
   ]
 
@@ -120,7 +116,7 @@ async function main() {
   printStep(6, 'Inspect filtersMatched per transaction')
   for (const txn of txns) {
     const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
-    const amount = txn.paymentTransaction?.amount ?? 0
+    const amount = txn.paymentTransaction?.amount ?? 0n
     printInfo(
       `${note}: ${formatMicroAlgo(amount)} | filtersMatched: [${(txn.filtersMatched ?? []).join(', ')}]`,
     )
@@ -194,7 +190,7 @@ async function main() {
   console.log('  ├────────────┼─────────────────────────┼───────────────────────────────────────┤')
   for (const txn of txns) {
     const note = txn.note ? Buffer.from(txn.note).toString('utf-8') : ''
-    const amount = txn.paymentTransaction?.amount ?? 0
+    const amount = txn.paymentTransaction?.amount ?? 0n
     const filters = (txn.filtersMatched ?? []).join(', ')
     console.log(
       `  │ ${note.padEnd(10)} │ ${formatMicroAlgo(amount).padEnd(23)} │ ${filters.padEnd(37)} │`,

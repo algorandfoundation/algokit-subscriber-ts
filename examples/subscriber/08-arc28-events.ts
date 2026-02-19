@@ -17,7 +17,6 @@ import { algo, AlgorandClient, AppFactory } from '@algorandfoundation/algokit-ut
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import type { Arc28Event, Arc28EventGroup } from '@algorandfoundation/algokit-subscriber/types/arc-28'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -27,10 +26,7 @@ async function main() {
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -69,14 +65,14 @@ async function main() {
     args: [42n, 99n],
     sender: creator.addr,
   })
-  printInfo(`emitSwapped(42, 99) txn: ${swapResult.txIds[0]}`)
+  printInfo(`emitSwapped(42, 99) txn: ${swapResult.txIds.at(-1)}`)
 
   const complexResult = await appClient.send.call({
     method: 'emitComplex',
     args: [10n, 20n, [1, 2, 3]],
     sender: creator.addr,
   })
-  printInfo(`emitComplex(10, 20, [1,2,3]) txn: ${complexResult.txIds[0]}`)
+  printInfo(`emitComplex(10, 20, [1,2,3]) txn: ${complexResult.txIds.at(-1)}`)
   printSuccess('2 event-emitting app calls sent')
 
   // Watermark: just before the app creation round

@@ -13,7 +13,6 @@ import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatAlgo } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 /** Custom mapped type for payment summary */
 interface PaymentSummary {
@@ -29,10 +28,7 @@ async function main() {
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -63,7 +59,7 @@ async function main() {
       sender: sender.addr,
       receiver: receiver.addr,
       amount: p.amount,
-      note: new TextEncoder().encode(p.note),
+      note: p.note,
     })
     const round = result.confirmation.confirmedRound!
     if (!firstRound) firstRound = round
