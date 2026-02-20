@@ -12,17 +12,13 @@
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
   printHeader('15 — Lifecycle Hooks & Error Handling')
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
@@ -46,7 +42,7 @@ async function main() {
     note: 'lifecycle txn 1',
   })
   const firstRound = txn1.confirmation!.confirmedRound!
-  printInfo(`Sent txn: ${txn1.transaction.txId()}`)
+  printInfo(`Sent txn: ${txn1.txIds.at(-1)}`)
 
   let watermarkA = firstRound - 1n
   const timeline: string[] = []

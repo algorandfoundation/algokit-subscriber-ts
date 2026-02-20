@@ -9,21 +9,17 @@
  * Prerequisites:
  * - LocalNet running (via `algokit localnet start`)
  */
-import { algo, AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
+import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import { BalanceChangeRole } from '@algorandfoundation/algokit-subscriber/types/subscription'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, formatMicroAlgo } from './shared/utils.js'
-import { ALGOD_CONFIG, KMD_CONFIG } from './shared/constants.js'
 
 async function main() {
   printHeader('07 — Balance Change Tracking')
 
   // Step 1: Connect to LocalNet
   printStep(1, 'Connect to LocalNet')
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: ALGOD_CONFIG,
-    kmdConfig: KMD_CONFIG,
-  })
+  const algorand = AlgorandClient.defaultLocalNet()
   const status = await algorand.client.algod.status()
   printInfo(`Current round: ${status.lastRound.toString()}`)
   printSuccess('Connected to LocalNet')
