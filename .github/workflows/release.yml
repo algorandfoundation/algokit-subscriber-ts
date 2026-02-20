@@ -37,7 +37,7 @@ jobs:
 
   release:
     name: Release
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/release-node.yml@ci/reusable-release
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-release.yml@ci/reusable-release
     needs:
       - build
     secrets:
