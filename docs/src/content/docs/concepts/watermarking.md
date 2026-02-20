@@ -5,7 +5,7 @@ description: Create reliable syncing services that can recover from outages usin
 
 You can create reliable syncing / indexing services through a simple round watermarking capability that allows you to create resilient syncing services that can recover from an outage.
 
-This works through the use of the `watermarkPersistence` parameter in [`AlgorandSubscriber`](/algokit-subscriber-ts/guide/subscriber/) and `watermark` parameter in [`getSubscribedTransactions`](/algokit-subscriber-ts/guide/subscriptions/):
+This works through the use of the `watermarkPersistence` parameter in [`AlgorandSubscriber`](../../guide/subscriber/) and `watermark` parameter in [`getSubscribedTransactions`](../../guide/subscriptions/):
 
 ```typescript
 async function getSavedWatermark(): Promise<bigint> {

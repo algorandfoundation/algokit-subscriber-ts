@@ -3,11 +3,11 @@ title: ARC-28 Events
 description: Subscribe to and process ARC-28 events emitted by smart contracts.
 ---
 
-You can [subscribe to ARC-28 events](/algokit-subscriber-ts/concepts/filtering/) for a smart contract, similar to how you can [subscribe to events in Ethereum](https://docs.web3js.org/guides/events_subscriptions/).
+You can [subscribe to ARC-28 events](../filtering/) for a smart contract, similar to how you can [subscribe to events in Ethereum](https://docs.web3js.org/guides/events_subscriptions/).
 
-Furthermore, you can receive any ARC-28 events that a smart contract call you subscribe to emitted in the [subscribed transaction object](/algokit-subscriber-ts/guide/subscriptions/#subscribedtransaction).
+Furthermore, you can receive any ARC-28 events that a smart contract call you subscribe to emitted in the [subscribed transaction object](../../guide/subscriptions/#subscribedtransaction).
 
-Both subscription and receiving ARC-28 events work through the use of the `arc28Events` parameter in [`AlgorandSubscriber`](/algokit-subscriber-ts/guide/subscriber/) and [`getSubscribedTransactions`](/algokit-subscriber-ts/guide/subscriptions/):
+Both subscription and receiving ARC-28 events work through the use of the `arc28Events` parameter in [`AlgorandSubscriber`](../../guide/subscriber/) and [`getSubscribedTransactions`](../../guide/subscriptions/):
 
 ```typescript
 const group1Events: Arc28EventGroup = {
@@ -71,6 +71,6 @@ export interface Arc28Event {
 
 Each group allows you to apply logic to the applicability and processing of a set of events. This structure allows you to safely process the events from multiple contracts in the same subscriber, or perform more advanced filtering logic to event processing.
 
-When specifying an [ARC-28 event filter](/algokit-subscriber-ts/concepts/filtering/), you specify both the `groupName` and `eventName`(s) to narrow down what event(s) you want to subscribe to.
+When specifying an [ARC-28 event filter](../filtering/), you specify both the `groupName` and `eventName`(s) to narrow down what event(s) you want to subscribe to.
 
-If you want to emit an ARC-28 event from your smart contract you can follow the [code examples for emitting ARC-28 events](/algokit-subscriber-ts/concepts/emit-arc28-events/).
+If you want to emit an ARC-28 event from your smart contract you can follow the [code examples for emitting ARC-28 events](../emit-arc28-events/).
