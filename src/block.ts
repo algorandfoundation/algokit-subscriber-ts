@@ -1,7 +1,6 @@
 import { Config } from '@algorandfoundation/algokit-utils'
-import algosdk from 'algosdk'
+import type { AlgodClient, BlockResponse } from '@algorandfoundation/algokit-utils/algod-client'
 import { chunkArray, range } from './utils'
-import Algodv2 = algosdk.Algodv2
 
 /**
  * Retrieves blocks in bulk (30 at a time) between the given round numbers.
@@ -9,17 +8,17 @@ import Algodv2 = algosdk.Algodv2
  * @param client The algod client
  * @returns The blocks
  */
-export async function getBlocksBulk(context: { startRound: bigint; maxRound: bigint }, client: Algodv2) {
+export async function getBlocksBulk(context: { startRound: bigint; maxRound: bigint }, client: AlgodClient) {
   // Grab 30 at a time in parallel to not overload the node
   const blockChunks = chunkArray(range(context.startRound, context.maxRound), 30)
-  let blocks: algosdk.modelsv2.BlockResponse[] = []
+  let blocks: BlockResponse[] = []
   for (const chunk of blockChunks) {
     Config.logger.info(`Retrieving ${chunk.length} blocks from round ${chunk[0]} via algod`)
     const start = +new Date()
     blocks = blocks.concat(
       await Promise.all(
         chunk.map(async (round) => {
-          return await client.block(round).do()
+          return await client.block(round)
         }),
       ),
     )
@@ -27,4 +26,3 @@ export async function getBlocksBulk(context: { startRound: bigint; maxRound: big
   }
   return blocks
 }
-

@@ -53,6 +53,12 @@ coverage
 code-docs/
 out/
 
+# Docs (Astro Starlight)
+docs/dist/
+docs/.astro/
+docs/node_modules/
+docs/src/content/docs/api/
+
 # dotenv environment variable files
 .env
 .env.development.local
@@ -63,8 +69,16 @@ out/
 watermark.txt
 examples/**/*.json
 !examples/**/*.arc32.json
+!examples/**/*.arc56.json
+!examples/subscriber/package.json
+!examples/subscriber/package-lock.json
+!examples/subscriber/tsconfig.json
+!examples/subscriber/tsconfig.run.json
 
 __pycache__
 
 *.db
 *.db-journal
+
+
+.claude/
