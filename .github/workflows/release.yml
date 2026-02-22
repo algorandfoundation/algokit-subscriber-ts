@@ -28,15 +28,15 @@ jobs:
   #       algokit localnet start
   #       npx --yes wait-on tcp:4001 -t 30000
 
-  # build:
-  #   name: Build
-  #   uses: algorandfoundation/algokit-shared-config/.github/workflows/node-build-zip.yml@ci/reusable-release
-  #   needs:
-  #     - ci
-  #   with:
-  #     node-version: 20.x
-  #     build-path: dist
-  #     artifact-name: package
+  build:
+    name: Build
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-build-zip.yml@ci/reusable-release
+    needs:
+      # - ci
+    with:
+      node-version: 20.x
+      build-path: dist
+      artifact-name: package
 
   generate_and_publish_docs:
     # needs:
