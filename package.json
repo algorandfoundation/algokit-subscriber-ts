@@ -14,7 +14,7 @@
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "check-types": "prisma generate && tsc --noEmit",
-    "audit": "better-npm-audit audit",
+    "audit": "pnpm audit",
     "format": "prettier --write .",
     "commit-lint": "commitlint --edit -o",
     "semantic-release": "semantic-release",
@@ -112,10 +112,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "overrides": {
-    "esbuild": "0.25.0",
-    "js-yaml": "4.1.1",
-    "glob": "^11.1.0"
+  "pnpm": {
+    "overrides": {
+      "minimatch": ">=10.2.1",
+      "ajv": ">=8.18.0",
+      "bn.js": ">=5.2.3"
+    }
   },
   "release": {
     "branches": [
