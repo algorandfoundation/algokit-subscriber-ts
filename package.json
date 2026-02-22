@@ -116,6 +116,7 @@
     "overrides": {
       "minimatch": ">=10.2.1",
       "ajv": ">=8.18.0",
+      "@eslint/eslintrc>ajv": "^6.12.6",
       "bn.js": ">=5.2.3"
     }
   },
