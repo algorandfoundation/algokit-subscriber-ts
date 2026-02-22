@@ -4,7 +4,7 @@ export default defineConfig({
   appType: 'custom',
   test: {
     include: ['**/*.spec.ts'],
-    exclude: ['node_modules'],
+    exclude: ['node_modules', 'docs/node_modules'],
     // Sometimes indexer catchup is slowwwww...
     testTimeout: 20_000,
     setupFiles: ['tests/setup.ts'],
