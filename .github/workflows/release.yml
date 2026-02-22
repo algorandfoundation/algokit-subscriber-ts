@@ -14,37 +14,35 @@ jobs:
   generate_and_publish_docs:
     name: Build and Publish Docs
     uses: algorandfoundation/algokit-shared-config/.github/workflows/build-and-publish-docs.yml@ci/reusable-release
-    with:
-      working-directory: .
-      node-version: 20.x
-  ci:
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-ci.yml@main
-    with:
-      node-version: 20.x
-      working-directory: .
-      run-commit-lint: true
-      run-build: true
-      pre-test-script: |
-        pipx install algokit
-        algokit localnet start
-        npx --yes wait-on tcp:4001 -t 30000
 
-  build:
-    name: Build
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-build-zip.yml@ci/reusable-release
-    # needs:
-    #   - ci
-    with:
-      node-version: 20.x
-      build-path: dist
-      artifact-name: package
+  # ci:
+  #   uses: algorandfoundation/algokit-shared-config/.github/workflows/node-ci.yml@main
+  #   with:
+  #     node-version: 20.x
+  #     working-directory: .
+  #     run-commit-lint: true
+  #     run-build: true
+  #     pre-test-script: |
+  #       pipx install algokit
+  #       algokit localnet start
+  #       npx --yes wait-on tcp:4001 -t 30000
 
-  release:
-    name: Release
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-release.yml@ci/reusable-release
-    needs:
-      - build
-    secrets:
-      BOT_ID: ${{ secrets.BOT_ID }}
-      BOT_SK: ${{ secrets.BOT_SK }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # build:
+  #   name: Build
+  #   uses: algorandfoundation/algokit-shared-config/.github/workflows/node-build-zip.yml@ci/reusable-release
+  #   # needs:
+  #   #   - ci
+  #   with:
+  #     node-version: 20.x
+  #     build-path: dist
+  #     artifact-name: package
+
+  # release:
+  #   name: Release
+  #   uses: algorandfoundation/algokit-shared-config/.github/workflows/node-release.yml@ci/reusable-release
+  #   needs:
+  #     - build
+  #   secrets:
+  #     BOT_ID: ${{ secrets.BOT_ID }}
+  #     BOT_SK: ${{ secrets.BOT_SK }}
+  #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
