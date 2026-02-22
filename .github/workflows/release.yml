@@ -31,8 +31,8 @@ jobs:
   build:
     name: Build
     uses: algorandfoundation/algokit-shared-config/.github/workflows/node-build-zip.yml@ci/reusable-release
-    needs:
-      # - ci
+    # needs:
+    # - ci
     with:
       node-version: 20.x
       build-path: dist
