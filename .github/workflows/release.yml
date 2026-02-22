@@ -34,6 +34,8 @@ jobs:
       artifact-name: package
 
   generate_and_publish_docs:
+    needs:
+      - ci
     name: Build and Publish Docs
     uses: algorandfoundation/algokit-shared-config/.github/workflows/build-and-publish-docs.yml@ci/reusable-release
 
