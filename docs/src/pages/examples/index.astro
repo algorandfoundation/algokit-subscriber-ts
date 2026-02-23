@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content'
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+
+const allExamples = await getCollection('examples')
+const sortedExamples = allExamples.sort((a, b) => a.data.order - b.data.order)
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Code Examples',
+    description: `${allExamples.length} runnable TypeScript examples demonstrating AlgoKit Subscriber features`,
+  }}
+>
+  <p>
+    Browse <strong>{allExamples.length}</strong> runnable TypeScript examples demonstrating how to use the AlgoKit
+    Subscriber library. Each example is self-contained and progressively introduces features.
+  </p>
+
+  <h2>Quick Start</h2>
+  <pre><code>{`# Clone the repository
+git clone https://github.com/algorandfoundation/algokit-subscriber-ts.git
+cd algokit-subscriber-ts
+
+# Install dependencies and build the package
+npm ci
+npm run build
+
+# Install examples dependencies
+cd examples/subscriber
+npm ci
+
+# Run any example
+npm run example 01-basic-poll-once.ts`}</code></pre>
+
+  <h2>Prerequisites</h2>
+  <ul>
+    <li>Node.js &gt;= 20.0</li>
+    <li>
+      <a href="https://github.com/algorandfoundation/algokit-cli">AlgoKit CLI</a> installed
+    </li>
+    <li>
+      LocalNet running (<code>algokit localnet start</code>)
+    </li>
+  </ul>
+
+  <h2>Examples ({allExamples.length})</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Example</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        sortedExamples.map((example) => (
+          <tr>
+            <td>
+              <a href={`/algokit-subscriber-ts/examples/${example.id}/`}>{example.data.title}</a>
+            </td>
+            <td>{(() => {
+              const text = example.data.description || ''
+              const lines = text.split('\n')
+              const elements: any[] = []
+              let bulletBuffer: string[] = []
+              const flushBullets = () => {
+                if (bulletBuffer.length > 0) {
+                  elements.push(<ul>{bulletBuffer.map((b) => <li set:html={b} />)}</ul>)
+                  bulletBuffer = []
+                }
+              }
+              for (const line of lines) {
+                const trimmed = line.trim()
+                if (!trimmed) continue
+                if (/^[-•]\s/.test(trimmed)) {
+                  bulletBuffer.push(trimmed.replace(/^[-•]\s*/, ''))
+                } else {
+                  flushBullets()
+                  elements.push(<p set:html={trimmed} />)
+                }
+              }
+              flushBullets()
+              return elements
+            })()}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</StarlightPage>
