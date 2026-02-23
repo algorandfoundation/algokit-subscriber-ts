@@ -654,7 +654,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         },
         "transactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/8",
       }
-      `)
+    `)
 
     // https://allo.info/tx/QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q/inner/9/
     expect(getTransactionInBlockForDiff(transformed[intraRoundOffset + 9])).toMatchInlineSnapshot(`

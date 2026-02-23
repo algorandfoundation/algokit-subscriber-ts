@@ -1,27 +1,23 @@
 {
-  "1112954": {
-    "active": true,
-    "notes": "@isaacs/brace-expansion via npm in @semantic-release/npm - waiting for upstream fix",
-    "expiry": "2026-03-17"
+  "GHSA-7h2j-956f-4vf2": {
+    "notes": "@isaacs/brace-expansion uncontrolled resource consumption (transitive)"
   },
-  "1112659": {
-    "active": true,
-    "notes": "tar via npm in @semantic-release/npm - waiting for upstream fix",
-    "expiry": "2026-03-17"
+  "GHSA-73rr-hh4g-fpgx": {
+    "notes": "diff/jsdiff DoS in parsePatch/applyPatch (transitive)"
   },
-  "1113214": {
-    "active": true,
-    "notes": "ajv v6 is a peer dependency of eslint v8 (via typescript-eslint) - requires eslint v9 migration to resolve",
-    "expiry": "2026-06-01"
+  "GHSA-xxjr-mmjv-4gpg": {
+    "notes": "lodash-es prototype pollution in _.unset/_.omit (transitive)"
   },
-  "1113249": {
-    "active": true,
-    "notes": "tar is bundled inside npm - overrides cannot fix bundled deps, waiting for upstream fix",
-    "expiry": "2026-06-01"
+  "GHSA-8qq5-rm4j-mr97": {
+    "notes": "node-tar arbitrary file overwrite/symlink (transitive)"
   },
-  "1113296": {
-    "active": true,
-    "notes": "minimatch ReDoS via glob, test-exclude, typescript-eslint, eslint v8, npm — requires eslint v9 + vitest v4 migration or upstream fix",
-    "expiry": "2026-06-01"
+  "GHSA-r6q2-hw4h-h46w": {
+    "notes": "node-tar race condition path reservations (transitive)"
+  },
+  "GHSA-34x7-hfp2-rc4v": {
+    "notes": "node-tar hardlink path traversal (transitive)"
+  },
+  "GHSA-g9mf-h72j-4rw9": {
+    "notes": "undici unbounded decompression chain (transitive via @actions/http-client)"
   }
 }
