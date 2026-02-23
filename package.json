@@ -107,6 +107,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "fast-glob": "^3.3.3",
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
