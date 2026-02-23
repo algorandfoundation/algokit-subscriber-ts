@@ -62,6 +62,10 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Examples',
+          items: [{ label: 'Overview', link: '/examples/' }],
+        },
+        {
           label: 'Migration Guides',
           collapsed: true,
           autogenerate: { directory: 'migration' },
