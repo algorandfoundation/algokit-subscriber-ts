@@ -44,12 +44,12 @@ jobs:
     name: Build and Publish Docs
     uses: algorandfoundation/algokit-shared-config/.github/workflows/build-and-publish-docs.yml@ci/reusable-release
 
-  # release:
-  #   name: Release
-  #   uses: algorandfoundation/algokit-shared-config/.github/workflows/node-release.yml@ci/reusable-release
-  #   needs:
-  #     - build
-  #   secrets:
-  #     BOT_ID: ${{ secrets.BOT_ID }}
-  #     BOT_SK: ${{ secrets.BOT_SK }}
-  #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  release:
+    name: Release
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-release.yml@ci/reusable-release
+    needs:
+      - build
+    secrets:
+      BOT_ID: ${{ secrets.BOT_ID }}
+      BOT_SK: ${{ secrets.BOT_SK }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
