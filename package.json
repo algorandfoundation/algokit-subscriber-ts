@@ -108,6 +108,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@types/node": "^25.3.0",
     "fast-glob": "^3.3.3",
     "js-sha512": "^0.9.0"
   },
