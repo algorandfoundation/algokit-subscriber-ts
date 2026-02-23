@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   pull_request:
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-ci.yml@main
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-ci.yml@mci/reusable-release
     with:
       node-version: 20.x
       working-directory: .
@@ -26,6 +26,6 @@ jobs:
         npm run audit
 
   check_docs:
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@main
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@mci/reusable-release
     with:
       node-version: 20.x
