@@ -1,7 +1,14 @@
 {
   "name": "@algorandfoundation/algokit-subscriber",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.29.2",
   "private": false,
+  "pnpm": {
+    "overrides": {
+      "minimatch": ">=10.2.1",
+      "bn.js": ">=5.2.3"
+    }
+  },
   "scripts": {
     "build": "run-s build:*",
     "build:0-clean": "rimraf dist coverage",
@@ -12,12 +19,15 @@
     "test:watch": "vitest watch --coverage --passWithNoTests",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
-    "check-types": "tsc --noEmit",
-    "audit": "better-npm-audit audit",
+    "check-types": "prisma generate && tsc --noEmit",
+    "audit": "pnpm audit",
     "format": "prettier --write .",
     "commit-lint": "commitlint --edit -o",
     "semantic-release": "semantic-release",
-    "generate:code-docs": "typedoc",
+    "docs:dev": "npm run --prefix docs dev",
+    "docs:build": "pnpm run --prefix docs build",
+    "docs:preview": "npm run --prefix docs preview",
+    "generate:code-docs": "npm run docs:build",
     "generate:contract-client": "cd tests/contract && poetry run python -m build",
     "pre-commit": "run-s check-types lint:fix audit format test generate:code-docs",
     "dhm": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/data-history-museum/index.ts",
