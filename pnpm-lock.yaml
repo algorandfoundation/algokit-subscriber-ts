@@ -13,8 +13,11 @@ importers:
   .:
     dependencies:
       '@algorandfoundation/algokit-utils':
-        specifier: ^10.0.0-alpha.39
-        version: 10.0.0-alpha.39
+        specifier: ^9.0.0
+        version: 9.2.0(algosdk@3.5.2)
+      algosdk:
+        specifier: ^3.0.0
+        version: 3.5.2
       js-sha512:
         specifier: ^0.9.0
         version: 0.9.0
@@ -118,12 +121,11 @@ packages:
   '@actions/io@3.0.2':
     resolution: {integrity: sha512-nRBchcMM+QK1pdjO7/idu86rbJI5YHUKCvKs0KxnSYbVe3F51UfGxuZX4Qy/fWlp6l7gWFwIkrOzN+oUK03kfw==}
 
-  '@algorandfoundation/algokit-utils@10.0.0-alpha.39':
-    resolution: {integrity: sha512-nqyBdXsdgt5FIKLXMctJXFZWDgwQBfXowSacrIfLplMphRuKqWOV3AwTOB+QDvMMsCPAstf6ULmEBQLJcXlVtA==}
+  '@algorandfoundation/algokit-utils@9.2.0':
+    resolution: {integrity: sha512-jILpK3PlSJ55crS8+Dl7iIiADEj/VowokTGSVEEneDG41XM3jMmogGVpCNipBil/YAGC2eh2yc4l9iHnfQdT/g==}
     engines: {node: '>=20.0'}
-
-  '@algorandfoundation/xhd-wallet-api@2.0.0-canary.1':
-    resolution: {integrity: sha512-U6rSWMO6FKDLvMxWtfKyW5ctqSy2NrONWTU/jOA+BX0SGru0GPXsxwzFdcPa5w+X055V/xVVsr8eA3xA+m/5jA==}
+    peerDependencies:
+      algosdk: ^3.5.2
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -467,21 +469,6 @@ packages:
 
   '@makerx/prettier-config@2.0.1':
     resolution: {integrity: sha512-fI2TT312JPVrgNFASiZG8b7N4RjazYvxEd7Yq05jwTdZyTiT9eRGjKHSRc+MA9uPBeOVLWNI7PKYTCqyXTw7uA==}
-
-  '@noble/ciphers@2.1.1':
-    resolution: {integrity: sha512-bysYuiVfhxNJuldNXlFEitTVdNnYUc+XNJZd7Qm2a5j1vZHgY+fazadNFWFaMK/2vye0JVlxV3gHmC0WDfAOQw==}
-    engines: {node: '>= 20.19.0'}
-
-  '@noble/curves@2.0.1':
-    resolution: {integrity: sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw==}
-    engines: {node: '>= 20.19.0'}
-
-  '@noble/ed25519@3.0.0':
-    resolution: {integrity: sha512-QyteqMNm0GLqfa5SoYbSC3+Pvykwpn95Zgth4MFVSMKBB75ELl9tX1LAVsN4c3HXOrakHsF2gL4zWDAYCcsnzg==}
-
-  '@noble/hashes@2.0.1':
-    resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
-    engines: {node: '>= 20.19.0'}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -954,13 +941,13 @@ packages:
   ajv@8.18.0:
     resolution: {integrity: sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==}
 
-  algo-msgpack-with-bigint@2.1.1:
-    resolution: {integrity: sha512-F1tGh056XczEaEAqu7s+hlZUDWwOBT70Eq0lfMpBP2YguSQVyxRbprLq5rELXKQOyOaixTWYhMeMQMzP0U5FoQ==}
-    engines: {node: '>= 10'}
-
   algorand-msgpack@1.1.0:
     resolution: {integrity: sha512-08k7pBQnkaUB5p+jL7f1TRaUIlTSDE0cesFu1mD7llLao+1cAhtvvZmGE3OnisTd0xOn118QMw74SRqddqaYvw==}
     engines: {node: '>= 14'}
+
+  algosdk@3.5.2:
+    resolution: {integrity: sha512-frhGtZl1JvfrLRKmMvUm880wj4OiWsWo2FhbreNWh7pdFsKuWPj60fV682wt/CYefLI70iwHavPOwGBkTVt0VA==}
+    engines: {node: '>=18.0.0'}
 
   ansi-escapes@7.3.0:
     resolution: {integrity: sha512-BvU8nYgGQBxcmMuEeUEmNTvrMVjJNSH7RgW24vXexN4Ven6qCvy4TntnvlnwnMLTVlcRQQdbRY8NKnaIoeWDNg==}
@@ -1041,9 +1028,6 @@ packages:
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
-
-  bn.js@5.2.3:
-    resolution: {integrity: sha512-EAcmnPkxpntVL+DS7bO1zhcZNvCkxqtkd0ZY53h06GNQ3DEkkGZ/gKgmDv6DdZQGj9BgfSPKtJJ7Dp1GPP8f7w==}
 
   bottleneck@2.19.5:
     resolution: {integrity: sha512-VHiNCbI1lKdl44tGrhNfU3lup0Tj/ZBMJB5/2ZbNXRCPuRCO7ed2mgcK4r17y+KB2EfuYuRaVlwNbAeaWGSpbw==}
@@ -1782,6 +1766,15 @@ packages:
   jiti@2.6.1:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
+
+  js-sha256@0.9.0:
+    resolution: {integrity: sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==}
+
+  js-sha3@0.8.0:
+    resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
+
+  js-sha512@0.8.0:
+    resolution: {integrity: sha512-PWsmefG6Jkodqt+ePTvBZCSMFgN7Clckjd0O7su3I0+BW2QWUTJNzjktHsztGLhncP2h8mcF9V9Y2Ha59pAViQ==}
 
   js-sha512@0.9.0:
     resolution: {integrity: sha512-mirki9WS/SUahm+1TbAPkqvbCiCfOAAsyXeHxK1UkullnJVVqoJG2pL9ObvT05CN+tM7fxhfYm0NbXn+1hWoZg==}
@@ -2995,27 +2988,10 @@ snapshots:
 
   '@actions/io@3.0.2': {}
 
-  '@algorandfoundation/algokit-utils@10.0.0-alpha.39':
+  '@algorandfoundation/algokit-utils@9.2.0(algosdk@3.5.2)':
     dependencies:
-      '@algorandfoundation/xhd-wallet-api': 2.0.0-canary.1
-      '@noble/ed25519': 3.0.0
-      '@noble/hashes': 2.0.1
-      algorand-msgpack: 1.1.0
+      algosdk: 3.5.2
       buffer: 6.0.3
-      dotenv: 16.6.1
-      hi-base32: 0.5.1
-      json-bigint: 1.0.0
-      tweetnacl: 1.0.3
-      vlq: 2.0.4
-
-  '@algorandfoundation/xhd-wallet-api@2.0.0-canary.1':
-    dependencies:
-      '@noble/ciphers': 2.1.1
-      '@noble/curves': 2.0.1
-      '@noble/hashes': 2.0.1
-      ajv: 8.18.0
-      algo-msgpack-with-bigint: 2.1.1
-      bn.js: 5.2.3
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -3326,16 +3302,6 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   '@makerx/prettier-config@2.0.1': {}
-
-  '@noble/ciphers@2.1.1': {}
-
-  '@noble/curves@2.0.1':
-    dependencies:
-      '@noble/hashes': 2.0.1
-
-  '@noble/ed25519@3.0.0': {}
-
-  '@noble/hashes@2.0.1': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -3847,9 +3813,18 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  algo-msgpack-with-bigint@2.1.1: {}
-
   algorand-msgpack@1.1.0: {}
+
+  algosdk@3.5.2:
+    dependencies:
+      algorand-msgpack: 1.1.0
+      hi-base32: 0.5.1
+      js-sha256: 0.9.0
+      js-sha3: 0.8.0
+      js-sha512: 0.8.0
+      json-bigint: 1.0.0
+      tweetnacl: 1.0.3
+      vlq: 2.0.4
 
   ansi-escapes@7.3.0:
     dependencies:
@@ -3913,8 +3888,6 @@ snapshots:
   bignumber.js@9.3.1: {}
 
   binary-extensions@2.3.0: {}
-
-  bn.js@5.2.3: {}
 
   bottleneck@2.19.5: {}
 
@@ -4690,6 +4663,12 @@ snapshots:
   java-properties@1.0.2: {}
 
   jiti@2.6.1: {}
+
+  js-sha256@0.9.0: {}
+
+  js-sha3@0.8.0: {}
+
+  js-sha512@0.8.0: {}
 
   js-sha512@0.9.0: {}
 
