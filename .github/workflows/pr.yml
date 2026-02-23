@@ -27,3 +27,5 @@ jobs:
 
   check_docs:
     uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@main
+    with:
+      node-version: 20.x
