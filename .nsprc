@@ -9,19 +9,14 @@
     "notes": "tar via npm in @semantic-release/npm - waiting for upstream fix",
     "expiry": "2026-03-17"
   },
-  "1113214": {
+  "1113375": {
     "active": true,
-    "notes": "ajv v6 is a peer dependency of eslint v8 (via typescript-eslint) - requires eslint v9 migration to resolve",
+    "notes": "tar arbitrary file read/write via hardlink target escape (npm>tar) - tar is bundled inside npm, overrides cannot fix bundled deps, waiting for upstream fix",
     "expiry": "2026-06-01"
   },
-  "1113249": {
+  "1113371": {
     "active": true,
-    "notes": "tar is bundled inside npm - overrides cannot fix bundled deps, waiting for upstream fix",
-    "expiry": "2026-06-01"
-  },
-  "1113296": {
-    "active": true,
-    "notes": "minimatch ReDoS via glob, test-exclude, typescript-eslint, eslint v8, npm — requires eslint v9 + vitest v4 migration or upstream fix",
+    "notes": "minimatch ReDoS via repeated wildcards (glob, npm, test-exclude, typescript-eslint) — npm>minimatch is bundled inside npm, overrides cannot fix bundled deps, waiting for upstream fix or vitest v4 + eslint v9 migration",
     "expiry": "2026-06-01"
   }
 }

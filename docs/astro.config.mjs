@@ -15,6 +15,11 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'AlgoKit Subscriber TypeScript',
+      customCss: [
+        'remark-github-alerts/styles/github-colors-light.css',
+        'remark-github-alerts/styles/github-colors-dark-media.css',
+        'remark-github-alerts/styles/github-base.css',
+      ],
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/algorandfoundation/algokit-subscriber-ts' },
         { icon: 'discord', label: 'Discord', href: 'https://discord.gg/algorand' },
@@ -60,6 +65,10 @@ export default defineConfig({
             { slug: 'concepts/state-proofs' },
             { slug: 'concepts/fast-catchup' },
           ],
+        },
+        {
+          label: 'Examples',
+          items: [{ label: 'Overview', link: '/examples/' }],
         },
         {
           label: 'Migration Guides',
