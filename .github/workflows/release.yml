@@ -12,7 +12,7 @@ concurrency: release
 
 permissions:
   pages: write
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
