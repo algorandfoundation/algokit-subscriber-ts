@@ -51,4 +51,3 @@ jobs:
     secrets:
       BOT_ID: ${{ secrets.BOT_ID }}
       BOT_SK: ${{ secrets.BOT_SK }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
