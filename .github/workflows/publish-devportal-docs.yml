@@ -1,0 +1,26 @@
+name: Publish DevPortal Docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ci/add-publish-to-devportal-workflow]
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  publish-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Publish DevPortal Docs
+        uses: algorandfoundation/devportal/.github/actions/publish-devportal-docs@ci/update-publish-devportal-docs-workflow
+        with:
+          docs-dir: docs
