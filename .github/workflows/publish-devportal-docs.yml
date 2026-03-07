@@ -20,6 +20,10 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
+      - name: Install root dependencies
+        run: npm ci
+      - name: Build package
+        run: npm run build
       - name: Publish DevPortal Docs
         uses: algorandfoundation/devportal/.github/actions/publish-devportal-docs@ci/update-publish-devportal-docs-workflow
         with:
