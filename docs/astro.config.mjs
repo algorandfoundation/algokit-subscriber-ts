@@ -1,7 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import starlightTypeDoc, { typeDocSidebarGroup } from 'starlight-typedoc';
+import starlightTypeDoc from 'starlight-typedoc';
+import sidebar from './sidebar.config.json';
 import remarkGithubAlerts from 'remark-github-alerts';
 
 // https://astro.build/config
@@ -36,47 +37,11 @@ export default defineConfig({
           typeDoc: {
             excludeReferences: true,
             gitRevision: 'main',
+            entryFileName: 'index',
           },
         }),
       ],
-      sidebar: [
-        { label: 'Home', link: '/' },
-        {
-          label: 'Getting Started',
-          items: [{ label: 'Quick Start', slug: 'tutorials/quick-start' }],
-        },
-        {
-          label: 'Guides',
-          items: [
-            { slug: 'guide/subscriber' },
-            { slug: 'guide/subscriptions' },
-          ],
-        },
-        {
-          label: 'Concepts',
-          items: [
-            { slug: 'concepts/sync-behaviour' },
-            { slug: 'concepts/low-latency' },
-            { slug: 'concepts/watermarking' },
-            { slug: 'concepts/filtering' },
-            { slug: 'concepts/arc28-events' },
-            { slug: 'concepts/emit-arc28-events' },
-            { slug: 'concepts/inner-transactions' },
-            { slug: 'concepts/state-proofs' },
-            { slug: 'concepts/fast-catchup' },
-          ],
-        },
-        {
-          label: 'Examples',
-          items: [{ label: 'Overview', link: '/examples/' }],
-        },
-        {
-          label: 'Migration Guides',
-          collapsed: true,
-          autogenerate: { directory: 'migration' },
-        },
-        typeDocSidebarGroup,
-      ],
+      sidebar,
     }),
   ],
 });

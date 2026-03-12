@@ -17,12 +17,11 @@
     "format": "prettier --write .",
     "commit-lint": "commitlint --edit -o",
     "semantic-release": "semantic-release",
-    "docs:dev": "npm run --prefix docs dev",
-    "docs:build": "npm run --prefix docs build",
-    "docs:preview": "npm run --prefix docs preview",
-    "generate:code-docs": "npm run docs:build",
+    "docs:dev": "pnpm run --prefix docs dev",
+    "docs:build": "pnpm run --prefix docs build",
+    "docs:preview": "pnpm run --prefix docs preview",
     "generate:contract-client": "cd tests/contract && poetry run python -m build",
-    "pre-commit": "run-s check-types lint:fix audit format test generate:code-docs",
+    "pre-commit": "run-s check-types lint:fix audit format test docs:build",
     "dhm": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/data-history-museum/index.ts",
     "watch-dhm": "cross-env RUN_LOOP=true npm run dhm",
     "xgov": "npx prisma migrate dev && ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/xgov-voting/index.ts",
@@ -112,7 +111,8 @@
     "esbuild": "0.25.0",
     "js-yaml": "4.1.1",
     "glob": "^11.1.0",
-    "ajv": "^6.14.0"
+    "ajv": "^6.14.0",
+    "minimatch": "^3.1.5"
   },
   "release": {
     "branches": [
