@@ -9,7 +9,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import { parseJSDoc, extractOrder, createSlug, lineSeparator } from '../src/loaders/examples-loader.ts'
+import { parseJSDoc, extractOrder, createSlug } from '../src/loaders/examples-loader.ts'
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '..', '..')
 const EXAMPLES_DIR = path.join(REPO_ROOT, 'examples', 'subscriber')
