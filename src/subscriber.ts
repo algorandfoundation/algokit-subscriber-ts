@@ -117,7 +117,6 @@ export class AlgorandSubscriber {
     }
     this.startPromise = (async () => {
       while (!this.abortController.signal.aborted) {
-        // eslint-disable-next-line no-console
         const start = +new Date()
         const result = await this.pollOnce()
         const durationInSeconds = (+new Date() - start) / 1000
@@ -129,7 +128,6 @@ export class AlgorandSubscriber {
           subscribedTransactionsLength: result.subscribedTransactions.length,
         })
         inspect?.(result)
-        // eslint-disable-next-line no-console
         if (result.currentRound > result.newWatermark || !this.config.waitForBlockWhenAtTip) {
           Config.getLogger(suppressLog).info(
             `Subscription poll completed in ${durationInSeconds}s; sleeping for ${this.config.frequencyInSeconds ?? 1}s`,

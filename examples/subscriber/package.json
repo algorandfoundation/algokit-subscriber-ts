@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@algorandfoundation/algokit-subscriber": "file:../../dist",
-    "@algorandfoundation/algokit-utils": "^10.0.0-alpha.39"
+    "@algorandfoundation/algokit-utils": "^10.0.0-alpha.45"
   },
   "devDependencies": {
     "tsx": "^4.21.0",
