@@ -9,7 +9,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import { parseJSDoc, extractOrder, createSlug } from '../src/loaders/examples-loader.ts'
+import { createSlug, extractOrder, parseJSDoc } from '../src/loaders/examples-loader.ts'
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '..', '..')
 const EXAMPLES_DIR = path.join(REPO_ROOT, 'examples', 'subscriber')
@@ -158,7 +158,7 @@ npx tsx 01-basic-poll-once.ts
 
 ## Prerequisites
 
-- Node.js >= 20
+- Node.js >= 24
 - npm
 - [AlgoKit CLI](https://github.com/algorandfoundation/algokit-cli) installed
 - LocalNet running for network examples (\`algokit localnet start\`)
