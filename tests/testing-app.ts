@@ -1,20 +1,21 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import algosdk, { OnApplicationComplete } from 'algosdk'
+import type { AddressWithSigners } from '@algorandfoundation/algokit-utils/transact'
+import { OnApplicationComplete, Transaction } from '@algorandfoundation/algokit-utils/transact'
 import { TestingAppFactory } from './contract/client'
 
 export async function app(params: {
   create: true
   algorand: AlgorandClient
-  creator: algosdk.Account
+  creator: AddressWithSigners
   note?: string
 }): ReturnType<TestingAppFactory['send']['create']['bare']>
 export async function app(params: {
   create: false
   algorand: AlgorandClient
-  creator: algosdk.Account
+  creator: AddressWithSigners
   note?: string
-}): Promise<algosdk.Transaction>
-export async function app(params: { create: boolean; algorand: AlgorandClient; creator: algosdk.Account; note?: string }) {
+}): Promise<Transaction>
+export async function app(params: { create: boolean; algorand: AlgorandClient; creator: AddressWithSigners; note?: string }) {
   params.algorand.setSignerFromAccount(params.creator)
   const factory = new TestingAppFactory({
     algorand: params.algorand,
@@ -22,7 +23,7 @@ export async function app(params: { create: boolean; algorand: AlgorandClient; c
 
   const result = await (params.create ? factory.send : factory.createTransaction).create.bare({
     sender: params.creator.addr,
-    onComplete: OnApplicationComplete.NoOpOC,
+    onComplete: OnApplicationComplete.NoOp,
     note: params.note,
   })
 

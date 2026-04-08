@@ -1,5 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { describe, expect, it } from 'vitest'
 import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions } from '../transactions'
@@ -16,7 +16,6 @@ describe('Asset config transaction', () => {
       decimals: 6,
       total: 2000000000000000n,
       clawback: 'ATPVJYGEGP5H6GCZ4T6CG4PK7LH5OMWXHLXZHDPGO7RO6T3EHWTF6UUY6E',
-      defaultFrozen: false,
       freeze: 'ATPVJYGEGP5H6GCZ4T6CG4PK7LH5OMWXHLXZHDPGO7RO6T3EHWTF6UUY6E',
       manager: 'ATPVJYGEGP5H6GCZ4T6CG4PK7LH5OMWXHLXZHDPGO7RO6T3EHWTF6UUY6E',
       name: 'Fry Node',
@@ -33,7 +32,7 @@ describe('Asset config transaction', () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.acfg,
+          type: TransactionType.AssetConfig,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,
@@ -52,7 +51,7 @@ describe('Asset config transaction', () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.acfg,
+          type: TransactionType.AssetConfig,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,

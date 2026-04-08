@@ -1,23 +1,17 @@
 {
-  "GHSA-7h2j-956f-4vf2": {
-    "notes": "@isaacs/brace-expansion uncontrolled resource consumption (transitive)"
+  "1115543": {
+    "active": true,
+    "notes": "brace-expansion bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-06-01"
   },
-  "GHSA-73rr-hh4g-fpgx": {
-    "notes": "diff/jsdiff DoS in parsePatch/applyPatch (transitive)"
+  "1115551": {
+    "active": true,
+    "notes": "picomatch bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-06-01"
   },
-  "GHSA-xxjr-mmjv-4gpg": {
-    "notes": "lodash-es prototype pollution in _.unset/_.omit (transitive)"
-  },
-  "GHSA-8qq5-rm4j-mr97": {
-    "notes": "node-tar arbitrary file overwrite/symlink (transitive)"
-  },
-  "GHSA-r6q2-hw4h-h46w": {
-    "notes": "node-tar race condition path reservations (transitive)"
-  },
-  "GHSA-34x7-hfp2-rc4v": {
-    "notes": "node-tar hardlink path traversal (transitive)"
-  },
-  "GHSA-g9mf-h72j-4rw9": {
-    "notes": "undici unbounded decompression chain (transitive via @actions/http-client)"
+  "1115554": {
+    "active": true,
+    "notes": "picomatch bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-06-01"
   }
 }

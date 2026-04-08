@@ -1,0 +1,43 @@
+name: 'Build and Publish Documentation'
+description: 'Builds Astro Starlight documentation and publishes to GitHub Pages or PR preview'
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '24.x'
+  deployment-type:
+    description: 'Type of deployment: "release" or "pr-preview"'
+    required: true
+  pr-number:
+    description: 'Pull request number (required for pr-preview deployment)'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install root dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        package_json_file: docs/package.json
+
+    - name: Install docs dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile --dir docs
+
+    - name: Build documentation
+      shell: bash
+      run: npm run docs:build
+
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v4
+      with:
+        path: docs/dist

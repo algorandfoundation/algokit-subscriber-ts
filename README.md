@@ -2,69 +2,80 @@
 
 This library a simple, but flexible / configurable Algorand transaction subscription / indexing mechanism. It allows you to quickly create Node.js or JavaScript services that follow or subscribe to the Algorand Blockchain.
 
-[Documentation](./docs/README.md)
+[Documentation](https://algorandfoundation.github.io/algokit-subscriber-ts/)
 
 ## Install
 
-Before installing, you'll need to decide on the version you want to target. Version 2 and 3 have largerly the same feature set, however v2 leverages algosdk@>=2.9.0<3.0, whereas v3 leverages algosdk@>=3.0.0. It is recommended that you aim to target the latest version, however in some circumstances that might not be possible.
-
-Once you've decided on the target version, this library can be installed from NPM using your favourite npm client, e.g.:
-
-To target algosdk@2 and use version 2 of AlgoKit Subscriber, run the below:
+This library can be installed from NPM using your preferred npm client, e.g.:
 
 ```
-npm install algosdk@^2.10.0 @algorandfoundation/algokit-utils@^7.1.0 @algorandfoundation/algokit-subscriber@^2.2.0
+npm install @algorandfoundation/algokit-utils @algorandfoundation/algokit-subscriber
 ```
 
-To target algosdk@3 and use the latest version of AlgoKit Subscriber, run the below:
+**Note**: Version 4+ of AlgoKit Subscriber uses `@algorandfoundation/algokit-utils@^10.0.0`, which has decoupled from algosdk. You no longer need to install algosdk separately unless you need it for other purposes.
 
-```
-npm install algosdk@^3.1.0 @algorandfoundation/algokit-utils @algorandfoundation/algokit-subscriber
-```
+### Installing Older Versions
+
+If you need to use an older version:
+
+- **Version 3** (for algosdk@3): `npm install algosdk@^3.1.0 @algorandfoundation/algokit-utils@^9.0.0 @algorandfoundation/algokit-subscriber@^3.0.0`
+- **Version 2** (for algosdk@2): `npm install algosdk@^2.10.0 @algorandfoundation/algokit-utils@^7.1.0 @algorandfoundation/algokit-subscriber@^2.2.0`
 
 ## Migration
 
 Whilst we aim to minimise breaking changes, there are situations where they are required.
 
-If you're migrating from an older version to v3, please refer to the [v3 migration guide](./docs/v3-migration.md).
+- Migrating to v4 (algokit-utils v10)? See the [v4 migration guide](https://algorandfoundation.github.io/algokit-subscriber-ts/migration/v4-migration/)
+- Migrating to v3 (algosdk v3)? See the [v3 migration guide](https://algorandfoundation.github.io/algokit-subscriber-ts/migration/v3-migration/)
 
 ## Quick start
 
 ```typescript
+import { AlgorandClient } from "@algorandfoundation/algokit-utils";
+import { AlgorandSubscriber } from "@algorandfoundation/algokit-subscriber";
+import { TransactionType } from "@algorandfoundation/algokit-utils/transact";
+
+const algorand = AlgorandClient.testNet();
+
 // Create subscriber
 const subscriber = new AlgorandSubscriber(
   {
     filters: [
       {
-        name: 'filter1',
+        name: "filter1",
         filter: {
           type: TransactionType.pay,
-          sender: 'ABC...',
+          sender: "ABC...",
         },
       },
     ],
-    /* ... other options (use intellisense to explore) */
+    watermarkPersistence: {
+      get: async () => 0n,
+      set: async (watermark) => {
+        /* save watermark */
+      },
+    },
   },
-  algod,
-  optionalIndexer,
-)
+  algorand.client.algod,
+  algorand.client.indexer
+);
 
 // Set up subscription(s)
-subscriber.on('filter1', async (transaction) => {
+subscriber.on("filter1", async (transaction) => {
   // ...
-})
+});
 //...
 
 // Set up error handling
 subscriber.onError((e) => {
   // ...
-})
+});
 
 // Either: Start the subscriber (if in long-running process)
-subscriber.start()
+subscriber.start();
 
 // OR: Poll the subscriber (if in cron job / periodic lambda)
-subscriber.pollOnce()
+subscriber.pollOnce();
 ```
 
 ## Key features
@@ -122,44 +133,48 @@ The following code, when algod is pointed to TestNet, will find all transactions
 The watermark is stored in-memory so this particular example is not resilient to restarts. To change that you can implement proper persistence of the watermark. There is [an example that uses the file system](./examples/data-history-museum/) to demonstrate this.
 
 ```typescript
-const algorand = AlgorandClient.fromEnvironment()
-let watermark = 0n
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+
+const algorand = AlgorandClient.fromEnvironment();
+let watermark = 0n;
 const subscriber = new AlgorandSubscriber(
   {
-    events: [
+    filters: [
       {
-        eventName: 'dhm-asset',
+        name: "dhm-asset",
         filter: {
           type: TransactionType.acfg,
           // Data History Museum creator account on TestNet
-          sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
+          sender: "ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU",
         },
       },
     ],
     frequencyInSeconds: 5,
     maxRoundsToSync: 100,
-    syncBehaviour: 'catchup-with-indexer',
+    syncBehaviour: "catchup-with-indexer",
     watermarkPersistence: {
       get: async () => watermark,
       set: async (newWatermark) => {
-        watermark = newWatermark
+        watermark = newWatermark;
       },
     },
   },
   algorand.client.algod,
-  algorand.client.indexer,
-)
-subscriber.onBatch('dhm-asset', async (events) => {
-  console.log(`Received ${events.length} asset changes`)
+  algorand.client.indexer
+);
+subscriber.onBatch("dhm-asset", async (events) => {
+  console.log(`Received ${events.length} asset changes`);
   // ... do stuff with the events
-})
+});
 
 subscriber.onError((e) => {
   // eslint-disable-next-line no-console
-  console.error(e)
-})
+  console.error(e);
+});
 
-subscriber.start()
+subscriber.start();
 ```
 
 ### USDC real-time monitoring
@@ -167,14 +182,18 @@ subscriber.start()
 The following code, when algod is pointed to MainNet, will find all transfers of [USDC](https://www.circle.com/en/usdc-multichain/algorand) that are greater than $1 and it will poll every 1s for new transfers.
 
 ```typescript
-const algorand = AlgorandClient.fromEnvironment()
-let watermark = 0n
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
+
+const algorand = AlgorandClient.fromEnvironment();
+let watermark = 0n;
 
 const subscriber = new AlgorandSubscriber(
   {
-    events: [
+    filters: [
       {
-        eventName: 'usdc',
+        name: "usdc",
         filter: {
           type: TransactionType.axfer,
           assetId: 31566704n, // MainNet: USDC
@@ -183,31 +202,31 @@ const subscriber = new AlgorandSubscriber(
       },
     ],
     waitForBlockWhenAtTip: true,
-    syncBehaviour: 'skip-sync-newest',
+    syncBehaviour: "skip-sync-newest",
     watermarkPersistence: {
       get: async () => watermark,
       set: async (newWatermark) => {
-        watermark = newWatermark
+        watermark = newWatermark;
       },
     },
   },
-  algorand.client.algod,
-)
-subscriber.on('usdc', (transfer) => {
+  algorand.client.algod
+);
+subscriber.on("usdc", (transfer) => {
   // eslint-disable-next-line no-console
   console.log(
     `${transfer.sender} sent ${transfer.assetTransferTransaction?.receiver} USDC$${Number(
-      (transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000n,
-    ).toFixed(2)} in transaction ${transfer.id}`,
-  )
-})
+      (transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000n
+    ).toFixed(2)} in transaction ${transfer.id}`
+  );
+});
 
 subscriber.onError((e) => {
   // eslint-disable-next-line no-console
-  console.error(e)
-})
+  console.error(e);
+});
 
-subscriber.start()
+subscriber.start();
 ```
 
 ## Getting started
