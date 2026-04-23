@@ -11,22 +11,26 @@ on:
 concurrency: release
 
 permissions:
+  contents: write
+  issues: read
   id-token: write
-  pages: write
 
 jobs:
   ci:
     name: Continuous Integration
-    uses: makerxstudio/shared-config/.github/workflows/node-ci.yml@main
-    with:
-      node-version: 24.x
-      run-commit-lint: true
-      pre-test-script: |
-        pipx install algokit
-        algokit localnet start
-        npx --yes wait-on tcp:4001 -t 30000
-      audit-script: |
-        npm run audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Run CI
+        uses: ./.github/actions/ci
+        with:
+          node-version: 24.x
+          commit-lint-from: ${{ github.event.before }}
+          commit-lint-to: ${{ github.sha }}
 
   check_docs:
     runs-on: ubuntu-latest
@@ -56,23 +60,50 @@ jobs:
 
   build:
     name: Build
-    uses: makerxstudio/shared-config/.github/workflows/node-build-zip.yml@main
+    runs-on: ubuntu-latest
     needs:
       - ci
       - check_docs
-    with:
-      node-version: 24.x
-      build-path: dist
-      artifact-name: package
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Rebuild and prepare
+        run: npm rebuild && npm run prepare --if-present
+
+      - name: Build
+        run: npm run build
+
+      - name: Zip build folder
+        run: cd dist && zip -q -r ../package.zip *
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: package
+          path: package.zip
+          if-no-files-found: error
 
   release:
     name: Release
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
-      # Step to generate the bot token for semantic release
       - name: Generate bot token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         id: app_token
         with:
           app-id: ${{ secrets.BOT_ID }}
@@ -83,7 +114,6 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
 
-      # Set git user to the GitHub App
       - name: Set Git user as GitHub actions
         run: git config --global user.email "179917785+engineering-ci[bot]@users.noreply.github.com" && git config --global user.name "engineering-ci[bot]"
 
@@ -93,7 +123,7 @@ jobs:
           node-version: 24.x
 
       - name: Download built package
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: package
           path: artifacts
@@ -110,7 +140,6 @@ jobs:
       - name: 'Semantic release'
         run: npx semantic-release
         env:
-          # Use the GitHub App token for authentication
           GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
 
   deploy_docs:

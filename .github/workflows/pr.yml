@@ -8,22 +8,22 @@ on:
 
 permissions:
   contents: read
-  checks: write
 
 jobs:
   pull_request:
-    uses: makerxstudio/shared-config/.github/workflows/node-ci.yml@main
-    with:
-      node-version: 24.x
-      working-directory: ./
-      run-commit-lint: true
-      run-build: true
-      pre-test-script: |
-        pipx install algokit
-        algokit localnet start
-        npx --yes wait-on tcp:4001 -t 30000
-      audit-script: |
-        npm run audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Run CI
+        uses: ./.github/actions/ci
+        with:
+          node-version: 24.x
+          commit-lint-from: ${{ github.event.pull_request.base.sha }}
+          commit-lint-to: ${{ github.event.pull_request.head.sha }}
 
   check_docs:
     runs-on: ubuntu-latest
