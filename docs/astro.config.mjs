@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 import starlightTypeDoc from 'starlight-typedoc';
 import sidebar from './sidebar.config.json';
 import remarkGithubAlerts from 'remark-github-alerts';
+import remarkFixIndexUrls from './plugins/remark-fix-index-urls';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,7 +12,7 @@ export default defineConfig({
   base: '/algokit-subscriber-ts/',
   trailingSlash: 'always',
   markdown: {
-    remarkPlugins: [remarkGithubAlerts],
+    remarkPlugins: [remarkGithubAlerts, remarkFixIndexUrls],
   },
   integrations: [
     starlight({

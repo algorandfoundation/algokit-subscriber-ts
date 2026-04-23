@@ -16,7 +16,9 @@
     "astro": "astro"
   },
   "devDependencies": {
-    "tsx": "^4.21.0"
+    "@types/mdast": "^4.0.4",
+    "tsx": "^4.21.0",
+    "unist-util-visit": "^5.1.0"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.6",
