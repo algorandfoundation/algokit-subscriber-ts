@@ -4,7 +4,7 @@ Hands-on examples demonstrating the full capabilities of `@algorandfoundation/al
 
 ## Prerequisites
 
-- **Node.js** >= 24
+- **Node.js** >= 22
 - **AlgoKit CLI** ([install guide](https://github.com/algorandfoundation/algokit-cli#install))
 - **LocalNet** running via `algokit localnet start`
 
