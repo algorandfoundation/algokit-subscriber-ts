@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   ci:
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-ci.yml@chore/node-npm
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-ci.yml@main
     with:
       run-commit-lint: true
       run-build: true
@@ -25,14 +25,14 @@ jobs:
       install-algokit: true
 
   check_docs:
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@chore/node-npm
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/check-docs.yml@main
 
   build:
     name: Build
     needs:
       - ci
       - check_docs
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-build-zip.yml@chore/node-npm
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/node-build-zip.yml@main
     with:
       build-path: dist
       artifact-name: package
@@ -88,4 +88,4 @@ jobs:
   publish_docs:
     needs: check_docs
     if: github.ref == 'refs/heads/release'
-    uses: algorandfoundation/algokit-shared-config/.github/workflows/publish-docs.yml@chore/node-npm
+    uses: algorandfoundation/algokit-shared-config/.github/workflows/publish-docs.yml@main
