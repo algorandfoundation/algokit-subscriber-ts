@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { algo, AlgorandClient, AppFactory } from '@algorandfoundation/algokit-utils'
+import { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/indexer'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, createFilterTester } from './shared/utils.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -119,7 +120,7 @@ async function main() {
   // Step 7: Subscribe with appOnComplete filter — matches by on-complete type
   printStep(7, 'Filter: appOnComplete = optin')
   const optInTxns = await testFilter(
-    'optin-calls', { appOnComplete: 'optin' }, 1,
+    'optin-calls', { appOnComplete: ApplicationOnComplete.optin }, 1,
     'appOnComplete filter matched 1 opt-in transaction',
     (txn) => {
       const appTxn = txn.applicationTransaction

@@ -18,7 +18,7 @@ getSubscribedTransactions({filters: [{name: 'filterName', filter: {/* Filter pro
 
 Currently this allows you filter based on any combination (AND logic) of:
 
-- Transaction type e.g. `filter: { type: TransactionType.axfer }` or `filter: {type: [TransactionType.axfer, TransactionType.pay] }`
+- Transaction type e.g. `filter: { type: TransactionType.AssetTransfer }` or `filter: {type: [TransactionType.AssetTransfer, TransactionType.Payment] }`
 - Account (sender and receiver) e.g. `filter: { sender: "ABCDE..F" }` or `filter: { sender: ["ABCDE..F", "ZYXWV..A"] }` and `filter: { receiver: "12345..6" }` or `filter: { receiver: ["ABCDE..F", "ZYXWV..A"] }`
 - Note prefix e.g. `filter: { notePrefix: "xyz" }`
 - Apps
@@ -47,10 +47,10 @@ Currently this allows you filter based on any combination (AND logic) of:
 - Assets
   - ID e.g. `filter: { assetId: 123456n }` or `filter: { assetId: [123456n, 456789n] }`
   - Creation e.g. `filter: { assetCreate: true }`
-  - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.axfer, minAmount: 1, maxAmount: 100 }`
+  - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.AssetTransfer, minAmount: 1, maxAmount: 100 }`
   - Balance changes (asset ID, sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{assetId: [15345n, 36234n], role: [BalanceChangeRole.Sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
 - Algo transfers (pay transactions)
-  - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.pay, minAmount: 1, maxAmount: 100 }`
+  - Amount transferred (min and/or max) e.g. `filter: { type: TransactionType.Payment, minAmount: 1, maxAmount: 100 }`
   - Balance changes (sender, receiver, close to, min and/or max change) e.g. `filter: { balanceChanges: [{role: [BalanceChangeRole.Sender], address: "ABC...", minAmount: 1, maxAmount: 2}]}`
 
 You can supply multiple, named filters via the [`NamedTransactionFilter`](../../guide/subscriptions/#namedtransactionfilter) type. When subscribed transactions are returned each transaction will have a `filtersMatched` property that will have an array of any filter(s) that caused that transaction to be returned. When using [`AlgorandSubscriber`](../../guide/subscriber/), you can subscribe to events that are emitted with the filter name.

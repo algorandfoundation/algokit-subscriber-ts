@@ -44,7 +44,7 @@ const subscriber = new AlgorandSubscriber(
       {
         name: "filter1",
         filter: {
-          type: TransactionType.pay,
+          type: TransactionType.Payment,
           sender: "ABC...",
         },
       },
@@ -145,7 +145,7 @@ const subscriber = new AlgorandSubscriber(
       {
         name: "dhm-asset",
         filter: {
-          type: TransactionType.acfg,
+          type: TransactionType.AssetConfig,
           // Data History Museum creator account on TestNet
           sender: "ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU",
         },
@@ -195,7 +195,7 @@ const subscriber = new AlgorandSubscriber(
       {
         name: "usdc",
         filter: {
-          type: TransactionType.axfer,
+          type: TransactionType.AssetTransfer,
           assetId: 31566704n, // MainNet: USDC
           minAmount: 1_000_000n, // $1
         },

@@ -223,13 +223,13 @@ export interface CoreTransactionSubscriptionParams {
    *  filter: [{
    *   name: 'asset-transfers',
    *   filter: {
-   *     type: TransactionType.axfer,
+   *     type: TransactionType.AssetTransfer,
    *     //...
    *   }
    *  }, {
    *   name: 'payments',
    *   filter: {
-   *     type: TransactionType.pay,
+   *     type: TransactionType.Payment,
    *     //...
    *   }
    *  }]

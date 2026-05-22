@@ -43,13 +43,13 @@ export interface TransactionSubscriptionParams {
    *  filter: [{
    *   name: 'asset-transfers',
    *   filter: {
-   *     type: TransactionType.axfer,
+   *     type: TransactionType.AssetTransfer,
    *     //...
    *   }
    *  }, {
    *   name: 'payments',
    *   filter: {
-   *     type: TransactionType.pay,
+   *     type: TransactionType.Payment,
    *     //...
    *   }
    *  }]
@@ -177,7 +177,7 @@ Each filter you provide within this type will apply an AND logic between the spe
 
 ```typescript
 filter: {
-  type: TransactionType.axfer,
+  type: TransactionType.AssetTransfer,
   sender: "ABC..."
 }
 ```
@@ -450,7 +450,7 @@ const subscription = await getSubscribedTransactions(
       {
         name: 'filter1',
         filter: {
-          type: TransactionType.acfg,
+          type: TransactionType.AssetConfig,
           sender: 'ER7AMZRPD5KDVFWTUUVOADSOWM4RQKEEV2EDYRVSA757UHXOIEKGMBQIVU',
           assetCreate: true,
         },
