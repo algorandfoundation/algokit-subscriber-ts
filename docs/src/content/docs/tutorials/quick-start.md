@@ -27,7 +27,7 @@ const subscriber = new AlgorandSubscriber(
       {
         name: 'filter1',
         filter: {
-          type: TransactionType.pay,
+          type: TransactionType.Payment,
           sender: 'ABC...',
         },
       },

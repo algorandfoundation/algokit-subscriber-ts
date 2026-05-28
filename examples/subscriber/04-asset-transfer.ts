@@ -10,6 +10,7 @@
  * - LocalNet running (via `algokit localnet start`)
  */
 import { algo, AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { printHeader, printStep, printInfo, printSuccess, printError, shortenAddress, createFilterTester } from './shared/utils.js'
 
 async function main() {
@@ -83,7 +84,7 @@ async function main() {
   // Step 7: Subscribe with type=axfer + assetId filter — matches opt-in and transfer
   printStep(7, 'Filter: type = axfer, assetId = created asset')
   const axferTxns = await testFilter(
-    'asset-transfers', { type: 'axfer', assetId: assetId }, 2,
+    'asset-transfers', { type: TransactionType.AssetTransfer, assetId: assetId }, 2,
     'axfer filter matched 2 transactions (opt-in + transfer)',
     (txn) => {
       const axfer = txn.assetTransferTransaction!

@@ -66,12 +66,12 @@ const subscriber = new AlgorandSubscriber(
 import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import type { ApplicationOnComplete } from '@algorandfoundation/algokit-utils/indexer'
 
-// Using in filters (same as before)
+// Using in filters (member names are now PascalCase)
 const subscriber = new AlgorandSubscriber(
   {
     filters: [{
       name: 'payments',
-      filter: { type: TransactionType.pay }
+      filter: { type: TransactionType.Payment }
     }],
     // ...
   },
@@ -150,7 +150,7 @@ const subscriber = new AlgorandSubscriber(
     filters: [{
       name: 'usdc-transfers',
       filter: {
-        type: TransactionType.axfer,
+        type: TransactionType.AssetTransfer,
         assetId: 31566704n,
         minAmount: 1_000_000n,
       }
