@@ -1,4 +1,5 @@
-import algosdk from 'algosdk'
+import type { SignedTxnWithAD } from '@algorandfoundation/algokit-utils/algod-client'
+import type { Transaction } from '@algorandfoundation/algokit-utils/transact'
 
 /** The representation of all important data for a single transaction or inner transaction
  * and its side effects within a committed block.
@@ -7,7 +8,7 @@ export interface TransactionInBlock {
   // Raw data
 
   /** The signed transaction with apply data from the block */
-  signedTxnWithAD: algosdk.SignedTxnWithAD
+  signedTxnWithAD: SignedTxnWithAD
 
   // Processed data
   /** The transaction ID
@@ -44,15 +45,15 @@ export interface TransactionInBlock {
    */
   parentTransactionId?: string
   /** The binary genesis hash of the network the transaction is within. */
-  genesisHash?: Buffer
+  genesisHash?: Uint8Array
   /** The string genesis ID of the network the transaction is within. */
   genesisId?: string
   /** The round number of the block the transaction is within. */
   roundNumber: bigint
   /** The round unix timestamp of the block the transaction is within. */
   roundTimestamp: number
-  /** The transaction as an algosdk `Transaction` object. */
-  transaction: algosdk.Transaction
+  /** The transaction as a `Transaction` object. */
+  transaction: Transaction
   /** The asset ID if an asset was created from this transaction. */
   createdAssetId?: bigint
   /** The app ID if an app was created from this transaction. */
