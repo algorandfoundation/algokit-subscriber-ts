@@ -1,5 +1,5 @@
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
-import { TransactionType } from 'algosdk'
+import { TransactionType } from '@algorandfoundation/algokit-utils/transact'
 import { describe, expect, it } from 'vitest'
 import { GetSubscribedTransactions } from '../transactions'
 
@@ -12,7 +12,7 @@ describe('Application create transaction', () => {
     const indexerTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.appl,
+          type: TransactionType.AppCall,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,
@@ -24,14 +24,14 @@ describe('Application create transaction', () => {
 
     const txn = indexerTxns.subscribedTransactions.find((txn) => txn.id === txnId)
     expect(txn).toBeDefined()
-    expect(txn!.createdApplicationIndex).toBe(1167143153n)
+    expect(txn!.createdAppId).toBe(1167143153n)
   })
 
   it('Can have an app create transaction subscribed correctly from algod', async () => {
     const algodTxns = await GetSubscribedTransactions(
       {
         filters: {
-          type: TransactionType.appl,
+          type: TransactionType.AppCall,
         },
         roundsToSync: 1,
         currentRound: roundNumber + 1n,
@@ -43,6 +43,6 @@ describe('Application create transaction', () => {
 
     const txn = algodTxns.subscribedTransactions.find((txn) => txn.id === txnId)
     expect(txn).toBeDefined()
-    expect(txn!.createdApplicationIndex).toBe(1167143153n)
+    expect(txn!.createdAppId).toBe(1167143153n)
   })
 })
