@@ -6,7 +6,7 @@
     "build": "run-s build:*",
     "build:0-clean": "rimraf dist coverage",
     "build:1-compile": "rollup -c --configPlugin typescript --configImportAttributesKey with",
-    "build:2-copy-pkg-json": "npx --yes @makerx/ts-toolkit@4.0.0-beta.22 copy-package-json --custom-sections module main type types exports",
+    "build:2-copy-pkg-json": "tsx scripts/copy-package-json.ts",
     "build:3-copy-readme": "cpy README.md dist",
     "test": "vitest run --coverage --passWithNoTests",
     "test:watch": "vitest watch --coverage --passWithNoTests",
@@ -17,9 +17,11 @@
     "format": "prettier --write .",
     "commit-lint": "commitlint --edit -o",
     "semantic-release": "semantic-release",
-    "generate:code-docs": "typedoc",
+    "docs:dev": "pnpm run --prefix docs dev",
+    "docs:build": "pnpm run --prefix docs build",
+    "docs:preview": "pnpm run --prefix docs preview",
     "generate:contract-client": "cd tests/contract && poetry run python -m build",
-    "pre-commit": "run-s check-types lint:fix audit format test generate:code-docs",
+    "pre-commit": "run-s check-types lint:fix audit format test docs:build",
     "dhm": "ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/data-history-museum/index.ts",
     "watch-dhm": "cross-env RUN_LOOP=true npm run dhm",
     "xgov": "npx prisma migrate dev && ts-node-dev --project tsconfig.dev.json --transpile-only --watch .env -r dotenv/config ./examples/xgov-voting/index.ts",
@@ -31,8 +33,12 @@
   },
   "author": "Algorand Foundation",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/algorandfoundation/algokit-subscriber-ts"
+  },
   "engines": {
-    "node": ">=20.0"
+    "node": ">=22.0"
   },
   "type": "commonjs",
   "main": "index.js",
@@ -66,48 +72,52 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "@algorandfoundation/algokit-client-generator": "^5.0.0",
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
     "@eslint/js": "^9.16.0",
-    "@makerx/prettier-config": "^2.0.1",
     "@prisma/client": "^5.15.1",
     "@rollup/plugin-typescript": "^12.1.2",
-    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/coverage-v8": "^4.1.2",
     "better-npm-audit": "^3.7.3",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^7.4.1",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
     "npm-run-all2": "^8.0.4",
     "prettier": "3.2.5",
     "prisma": "^5.15.1",
-    "rimraf": "^6.0.1",
-    "rollup": "^4.41.1",
-    "semantic-release": "^25.0.2",
+    "rimraf": "^6.1.3",
+    "rollup": "^4.59.0",
+    "semantic-release": "^25.0.3",
     "tiny-invariant": "^1.3.3",
     "ts-node-dev": "^2.0.0",
-    "typedoc": "^0.25.4",
-    "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.4.3",
+    "tslib": "^2.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.16.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "js-sha512": "^0.9.0"
   },
   "peerDependencies": {
-    "@algorandfoundation/algokit-utils": "^9.0.0",
-    "algosdk": "^3.0.0"
+    "@algorandfoundation/algokit-utils": "^10.0.0-beta.2"
   },
   "publishConfig": {
     "access": "public"
   },
   "overrides": {
+    "ajv": "^6.14.0",
+    "brace-expansion": "^5.0.5",
     "esbuild": "0.25.0",
+    "glob": "^11.1.0",
+    "handlebars": "^4.7.9",
     "js-yaml": "4.1.1",
-    "glob": "^11.1.0"
+    "minimatch": "^3.1.5",
+    "picomatch": "^4.0.4",
+    "undici": "^7.24.0"
   },
   "release": {
     "branches": [

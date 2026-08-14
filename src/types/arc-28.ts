@@ -1,6 +1,5 @@
-import algosdk from 'algosdk'
+import type { ABIValue } from '@algorandfoundation/algokit-utils/abi'
 import { SubscribedTransaction } from './subscription'
-import ABIValue = algosdk.ABIValue
 
 /**
  * The definition of metadata for an ARC-28 event per https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0028.md#event.
