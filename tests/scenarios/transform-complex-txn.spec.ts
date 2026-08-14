@@ -32,6 +32,7 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(getSubscribedTransactionForDiff(txn)).toMatchInlineSnapshot(`
       {
         "applicationTransaction": {
+          "access": [],
           "accounts": [],
           "applicationArgs": [
             "AA==",
@@ -40,6 +41,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "BAAAAAAABgTFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
           ],
           "applicationId": 1390675395n,
+          "boxReferences": [],
           "foreignApps": [],
           "foreignAssets": [
             1390638935n,
@@ -383,6 +385,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": undefined,
         "transaction": {
           "applicationCall": {
+            "access": [],
             "accounts": [
               "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
               "QDNLKZLNM6ZUD4ZI24RSY6O4QHWF3RHDQIYDV7S5AAHKFZSV2MSSULCE4U",
@@ -413,6 +416,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "numLocalByteSlices": 0,
             "numLocalInts": 0,
             "onComplete": 0,
+            "rejectVersion": 0,
           },
           "fee": 1000n,
           "firstValid": 35214365n,
@@ -469,6 +473,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
           "applicationCall": {
+            "access": [],
             "accounts": [
               "QDNLKZLNM6ZUD4ZI24RSY6O4QHWF3RHDQIYDV7S5AAHKFZSV2MSSULCE4U",
             ],
@@ -491,6 +496,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "numLocalByteSlices": 0,
             "numLocalInts": 0,
             "onComplete": 0,
+            "rejectVersion": 0,
           },
           "fee": 2000n,
           "firstValid": 35214365n,
@@ -571,6 +577,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
           "applicationCall": {
+            "access": [],
             "accounts": [],
             "appArgs": [
               "AA==",
@@ -592,6 +599,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "numLocalByteSlices": 0,
             "numLocalInts": 0,
             "onComplete": 0,
+            "rejectVersion": 0,
           },
           "fee": 2000n,
           "firstValid": 35214365n,
@@ -672,6 +680,7 @@ describe('Complex transaction with many nested inner transactions', () => {
         "parentTransactionId": "QLYC4KMQW5RZRA7W5GYCJ4CUVWWSZKMK2V4X3XFQYSGYCJH6LI4Q",
         "transaction": {
           "applicationCall": {
+            "access": [],
             "accounts": [
               "GJQLSF3KJZFRN7PMUYLDAOUVNHQVFMFXUNO6UPXVQH3GJXM5T53PF4TXEE",
             ],
@@ -694,6 +703,7 @@ describe('Complex transaction with many nested inner transactions', () => {
             "numLocalByteSlices": 0,
             "numLocalInts": 0,
             "onComplete": 0,
+            "rejectVersion": 0,
           },
           "fee": 2000n,
           "firstValid": 35214365n,

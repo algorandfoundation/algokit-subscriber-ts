@@ -1,1 +1,47 @@
-{}
+{
+  "1130591": {
+    "active": true,
+    "notes": "brace-expansion bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1130734": {
+    "active": true,
+    "notes": "brace-expansion bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1130722": {
+    "active": true,
+    "notes": "ip-address bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1130723": {
+    "active": true,
+    "notes": "ip-address bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1130724": {
+    "active": true,
+    "notes": "ip-address bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1124287": {
+    "active": true,
+    "notes": "tar bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1130716": {
+    "active": true,
+    "notes": "undici bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1130727": {
+    "active": true,
+    "notes": "undici bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  },
+  "1130732": {
+    "active": true,
+    "notes": "undici bundled inside npm in @semantic-release/npm - waiting for upstream fix",
+    "expiry": "2026-11-01"
+  }
+}

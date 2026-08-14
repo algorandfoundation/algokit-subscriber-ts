@@ -18,7 +18,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 
 const prisma = new PrismaClient()
 
-const votingRoundId = 1821334702n // Grab from https://voting.algorand.foundation/
+const votingRoundId = 1821334702n // A historical mainnet voting round: https://lora.algokit.io/mainnet/application/1821334702
 const watermarkId = `voting-${votingRoundId}`
 
 async function getXGovSubscriber() {
