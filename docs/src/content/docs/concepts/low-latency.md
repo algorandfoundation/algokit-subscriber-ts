@@ -3,7 +3,7 @@ title: Low Latency Processing
 description: Configure polling semantics for minimal latency when processing new blocks.
 ---
 
-You can control the polling semantics of the library when using the [`AlgorandSubscriber`](../../guide/subscriber/) by either specifying the `frequencyInSeconds` parameter to control the duration between polls or you can use the `waitForBlockWhenAtTip` parameter to indicate the subscriber should [call algod to ask it to inform the subscriber when a new round is available](https://dev.algorand.co/reference/rest-apis/algod/#waitforblock) so the subscriber can immediately process that round with a much lower-latency. When this mode is set, the subscriber intelligently uses this option only when it's caught up to the tip of the chain, but otherwise uses `frequencyInSeconds` while catching up to the tip of the chain.
+You can control the polling semantics of the library when using the [`AlgorandSubscriber`](../../guide/subscriber/) by either specifying the `frequencyInSeconds` parameter to control the duration between polls or you can use the `waitForBlockWhenAtTip` parameter to indicate the subscriber should [call algod to ask it to inform the subscriber when a new round is available](https://dev.algorand.co/reference/rest-api/algod/operations/waitforblock/) so the subscriber can immediately process that round with a much lower-latency. When this mode is set, the subscriber intelligently uses this option only when it's caught up to the tip of the chain, but otherwise uses `frequencyInSeconds` while catching up to the tip of the chain.
 
 e.g.
 
@@ -22,7 +22,7 @@ If you want to manually run code that waits for a given round to become availabl
 await algod.statusAfterBlock(roundNumberToWaitFor).do()
 ```
 
-It's worth noting special care has been placed in the subscriber library to properly handle abort signalling. All asynchronous operations including algod polls and polling waits have abort signal handling in place so if you call `subscriber.stop()` at any point in time it should almost immediately, cleanly, exit and if you want to wait for the stop to finish you can `await subscriber.stop()`.
+It's worth noting special care has been placed in the subscriber library to properly handle abort signalling. All asynchronous operations including algod polls and polling waits have abort signal handling in place so if you call `subscriber.stop(reason)` at any point in time it should almost immediately, cleanly, exit and if you want to wait for the stop to finish you can `await subscriber.stop(reason)`.
 
 If you want to hook this up to Node.js process signals you can include code like this in your service entrypoint:
 

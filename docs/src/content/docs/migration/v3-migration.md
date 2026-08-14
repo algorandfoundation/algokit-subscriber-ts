@@ -5,7 +5,7 @@ description: Migration guide for upgrading from AlgoKit Subscriber v2 to v3.
 
 This release updates the subscriber library to support `algosdk@3`. As a result the majority of the changes are to support this.
 
-For further information about `algosdk@3`, see [migration guide for algosdk@3](https://github.com/algorand/js-algorand-sdk/blob/develop/v2_TO_v3_MIGRATION_GUIDE.md).
+For further information about `algosdk@3`, see [migration guide for algosdk@3](https://github.com/algorand/js-algorand-sdk/blob/main/v2_TO_v3_MIGRATION_GUIDE.md).
 
 [Details of this release are available here](https://github.com/algorandfoundation/algokit-subscriber-ts/releases/tag/v3.0.0)
 

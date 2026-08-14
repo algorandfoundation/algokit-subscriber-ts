@@ -252,7 +252,7 @@ If you call `onBatch` it will be called first, with the full set of transactions
 The default type that will be received is a `SubscribedTransaction`, which can be imported like so:
 
 ```typescript
-import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types'
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
 ```
 
 See the [detail about this type](../subscriptions/#subscribedtransaction).

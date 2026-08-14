@@ -233,7 +233,7 @@ export interface TransactionSubscriptionResult {
   newWatermark: bigint
   /** Any transactions that matched the given filter within
    * the synced round range. This substantively uses the [indexer transaction
-   * format](https://dev.algorand.co/reference/rest-apis/indexer#transaction)
+   * format](https://dev.algorand.co/reference/rest-api/indexer/operations/searchfortransactions/)
    * to represent the data with some additional fields.
    */
   subscribedTransactions: SubscribedTransaction[]
@@ -290,7 +290,7 @@ export interface BlockMetadata {
 The common model used to expose a transaction that is returned from a subscription is a `SubscribedTransaction`, which can be imported like so:
 
 ```typescript
-import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types'
+import type { SubscribedTransaction } from '@algorandfoundation/algokit-subscriber/types/subscription'
 ```
 
 This type is a class that extends `algosdk.indexerModels.Transaction`, so it is substantively based on the indexer

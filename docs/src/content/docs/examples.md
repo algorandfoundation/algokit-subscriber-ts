@@ -149,8 +149,10 @@ subscriber.start()
 ## xGov voting
 
 `examples/xgov-voting/index.ts` is the most involved example. It indexes the votes cast in an
-[Algorand xGov voting round](https://voting.algorand.foundation/) into a SQL database via
-[Prisma](https://www.prisma.io/), decoding the ARC-4 vote arguments out of each app call.
+Algorand xGov voting round into a SQL database via
+[Prisma](https://www.prisma.io/), decoding the ARC-4 vote arguments out of each app call. Note that the
+[xGov programme](https://xgov.algorand.co/) has since moved on-chain, so this example targets a
+[historical voting round](https://lora.algokit.io/mainnet/application/1821334702).
 
 It demonstrates:
 
