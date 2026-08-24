@@ -24,7 +24,7 @@
     "notes": "ip-address bundled inside npm in @semantic-release/npm - waiting for upstream fix",
     "expiry": "2026-11-01"
   },
-  "1124287": {
+  "1145647": {
     "active": true,
     "notes": "tar bundled inside npm in @semantic-release/npm - waiting for upstream fix",
     "expiry": "2026-11-01"
