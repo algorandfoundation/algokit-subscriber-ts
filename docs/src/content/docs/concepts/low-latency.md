@@ -19,7 +19,9 @@ If you are using [`getSubscribedTransactions`](../../guide/subscriptions/) or th
 If you want to manually run code that waits for a given round to become available you can execute the following code:
 
 ```typescript
-await algod.statusAfterBlock(roundNumberToWaitFor).do()
+// Despite the method name, algod's `wait-for-block-after` endpoint returns once a block *after* the given round exists,
+// so pass the round before the one you want to wait for
+await algod.statusAfterBlock(roundNumberToWaitFor - 1n).do()
 ```
 
 It's worth noting special care has been placed in the subscriber library to properly handle abort signalling. All asynchronous operations including algod polls and polling waits have abort signal handling in place so if you call `subscriber.stop(reason)` at any point in time it should almost immediately, cleanly, exit and if you want to wait for the stop to finish you can `await subscriber.stop(reason)`.
