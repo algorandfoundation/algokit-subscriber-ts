@@ -26,7 +26,7 @@ Currently this allows you filter based on any combination (AND logic) of:
   - ID e.g. `filter: { appId: 54321n }` or `filter: { appId: [54321n, 12345n] }`
   - Creation e.g. `filter: { appCreate: true }`
   - Call on-complete(s) e.g. `filter: { appOnComplete: ApplicationOnComplete.optin }` or `filter: { appOnComplete: [ApplicationOnComplete.optin, ApplicationOnComplete.noop] }`
-  - ARC4 method signature(s) e.g. `filter: { methodSignature: "MyMethod(uint64,string)" }` or `filter: { methodSignature: ["MyMethod(uint64,string)uint64", "MyMethod2(unit64)"] }`
+  - ARC4 method signature(s) e.g. `filter: { methodSignature: "MyMethod(uint64,string)" }` or `filter: { methodSignature: ["MyMethod(uint64,string)uint64", "MyMethod2(uint64)"] }`
   - Call arguments e.g.
     ```typescript
     filter: {
