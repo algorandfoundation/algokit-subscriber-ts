@@ -137,8 +137,8 @@ const subscriber = new AlgorandSubscriber(
 subscriber.on('usdc', (transfer) => {
   // eslint-disable-next-line no-console
   console.log(
-    `${transfer.sender} sent ${transfer.assetTransferTransaction?.receiver} USDC$${Number(
-      (transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000n,
+    `${transfer.sender} sent ${transfer.assetTransferTransaction?.receiver} USDC$${(
+      Number(transfer.assetTransferTransaction?.amount ?? 0n) / 1_000_000
     ).toFixed(2)} in transaction ${transfer.id}`,
   )
 })
