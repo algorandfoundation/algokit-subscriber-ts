@@ -93,6 +93,7 @@ subscriber.start()
 
 `examples/usdc/index.ts` is a minimal real-time notification service. It watches for
 [USDC](https://www.circle.com/en/usdc-multichain/algorand) transfers greater than $1 and logs them as they appear.
+It is pinned to MainNet because that's where the USDC asset (`31566704`) lives.
 
 It demonstrates:
 
@@ -107,7 +108,7 @@ import algosdk from 'algosdk'
 import { AlgorandSubscriber } from '@algorandfoundation/algokit-subscriber'
 import TransactionType = algosdk.TransactionType
 
-const algorand = AlgorandClient.fromEnvironment()
+const algorand = AlgorandClient.mainNet()
 let watermark = 0n
 
 const subscriber = new AlgorandSubscriber(

@@ -12,7 +12,7 @@ if (!fs.existsSync(path.join(__dirname, '..', '..', '.env')) && !process.env.ALG
 }
 
 ;(async () => {
-  const algorand = AlgorandClient.testNet()
+  const algorand = AlgorandClient.mainNet()
   let watermark = 0n
 
   const subscriber = new AlgorandSubscriber(
