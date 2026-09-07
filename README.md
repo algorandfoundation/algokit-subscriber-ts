@@ -66,7 +66,7 @@ subscriber.onError((e) => {
 subscriber.start()
 
 // OR: Poll the subscriber (if in cron job / periodic lambda)
-subscriber.pollOnce()
+await subscriber.pollOnce()
 ```
 
 ## Key features
