@@ -115,7 +115,7 @@
     "brace-expansion": "^5.0.9",
     "esbuild": "0.25.0",
     "handlebars": "^4.7.9",
-    "js-yaml": "^4.3.1",
+    "js-yaml": "^4.3.2",
     "minimatch@^3": "^3.1.5",
     "picomatch": "^4.0.5",
     "undici": "^7.29.0"
