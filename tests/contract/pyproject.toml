@@ -2,7 +2,7 @@
 name = "test-contract"
 version = "0.1.0"
 description = "Algorand test smart contract"
-authors = ["Rob Moore <rob.moore@makerx.com.au>"]
+authors = ["AlgoKit team <algokit-engineering@algorand.foundation>"]
 
 [tool.poetry.dependencies]
 python = "^3.12"

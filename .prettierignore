@@ -10,3 +10,5 @@ coverage
 **/generated/types.ts
 # don't format ide files
 .idea
+# don't format docs (Astro has its own formatting)
+docs

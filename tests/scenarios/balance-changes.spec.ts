@@ -432,6 +432,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
+              address: account.addr.toString(),
               minAmount: 196_000n,
             },
           ],
@@ -456,6 +457,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
+              address: account2.addr.toString(),
               minAbsoluteAmount: 297_000n,
             },
           ],
@@ -467,6 +469,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
+              address: account2.addr.toString(),
               maxAmount: -297_000n,
             },
           ],
@@ -478,6 +481,7 @@ describe('Subscribing to calls that effect balance changes', () => {
         {
           balanceChanges: [
             {
+              address: account.addr.toString(),
               minAmount: 0n,
               maxAmount: 0n,
             },
