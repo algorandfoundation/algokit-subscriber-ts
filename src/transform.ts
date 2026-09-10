@@ -425,6 +425,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
             }),
             hbSeed: transaction.heartbeat.seed,
             hbVoteId: transaction.heartbeat.voteID,
+            hbChallengeDiscount: transaction.heartbeat.challengeDiscount || undefined,
           }),
         }
         : undefined),
@@ -464,7 +465,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
           genesisId,
         })
       }),
-      ...(signedTxnWithAD.signedTxn.sig || signedTxnWithAD.signedTxn.lsig || signedTxnWithAD.signedTxn.msig
+      ...(signedTxnWithAD.signedTxn.sig || signedTxnWithAD.signedTxn.lsig || signedTxnWithAD.signedTxn.msig || signedTxnWithAD.signedTxn.pqsig
         ? {
           signature: new algosdk.indexerModels.TransactionSignature({
             sig: signedTxnWithAD.signedTxn.sig ? Buffer.from(signedTxnWithAD.signedTxn.sig).toString('base64') : undefined,
@@ -475,34 +476,13 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
                 signature: signedTxnWithAD.signedTxn.lsig.sig
                   ? Buffer.from(signedTxnWithAD.signedTxn.lsig.sig).toString('base64')
                   : undefined,
-                multisigSignature: signedTxnWithAD.signedTxn.lsig.msig
-                  ? new algosdk.indexerModels.TransactionSignatureMultisig({
-                    version: signedTxnWithAD.signedTxn.lsig.msig.v,
-                    threshold: signedTxnWithAD.signedTxn.lsig.msig.thr,
-                    subsignature: signedTxnWithAD.signedTxn.lsig.msig.subsig.map(
-                      (s) =>
-                        new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
-                          publicKey: Buffer.from(s.pk).toString('base64'),
-                          signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
-                        }),
-                    ),
-                  })
-                  : undefined,
+                multisigSignature: algodMultisigToIndexerMultisig(signedTxnWithAD.signedTxn.lsig.msig),
+                logicMultisigSignature: algodMultisigToIndexerMultisig(signedTxnWithAD.signedTxn.lsig.lmsig),
+                pqsig: algodPQSigToIndexerPQSig(signedTxnWithAD.signedTxn.lsig.pqsig),
               })
               : undefined,
-            multisig: signedTxnWithAD.signedTxn.msig
-              ? new algosdk.indexerModels.TransactionSignatureMultisig({
-                version: signedTxnWithAD.signedTxn.msig.v,
-                threshold: signedTxnWithAD.signedTxn.msig.thr,
-                subsignature: signedTxnWithAD.signedTxn.msig.subsig.map(
-                  (s) =>
-                    new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
-                      publicKey: Buffer.from(s.pk).toString('base64'),
-                      signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
-                    }),
-                ),
-              })
-              : undefined,
+            multisig: algodMultisigToIndexerMultisig(signedTxnWithAD.signedTxn.msig),
+            pqsig: algodPQSigToIndexerPQSig(signedTxnWithAD.signedTxn.pqsig),
           }),
         }
         : undefined),
@@ -561,6 +541,38 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
     console.error(`Failed to transform transaction ${transactionId} from block ${roundNumber}`)
     throw e
   }
+}
+
+function algodMultisigToIndexerMultisig(
+  msig: algosdk.EncodedMultisig | undefined,
+): algosdk.indexerModels.TransactionSignatureMultisig | undefined {
+  if (!msig) return undefined
+  return new algosdk.indexerModels.TransactionSignatureMultisig({
+    version: msig.v,
+    threshold: msig.thr,
+    subsignature: msig.subsig.map(
+      (s) =>
+        new algosdk.indexerModels.TransactionSignatureMultisigSubsignature({
+          publicKey: Buffer.from(s.pk).toString('base64'),
+          signature: s.s ? Buffer.from(s.s).toString('base64') : undefined,
+        }),
+    ),
+  })
+}
+
+function algodPQSigToIndexerPQSig(
+  pqsig: algosdk.EncodedPQSig | undefined,
+): algosdk.indexerModels.TransactionSignaturePQsig | undefined {
+  if (!pqsig) return undefined
+  return new algosdk.indexerModels.TransactionSignaturePQsig({
+    // The scheme is a 2-byte identifier (e.g. f1 for Falcon-1024) that the indexer exposes as an ASCII string
+    // https://github.com/algorand/go-algorand/blob/master/protocol/pq_scheme.go
+    scheme: Buffer.from(pqsig.sch).toString('utf8'),
+    // The indexer omits a zero salt
+    salt: pqsig.slt || undefined,
+    publicKey: pqsig.pk,
+    signature: pqsig.sig,
+  })
 }
 
 function algodMerkleArrayProofToIndexerMerkleArrayProof(proof: algosdk.MerkleArrayProof): algosdk.indexerModels.MerkleArrayProof {

@@ -5,31 +5,23 @@ import { getSubscribedTransactionForDiff } from '../subscribed-transactions'
 import { GetSubscribedTransactions } from '../transactions'
 
 describe('Heartbeat transaction', () => {
-  // TODO: At some point FNet will likely be torn down, once we have hb transactions on mainnet or testnet we should update this test
-  const txnId = 'S257NEWKKXQPBRZ4KDZMTL2PBKP6QTBNXUADHB2UZELXIHBYUVAA'
-  const roundNumber = 3811103n
-  const algorand = AlgorandClient.fromConfig({
-    algodConfig: {
-      server: 'https://fnet-api.4160.nodely.io/',
-      port: 443,
-    },
-    indexerConfig: {
-      server: 'https://fnet-idx.4160.nodely.io/',
-      port: 443,
-    },
-  })
+  // A heartbeat sent by a challenged account, claiming the challenge fee discount
+  const txnId = 'NOEVK43VAU7B3FIOLZXR3437K6WJYZBNNRTANG72VDQRE7AIF2QQ'
+  const roundNumber = 64863104n
+  const algorand = AlgorandClient.mainNet()
   const expectedHeartbeatData = {
-    hbAddress: 'OOEPDEGVG3YL2FUHUEV2LKLPQRP35AJPQL3LV3TS6UFFRLJ552PVDZJGLM',
-    hbKeyDilution: 1001n,
+    hbAddress: 'T5NPCKOB7BJFZBXK3VYUJIJ6VWUUDKV3ZUJCJZUAOL7RB2TSNH4XVQLHHA',
+    hbChallengeDiscount: true,
+    hbKeyDilution: 1688n,
     hbProof: {
-      hbPk: 'SMvycKufLfsZY8Z+keR+wrpCyshVM2a7MUvgh6ufs4g=',
-      hbPk1sig: '9csOZzjc8pgVggeK5bT0UCgQ0+f0KYwK+wTqlFFkDimyv6Iqa49ziMoorjSkOsVnsSNCJHQY8EJs9PMc2X31Dw==',
-      hbPk2: 'Rcxu2WJtT8bu6KUdbDsiYSmA+q/HILqtQF4hImNA5N8=',
-      hbPk2sig: 'n54z0JW489m0YzCLKsdeoSPL5JRBedbgCdj+MNQTvIT1diLCuyV6BnFXax7wEQy0Q+Q3MWNskmqncCOK6AMFCA==',
-      hbSig: 'cq2BGIbl2d5w5Qo1ziMYZ9hasVORGwD8NsYQqnrUreD9pyqmY6HOfgdnUf7TtryNef+/RqKRJFcNPrfD7xv5CA==',
+      hbPk: 'L0uu9U/wdczXz2boG1Ez8fmlUExSdJIY8fj9qFRtiKg=',
+      hbPk1sig: 'w5Y3YM5oHyh7/h3mzln/5Y8FQcJ03OILwFWdDguwD9lzd89szWAsD++PIgo8rMQAhXWlYVgIER4uXGaIfFdKBg==',
+      hbPk2: 'NsfrcMpM2U4a20I4bzl15YqX6a5dea7WI/mMMuusURQ=',
+      hbPk2sig: 'ngwdgkCyfZnJtxtk5TS8rhHXvZtsCdIelXMOPztTQyi3lw7Q8xwGOjQ23EdPpUwgXkF2JQVhhrxJHU/xbcDZCQ==',
+      hbSig: 'nqKYBOKbXOk/ATSsTkmA/tVcnMjzR8oRiJmPJxHXL2SXgWGMsjh5KghZ4Xq/JY25+A9QGf8J2rSBuaGW4n4yDA==',
     },
-    hbSeed: 'uC0B02o31PDWHup9KzE/4lSFsOgoKq1+is6IYMK3Ptc=',
-    hbVoteId: 'S+MIkXmZHCYzcje+tyYh3XOO1XTO7ZX/uH5rhITpKHk=',
+    hbSeed: '+IuQbNsEOp8+HNcEUJQOR4atoRT14njEr0WzMCbK7Qs=',
+    hbVoteId: 'yc+XgDi9XyQhHwly5JE2oxI9qHAlU4Ucu6k2amhmSRI=',
   }
 
   it('Can have a hb transaction subscribed correctly from indexer', async () => {
@@ -48,8 +40,10 @@ describe('Heartbeat transaction', () => {
 
     expect(indexerTxns.subscribedTransactions.length).toBe(1)
     const txn = indexerTxns.subscribedTransactions[0]
+    // https://allo.info/tx/NOEVK43VAU7B3FIOLZXR3437K6WJYZBNNRTANG72VDQRE7AIF2QQ
     expect(txn.id).toBe(txnId)
-    expect(getSubscribedTransactionForDiff(txn).heartbeatTransaction).toMatchObject(expectedHeartbeatData)
+    expect(txn.fee).toBe(0n)
+    expect(getSubscribedTransactionForDiff(txn).heartbeatTransaction).toEqual(expectedHeartbeatData)
   })
 
   it('Can have a hb transaction subscribed correctly from algod', async () => {
@@ -69,6 +63,7 @@ describe('Heartbeat transaction', () => {
     expect(algodTxns.subscribedTransactions.length).toBe(1)
     const txn = algodTxns.subscribedTransactions[0]
     expect(txn.id).toBe(txnId)
-    expect(getSubscribedTransactionForDiff(txn).heartbeatTransaction).toMatchObject(expectedHeartbeatData)
+    expect(txn.fee).toBe(0n)
+    expect(getSubscribedTransactionForDiff(txn).heartbeatTransaction).toEqual(expectedHeartbeatData)
   })
 })
