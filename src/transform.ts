@@ -336,6 +336,7 @@ export function getIndexerTransactionFromAlgodTransaction(t: TransactionInBlock,
               : undefined),
             accounts: transaction.applicationCall!.accounts.map((a) => a),
             extraProgramPages: transaction.applicationCall!.extraPages,
+            rejectVersion: transaction.applicationCall!.rejectVersion || undefined,
           }),
         }
         : undefined),
