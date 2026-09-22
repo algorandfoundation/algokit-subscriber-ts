@@ -257,6 +257,8 @@ export interface BlockMetadata {
   genesisHash: string
   /** The base64 previous block hash. */
   previousBlockHash?: string
+  /** The base64 previous block hash, using SHA-512. */
+  previousBlockHashSha512?: string
   /** The base64 seed of the block. */
   seed: string
   /** Fields relating to rewards */
@@ -272,6 +274,12 @@ export interface BlockMetadata {
   transactionsRoot: string
   /** TransactionsRootSHA256 is an auxiliary TransactionRoot, built using a vector commitment instead of a merkle tree, and SHA256 hash function instead of the default SHA512_256. This commitment can be used on environments where only the SHA256 function exists. */
   transactionsRootSha256: string
+  /** TransactionsRootSHA512 is an auxiliary TransactionRoot, built using a vector commitment instead of a merkle tree, and SHA512 hash function instead of the default SHA512_256. */
+  transactionsRootSha512?: string
+  /** The degree to which this block is full, based on the number of bytes in the final block compared to the maximum allowed. Expressed as a fixed-point integer with 6 digits of precision, so 1,000,000 is a completely full block. */
+  load: bigint
+  /** The fee required, beyond the minimum fee, for "normal" transactions in this block. */
+  congestionTax: bigint
   /** Fields relating to a protocol upgrade. */
   upgradeState?: BlockUpgradeState
   /** Tracks the status of state proofs. */

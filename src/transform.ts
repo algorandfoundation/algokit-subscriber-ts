@@ -621,6 +621,7 @@ export function blockResponseToBlockMetadata(blockResponse: algosdk.modelsv2.Blo
     genesisId: block.header.genesisID,
     genesisHash: Buffer.from(block.header.genesisHash).toString('base64'),
     previousBlockHash: block.header.branch ? Buffer.from(block.header.branch).toString('base64') : undefined,
+    previousBlockHashSha512: optionalBase64Hash(block.header.branch512),
     seed: Buffer.from(block.header.seed).toString('base64'),
     parentTransactionCount: block.payset?.length ?? 0,
     fullTransactionCount: countAllTransactions(block.payset.map((s) => s.signedTxn) ?? []),
@@ -642,6 +643,9 @@ export function blockResponseToBlockMetadata(blockResponse: algosdk.modelsv2.Blo
     txnCounter: block.header.txnCounter ?? 0n,
     transactionsRoot: Buffer.from(block.header.txnCommitments.nativeSha512_256Commitment).toString('base64'),
     transactionsRootSha256: Buffer.from(block.header.txnCommitments.sha256Commitment).toString('base64'),
+    transactionsRootSha512: optionalBase64Hash(block.header.txnCommitments.sha512Commitment),
+    load: block.header.load ?? 0n,
+    congestionTax: block.header.congestionTax ?? 0n,
     proposer: block.header.proposer?.toString(),
     ...(block.header.upgradeVote
       ? {
@@ -669,6 +673,14 @@ export function blockResponseToBlockMetadata(blockResponse: algosdk.modelsv2.Blo
       }))
       : undefined,
   }
+}
+
+function optionalBase64Hash(hash: Uint8Array | undefined): string | undefined {
+  // algosdk decodes an absent fixed-length byte field as a zero-filled array
+  if (!hash || hash.every((b) => b === 0)) {
+    return undefined
+  }
+  return Buffer.from(hash).toString('base64')
 }
 
 function countAllTransactions(txns: SignedTxnWithAD[]): number {
