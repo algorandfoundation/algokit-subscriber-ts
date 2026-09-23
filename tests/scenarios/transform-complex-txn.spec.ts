@@ -313,16 +313,19 @@ describe('Complex transaction with many nested inner transactions', () => {
     expect(algodTxns.blockMetadata).toMatchInlineSnapshot(`
       [
         {
+          "congestionTax": 0n,
           "fullTransactionCount": 171,
           "genesisHash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
           "genesisId": "mainnet-v1.0",
           "hash": "EOq+HX242/G/ADonU6q5lfimxX7twuFKEwtG4rDt+kI=",
+          "load": 0n,
           "parentTransactionCount": 55,
           "participationUpdates": {
             "absentParticipationAccounts": [],
             "expiredParticipationAccounts": [],
           },
           "previousBlockHash": "8ReLxqOPxmuKuBfACtllRRr13n2E2r01f8wXt3vFYW0=",
+          "previousBlockHashSha512": undefined,
           "proposer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
           "rewards": {
             "feeSink": "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
@@ -345,6 +348,7 @@ describe('Complex transaction with many nested inner transactions', () => {
           "timestamp": 1705252440,
           "transactionsRoot": "xrzxjhAycO5dLAJ622EAMV4ffb2T1sagFWYQPR1S0IQ=",
           "transactionsRootSha256": "JfFssH1FIyVOuor0PEX9ZAwiCcMH2FcZbcRTsmqYpa0=",
+          "transactionsRootSha512": undefined,
           "txnCounter": 1401537349n,
           "upgradeState": {
             "currentProtocol": "https://github.com/algorandfoundation/specs/tree/abd3d4823c6f77349fc04c3af7b1e99fe4df699f",
