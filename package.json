@@ -82,7 +82,7 @@
     "better-npm-audit": "^3.7.3",
     "conventional-changelog-conventionalcommits": "8.0.0",
     "cpy-cli": "^7.0.0",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "dotenv-cli": "^7.4.1",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
