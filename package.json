@@ -86,7 +86,7 @@
     "dotenv-cli": "^7.4.1",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
-    "npm-run-all2": "^8.0.4",
+    "npm-run-all2": "^9.0.3",
     "prettier": "3.2.5",
     "prisma": "^5.15.1",
     "rimraf": "^6.1.3",
